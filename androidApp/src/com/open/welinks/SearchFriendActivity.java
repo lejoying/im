@@ -1,14 +1,7 @@
 package com.open.welinks;
 
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.welinks.model.API;
-import com.open.welinks.model.Data;
-import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.ViewManage;
-
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -17,8 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.app.Activity;
-import android.content.Intent;
+
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welinks.model.API;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.view.ViewManage;
 
 public class SearchFriendActivity extends Activity {
 

@@ -1,5 +1,8 @@
 package com.open.welinks.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,17 +12,23 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.view.Alert;
 import com.open.welinks.view.GroupInfomationView;
+import com.open.welinks.view.ViewManage;
+import com.open.welinks.view.Alert.AlertInputDialog;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 
 public class GroupInfomationController {
 
@@ -36,6 +45,10 @@ public class GroupInfomationController {
 	public OnSeekBarChangeListener mOnSeekBarChangeListener;
 
 	public Group currentGroup;
+
+	public ViewManage viewManage = ViewManage.getInstance();
+
+	public Gson gson = new Gson();
 
 	public GroupInfomationController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -90,7 +103,14 @@ public class GroupInfomationController {
 					intent.putExtra("key", currentGroup.gid + "");
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.exit2DeleteGroupView)) {
-					thisActivity.finish();
+					Alert.createDialog(thisActivity).setTitle("您确定要删除并退出该群组？").setOnConfirmClickListener(new OnDialogClickListener() {
+
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+							thisActivity.finish();
+							resetShareGroup();
+						}
+					}).show();
 				} else if (view.equals(thisView.groupMemberControlView)) {
 					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);
 					intent.putExtra("gid", currentGroup.gid + "");
@@ -150,6 +170,39 @@ public class GroupInfomationController {
 		} else {
 			thisActivity.finish();
 		}
+	}
+
+	public void resetShareGroup() {
+		parser.check();
+		String gid = data.localStatus.localData.currentSelectedGroup;
+		data.relationship.groups.remove(gid);
+		data.localStatus.localData.currentSelectedGroup = "";
+		viewManage.shareSubView.setGroupsDialogContent();
+		if (data.relationship.groups.size() != 0) {
+			data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
+			viewManage.shareSubView.shareTopMenuGroupName.setText(data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).name);
+		} else {
+			viewManage.shareSubView.shareTopMenuGroupName.setText("暂无群组");
+		}
+		viewManage.shareSubView.shareMessageListBody.y = 0;
+		data.relationship.isModified = true;
+		viewManage.shareSubView.showShareMessages();
+		List<String> subtractMembers = new ArrayList<String>();
+		subtractMembers.add(data.userInformation.currentUser.phone);
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		String subtractMembersStr = gson.toJson(subtractMembers);
+		modifyGroupMembers(API.GROUP_REMOVEMEMBERS, subtractMembersStr, responseHandlers.removeMembersCallBack);
+	}
+
+	public void modifyGroupMembers(String url, String membersContentString, RequestCallBack<String> callBack) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", currentGroup.gid + "");
+		params.addBodyParameter("members", membersContentString);
+
+		httpUtils.send(HttpMethod.POST, url, params, callBack);
 	}
 
 	public void modifyGroupName(String groupName) {

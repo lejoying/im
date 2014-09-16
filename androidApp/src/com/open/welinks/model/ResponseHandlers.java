@@ -485,9 +485,21 @@ public class ResponseHandlers {
 							friend.id = account.ID;
 
 							data.tempData.tempFriend = friend;
+
+							data.relationship.friendsMap.put(friend.phone, friend);
+						} else {
+							Friend friend = data.relationship.friendsMap.get(account.phone);
+							if (friend != null) {
+								friend.head = account.head;
+								friend.nickName = account.nickName;
+								friend.mainBusiness = account.mainBusiness;
+								friend.sex = account.sex;
+								friend.userBackground = account.userBackground;
+							}
 						}
 						viewManage.searchFriendActivity.searchCallBack(account.phone, isTemp);
 					}
+					viewManage.postNotifyView("MeSubView");
 				}
 			} else {
 				if ("获取用户信息失败".equals(response.提示信息) && "用户不存在".equals(response.失败原因)) {
@@ -805,6 +817,7 @@ public class ResponseHandlers {
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
 			}
+			DataUtil.getUserCurrentAllGroup();
 		};
 	};
 
@@ -816,6 +829,7 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
+			DataUtil.getUserCurrentAllGroup();
 			if (response.提示信息.equals("退出群组成功")) {
 				log.e(tag, "---------------------退出群组成功");
 			} else {

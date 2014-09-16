@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Context;
@@ -431,10 +430,16 @@ public class MainController {
 		group.description = (String) map.get("description");
 		group.distance = (Integer) map.get("distance");
 
-		if (!data.relationship.squares.contains(String.valueOf(group.gid))) {
-			data.relationship.squares.add(String.valueOf(group.gid));
+		if (!data.relationship.squares.contains(group.gid + "")) {
+			data.relationship.squares.add(group.gid + "");
+			data.relationship.groupsMap.put(group.gid + "", group);
+		} else {
+			Group group2 = data.relationship.groupsMap.get(group.gid + "");
+			group2.name = (String) map.get("name");
+			group2.icon = (String) map.get("icon");
+			group2.description = (String) map.get("description");
+			group2.distance = (Integer) map.get("distance");
 		}
-		data.relationship.groupsMap.put(String.valueOf(group.gid), group);
 
 		data.relationship.isModified = true;
 	}

@@ -40,7 +40,7 @@
                 android:layout_alignParentLeft="true"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="一起嗨"
+                android:text="暂无群组"
                 android:maxEms="7"
                 android:ellipsize="end"
                 android:textColor="@color/text_color"

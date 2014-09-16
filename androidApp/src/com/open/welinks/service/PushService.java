@@ -15,8 +15,9 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
-import com.open.lib.MyLog;
 import com.open.lib.HttpClient.ResponseHandler;
+import com.open.lib.MyLog;
+import com.open.welinks.LoginActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
@@ -46,6 +47,10 @@ public class PushService extends Service {
 
 	public Gson gson = new Gson();
 
+	public static PushService instance;
+
+	public static boolean isRunning = false;
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -58,6 +63,7 @@ public class PushService extends Service {
 		httpUtils = new HttpUtils();
 		mResponseInfoHandler = new ResponseInfoHandler(10);
 		random = new Random();
+		instance = this;
 		super.onCreate();
 	}
 
@@ -77,6 +83,13 @@ public class PushService extends Service {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
+	public void startLongPull() {
+		if (!isRunning) {
+			connect();
+			isRunning = true;
+		}
+	}
+
 	@Override
 	public void onDestroy() {
 		operation = false;
@@ -92,7 +105,8 @@ public class PushService extends Service {
 	}
 
 	public void stopLongPull() {
-		// stopSelf();
+		Intent intent = new Intent(PushService.this, LoginActivity.class);
+		startActivity(intent);
 	}
 
 	HttpHandler<String> httpHandler;
@@ -118,12 +132,17 @@ public class PushService extends Service {
 			if (httpHandler != null) {
 				httpHandler.cancel(true);
 			}
-			try {
-				Response response = gson.fromJson(responseInfo.result, Response.class);
-				if ("请求失败".equals(response.提示信息.substring(response.提示信息.length() - 2))) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.失败原因 != null) {
+				if ("请求失败".equals(response.提示信息)) {
 					stopLongPull();
+					parser.check();
+					data.userInformation.currentUser.accessKey = "";
+					data.userInformation.isModified = true;
+					log.e("accessKey 无效,自动退出...");
+				} else {
 				}
-			} catch (Exception e) {
+			} else {
 				connect();
 				mResponseInfoHandler.exclude(responseInfo);
 			}
@@ -132,7 +151,7 @@ public class PushService extends Service {
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			System.out.println("fail---------------------");
-			connect();
+			isRunning = false;
 		};
 	};
 }

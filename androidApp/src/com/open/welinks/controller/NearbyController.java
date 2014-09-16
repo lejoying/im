@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
-import android.sax.StartElementListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -175,6 +174,9 @@ public class NearbyController {
 					if (result != null && result.getQuery() != null) {
 						if (result.getQuery().equals(mQuery)) {
 							mCloudItems = result.getClouds();
+							if (mAmapLocation == null) {
+								return;
+							}
 							LatLng point = new LatLng(mAmapLocation.getLatitude(), mAmapLocation.getLongitude());
 							mInfomations.clear();
 							for (CloudItem item : mCloudItems) {

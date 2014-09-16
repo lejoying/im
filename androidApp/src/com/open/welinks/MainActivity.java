@@ -3,6 +3,7 @@ package com.open.welinks;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -24,8 +25,8 @@ import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
+import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
-import com.open.welinks.view.Alert;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.MeSubView;
@@ -49,13 +50,20 @@ public class MainActivity extends Activity {
 	public Parser parser = Parser.getInstance();
 
 	public boolean islinked = false;
+	public static final String CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
 		initImageLoader(getApplicationContext());
+
 		startPushService();
+		
+		ConnectionChangeReceiver connectionChangeReceiver = new ConnectionChangeReceiver();
+		IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
+		registerReceiver(connectionChangeReceiver, filter);
+
 		thisActivity.setContentView(R.layout.activity_welinks);
 	}
 

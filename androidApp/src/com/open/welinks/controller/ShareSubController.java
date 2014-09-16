@@ -312,6 +312,8 @@ public class ShareSubController {
 							thisView.showShareMessages();
 							getCurrentGroupShareMessages();
 							thisView.showGroupMembers();
+							thisView.shareMessageListBody.y = 0;
+							thisView.shareMessageListBody.setChildrenPosition();
 						}
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);

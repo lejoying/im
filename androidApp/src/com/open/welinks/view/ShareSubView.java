@@ -174,28 +174,33 @@ public class ShareSubView {
 	}
 
 	public void showShareMessages() {
+		showGroupMembers();
 		data = parser.check();
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
-		if (share == null)
-			return;
+		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		SharesMessageBody sharesMessageBody0 = null;
-		sharesMessageBody0 = (SharesMessageBody) shareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
-		this.shareMessageListBody.listItemsSequence.clear();
-		this.shareMessageListBody.containerView.removeAllViews();
-		this.shareMessageListBody.height = 0;
-		if (sharesMessageBody0 == null) {
-			sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
-			sharesMessageBody0.initialize(-1);
+		if (flag) {
+			sharesMessageBody0 = (SharesMessageBody) shareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
+			this.shareMessageListBody.listItemsSequence.clear();
+			this.shareMessageListBody.containerView.removeAllViews();
+			this.shareMessageListBody.height = 0;
+			if (sharesMessageBody0 == null) {
+				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
+				sharesMessageBody0.initialize(-1);
+			}
+			sharesMessageBody0.setContent(null, "");
+			this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
+			this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
+			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (50 * displayMetrics.density));
+			sharesMessageBody0.y = 60 * displayMetrics.density * 0 + 2 * displayMetrics.density;
+			sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
+			sharesMessageBody0.cardView.setX(0);
+			this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
+			this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 		}
-		sharesMessageBody0.setContent(null, "");
-		this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
-		this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
-		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (50 * displayMetrics.density));
-		sharesMessageBody0.y = 60 * displayMetrics.density * 0 + 2 * displayMetrics.density;
-		sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
-		sharesMessageBody0.cardView.setX(0);
-		this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
-		this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
+		if (share == null) {
+			return;
+		}
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
@@ -248,18 +253,18 @@ public class ShareSubView {
 			Friend friend = data.relationship.friendsMap.get(shareMessage.phone);
 			this.shareMessageListBody.listItemsSequence.add(keyName);
 			String fileName = "";
-			if(friend!=null){
-				fileName =friend.head;
+			if (friend != null) {
+				fileName = friend.head;
 			}
 			sharesMessageBody.setContent(shareMessage, fileName);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
 			sharesMessageBody.y = this.shareMessageListBody.height;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
-			sharesMessageBody.cardView.setX(0);
+//			sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
 			if (isExists) {
-				sharesMessageBody.cardView.setX(10 * displayMetrics.density);
+				// sharesMessageBody.cardView.setX(10 * displayMetrics.density);
 			}
 			sharesMessageBody.itemHeight = 350 * displayMetrics.density;
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
@@ -279,6 +284,7 @@ public class ShareSubView {
 		}
 
 		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
+		shareMessageListBody.setChildrenPosition();
 	}
 
 	public class SharesMessageBody extends MyListItemBody {

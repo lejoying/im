@@ -1,11 +1,7 @@
 package com.open.welinks.controller;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,7 +17,6 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
@@ -35,14 +30,11 @@ import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.utils.CommonNetConnection;
 import com.open.welinks.utils.NetworkHandler;
-import com.open.welinks.utils.NetworkHandler.Settings;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
-import com.open.welinks.view.Alert.OnLoadingCancelListener;
 import com.open.welinks.view.LoginView;
 import com.open.welinks.view.LoginView.Status;
 

@@ -151,17 +151,22 @@ public class SquareSubView {
 
 		data = parser.check();
 
-		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
-		if (group0 != null) {
-			this.squareTopMenuSquareName.setText(group0.name);
+		try {
+			Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+			if (group0 != null) {
+				this.squareTopMenuSquareName.setText(group0.name);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		showSquareMessages();
 		initReleaseShareDialogView();
-		initializationGroupsDialog();
+		initializationSquaresDialog();
 	}
 
 	public void showSquareMessages() {
+
 		this.squareMessageListBody.listItemsSequence.clear();
 		this.squareMessageListBody.containerView.removeAllViews();
 		this.squareMessageListBody.height = 0;
@@ -209,6 +214,7 @@ public class SquareSubView {
 		}
 
 		this.squareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
+		squareMessageListBody.setChildrenPosition();
 	}
 
 	public class SharesMessageBody extends MyListItemBody {
@@ -339,7 +345,7 @@ public class SquareSubView {
 	public ViewGroup pop_out_background1;
 	public ViewGroup pop_out_background2;
 
-	public void initializationGroupsDialog() {
+	public void initializationSquaresDialog() {
 		squareDialogView = (TouchView) mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
 
 		squareDialogView.setTag(R.id.tag_class, "group_view");
@@ -370,10 +376,10 @@ public class SquareSubView {
 		// setGroupsDialogContent();
 	}
 
-	public boolean isShowGroupDialog = false;
+	public boolean isShowSquareDialog = false;
 
-	public void showGroupsDialog() {
-		if (!isShowGroupDialog) {
+	public void showSquaresDialog() {
+		if (!isShowSquareDialog) {
 			if (data.relationship.squares.size() == 0) {
 				if (groupsManageButtons.getVisibility() == View.GONE) {
 					groupsManageButtons.setVisibility(View.VISIBLE);
@@ -391,18 +397,18 @@ public class SquareSubView {
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 			layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 			mainView.main_container.addView(this.squareDialogView, layoutParams);
-			isShowGroupDialog = true;
+			isShowSquareDialog = true;
 		}
 	}
 
-	public void dismissGroupDialog() {
-		if (isShowGroupDialog) {
+	public void dismissSquareDialog() {
+		if (isShowSquareDialog) {
 			squaresListBody.inActive();
 			squareMessageListBody.active();
 			mainView.mainPagerBody.active();
 			// groupPopWindow.dismiss();
 			mainView.main_container.removeView(this.squareDialogView);
-			isShowGroupDialog = false;
+			isShowSquareDialog = false;
 		}
 	}
 

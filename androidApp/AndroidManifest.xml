@@ -26,6 +26,7 @@
         android:name="android.test.InstrumentationTestRunner"
         android:label="Tests for My App"
         android:targetPackage="com.open.welinks" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -51,6 +52,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name="com.open.welinks.service.ConnectionChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name="com.open.welinks.GroupListActivity"
             android:label="@string/app_name"

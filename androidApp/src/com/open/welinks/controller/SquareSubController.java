@@ -223,14 +223,14 @@ public class SquareSubController {
 						thisView.groupsManageButtons.setVisibility(View.VISIBLE);
 					}
 				} else if (view.equals(thisView.pop_out_background1) || view.equals(thisView.pop_out_background2)) {
-					thisView.dismissGroupDialog();
+					thisView.dismissSquareDialog();
 				} else if (view.equals(thisView.findMoreGroupButtonView)) {
 					Intent intent = new Intent(thisActivity, FindMoreActivity.class);
 					intent.putExtra("type", 1);
 					thisActivity.startActivity(intent);
-					thisView.dismissGroupDialog();
+					thisView.dismissSquareDialog();
 				} else if (view.equals(thisView.squareTopMenuGroupNameParent)) {
-					thisView.showGroupsDialog();
+					thisView.showSquaresDialog();
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseTextButton)) {
@@ -256,7 +256,7 @@ public class SquareSubController {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.squareDialogView)) {
 					thisView.squareDialogView.isIntercept = false;
-					thisView.dismissGroupDialog();
+					thisView.dismissSquareDialog();
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
@@ -265,7 +265,7 @@ public class SquareSubController {
 					if ("GroupDialogContentItem".equals(type)) {
 						parser.check();
 						// modify data
-						thisView.dismissGroupDialog();
+						thisView.dismissSquareDialog();
 						if (!data.localStatus.localData.currentSelectedSquare.equals(content)) {
 							try {
 								data.localStatus.localData.currentSelectedSquare = content;
@@ -464,8 +464,8 @@ public class SquareSubController {
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SHARE) {
-			if (thisView.isShowGroupDialog) {
-				thisView.dismissGroupDialog();
+			if (thisView.isShowSquareDialog) {
+				thisView.dismissSquareDialog();
 				return false;
 			}
 		}

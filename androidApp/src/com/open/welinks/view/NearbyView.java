@@ -3,9 +3,6 @@ package com.open.welinks.view;
 import java.util.ArrayList;
 import java.util.Map;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +12,15 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.DistanceUtils;
-import com.open.welinks.utils.MCImageUtils;
 
 public class NearbyView {
 	public NearbyView thisView;
@@ -37,9 +36,12 @@ public class NearbyView {
 
 	public NearbyAdapter nearbyAdapter;
 
-	public Bitmap bitmap;
+	// public Bitmap bitmap;
 
 	public int NearbyLayoutID;
+
+	public DisplayImageOptions headOptions;
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public NearbyView(NearbyActivity thisActivity) {
 		thisView = this;
@@ -47,6 +49,9 @@ public class NearbyView {
 	}
 
 	public void initView() {
+
+		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(45)).build();
+
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_nearby);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
@@ -58,8 +63,8 @@ public class NearbyView {
 
 		titleContent.setText("附近");
 
-		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		// bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
+		// bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 	}
 
 	public void fillData() {
@@ -113,11 +118,12 @@ public class NearbyView {
 
 			if (thisController.status == Status.account) {
 				String head = (String) infomation.get("head");
-				if ("".equals(head) || "Head".equals(head)) {
-					holder.head.setImageBitmap(bitmap);
-				} else {
-					thisController.setImageOnView(head, holder.head);
-				}
+				fileHandlers.getHeadImage(head, holder.head, headOptions);
+				// if ("".equals(head) || "Head".equals(head)) {
+				// holder.head.setImageBitmap(bitmap);
+				// } else {
+				// thisController.setImageOnView(head, holder.head);
+				// }
 				String sex = (String) infomation.get("sex");
 				int sexImageResource = 0;
 				if ("男".equals(sex) || "male".equals(sex)) {
@@ -141,11 +147,12 @@ public class NearbyView {
 				convertView.setTag(R.id.tag_third, infomation);
 			} else {
 				String icon = (String) infomation.get("icon");
-				if ("".equals(icon)) {
-					holder.head.setImageBitmap(bitmap);
-				} else {
-					thisController.setImageOnView((String) infomation.get("icon"), holder.head);
-				}
+				fileHandlers.getHeadImage(icon, holder.head, headOptions);
+				// if ("".equals(icon)) {
+				// holder.head.setImageBitmap(bitmap);
+				// } else {
+				// thisController.setImageOnView((String) infomation.get("icon"), holder.head);
+				// }
 				String description = (String) infomation.get("description");
 				if ("".equals(description)) {
 					if (thisController.status == Status.group) {

@@ -5,10 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,15 +24,17 @@ import com.google.gson.JsonSyntaxException;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ThreeChoicesView;
 import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.view.ViewManage;
@@ -71,9 +69,12 @@ public class DynamicListActivity extends Activity {
 	public Map<String, Friend> friendsMap;
 	public Gson gson = new Gson();
 
-	public Bitmap bitmap;
+	// public Bitmap bitmap;
 	public int selectType = 3;
 	public ThreeChoicesView threeChoicesView;
+
+	public DisplayImageOptions headOptions;
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -142,9 +143,11 @@ public class DynamicListActivity extends Activity {
 	public void initView() {
 		mInflater = this.getLayoutInflater();
 
-		Resources resources = getResources();
-		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		// Resources resources = getResources();
+		// bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+		// bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+
+		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		setContentView(R.layout.activity_dynamiclist);
 		backView = (RelativeLayout) findViewById(R.id.backView);
@@ -250,7 +253,9 @@ public class DynamicListActivity extends Activity {
 			holder.processedView.setVisibility(View.GONE);
 			String content = "";
 
-			holder.headView.setImageBitmap(bitmap);
+			String headFileName = "";
+			// holder.headView.setImageBitmap(bitmap);
+
 			String key = groupEventMessages.get(position);
 			EventMessage event = data.event.groupEventsMap.get(key);
 			if (event == null) {
@@ -261,6 +266,7 @@ public class DynamicListActivity extends Activity {
 			String nickName = event.phone;
 			Friend friend = data.relationship.friendsMap.get(nickName);
 			if (friend != null) {
+				headFileName = friend.phone;
 				nickName = friend.nickName;
 				if (friend.phone.equals(data.userInformation.currentUser.phone)) {
 					nickName = "您";
@@ -269,6 +275,7 @@ public class DynamicListActivity extends Activity {
 			Group group = data.relationship.groupsMap.get(event.gid + "");
 			String groupName = event.gid;
 			if (group != null) {
+				headFileName = group.icon;
 				groupName = group.name;
 			}
 			String contentType = event.type;
@@ -287,6 +294,8 @@ public class DynamicListActivity extends Activity {
 				content = nickName + "把你从" + groupName + "群组移除.";
 			}
 			holder.eventContentView.setText(content);
+
+			fileHandlers.getHeadImage(headFileName, holder.headView, headOptions);
 			return convertView;
 		}
 	}
@@ -334,6 +343,7 @@ public class DynamicListActivity extends Activity {
 			final EventHolder holder0 = holder;
 			Friend friend;
 
+			String headFileName = "";
 			String content = "";
 			String nickName = "";
 			try {
@@ -345,6 +355,7 @@ public class DynamicListActivity extends Activity {
 						content = event.content;
 					}
 					if (friend != null) {
+						headFileName = friend.head;
 						nickName = friend.nickName;
 					} else {
 						nickName = event.phone;
@@ -402,6 +413,7 @@ public class DynamicListActivity extends Activity {
 						content = event.content;
 					}
 					if (friend != null) {
+						headFileName = friend.head;
 						nickName = friend.nickName;
 					} else {
 						nickName = event.phone;
@@ -414,6 +426,7 @@ public class DynamicListActivity extends Activity {
 						holder.processedView.setText("已添加");
 					}
 				} else if ("account_dataupdate".equals(event.type)) {
+					headFileName = data.userInformation.currentUser.head;
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 					holder.eventContentView.setText("更新个人资料");
 					holder.eventOperationView.setVisibility(View.GONE);
@@ -422,7 +435,8 @@ public class DynamicListActivity extends Activity {
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
 			}
-			holder.headView.setImageBitmap(bitmap);
+			// holder.headView.setImageBitmap(bitmap);
+			fileHandlers.getHeadImage(headFileName, holder.headView, headOptions);
 			return convertView;
 		}
 	}
