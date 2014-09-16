@@ -336,10 +336,16 @@ public class SquareSubView {
 		}
 	}
 
+	public ViewGroup pop_out_background1;
+	public ViewGroup pop_out_background2;
+
 	public void initializationGroupsDialog() {
 		squareDialogView = (TouchView) mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
 
 		squareDialogView.setTag(R.id.tag_class, "group_view");
+
+		pop_out_background1 = (ViewGroup) squareDialogView.findViewById(R.id.pop_out_background1);
+		pop_out_background2 = (ViewGroup) squareDialogView.findViewById(R.id.pop_out_background2);
 
 		groupManageView = squareDialogView.findViewById(R.id.groups_manage);
 		groupManageView.setTag(R.id.tag_class, "group_setting");

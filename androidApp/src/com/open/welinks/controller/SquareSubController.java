@@ -222,6 +222,8 @@ public class SquareSubController {
 					} else {
 						thisView.groupsManageButtons.setVisibility(View.VISIBLE);
 					}
+				} else if (view.equals(thisView.pop_out_background1) || view.equals(thisView.pop_out_background2)) {
+					thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.findMoreGroupButtonView)) {
 					Intent intent = new Intent(thisActivity, FindMoreActivity.class);
 					intent.putExtra("type", 1);
@@ -325,6 +327,9 @@ public class SquareSubController {
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
 
 		thisView.findMoreGroupButtonView.setOnClickListener(mOnClickListener);
+		
+		thisView.pop_out_background1.setOnClickListener(mOnClickListener);
+		thisView.pop_out_background2.setOnClickListener(mOnClickListener);
 	}
 
 	public void getCurrentSquareShareMessages() {

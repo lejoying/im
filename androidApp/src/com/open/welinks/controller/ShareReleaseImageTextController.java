@@ -426,7 +426,7 @@ public class ShareReleaseImageTextController {
 				StreamParser.parseToFile(bytes, fileOutputStream);
 
 				if (i == 0) {
-					int showImageWidth = thisView.displayMetrics.widthPixels - (int) (22 * thisView.displayMetrics.density + 0.5f);
+					int showImageWidth = thisView.displayMetrics.widthPixels;
 
 					ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, thisView.showImageHeight);
 					byte[] snapBytes = snapByteStream.toByteArray();
