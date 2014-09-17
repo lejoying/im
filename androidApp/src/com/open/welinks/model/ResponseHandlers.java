@@ -56,7 +56,7 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-
+			
 		}
 	};
 
@@ -269,6 +269,7 @@ public class ResponseHandlers {
 					gid = response.relationship.groups.get(0);
 				} else {
 					gid = "";
+					data.localStatus.localData.currentSelectedGroup = gid;
 				}
 				if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
 					if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
@@ -516,6 +517,8 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("加入群组成功")) {
+				parser.check();
+				DataUtil.getUserCurrentAllGroup();
 				log.e(tag, "---------------------加入群组成功");
 			}
 		};

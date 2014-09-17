@@ -9,11 +9,14 @@ import java.util.Queue;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.ViewManage;
 
@@ -50,9 +53,10 @@ public class ResponseEventHandlers {
 		if (message.sendType.equals("event")) {
 			String contentType = message.contentType;
 			if ("message".equals(contentType)) {
-				updateLocalMessage(gson.fromJson(message.content, Message.class));
+				Message messageGson = gson.fromJson(message.content, Message.class);
+				updateLocalMessage(messageGson);
 				if (NotificationUtils.isLeave(viewManage.mainView.context)) {
-					NotificationUtils.showMessageNotification(viewManage.mainView.context, gson.fromJson(message.content, Message.class));
+					NotificationUtils.showMessageNotification(viewManage.mainView.context, messageGson);
 				} else {
 					NotificationUtils.commonVibrate(viewManage.mainView.context);
 				}
@@ -312,21 +316,41 @@ public class ResponseEventHandlers {
 	}
 
 	public void updateLocalMessage(Message message) {
+		parser.check();
 		message.type = Constant.MESSAGE_TYPE_RECEIVE;
-		if ("point".equals(message.sendType)) {
-			ArrayList<Message> list = data.messages.friendMessageMap.get("p" + message.phone);
-			if (list == null) {
-				list = new ArrayList<Data.Messages.Message>();
-				data.messages.friendMessageMap.put("p" + message.phone, list);
+		String sendType = message.sendType;
+		if ("point".equals(sendType)) {
+			String key = "";
+			User user = data.userInformation.currentUser;
+			if (message.phone.equals(user.phone)) {
+				try {
+					List<String> phoneTos = gson.fromJson(message.phoneto, new TypeToken<List<String>>() {
+					}.getType());
+					key = "p" + phoneTos.get(0);
+				} catch (JsonSyntaxException e) {
+					e.printStackTrace();
+				}
+			} else {
+				key = "p" + message.phone;
 			}
-			list.add(message);
-		} else if ("group".equals(message.sendType)) {
-			ArrayList<Message> list = data.messages.groupMessageMap.get("g" + message.gid);
-			if (list == null) {
-				list = new ArrayList<Data.Messages.Message>();
-				data.messages.groupMessageMap.put("g" + message.gid, list);
+			ArrayList<Message> messageList = data.messages.friendMessageMap.get(key);
+			if (messageList == null) {
+				messageList = new ArrayList<Message>();
+				data.messages.friendMessageMap.put(key, messageList);
 			}
-			list.add(message);
+			if (!messageList.contains(message)) {
+				messageList.add(message);
+			}
+		} else if ("group".equals(sendType)) {
+			String key = "g" + message.gid;
+			ArrayList<Message> groupList = data.messages.groupMessageMap.get(key);
+			if (groupList == null) {
+				groupList = new ArrayList<Message>();
+				data.messages.groupMessageMap.put(key, groupList);
+			}
+			if (!groupList.contains(message)) {
+				groupList.add(message);
+			}
 		}
 		data.messages.isModified = true;
 		if (viewManage.chatView != null) {

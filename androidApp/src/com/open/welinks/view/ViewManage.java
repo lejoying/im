@@ -14,10 +14,11 @@ public class ViewManage {
 	public Debug1View debug1View = null;
 	public LoginView loginView = null;
 	public MainView mainView = null;
-	public MeSubView meSubView;
-	public SquareSubView squareSubView;
-	public ShareSubView shareSubView;
+	public MeSubView meSubView = null;
+	public SquareSubView squareSubView = null;
+	public ShareSubView shareSubView = null;
 	public ChatView chatView = null;
+	public MessagesSubView messagesSubView = null;
 
 	public DynamicListActivity dynamicListActivity = null;
 	public GroupListActivity groupListActivity = null;

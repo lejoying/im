@@ -89,4 +89,39 @@ public class DataUtil {
 
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}
+
+	public static void clearData() {
+		try {
+			// data = null;
+			data.userInformation.isModified = false;
+			data.userInformation.currentUser.phone = "";
+			data.userInformation.currentUser.accessKey = "";
+
+			data.relationship.isModified = false;
+			data.relationship.circles.clear();
+			data.relationship.circlesMap.clear();
+			data.relationship.groups.clear();
+			data.relationship.groupsMap.clear();
+			data.relationship.squares.clear();
+
+			data.messages.isModified = false;
+			data.messages.friendMessageMap.clear();
+			data.messages.groupMessageMap.clear();
+			data.messages.messagesOrder.clear();
+
+			data.shares.isModified = false;
+			data.shares.shareMap.clear();
+
+			data.event.isModified = false;
+			data.event.groupEvents.clear();
+			data.event.groupEventsMap.clear();
+			data.event.userEvents.clear();
+			data.event.userEventsMap.clear();
+
+			data.localStatus.localData.currentSelectedGroup = "";
+			data.localStatus.localData.currentSelectedSquare = "";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

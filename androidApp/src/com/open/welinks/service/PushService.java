@@ -106,6 +106,7 @@ public class PushService extends Service {
 
 	public void stopLongPull() {
 		Intent intent = new Intent(PushService.this, LoginActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 	}
 
@@ -152,6 +153,7 @@ public class PushService extends Service {
 		public void onFailure(HttpException error, String msg) {
 			System.out.println("fail---------------------");
 			isRunning = false;
+			connect();
 		};
 	};
 }

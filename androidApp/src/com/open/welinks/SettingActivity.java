@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.welinks.model.Data;
+import com.open.welinks.model.DataUtil;
 import com.open.welinks.model.Parser;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
@@ -103,6 +104,7 @@ public class SettingActivity extends Activity implements OnClickListener {
 				data.userInformation.isModified = true;
 				setResult(Activity.RESULT_OK);
 				finish();
+				DataUtil.clearData();
 			}
 		}).show();
 

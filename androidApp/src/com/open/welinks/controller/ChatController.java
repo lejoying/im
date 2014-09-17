@@ -33,6 +33,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfomationActivity;
@@ -45,13 +46,18 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ChatView;
+import com.open.welinks.view.ViewManage;
 
 public class ChatController {
 
 	public String tag = "ChatController";
+
+	public Parser parser = Parser.getInstance();
+	public MyLog log = new MyLog(tag, true);
 
 	public ChatController thisController;
 	public ChatActivity thisActivity;
@@ -113,28 +119,13 @@ public class ChatController {
 	}
 
 	public void onResume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void onPause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void onDestroy() {
 
-	}
-
-	public void mFinish() {
-		List<String> messagesOrder = data.messages.messagesOrder;
-		if ("point".equals(type)) {
-			messagesOrder.add(0, "p" + key);
-		} else if ("group".equals(type)) {
-			messagesOrder.add(0, "g" + key);
-		}
-		data.messages.isModified = true;
-		thisActivity.finish();
 	}
 
 	public void initializeListeners() {
@@ -149,7 +140,8 @@ public class ChatController {
 					intent.putExtra("position", String.valueOf(0));
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.backview)) {
-					mFinish();
+					thisActivity.finish();
+					// mFinish();
 				} else if (view.equals(thisView.infomation_layout)) {
 					if ("point".equals(type)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
@@ -168,7 +160,7 @@ public class ChatController {
 				} else if (view.equals(thisView.more)) {
 					showSelectTab();
 				} else if (view.equals(thisView.selectedface)) {
-
+					// TODO
 				} else if (view.equals(thisView.selectpicture)) {
 					data.tempData.selectedImageList = null;
 					thisActivity.startActivityForResult(new Intent(thisActivity, ImagesDirectoryActivity.class), R.id.chat_content);
@@ -407,26 +399,60 @@ public class ChatController {
 	}
 
 	public void sendMessageToLocal(String messageContent, String contentType, long time) {
+		// TODO
+		parser.check();
+		List<String> messagesOrder = data.messages.messagesOrder;
+		String key0 = null;
+		if ("point".equals(type)) {
+			key0 = "p" + key;
+			if (data.messages.messagesOrder.contains(key0)) {
+				data.messages.messagesOrder.remove(key0);
+			}
+			messagesOrder.add(0, key0);
+		} else if ("group".equals(type)) {
+			key0 = "g" + key;
+			if (data.messages.messagesOrder.contains(key0)) {
+				data.messages.messagesOrder.remove(key0);
+			}
+			messagesOrder.add(0, key0);
+		}
+		data.messages.isModified = true;
+
+		User user = data.userInformation.currentUser;
 		Message message = data.messages.new Message();
 		message.content = messageContent;
 		message.contentType = contentType;
-		message.sendType = "point";
-		message.phone = data.userInformation.currentUser.phone;
-		message.nickName = data.userInformation.currentUser.nickName;
-		message.phoneto = "[\"" + key + "\"]";
+		message.phone = user.phone;
+		message.nickName = user.nickName;
 		message.time = String.valueOf(time);
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;
 		if ("group".equals(type)) {
 			message.gid = key;
 			message.sendType = "group";
-			data.messages.groupMessageMap.get("g" + key).add(message);
-		} else {
-			data.messages.friendMessageMap.get("p" + key).add(message);
+			message.phoneto = data.relationship.groupsMap.get(key).members.toString();
+			if (data.messages.groupMessageMap == null) {
+				data.messages.groupMessageMap = new HashMap<String, ArrayList<Message>>();
+			}
+			if (data.messages.groupMessageMap.get(key0) == null) {
+				data.messages.groupMessageMap.put(key0, new ArrayList<Message>());
+			}
+			data.messages.groupMessageMap.get(key0).add(message);
+		} else if ("point".equals(type)) {
+			message.sendType = "point";
+			message.phoneto = "[\"" + key + "\"]";
+			if (data.messages.friendMessageMap == null) {
+				data.messages.friendMessageMap = new HashMap<String, ArrayList<Message>>();
+			}
+			if (data.messages.friendMessageMap.get(key0) == null) {
+				data.messages.friendMessageMap.put(key0, new ArrayList<Message>());
+			}
+			data.messages.friendMessageMap.get(key0).add(message);
 		}
 		thisView.mChatAdapter.notifyDataSetChanged();
-		if ("text".equals(contentType))
+		if ("text".equals(contentType)) {
 			sendMessageToServer(contentType, messageContent);
+		}
 	}
 
 	public void sendMessageToServer(String contentType, String content) {
@@ -489,8 +515,14 @@ public class ChatController {
 	}
 
 	public void onBackPressed() {
-		mFinish();
-
+		// mFinish();
+		thisActivity.finish();
 	}
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
+	public void finish() {
+		viewManage.chatView = null;
+		viewManage.messagesSubView.showMessagesSequence();
+	}
 }

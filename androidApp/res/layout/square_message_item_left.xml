@@ -12,6 +12,7 @@
     <com.open.lib.TouchImageView
         android:layout_width="360dp"
         android:layout_height="115dp"
+        android:visibility="gone"
         android:background="@drawable/square_message_background1" />
 
     <com.open.lib.TouchTextView

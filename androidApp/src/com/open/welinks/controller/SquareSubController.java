@@ -283,6 +283,8 @@ public class SquareSubController {
 								nowpage = 0;
 								thisView.showSquareMessages();
 								getCurrentSquareShareMessages();
+								thisView.squareMessageListBody.y = 0;
+								thisView.squareMessageListBody.setChildrenPosition();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -327,7 +329,7 @@ public class SquareSubController {
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
 
 		thisView.findMoreGroupButtonView.setOnClickListener(mOnClickListener);
-		
+
 		thisView.pop_out_background1.setOnClickListener(mOnClickListener);
 		thisView.pop_out_background2.setOnClickListener(mOnClickListener);
 	}

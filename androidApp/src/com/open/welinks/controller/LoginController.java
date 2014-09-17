@@ -171,13 +171,13 @@ public class LoginController {
 						} else if (view.equals(thisView.mainButton)) {
 							final String phone = thisView.input1.getText().toString();
 							final String code = thisView.input2.getText().toString();
-							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
-							Matcher m = p.matcher(phone);
+							// Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+							// Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
 								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
-							} else if (!m.matches()) {
+							} else if (false) {// !m.matches()
 								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
@@ -195,13 +195,13 @@ public class LoginController {
 							if (remainLogin != 0) {
 								return;
 							}
-							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
-							Matcher m = p.matcher(phone);
+							// Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+							// Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
 								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
-							} else if (!m.matches()) {
+							} else if (false) {// !m.matches()
 								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
@@ -218,13 +218,13 @@ public class LoginController {
 						} else if (view.equals(thisView.mainButton)) {
 							final String phone = thisView.input1.getText().toString();
 							final String code = thisView.input2.getText().toString();
-							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
-							Matcher m = p.matcher(phone);
+							// Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+							// Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
 								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
-							} else if (!m.matches()) {
+							} else if (false) {// !m.matches()
 								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
@@ -242,13 +242,13 @@ public class LoginController {
 							if (remainRegister != 0) {
 								return;
 							}
-							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
-							Matcher m = p.matcher(phone);
+							// Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+							// Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
 								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
-							} else if (!m.matches()) {
+							} else if (false) {// !m.matches()
 								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
@@ -266,13 +266,13 @@ public class LoginController {
 						} else if (view.equals(thisView.mainButton)) {
 							final String phone = thisView.input1.getText().toString();
 							final String code = thisView.input2.getText().toString();
-							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
-							Matcher m = p.matcher(phone);
+							// Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+							// Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
 								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
-							} else if (!m.matches()) {
+							} else if (false) {// !m.matches()
 								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
@@ -289,13 +289,13 @@ public class LoginController {
 							if (remainResetPassword != 0) {
 								return;
 							}
-							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
-							Matcher m = p.matcher(phone);
+							// Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+							// Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
 								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
-							} else if (!m.matches()) {
+							} else if (false) {// !m.matches()
 								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
@@ -327,7 +327,7 @@ public class LoginController {
 							if (password.equals("")) {
 								loginFail("请输入密码");
 								showSoftInput(thisView.input1);
-							} else if (password.length() < 6) {
+							} else if (password.length() < 1) {
 								loginFail(thisActivity.getString(R.string.alert_text_passlength));
 								showSoftInput(thisView.input1);
 							} else if (password2.equals("")) {
