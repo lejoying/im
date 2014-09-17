@@ -1,0 +1,259 @@
+﻿@CHARSET "UTF-8";
+
+body {
+    color: #212619;
+    font-family: "黑体",Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    width: 100%;
+}
+.clear{
+    clear: both;
+}
+* {
+    margin: 0;
+    outline: 0 none;
+    padding: 0;
+}
+ol, ul {
+list-style: none;
+}
+#header-bg{
+    width:100%;
+    height:246px;
+    background:#2c3145;
+    min-width: 640px;
+}
+#header{
+    width:100%;
+    background: url(/static/image/header-bg.png) no-repeat scroll center center rgba(0, 0, 0, 0);
+}
+#header-body{
+	margin:0 auto;
+	position: relative;
+	width:640px;
+    height:246px;
+}
+#header .h-d-1{
+	position:absolute;
+    left:20px;
+    top:42px;
+    width:114px;
+    height:114px;
+    background: url(/static/image/liao-logo.png);
+}
+
+#header .h-d-2{
+	position:absolute;
+	font-size: 48px;	
+	left:162px;
+	top:50px;
+	color: #FFFFFF;
+}
+#header .h-d-4{
+	position:absolute;
+	font-size: 24px;	
+	left:162px;
+	top:120px;
+	color: #FFFFFF;
+}
+#header .h-d-3, #header .h-d-6{
+    top:176px;
+    left:460px;
+    position: absolute;
+}
+.h-d-3 a,.h-d-3 a:link{
+    display:block;
+    width: 161px;
+    height: 50px;
+    background: url(/static/image/download-normal.png);
+    
+}
+.h-d-3 a:hover{
+    display:block;
+    width: 161px;
+    height: 50px;
+    background: url(/static/image/download-hover.png);
+}
+
+.h-d-3-bottom a{
+    margin-top:30px;
+}
+
+.h-d-6 a,.h-d-6 a:link{
+    display:block;
+    width: 161px;
+    height: 50px;
+    background: url(/static/image/open-normal.png);
+    
+}
+.h-d-6 a:hover{
+    display:block;
+    width: 161px;
+    height: 50px;
+    background: url(/static/image/open-hover.png);
+}
+
+.h-d-6-bottom a{
+    margin-top:30px;
+}
+
+
+
+
+
+.downcal{position:absolute;right:20px;top:0;}
+#room-info{
+    margin-top:50px;
+    overflow: hidden;
+}
+#room-info .a-l{
+    float: left;
+    width:134px;
+    position: relative;
+}
+#room-info .a-r{
+    float: right;
+    width:491px;
+}
+
+.a-r .tit-tt{
+    //display: block;
+    margin:0px;padding:0px;
+    color: #000000;
+    font-size:40px;
+}
+
+.a-r .gm{
+    display: block;
+    font-size:24px;
+    margin-top:30px;
+    color:#7c7c7c;
+}
+.a-r .gn,.a-r .gc{
+    font-size:24px;
+    color:#7c7c7c;
+}
+.gn-color,.gc-color{
+    color:#01b99f;
+    font-size:24px;
+}
+.rm-ul{
+    display: block;
+    overflow: hidden;
+}
+.rm-ul li{
+    float:left;
+}
+.a-r p{
+    color:#7c7c7c;
+    margin-top:28px;
+    margin-right:20px;
+    display: block;
+    font-size: 24px;
+}
+#mask{
+    background: url(/static/image/roomlogo_bg.png);
+    width:110px;height:110px;
+    position: absolute;
+    top:10px;left:15px;
+}
+.a-l img{margin-top:10px;margin-left:15px;}
+#hr,#hrdiv{
+        margin-top:48px;
+	margin-bottom: 29px;
+	color:#cccccc;
+}
+.photos{
+    margin-left:0px;
+    width:100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.photos img{
+    margin:9px;
+}
+#body{
+    width:640px;
+    position: relative;
+    margin:0 auto;
+    overflow: hidden;
+}
+#footer{
+    background: url(/static/image/roominfo_footer.png);
+    height: 110px;
+    overflow: hidden;
+    position: fixed;
+    /*width:640px;*/
+    width:100%;
+    bottom:0px;left:0px;
+    position:fixed;
+    left:0px;right:0px;margin-left:auto;margin-right:auto;/*fixed水平居中*/
+}
+.foot-ul{
+    margin-top:20px;
+    float:left;
+}
+.foot-ul li{
+    float:left;
+}
+.foot-ul .memo{
+    font-size: 24px;
+    font-color: #282828;
+    line-height: 60px;
+    height:60px;
+    margin-left: 20px;
+    display:block;
+}
+.foot-ul .down{
+    border-radius: 8px;
+    text-decoration:none;
+    margin-left: 60px;
+    margin-top: 0px;
+    text-underline:none;
+    height:68px;
+    width:142px;
+    display: block;
+    background: #0a9ec0;
+    color:#FFFFFF;
+    font-size:24px;
+    line-height: 70px;
+    text-align: center;
+}
+.foot-ul .down:hover{
+    background: #12b5db;
+}
+
+#footer-div{
+    width:640px;
+    margin:0 auto;
+    position:relative;	
+}
+#footer-frame{
+    height: 110px;
+    overflow: hidden;
+}
+
+.error-div{
+    font-size:48px;
+    height:500px;
+}
+
+.ui-loader{
+    display: none;
+}
+
+.bigimg-div{
+    position:absolute;	
+    text-align:center;
+    background:#121212;
+    vertical-align: middle;
+    filter:alpha(opacity=1);
+    -moz-opacity:1; 
+    opacity:1;
+}
+.bigimg-div img{
+    vertical-align: middle;
+}
+.none{
+    display: none;
+}

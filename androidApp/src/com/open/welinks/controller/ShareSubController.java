@@ -225,6 +225,7 @@ public class ShareSubController {
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.groupListButtonView)) {
 					Intent intent = new Intent(thisActivity, GroupListActivity.class);
+					intent.putExtra("type", "list_group");
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.createGroupButtonView)) {
 					Intent intent = new Intent(thisActivity, CreateGroupStartActivity.class);
@@ -262,7 +263,8 @@ public class ShareSubController {
 					} else {
 						thisView.groupsManageButtons.setVisibility(View.VISIBLE);
 					}
-					// Intent intent = new Intent(thisActivity, GroupListActivity.class);
+					// Intent intent = new Intent(thisActivity,
+					// GroupListActivity.class);
 					// thisActivity.startActivity(intent);
 					// thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.releaseTextButton)) {

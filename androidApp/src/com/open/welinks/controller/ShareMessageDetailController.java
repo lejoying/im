@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -175,7 +176,13 @@ public class ShareMessageDetailController {
 		mOnTouchListener = new OnTouchListener() {
 
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public boolean onTouch(View view, MotionEvent event) {
+
+				if (view.equals(thisView.sharePopupWindow)) {
+					if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+						thisView.sharePopupWindow.dismiss();
+					}
+				}
 				// if (thisView.commentInputView.getVisibility() ==
 				// View.VISIBLE) {
 				// thisView.commentInputView.setVisibility(View.GONE);
@@ -263,7 +270,10 @@ public class ShareMessageDetailController {
 				} else if (view.equals(thisView.deleteOptionView)) {
 					deleteGroupShare();
 				} else if (view.equals(thisView.shareOptionView)) {
-					showShareView();
+					thisView.menuOptionsView.setVisibility(View.GONE);
+					thisView.sharePopupWindow.showAtLocation(thisActivity.findViewById(R.id.mainScrollView), Gravity.CENTER, 0, 0);
+				} else if (view.equals(thisView.shareView)) {
+					thisView.sharePopupWindow.dismiss();
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
@@ -311,7 +321,11 @@ public class ShareMessageDetailController {
 		thisView.mainScrollView.setOnTouchListener(mOnTouchListener);
 		thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
 
+		thisView.sharePopupWindow.setTouchInterceptor(mOnTouchListener);
+		thisView.shareView.setOnClickListener(mOnClickListener);
+
 		thisView.commentEditTextView.addTextChangedListener(textWatcher);
+
 	}
 
 	public void deleteGroupShare() {
@@ -336,10 +350,6 @@ public class ShareMessageDetailController {
 				}
 			}).show();
 		}
-	}
-
-	public void showShareView() {
-		thisView.shareView.show();
 	}
 
 	public void modifyPraiseusersToMessage(boolean option) {
@@ -380,5 +390,24 @@ public class ShareMessageDetailController {
 
 	public void onWindwoFocusChanged() {
 		initialHeight = thisView.commentEditTextView.getHeight();
+	}
+
+	public void onBackPressed() {
+		if (thisView.sharePopupWindow.isShowing()) {
+			thisView.sharePopupWindow.dismiss();
+		} else {
+			thisActivity.finish();
+		}
+
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+		if (thisView.sharePopupWindow.isShowing()) {
+			thisView.sharePopupWindow.dismiss();
+		}
+		if (requestCode == thisView.shareView.RESULT_SHAREVIEW && resultCode == Activity.RESULT_OK) {
+			thisView.shareView.onActivityResult(data2);
+		}
+
 	}
 }

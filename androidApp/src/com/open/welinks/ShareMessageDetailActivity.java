@@ -42,7 +42,14 @@ public class ShareMessageDetailActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		thisController.onActivityResult(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onBackPressed() {
+		thisController.onBackPressed();
+		super.onBackPressed();
 	}
 
 	@Override

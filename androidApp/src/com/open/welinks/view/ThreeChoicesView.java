@@ -17,14 +17,16 @@ import android.widget.FrameLayout;
 public class ThreeChoicesView extends FrameLayout {
 	private Context context;
 	private Button button_one, button_two, button_three;
+	private View layout_two;
 	private OnClickListener mOnClickListener;
-	private OnTouchListener mOnTouchListener;
 	private OnItemClickListener mOnItemClickListener;
-	private GestureDetector detector;
-	private SimpleOnGestureListener mSimpleOnGestureListener;
 	private int clickedItem = 1;
 
-	private Button currentButton;
+	public ThreeChoicesView(Context context) {
+		super(context);
+		this.context = context;
+		OnCreate(context);
+	}
 
 	public ThreeChoicesView(Context context, int defaultItem) {
 		super(context);
@@ -53,6 +55,7 @@ public class ThreeChoicesView extends FrameLayout {
 		button_one = (Button) this.findViewById(R.id.button_one);
 		button_two = (Button) this.findViewById(R.id.button_two);
 		button_three = (Button) this.findViewById(R.id.button_three);
+		layout_two = this.findViewById(R.id.layout_two);
 		mOnItemClickListener = new OnItemClickListener();
 		setViewStyle(clickedItem);
 		mOnClickListener = new OnClickListener() {
@@ -72,77 +75,9 @@ public class ThreeChoicesView extends FrameLayout {
 
 			}
 		};
-		mSimpleOnGestureListener = new SimpleOnGestureListener() {
-			@Override
-			public boolean onDown(MotionEvent e) {
-				return true;
-			}
-
-			@Override
-			public void onShowPress(MotionEvent e) {
-				// currentButton.setTextColor(Color.parseColor("#ffffff"));
-				System.out.println("showPress" + e.getAction());
-			}
-
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				System.out.println("tapup");
-				if (currentButton.equals(button_one)) {
-					setViewStyle(1);
-					mOnItemClickListener.onButtonCilck(1);
-				} else if (currentButton.equals(button_two)) {
-					setViewStyle(2);
-					mOnItemClickListener.onButtonCilck(2);
-				} else if (currentButton.equals(button_three)) {
-					setViewStyle(3);
-					mOnItemClickListener.onButtonCilck(3);
-				}
-				return true;
-			}
-
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-				System.out.println("fling");
-				return super.onFling(e1, e2, velocityX, velocityY);
-			}
-
-			@Override
-			public boolean onSingleTapConfirmed(MotionEvent e) {
-				System.out.println("onSingleTapConfirmed");
-				return super.onSingleTapConfirmed(e);
-			}
-
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-				System.out.println("onScroll");
-				return super.onScroll(e1, e2, distanceX, distanceY);
-			}
-		};
-		detector = new GestureDetector(context, mSimpleOnGestureListener);
-		mOnTouchListener = new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-					System.out.println("outside");
-				}
-				if (view.equals(button_one)) {
-					currentButton = button_one;
-				} else if (view.equals(button_two)) {
-					currentButton = button_two;
-				} else if (view.equals(button_three)) {
-					currentButton = button_three;
-				}
-				detector.onTouchEvent(event);
-				return false;
-			}
-		};
 		button_one.setOnClickListener(mOnClickListener);
 		button_two.setOnClickListener(mOnClickListener);
 		button_three.setOnClickListener(mOnClickListener);
-		// button_one.setOnTouchListener(mOnTouchListener);
-		// button_two.setOnTouchListener(mOnTouchListener);
-		// button_three.setOnTouchListener(mOnTouchListener);
 	}
 
 	public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -163,6 +98,10 @@ public class ThreeChoicesView extends FrameLayout {
 
 	public void setDefaultItem(int item) {
 		setViewStyle(item);
+	}
+
+	public void setTwoChoice() {
+		layout_two.setVisibility(View.GONE);
 	}
 
 	public class OnItemClickListener {

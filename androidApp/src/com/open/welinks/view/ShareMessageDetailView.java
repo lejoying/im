@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -106,6 +108,7 @@ public class ShareMessageDetailView {
 	public InputMethodManager inputMethodManager;
 
 	public ShareView shareView;
+	public PopupWindow sharePopupWindow;
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public File mImageFile;
@@ -199,7 +202,9 @@ public class ShareMessageDetailView {
 		deleteImageOptionView = (ImageView) thisActivity.findViewById(R.id.deleteImageOption);
 		deleteTextOptionView = (TextView) thisActivity.findViewById(R.id.deleteTextOption);
 
-		// shareView = new ShareView(thisActivity);
+		shareView = new ShareView(thisActivity);
+		shareView.setShareContent(thisController.shareMessage);
+		sharePopupWindow = new PopupWindow(shareView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 
 		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
 		detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);

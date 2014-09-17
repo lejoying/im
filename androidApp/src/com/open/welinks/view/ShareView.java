@@ -1,8 +1,11 @@
 package com.open.welinks.view;
 
+import com.open.welinks.GroupListActivity;
 import com.open.welinks.R;
+import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Shares.Share;
+import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,15 +20,16 @@ import android.widget.LinearLayout;
 public class ShareView extends FrameLayout {
 	private Context context;
 	private Activity activity;
-	private Message message;
-	private Share share;
+	private ShareMessage shareMessage;
 	private LinearLayout layout_one, layout_two, layout_three;
 	private View square_share, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone;
 
 	public int RESULT_SHAREVIEW = 0x99;
 
+	private Status status;
+
 	private enum Status {
-		square_share, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone
+		square_group, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone
 	}
 
 	private OnClickListener mOnClickListener;
@@ -37,29 +41,31 @@ public class ShareView extends FrameLayout {
 		onCreate();
 	}
 
-	public ShareView(Context context, Share share) {
+	public ShareView(Context context, ShareMessage shareMessage) {
 		super(context);
-		this.share = share;
+		this.shareMessage = shareMessage;
 		this.context = context;
+		this.activity = (Activity) context;
 		onCreate();
 	}
 
 	public ShareView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
+		this.activity = (Activity) context;
 		onCreate();
 	}
 
 	public ShareView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		this.context = context;
+		this.activity = (Activity) context;
 		onCreate();
 	}
 
 	private void onCreate() {
 		LayoutInflater.from(context).inflate(R.layout.layout_share, this);
-		((ViewGroup) activity.findViewById(android.R.id.content)).addView(this);
-		this.setClickable(false);
+
 		layout_one = (LinearLayout) this.findViewById(R.id.layout_one);
 		layout_two = (LinearLayout) this.findViewById(R.id.layout_two);
 		layout_three = (LinearLayout) this.findViewById(R.id.layout_three);
@@ -76,9 +82,9 @@ public class ShareView extends FrameLayout {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(square_share)) {
-					shareToSquareLocal(Status.square_share);
+					shareToLocal(Status.square_group);
 				} else if (view.equals(friend_group)) {
-					shareToSquareLocal(Status.friend_group);
+					shareToLocal(Status.friend_group);
 				} else if (view.equals(wechat_friend)) {
 					shareToWechat(Status.wechat_friend);
 				} else if (view.equals(wechat_circle)) {
@@ -87,8 +93,6 @@ public class ShareView extends FrameLayout {
 
 				} else if (view.equals(qq_qzone)) {
 
-				} else if (view.equals(this)) {
-					dismiss();
 				}
 
 			}
@@ -100,37 +104,52 @@ public class ShareView extends FrameLayout {
 		wechat_circle.setOnClickListener(mOnClickListener);
 		sina_weibo.setOnClickListener(mOnClickListener);
 		qq_qzone.setOnClickListener(mOnClickListener);
-		this.setOnClickListener(mOnClickListener);
 	}
 
-	private void shareToSquareLocal(Status status) {
-		System.out.println("showing-----------");
+	private void shareToLocal(Status status) {
+		this.status = status;
+		Intent intent = new Intent(activity, GroupListActivity.class);
+		if (status == Status.friend_group) {
+			intent.putExtra("type", "message");
+		} else if (status == Status.square_group) {
+			intent.putExtra("type", "share");
+		}
+		this.activity.startActivityForResult(intent, RESULT_SHAREVIEW);
 	}
 
 	private void shareToWechat(Status status) {
-		System.out.println("showing-----------");
+		this.status = status;
+
 	}
 
-	public ShareView setShareContent(Share share) {
-		this.share = share;
+	public ShareView setShareContent(ShareMessage shareMessage) {
+		this.shareMessage = shareMessage;
 		return this;
 	}
 
-	public void show() {
-		if (this.getVisibility() == View.GONE) {
-			this.setClickable(true);
-			this.setVisibility(View.VISIBLE);
+	public void onActivityResult(Intent result) {
+		String key = result.getStringExtra("key");
+		String type = result.getStringExtra("type");
+		if ("".equals(key) && "".equals(type)) {
+			if ("friend".equals(type)) {
+				sendToPerson(key);
+			} else if ("share".equals(type)) {
+				shareToGroup(key);
+			} else if ("message_group".equals(type)) {
+				sendToGroup(key);
+			}
 		}
 	}
 
-	public void dismiss() {
-		if (this.getVisibility() == View.VISIBLE) {
-			this.setClickable(false);
-			this.setVisibility(View.GONE);
-		}
+	private void shareToGroup(String gid) {
+
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	private void sendToGroup(String gid) {
+
+	}
+
+	private void sendToPerson(String phone) {
 
 	}
 
