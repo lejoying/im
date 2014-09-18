@@ -154,6 +154,7 @@ public class PushService extends Service {
 		public void onFailure(HttpException error, String msg) {
 			System.out.println("fail---------------------");
 			checkConnect();
+			// connect();
 		};
 	};
 
@@ -161,10 +162,9 @@ public class PushService extends Service {
 		ConnectivityManager conManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 		if (conManager.getActiveNetworkInfo() != null) {
 			if (conManager.getActiveNetworkInfo().isAvailable()) {
-				if (isRunning) {
-					connect();
-				}
+				connect();
 			} else {
+				// connect();
 				isRunning = false;
 			}
 		} else {
