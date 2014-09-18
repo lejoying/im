@@ -10,6 +10,7 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,8 +58,10 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.DataUtil;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
@@ -106,6 +109,20 @@ public class MainController {
 	public String userAddress;
 
 	public boolean isExit = false;
+
+	public static final String CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
+	public ConnectionChangeReceiver connectionChangeReceiver;
+
+	public MainController(Activity thisActivity) {
+		this.context = thisActivity;
+		this.thisActivity = thisActivity;
+
+		thisController = this;
+
+		connectionChangeReceiver = new ConnectionChangeReceiver();
+		IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
+		thisActivity.registerReceiver(connectionChangeReceiver, filter);
+	}
 
 	// public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	// public Spring mScaleSpring = mSpringSystem.createSpring();
@@ -173,13 +190,6 @@ public class MainController {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		http.send(HttpRequest.HttpMethod.POST, API.RELATION_GETINTIMATEFRIENDS, params, responseHandlers.getIntimateFriends);
-	}
-
-	public MainController(Activity thisActivity) {
-		this.context = thisActivity;
-		this.thisActivity = thisActivity;
-
-		thisController = this;
 	}
 
 	public void initializeListeners() {
@@ -740,11 +750,18 @@ public class MainController {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK) {
+			data = parser.check();
+			data.userInformation.currentUser.phone = "";
+			data.userInformation.currentUser.accessKey = "";
+			data.userInformation.isModified = true;
 			thisActivity.stopService(new Intent(thisActivity, PushService.class));
-			parser = Parser.getInstance();
+			if (this.connectionChangeReceiver != null) {
+				thisActivity.unregisterReceiver(this.connectionChangeReceiver);
+			}
 			parser.save();
 			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 			thisActivity.finish();
+			DataUtil.clearData();
 		} else if (requestCode == R.id.tag_second) {
 			messagesSubController.onActivityResult(requestCode, resultCode, data2);
 		} else {

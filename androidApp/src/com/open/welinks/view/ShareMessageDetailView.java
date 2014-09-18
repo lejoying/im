@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -48,6 +47,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share.Comment;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -162,9 +162,12 @@ public class ShareMessageDetailView {
 		backTitleView.setText("分享详情");
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		RelativeLayout.LayoutParams layoutParams1 = (android.widget.RelativeLayout.LayoutParams) rightContainer.getLayoutParams();
+		layoutParams1.rightMargin = 0;
 		shareMessageTimeView = new TextView(context);
 		shareMessageTimeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
 		shareMessageTimeView.setTextColor(Color.WHITE);
+		shareMessageTimeView.setPadding(30, 30, 30 + (int) (10 * displayMetrics.density), 30);
 		shareMessageTimeView.setSingleLine();
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 		// layoutParams.rightMargin = (int) (20 * displayMetrics.density);
@@ -325,7 +328,8 @@ public class ShareMessageDetailView {
 		// praiseUserContentView.setBackgroundColor(Color.RED);
 		List<String> praiseUsers = thisController.shareMessage.praiseusers;
 
-		int headWidth = praiseUserContentView.getWidth() / 5 - 5;
+		int headWidth = (int) (((screenWidth - 40 * screenDensity) / 2.7) * 2.2) / 5;// praiseUserContentView.getWidth() / 5 - 5;
+		int headHeight = (int) (40 * screenDensity);
 		int padding = (int) (5 * screenDensity);
 		praiseusersNumView.setText("共获得" + praiseUsers.size() + "个赞");
 		ImageView iv = new ImageView(thisActivity);
@@ -333,18 +337,29 @@ public class ShareMessageDetailView {
 		param.weight = 1;
 		iv.setLayoutParams(param);
 		praiseUserContentView.addView(iv);
+		User user = data.userInformation.currentUser;
 		for (int i = 0; i < praiseUsers.size(); i++) {
+			String key = praiseUsers.get(i);
 			final ImageView view = new ImageView(thisActivity);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(headWidth, LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(headWidth, headHeight);
 			params.gravity = Gravity.CENTER;
 			view.setPadding(padding, 0, padding, 0);
 			view.setLayoutParams(params);
 			// view.setImageBitmap(bitmap);
-			fileHandlers.getHeadImage("", view, headOptions);
+			String fileName = "";
+			Friend friend = data.relationship.friendsMap.get(key);
+			if (friend != null) {
+				fileName = friend.head;
+			}
+			if (user.phone.equals(key)) {
+				fileName = user.head;
+			}
+			fileHandlers.getHeadImage(fileName, view, headOptions);
 			// view.setBackgroundColor(Color.GREEN);
 			praiseUserContentView.addView(view);
-			if (i == 5)
+			if (i == 5) {
 				break;
+			}
 		}
 	}
 
@@ -413,7 +428,7 @@ public class ShareMessageDetailView {
 	}
 
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();
-	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 9);
+	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
 	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
 	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
 
