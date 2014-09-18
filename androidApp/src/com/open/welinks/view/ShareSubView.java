@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -60,7 +59,7 @@ public class ShareSubView {
 
 	public String tag = "ShareSubView";
 
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
@@ -176,6 +175,15 @@ public class ShareSubView {
 	public void showShareMessages() {
 		showGroupMembers();
 		data = parser.check();
+		boolean flag0 = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
+		if (!flag0) {
+			if (data.relationship.groups.size() == 0) {
+				data.localStatus.localData.currentSelectedGroup = "";
+				data.relationship.isModified = true;
+			} else {
+				data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
+			}
+		}
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		SharesMessageBody sharesMessageBody0 = null;
@@ -183,6 +191,8 @@ public class ShareSubView {
 			sharesMessageBody0 = (SharesMessageBody) shareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
 			this.shareMessageListBody.listItemsSequence.clear();
 			this.shareMessageListBody.containerView.removeAllViews();
+			shareMessageView.removeAllViews();
+			log.e("clear share list body.");
 			this.shareMessageListBody.height = 0;
 			if (sharesMessageBody0 == null) {
 				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
@@ -191,14 +201,21 @@ public class ShareSubView {
 			sharesMessageBody0.setContent(null, "");
 			this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
 			this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
-			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (50 * displayMetrics.density));
+			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (50 * displayMetrics.density));
 			sharesMessageBody0.y = 60 * displayMetrics.density * 0 + 2 * displayMetrics.density;
 			sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
-			sharesMessageBody0.cardView.setX(0);
+			// sharesMessageBody0.cardView.setX(0);
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
+		} else {
+			this.shareMessageListBody.listItemsSequence.clear();
+			this.shareMessageListBody.containerView.removeAllViews();
+			shareMessageView.removeAllViews();
+			this.shareMessageListBody.height = 0;
+			log.e("clear share list body.");
+			return;
 		}
-		if (share == null) {
+		if (!flag || share == null) {
 			return;
 		}
 
@@ -241,6 +258,10 @@ public class ShareSubView {
 			// .........................
 			log.e("message#---" + shareMessage.gsid);
 			String keyName = "message#" + shareMessage.gsid;
+			// Data duplication problem
+			if (this.shareMessageListBody.listItemsSequence.contains(keyName)) {
+				// continue;
+			}
 			boolean isExists = false;
 			if (this.shareMessageListBody.listItemBodiesMap.get(keyName) != null) {
 				sharesMessageBody = (SharesMessageBody) this.shareMessageListBody.listItemBodiesMap.get(keyName);
@@ -261,7 +282,7 @@ public class ShareSubView {
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
 			sharesMessageBody.y = this.shareMessageListBody.height;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
-//			sharesMessageBody.cardView.setX(0);
+			// sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
 			if (isExists) {
 				// sharesMessageBody.cardView.setX(10 * displayMetrics.density);
@@ -572,10 +593,20 @@ public class ShareSubView {
 
 	public void setGroupsDialogContent() {
 		data = parser.check();
-
+		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
+		if (!flag) {
+			if (data.relationship.groups.size() == 0) {
+				data.localStatus.localData.currentSelectedGroup = "";
+				data.relationship.isModified = true;
+			} else {
+				data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
+			}
+		}
 		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group0 != null) {
 			this.shareTopMenuGroupName.setText(group0.name);
+		} else {
+			this.shareTopMenuGroupName.setText("暂无群组");
 		}
 
 		List<String> groups = data.relationship.groups;
@@ -694,6 +725,9 @@ public class ShareSubView {
 	public void showGroupMembers() {
 		data = parser.check();
 		groupMembersListContentView.removeAllViews();
+		if (data.relationship.groupsMap == null || data.localStatus.localData == null) {
+			return;
+		}
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group != null) {
 			shareTopMenuGroupName.setText(group.name);
@@ -705,7 +739,11 @@ public class ShareSubView {
 		Map<String, Friend> friendsMap = data.relationship.friendsMap;
 
 		width = (int) (displayMetrics.density * 40);
-		for (int i = 0; i < groupMembers.size(); i++) {
+		int size = groupMembers.size();
+		if (size > 6) {
+			size = 6;
+		}
+		for (int i = 0; i < size; i++) {
 			String key = groupMembers.get(i);
 			Friend friend = friendsMap.get(key);
 
@@ -714,62 +752,12 @@ public class ShareSubView {
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
 			myScrollImageBody.contentView.addView(imageBody.imageView, layoutParams);
-			float x = i * (width + 2 * displayMetrics.density) + 5 * displayMetrics.density;
+			float x = i * (width + 5 * displayMetrics.density) + 5 * displayMetrics.density;
 			if (i == 0) {
 				x = 5 * displayMetrics.density;
 			}
 			imageBody.imageView.setX(x);// Translation
-			imageLoader.displayImage("drawable://" + R.drawable.face_man, imageBody.imageView, headOptions);
-			if (!"".equals(friend.head)) {
-				File currentImageFile = new File(fileHandlers.sdcardHeadImageFolder, friend.head);
-				String filepath = currentImageFile.getAbsolutePath();
-				boolean isFlag = false;
-				String path = "";
-				if (currentImageFile.exists()) {
-					BitmapFactory.Options boptions = new BitmapFactory.Options();
-					boptions.inJustDecodeBounds = true;
-					BitmapFactory.decodeFile(currentImageFile.getAbsolutePath(), boptions);
-					if (boptions.outWidth > 0) {
-						isFlag = true;
-					}
-				}
-				if (isFlag) {
-					path = "file://" + filepath;
-				} else {
-					path = API.DOMAIN_COMMONIMAGE + "heads/" + friend.head;
-				}
-
-				if (!isFlag) {
-					DownloadFile downloadFile = new DownloadFile(path, filepath);
-					downloadFile.view = imageBody.imageView;
-					downloadFile.view.setTag("head");
-					downloadFile.setDownloadFileListener(thisController.downloadListener);
-					downloadFileList.addDownloadFile(downloadFile);
-				} else {
-					Bitmap bitmap = thisController.fileHandlers.bitmaps.get(path);
-					if (bitmap != null) {
-						imageBody.imageView.setImageBitmap(bitmap);
-					} else {
-						imageLoader.displayImage(path, imageBody.imageView, headOptions, new SimpleImageLoadingListener() {
-							@Override
-							public void onLoadingStarted(String imageUri, View view) {
-							}
-
-							@Override
-							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-							}
-
-							@Override
-							public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-							}
-						});
-					}
-				}
-			}
-
-			// imageLoader.displayImage("file://" + key, imageBody.imageView,
-			// options);
+			fileHandlers.getHeadImage(friend.head, imageBody.imageView, headOptions);
 			myScrollImageBody.selectedImagesSequence.add(key);
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
 			imageBody.imageView.setTag("head");

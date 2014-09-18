@@ -172,6 +172,9 @@ public class SquareSubView {
 		this.squareMessageListBody.height = 0;
 
 		data = parser.check();
+		if (data.shares.shareMap == null || data.localStatus.localData == null) {
+			return;
+		}
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare);
 		if (share == null)
 			return;

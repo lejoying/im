@@ -284,7 +284,7 @@ public class BusinessCardController {
 	}
 
 	public void joinGroup() {
-		if (data.relationship.groupsMap.get(key) == null) {
+		if (!data.relationship.groups.contains(key)) {
 			Group group = data.relationship.new Group();
 			data.relationship.groupsMap.put(key, group);
 			thisView.status = Status.JOINEDGROUP;

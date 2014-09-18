@@ -121,7 +121,7 @@ public class MainController {
 		mListGesture = new GestureDetector(thisActivity, new GestureListener());
 
 		thisView.friendsSubView.showCircles();
-		thisView.messagesSubView.showMessages();
+		thisView.messagesSubView.showMessagesSequence();
 
 		thisView.shareSubView.showShareMessages();
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
@@ -136,7 +136,7 @@ public class MainController {
 		data.localStatus.thisActivityName = "MainActivity";
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 		data = parser.check();
-		thisView.title_messages.setText(data.userInformation.currentUser.nickName);
+		thisView.userTopbarNameView.setText(data.userInformation.currentUser.nickName);
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
 		// thisView.shareSubView.onResume();
@@ -603,6 +603,7 @@ public class MainController {
 			thisView.mainPagerBody.onTouchUp(event);
 
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
+				messagesSubController.onSingleTapUp(event);
 				thisView.messagesSubView.messageListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				friendsSubController.onSingleTapUp(event);
@@ -707,9 +708,6 @@ public class MainController {
 		}
 
 		public boolean onSingleTapUp(MotionEvent event) {
-			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
-				messagesSubController.onSingleTapUp(event);
-			}
 			return false;
 		}
 
@@ -722,6 +720,8 @@ public class MainController {
 				squareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onScroll();
+			} else if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
+				messagesSubController.onScroll();
 			}
 
 			return false;

@@ -27,26 +27,29 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/userTopbarNameParent"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="60dp" >
 
             <TextView
-                android:id="@+id/title_messages"
+                android:id="@+id/userTopbarName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="用户ABC"
+                 android:maxEms="7"
+                android:ellipsize="end"
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 
             <ImageView
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:layout_alignRight="@+id/title_messages"
+                android:layout_alignRight="@+id/userTopbarName"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"

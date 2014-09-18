@@ -7,12 +7,12 @@ import java.util.Map;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
@@ -27,16 +27,17 @@ import com.open.welinks.utils.DateUtil;
 public class MessagesSubView {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
+	public String tag = "MessagesSubView";
+	public MyLog log = new MyLog(tag, true);
 
 	public Gson gson = new Gson();
-
-	public String tag = "MessagesSubView";
 
 	public DisplayMetrics displayMetrics;
 
 	public TouchView messagesView;
 
-	public RelativeLayout noMessagesStatusView;
+	public TouchView noMessagesStatusView;
 
 	public ListBody1 messageListBody;
 
@@ -47,14 +48,15 @@ public class MessagesSubView {
 	public List<String> messagesKeepOnlyOne;
 
 	public boolean inited = false;
-	public Parser parser = Parser.getInstance();
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public DisplayImageOptions options;
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public MessagesSubView(MainView mainView) {
 		this.mainView = mainView;
-
+		viewManage.messagesSubView = this;
 	}
 
 	public void initViews() {
@@ -66,14 +68,14 @@ public class MessagesSubView {
 
 		messagesKeepOnlyOne = new ArrayList<String>();
 
-		noMessagesStatusView = (RelativeLayout) messagesView.findViewById(R.id.NoMessagesStatus);
+		noMessagesStatusView = (TouchView) messagesView.findViewById(R.id.NoMessagesStatus);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
 
 	}
 
 	public void onResume() {
 		if (inited) {
-			showMessages();
+			showMessagesSequence();
 		} else {
 			inited = true;
 		}
@@ -83,7 +85,7 @@ public class MessagesSubView {
 		inited = false;
 	}
 
-	public void showMessages() {
+	public void showMessagesSequence() {
 		data = parser.check();
 		if (data.messages == null) {
 			return;
@@ -141,6 +143,7 @@ public class MessagesSubView {
 			}
 
 			if (messagesKeepOnlyOne.contains(key)) {
+				log.e("消息队列出现重复数据");
 				MessageBody messageBody;
 				if (key.indexOf("p") == 0) {
 					this.messageListBody.listItemsSequence.remove("message#" + message.phone + "_" + message.time);
@@ -174,15 +177,16 @@ public class MessagesSubView {
 				messageBody.y = this.messageListBody.height;
 				messageBody.cardView.setY(messageBody.y);
 				messageBody.cardView.setX(0);
-				messageBody.cardView.setTag(R.id.tag_first, message);
+				messageBody.cardView.setTag(R.id.tag_class, "message_view");
+				messageBody.cardView.setTag(R.id.tag_first, key);
 				messageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
+				messageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 				this.messageListBody.height = this.messageListBody.height + 80 * displayMetrics.density;
 				this.messageListBody.containerView.addView(messageBody.cardView, layoutParams);
 			}
-
 		}
 		this.messageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
-
+		this.messageListBody.setChildrenPosition();
 	}
 
 	public class MessageBody extends MyListItemBody {
@@ -199,14 +203,17 @@ public class MessagesSubView {
 		public TextView lastChatMessageView;
 		public TextView notReadNumberView;
 
-		public View initialize() {
+		public TextView groupIconView;
 
+		public View initialize() {
 			this.cardView = mainView.mInflater.inflate(R.layout.chat_message_item, null);
-			headView = (ImageView) this.cardView.findViewById(R.id.userHeadView);
-			nickNameView = (TextView) this.cardView.findViewById(R.id.tv_nickname);
-			lastChatTimeView = (TextView) this.cardView.findViewById(R.id.tv_time);
-			lastChatMessageView = (TextView) this.cardView.findViewById(R.id.tv_lastchatcontent);
-			notReadNumberView = (TextView) this.cardView.findViewById(R.id.tv_notread);
+			this.headView = (ImageView) this.cardView.findViewById(R.id.userHeadView);
+			this.nickNameView = (TextView) this.cardView.findViewById(R.id.tv_nickname);
+			this.lastChatTimeView = (TextView) this.cardView.findViewById(R.id.tv_time);
+			this.lastChatMessageView = (TextView) this.cardView.findViewById(R.id.tv_lastchatcontent);
+			this.notReadNumberView = (TextView) this.cardView.findViewById(R.id.tv_notread);
+			this.groupIconView = (TextView) this.cardView.findViewById(R.id.groupIcon);
+
 			super.initialize(cardView);
 			return cardView;
 		}
@@ -217,13 +224,17 @@ public class MessagesSubView {
 			if ("text".equals(message.contentType)) {
 				lastChatMessageView.setText(message.content);
 			} else if ("image".equals(message.contentType)) {
-				lastChatMessageView.setText("图片");
+				lastChatMessageView.setText("[图片]");
 			} else if ("voice".equals(message.contentType)) {
-				lastChatMessageView.setText("声音");
+				lastChatMessageView.setText("[声音]");
 			}
 			lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			String sendType = message.sendType;
+			this.groupIconView.setVisibility(View.GONE);
 			if ("point".equals(sendType)) {
+				if (this.groupIconView.getVisibility() == View.VISIBLE) {
+					this.groupIconView.setVisibility(View.GONE);
+				}
 				if (data.relationship.friendsMap.get(message.phone) == null) {
 					nickNameView.setText(message.nickName);
 					notReadNumberView.setVisibility(View.GONE);
@@ -244,6 +255,9 @@ public class MessagesSubView {
 					}
 				}
 			} else if ("group".equals(sendType)) {
+				if (this.groupIconView.getVisibility() == View.GONE) {
+					this.groupIconView.setVisibility(View.VISIBLE);
+				}
 				if (data.relationship.groupsMap.get(message.gid) == null) {
 					nickNameView.setText(message.nickName);
 					notReadNumberView.setVisibility(View.GONE);

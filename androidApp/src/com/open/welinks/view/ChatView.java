@@ -30,10 +30,12 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
 
 public class ChatView {
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 	public String tag = "ChatView";
 
 	public DisplayMetrics displayMetrics;
@@ -111,6 +113,7 @@ public class ChatView {
 	public void showChatViews() {
 		String type = thisController.type, key = thisController.key;
 		ArrayList<Message> messages = null;
+		parser.check();
 		if ("group".equals(type)) {
 			messages = data.messages.groupMessageMap.get("g" + key);
 			if (messages == null) {
@@ -119,6 +122,7 @@ public class ChatView {
 			}
 			Group group = data.relationship.groupsMap.get(key);
 			if (group != null) {
+				group.notReadMessagesCount = 0;
 				name.setText(group.name + "(" + group.members.size() + ")");
 			} else {
 				name.setText("Group");
@@ -131,12 +135,8 @@ public class ChatView {
 			}
 			Friend friend = data.relationship.friendsMap.get(key);
 			if (friend != null) {
+				friend.notReadMessagesCount = 0;
 				fileHandlers.getHeadImage(friend.head, infomation, headOptions);
-				// if (friend.head.equals("Head") || friend.head.equals("")) {
-				// infomation.setImageBitmap(bitmap);
-				// } else {
-				// thisController.setHeadImage(friend.head, infomation);
-				// }
 				if ("".equals(friend.alias)) {
 					name.setText(friend.nickName);
 				} else {
@@ -145,9 +145,9 @@ public class ChatView {
 			} else {
 				name.setText("Name");
 				fileHandlers.getHeadImage("", infomation, headOptions);
-				// infomation.setImageBitmap(bitmap);
 			}
 		}
+		data.relationship.isModified = true;
 		mChatAdapter = new ChatAdapter(messages);
 		chat_content.setAdapter(mChatAdapter);
 		chat_content.setSelection(mChatAdapter.getCount());
