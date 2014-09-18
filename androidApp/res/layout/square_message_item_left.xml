@@ -22,8 +22,9 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
         android:lines="2"
-        android:text="“停车做爱枫林晚 ， 霜叶红叶二月红”"
-        android:textColor="#99000000"
+        android:gravity="center_horizontal"
+        android:text="“停车”"
+        android:textColor="#fff"
         android:textSize="16sp" />
 
     <com.open.lib.TouchTextView
@@ -34,7 +35,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:text="Lucy and Luly"
-        android:textColor="#99000000"
+        android:textColor="#fff"
         android:textSize="18sp" />
 
 </com.open.lib.TouchView>

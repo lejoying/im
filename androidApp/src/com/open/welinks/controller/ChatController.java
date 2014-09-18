@@ -37,8 +37,8 @@ import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfomationActivity;
+import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
-import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
@@ -136,7 +136,7 @@ public class ChatController {
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
 					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
-					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 					intent.putExtra("position", String.valueOf(0));
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.backview)) {

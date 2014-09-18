@@ -167,7 +167,7 @@ public class ShareMessageDetailView {
 		shareMessageTimeView = new TextView(context);
 		shareMessageTimeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
 		shareMessageTimeView.setTextColor(Color.WHITE);
-		shareMessageTimeView.setPadding(30, 30, 30 + (int) (10 * displayMetrics.density), 30);
+		shareMessageTimeView.setPadding(10, 10, 10 + (int) (10 * displayMetrics.density), 10);// 30
 		shareMessageTimeView.setSingleLine();
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 		// layoutParams.rightMargin = (int) (20 * displayMetrics.density);

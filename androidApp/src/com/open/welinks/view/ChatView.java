@@ -89,7 +89,7 @@ public class ChatView {
 		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		// infomation = (ImageView) thisActivity.findViewById(R.id.infomation);
 		infomation = new ImageView(context);
-		infomation.setBackgroundResource(R.drawable.share_to_group_icon);
+		infomation.setImageResource(R.drawable.share_to_group_icon);
 		RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (40 * displayMetrics.density), (int) (40 * displayMetrics.density));
 		infomationParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		infomation_layout.addView(infomation, infomationParams);
