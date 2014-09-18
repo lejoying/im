@@ -227,6 +227,8 @@ public class MessagesSubView {
 				lastChatMessageView.setText("[图片]");
 			} else if ("voice".equals(message.contentType)) {
 				lastChatMessageView.setText("[声音]");
+			} else if ("share".equals(message.contentType)) {
+				lastChatMessageView.setText("[分享]");
 			}
 			lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			String sendType = message.sendType;

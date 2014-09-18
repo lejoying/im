@@ -19,6 +19,7 @@ public class ViewManage {
 	public ShareSubView shareSubView = null;
 	public ChatView chatView = null;
 	public MessagesSubView messagesSubView = null;
+	public ShareMessageDetailView shareMessageDetailView = null;
 
 	public DynamicListActivity dynamicListActivity = null;
 	public GroupListActivity groupListActivity = null;

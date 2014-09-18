@@ -57,6 +57,8 @@ public class ShareMessageDetailView {
 	public Data data = Data.getInstance();
 	public String tag = "ShareMessageDetailView";
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public Context context;
 	public ShareMessageDetailView thisView;
 	public ShareMessageDetailController thisController;
@@ -128,7 +130,7 @@ public class ShareMessageDetailView {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
 		thisView = this;
-
+		viewManage.shareMessageDetailView = this;
 		mImageFile = fileHandlers.sdcardImageFolder;
 	}
 
@@ -208,7 +210,9 @@ public class ShareMessageDetailView {
 		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
 		detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
 
-		showShareMessageDetail();
+		if (thisController.shareMessage != null) {
+			showShareMessageDetail();
+		}
 	}
 
 	public void initData() {
@@ -235,7 +239,8 @@ public class ShareMessageDetailView {
 		String content = thisController.shareMessage.content;
 		ShareContent shareContent = gson.fromJson("{shareContentItems:" + content + "}", ShareContent.class);
 		List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
-		String textContent = "";
+		thisController.textContent = "";
+		thisController.imageContent = "";
 		int index = 0;
 		showImages = new ArrayList<String>();
 		for (int i = 0; i < shareContentItems.size(); i++) {
@@ -244,11 +249,13 @@ public class ShareMessageDetailView {
 			ShareContentItem shareContentItem = shareContentItems.get(i);
 			String type = shareContentItem.type;
 			if (type.equals("text")) {
-				textContent = shareContentItem.detail;
+				thisController.textContent = shareContentItem.detail;
 				continue;
 			}
 			String imageFileName = shareContentItem.detail;
-
+			if ("".equals(thisController.imageContent)) {
+				thisController.imageContent = imageFileName;
+			}
 			imageView.setTag("ShareMessageDetailImage#" + index);
 			index++;
 			imageView.setOnClickListener(thisController.mOnClickListener);
@@ -296,7 +303,7 @@ public class ShareMessageDetailView {
 				});
 			}
 		}
-		if (!"".equals(textContent)) {
+		if (!"".equals(thisController.textContent)) {
 			TextView textview = new TextView(thisActivity);
 			textview.setTextColor(Color.WHITE);
 			textview.setBackgroundColor(Color.parseColor("#26ffffff"));
@@ -305,7 +312,7 @@ public class ShareMessageDetailView {
 			textview.setPadding(padding, padding, padding, padding);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			textview.setLayoutParams(params);
-			textview.setText(textContent);
+			textview.setText(thisController.textContent);
 			shareMessageDetailContentView.addView(textview);
 		}
 		if (thisController.shareMessage.praiseusers.contains(thisController.currentUser.phone)) {

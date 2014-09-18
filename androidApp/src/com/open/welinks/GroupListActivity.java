@@ -109,6 +109,9 @@ public class GroupListActivity extends Activity {
 			for (String circles : data.relationship.circles) {
 				friends.addAll(data.relationship.circlesMap.get(circles).friends);
 			}
+			if (data.relationship.circlesMap.get("8888888") != null) {
+				friends.addAll(data.relationship.circlesMap.get("8888888").friends);
+			}
 			this.friends = friends.toArray(this.friends);
 		} else {
 			if (status == Status.square) {
@@ -223,12 +226,14 @@ public class GroupListActivity extends Activity {
 							if (status == Status.friend) {
 								intent.putExtra("key", friendsMap.get(friends[position]).phone);
 								intent.putExtra("type", "message");
+								intent.putExtra("sendType", "point");
 							} else {
 								intent.putExtra("key", String.valueOf(groupsMap.get(groups.get(position)).gid));
 								if (status == Status.share_group || status == Status.square) {
 									intent.putExtra("type", "share");
 								} else if (status == Status.message_group) {
 									intent.putExtra("type", "message");
+									intent.putExtra("sendType", "group");
 								}
 							}
 							setResult(Activity.RESULT_OK, intent);

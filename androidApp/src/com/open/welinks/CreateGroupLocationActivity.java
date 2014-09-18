@@ -243,6 +243,7 @@ public class CreateGroupLocationActivity extends Activity {
 						mOnLocationChangedListener.onLocationChanged(aMapLocation);
 						mAMap.clear();
 						location.setText("当前地址：" + aMapLocation.getAddress());
+						address = aMapLocation.getAddress();
 						mLatLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
 						searchGroups();
 					}

@@ -31,6 +31,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.utils.DateUtil;
 
 public class ChatView {
@@ -229,14 +230,14 @@ public class ChatView {
 					chatHolder.images_layout.setVisibility(View.GONE);
 					chatHolder.image.setVisibility(View.VISIBLE);
 					chatHolder.image.setTag(R.id.tag_first, images);
-					thisController.setImageThumbnail(image, chatHolder.image);
+					thisController.setImageThumbnail(image, chatHolder.image, 178, 106);
 					chatHolder.image.setOnClickListener(thisController.mOnClickListener);
 				} else {
 					chatHolder.image.setVisibility(View.GONE);
 					chatHolder.images_layout.setVisibility(View.VISIBLE);
 					chatHolder.images_count.setText(String.valueOf(images.size()));
 					chatHolder.images_layout.setTag(R.id.tag_first, images);
-					thisController.setImageThumbnail(image, chatHolder.images);
+					thisController.setImageThumbnail(image, chatHolder.images, 178, 106);
 					chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
 				}
 			} else if ("voice".equals(contentType)) {
@@ -258,6 +259,14 @@ public class ChatView {
 				chatHolder.share.setVisibility(View.VISIBLE);
 				chatHolder.voice.setVisibility(View.GONE);
 
+				MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
+				chatHolder.share_text.setText(messageContent.text);
+				thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
+
+				chatHolder.share.setTag(R.id.tag_second, messageContent.gid);
+				chatHolder.share.setTag(R.id.tag_third, messageContent.gsid);
+				chatHolder.share.setOnClickListener(thisController.mOnClickListener);
+
 			}
 			chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			String fileName = "";
@@ -272,14 +281,13 @@ public class ChatView {
 			}
 			fileHandlers.getHeadImage(fileName, chatHolder.head, headOptions);
 
-			// chatHolder.head.setImageBitmap(bitmap);
 			return convertView;
 		}
 
 		class ChatHolder {
 			public View images_layout, share;
 			public RelativeLayout voice;
-			public TextView time, character, voicetime, images_count, share_text;
+			public TextView time, character, voicetime, images_count, share_text, share_title;
 			public ImageView voice_icon, head, image, images, share_image;
 		}
 

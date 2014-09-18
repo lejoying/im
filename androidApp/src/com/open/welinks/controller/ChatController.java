@@ -40,6 +40,7 @@ import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
+import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
@@ -138,6 +139,11 @@ public class ChatController {
 					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
 					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
 					intent.putExtra("position", String.valueOf(0));
+					thisActivity.startActivity(intent);
+				} else if (view.getTag(R.id.tag_second) != null) {
+					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+					intent.putExtra("gid", (String) view.getTag(R.id.tag_second));
+					intent.putExtra("gsid", (String) view.getTag(R.id.tag_third));
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.backview)) {
 					thisActivity.finish();
@@ -291,9 +297,9 @@ public class ChatController {
 		return gson.fromJson(content, ArrayList.class);
 	}
 
-	public void setImageThumbnail(String fileName, ImageView view) {
+	public void setImageThumbnail(String fileName, ImageView view, int width, int height) {
 		File file = new File(sdFile, "welinks/thumbnail/" + fileName);
-		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + (int) (178 * thisView.displayMetrics.density + 0.5f) / 2 + "w_" + (int) (106 * thisView.displayMetrics.density + 0.5f) / 2 + "h_1c_1e_100q";
+		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + (int) (width * thisView.displayMetrics.density + 0.5f) / 2 + "w_" + (int) (height * thisView.displayMetrics.density + 0.5f) / 2 + "h_1c_1e_100q";
 		final String path = file.getAbsolutePath();
 		imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
 			@Override

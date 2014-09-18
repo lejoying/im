@@ -1,6 +1,9 @@
 package com.open.welinks.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
@@ -29,13 +33,18 @@ import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.SubData;
+import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
@@ -47,6 +56,10 @@ public class ShareMessageDetailController {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+
+	public SubData subData = SubData.getInstance();
+
+	public Gson gson = new Gson();
 	public String tag = "ShareMessageDetailController";
 
 	public Context context;
@@ -57,6 +70,9 @@ public class ShareMessageDetailController {
 	public String gsid = "";
 	public ShareMessage shareMessage;
 	public Share share;
+
+	public String textContent;
+	public String imageContent;
 
 	public OnClickListener mOnClickListener;
 	public OnScrollChangedListener mOnScrollChangedListener;
@@ -94,9 +110,27 @@ public class ShareMessageDetailController {
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
 			this.gsid = gsid;
-			share = data.shares.shareMap.get(gid);
-			shareMessage = share.shareMessagesMap.get(gsid);
+			if (data.shares.shareMap.containsKey(gid)) {
+				share = data.shares.shareMap.get(gid);
+				shareMessage = share.shareMessagesMap.get(gsid);
+			} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
+				share = data.shares.new Share();
+				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
+			} else {
+				share = data.shares.new Share();
+				getShareFromServer(gid, gsid);
+			}
 		}
+	}
+
+	public void getShareFromServer(String gid, String gsid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("gsid", gsid);
+		httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_get);
 	}
 
 	public void initializeListeners() {
@@ -385,6 +419,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void finish() {
+		thisView.viewManage.shareMessageDetailView = null;
 		data.tempData.selectedImageList = null;
 	}
 
@@ -408,9 +443,9 @@ public class ShareMessageDetailController {
 		if (requestCode == thisView.shareView.RESULT_SHAREVIEW && resultCode == Activity.RESULT_OK) {
 			String key = result.getStringExtra("key");
 			String type = result.getStringExtra("type");
-			if ("".equals(key) && "".equals(type)) {
+			if (!"".equals(key) && !"".equals(type)) {
 				if ("message".equals(type)) {
-					sendToChat(key);
+					sendToChat(key, result.getStringExtra("sendType"));
 				} else if ("share".equals(type)) {
 					shareToGroup(key);
 				}
@@ -423,7 +458,100 @@ public class ShareMessageDetailController {
 
 	}
 
-	public void sendToChat(String key) {
+	public void sendToChat(String key, String sendType) {
+		sendChatToServer(key, sendType, addChatToLocal(key, sendType));
+	}
 
+	public String addChatToLocal(String key, String sendType) {
+		parser.check();
+		List<String> messagesOrder = data.messages.messagesOrder;
+		String key0 = "";
+		if ("point".equals(sendType)) {
+			key0 = "p" + key;
+			if (data.messages.messagesOrder.contains(key0)) {
+				data.messages.messagesOrder.remove(key0);
+			}
+			messagesOrder.add(0, key0);
+		} else if ("group".equals(sendType)) {
+			key0 = "g" + key;
+			if (data.messages.messagesOrder.contains(key0)) {
+				data.messages.messagesOrder.remove(key0);
+			}
+			messagesOrder.add(0, key0);
+		}
+		data.messages.isModified = true;
+
+		User user = data.userInformation.currentUser;
+		Message message = data.messages.new Message();
+		System.out.println(gid + "^^^^^^^^^^^^^^^^^^^^^^^^^^^" + shareMessage.gsid);
+		MessageShareContent messageContent = subData.new MessageShareContent();
+		messageContent.gid = gid;
+		messageContent.gsid = shareMessage.gsid;
+		messageContent.image = imageContent;
+		messageContent.text = textContent;
+		String content = gson.toJson(messageContent);
+		message.content = content;
+		message.contentType = "share";
+		message.phone = user.phone;
+		message.nickName = user.nickName;
+		message.time = String.valueOf(new Date().getTime());
+		message.status = "sending";
+		message.type = Constant.MESSAGE_TYPE_SEND;
+		if ("group".equals(sendType)) {
+			message.gid = key;
+			message.sendType = "group";
+			message.phoneto = data.relationship.groupsMap.get(key).members.toString();
+			if (data.messages.groupMessageMap == null) {
+				data.messages.groupMessageMap = new HashMap<String, ArrayList<Message>>();
+			}
+			if (data.messages.groupMessageMap.get(key0) == null) {
+				data.messages.groupMessageMap.put(key0, new ArrayList<Message>());
+			}
+			data.messages.groupMessageMap.get(key0).add(message);
+		} else if ("point".equals(sendType)) {
+			message.sendType = "point";
+			message.phoneto = "[\"" + key + "\"]";
+			if (data.messages.friendMessageMap == null) {
+				data.messages.friendMessageMap = new HashMap<String, ArrayList<Message>>();
+			}
+			if (data.messages.friendMessageMap.get(key0) == null) {
+				data.messages.friendMessageMap.put(key0, new ArrayList<Message>());
+			}
+			data.messages.friendMessageMap.get(key0).add(message);
+		}
+
+		return content;
+	}
+
+	public void sendChatToServer(String key, String sendType, String content) {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("sendType", sendType);
+		params.addBodyParameter("contentType", "share");
+		params.addBodyParameter("content", content);
+		if ("group".equals(sendType)) {
+			Group group = data.relationship.groupsMap.get(key);
+			if (group == null) {
+				group = data.relationship.new Group();
+			}
+			params.addBodyParameter("gid", key);
+			params.addBodyParameter("phoneto", gson.toJson(group.members));
+		} else if ("point".equals(sendType)) {
+			List<String> phoneto = new ArrayList<String>();
+			phoneto.add(key);
+			params.addBodyParameter("phoneto", gson.toJson(phoneto));
+			params.addBodyParameter("gid", "");
+		}
+
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
+	}
+
+	public void showTempShare() {
+		shareMessage = data.tempData.tempShareMessageMap.get(gsid);
+		thisView.showShareMessageDetail();
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Data {
@@ -28,6 +29,8 @@ public class Data {
 		public ArrayList<ImageBean> prepareUploadImages;
 
 		public ArrayList<String> prepareDownloadImages;
+
+		public Map<String, ShareMessage> tempShareMessageMap = new HashMap<String, ShareMessage>();
 
 		public ArrayList<String> selectedImageList;
 

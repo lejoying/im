@@ -56,7 +56,7 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			
+
 		}
 	};
 
@@ -475,6 +475,11 @@ public class ResponseHandlers {
 								break;
 							}
 						}
+						if (data.relationship.circlesMap.get("8888888") != null) {
+							if (data.relationship.circlesMap.get("8888888").friends.contains(account.phone)) {
+								isTemp = false;
+							}
+						}
 						if (isTemp) {
 							Friend friend = data.relationship.new Friend();
 							friend.phone = account.phone;
@@ -590,6 +595,32 @@ public class ResponseHandlers {
 				log.e(tag, "---------------------发送成功");
 			}
 		};
+	};
+	public ResponseHandler<String> share_get = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public List<ShareMessage> shareMessages;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("response")) {
+				try {
+					ShareMessage shareMessages = response.shareMessages.get(0);
+					parser.check();
+					data.tempData.tempShareMessageMap.put(shareMessages.gsid, shareMessages);
+					if (viewManage.shareMessageDetailView != null) {
+						viewManage.shareMessageDetailView.thisController.showTempShare();
+					}
+				} catch (Exception e) {
+
+				}
+			} else {
+				System.out.println(response.失败原因 + "====================");
+			}
+		};
+
 	};
 	public ResponseHandler<String> share_getSharesCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
