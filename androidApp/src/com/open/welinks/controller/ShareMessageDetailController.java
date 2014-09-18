@@ -52,11 +52,14 @@ import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.InnerScrollView.OnScrollChangedListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareMessageDetailView;
+import com.open.welinks.view.ViewManage;
 
 public class ShareMessageDetailController {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+
+	public ViewManage viewManage = ViewManage.getInstance();
 
 	public SubData subData = SubData.getInstance();
 
@@ -484,7 +487,6 @@ public class ShareMessageDetailController {
 
 		User user = data.userInformation.currentUser;
 		Message message = data.messages.new Message();
-		System.out.println(gid + "^^^^^^^^^^^^^^^^^^^^^^^^^^^" + shareMessage.gsid);
 		MessageShareContent messageContent = subData.new MessageShareContent();
 		messageContent.gid = gid;
 		messageContent.gsid = shareMessage.gsid;
@@ -525,6 +527,8 @@ public class ShareMessageDetailController {
 	}
 
 	public void sendChatToServer(String key, String sendType, String content) {
+		String orderKay = "";
+
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 
@@ -534,6 +538,7 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("contentType", "share");
 		params.addBodyParameter("content", content);
 		if ("group".equals(sendType)) {
+			orderKay = "g" + key;
 			Group group = data.relationship.groupsMap.get(key);
 			if (group == null) {
 				group = data.relationship.new Group();
@@ -541,14 +546,23 @@ public class ShareMessageDetailController {
 			params.addBodyParameter("gid", key);
 			params.addBodyParameter("phoneto", gson.toJson(group.members));
 		} else if ("point".equals(sendType)) {
+			orderKay = "p" + key;
 			List<String> phoneto = new ArrayList<String>();
 			phoneto.add(key);
 			params.addBodyParameter("phoneto", gson.toJson(phoneto));
 			params.addBodyParameter("gid", "");
 		}
-
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
+
+		if (data.messages.messagesOrder.contains(orderKay)) {
+			data.messages.messagesOrder.remove(orderKay);
+			data.messages.messagesOrder.add(0, orderKay);
+		} else {
+			data.messages.messagesOrder.add(orderKay);
+		}
+		viewManage.messagesSubView.showMessagesSequence();
+
 	}
 
 	public void showTempShare() {
