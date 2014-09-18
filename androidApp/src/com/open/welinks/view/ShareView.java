@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 public class ShareView extends FrameLayout {
 	private Context context;
 	private Activity activity;
-	private ShareMessage shareMessage;
 	private LinearLayout layout_one, layout_two, layout_three;
 	private View square_share, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone;
 
@@ -36,14 +35,6 @@ public class ShareView extends FrameLayout {
 
 	public ShareView(Context context) {
 		super(context);
-		this.context = context;
-		this.activity = (Activity) context;
-		onCreate();
-	}
-
-	public ShareView(Context context, ShareMessage shareMessage) {
-		super(context);
-		this.shareMessage = shareMessage;
 		this.context = context;
 		this.activity = (Activity) context;
 		onCreate();
@@ -119,37 +110,6 @@ public class ShareView extends FrameLayout {
 
 	private void shareToWechat(Status status) {
 		this.status = status;
-
-	}
-
-	public ShareView setShareContent(ShareMessage shareMessage) {
-		this.shareMessage = shareMessage;
-		return this;
-	}
-
-	public void onActivityResult(Intent result) {
-		String key = result.getStringExtra("key");
-		String type = result.getStringExtra("type");
-		if ("".equals(key) && "".equals(type)) {
-			if ("friend".equals(type)) {
-				sendToPerson(key);
-			} else if ("share".equals(type)) {
-				shareToGroup(key);
-			} else if ("message_group".equals(type)) {
-				sendToGroup(key);
-			}
-		}
-	}
-
-	private void shareToGroup(String gid) {
-
-	}
-
-	private void sendToGroup(String gid) {
-
-	}
-
-	private void sendToPerson(String phone) {
 
 	}
 

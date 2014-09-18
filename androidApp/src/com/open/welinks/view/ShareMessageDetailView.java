@@ -203,7 +203,6 @@ public class ShareMessageDetailView {
 		deleteTextOptionView = (TextView) thisActivity.findViewById(R.id.deleteTextOption);
 
 		shareView = new ShareView(thisActivity);
-		shareView.setShareContent(thisController.shareMessage);
 		sharePopupWindow = new PopupWindow(shareView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 
 		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();

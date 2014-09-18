@@ -25,7 +25,7 @@ list-style: none;
 }
 #header{
     width:100%;
-    background: url(/static/image/header-bg.png) no-repeat scroll center center rgba(0, 0, 0, 0);
+    background: url(../image/header-bg.png) no-repeat scroll center center rgba(0, 0, 0, 0);
 }
 #header-body{
 	margin:0 auto;
@@ -39,7 +39,12 @@ list-style: none;
     top:42px;
     width:114px;
     height:114px;
-    background: url(/static/image/liao-logo.png);
+}
+.user-name{color:#d63232;display:block;margin-bottom: 7px;}
+
+#header .h-d-1 img{
+    width:114px;
+    height:114px;
 }
 
 #header .h-d-2{
@@ -65,14 +70,14 @@ list-style: none;
     display:block;
     width: 161px;
     height: 50px;
-    background: url(/static/image/download-normal.png);
+    background: url(../image/download-normal.png);
     
 }
 .h-d-3 a:hover{
     display:block;
     width: 161px;
     height: 50px;
-    background: url(/static/image/download-hover.png);
+    background: url(../image/download-hover.png);
 }
 
 .h-d-3-bottom a{
@@ -83,14 +88,14 @@ list-style: none;
     display:block;
     width: 161px;
     height: 50px;
-    background: url(/static/image/open-normal.png);
+    background: url(../image/open-normal.png);
     
 }
 .h-d-6 a:hover{
     display:block;
     width: 161px;
     height: 50px;
-    background: url(/static/image/open-hover.png);
+    background: url(../image/open-hover.png);
 }
 
 .h-d-6-bottom a{
@@ -115,6 +120,37 @@ list-style: none;
     float: right;
     width:491px;
 }
+.a-r p{
+color:#62a7ed;display:block;margin-bottom: 7px;
+}
+
+background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share.png?0");background-repeat: no-repeat;font-style: normal;
+.icon-boy{text-align:right;background-color:#1dd0ff;padding:0 5px 0 18px;color:#ffffff;background-position:-83px -150px;background-size: 128px auto;border-radius: 3px;}
+.icon-girl{text-align:right;background-color:#ffb4d2;padding:0 5px 0 18px;color:#ffffff;background-position:-83px -150px;background-size: 125px auto;border-radius: 3px;}
+.icon-renren{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-35px -337px;}
+.icon-I1{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:0 0;}
+.icon-I2{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-24px 0;}
+.icon-I3{background-position:-48px 0;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I4{background-position:-72px 0;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I5{background-position:0 -24px;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I6{background-position:-96px 0;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I7{background-position:-48px -24px;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I8{background-position:-72px -24px;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I9{background-position:-96px -24px;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I10{background-position:-96px 0;width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");}
+.icon-I11{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-48px -48px;}
+.icon-vip{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:0 -96px;}
+.icon-vip-year{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-24px -96px;}
+.icon-weibo{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-24px -72px;}
+.icon-weibo-vip{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-48px -72px;}
+.icon-qwb{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-72px -72px;}
+.icon-qwb-vip{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:-96px -72px;}
+.icon-renren{width: 24px;height: 24px;line-height: 24px;background-image: url("http://cdnst.momocdn.com/static/m4/img/share/share_new_08.png?0");background-position:0 -72px;}
+.icon-feed{background-position:-71px -142px;}
+.icon-group{background-position:-106px -142px;}
+.icon-download{width:36px;height:36px;background-position:-141px -283px;position: relative;top: -3px;}
+.icon-download-b{width:36px;height:36px;background-position:-124px -726px;position: relative;top: 2px;}
+.icon-close{width:22px;height:22px;background-position:-177px -0px;}
 
 .a-r .tit-tt{
     //display: block;
@@ -152,7 +188,7 @@ list-style: none;
     font-size: 24px;
 }
 #mask{
-    background: url(/static/image/roomlogo_bg.png);
+    background: url(../image/roomlogo_bg.png);
     width:110px;height:110px;
     position: absolute;
     top:10px;left:15px;
@@ -179,7 +215,7 @@ list-style: none;
     overflow: hidden;
 }
 #footer{
-    background: url(/static/image/roominfo_footer.png);
+    background: url(../image/roominfo_footer.png);
     height: 110px;
     overflow: hidden;
     position: fixed;
@@ -255,5 +291,6 @@ list-style: none;
     vertical-align: middle;
 }
 .none{
+
     display: none;
 }

@@ -401,13 +401,29 @@ public class ShareMessageDetailController {
 
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+	public void onActivityResult(int requestCode, int resultCode, Intent result) {
 		if (thisView.sharePopupWindow.isShowing()) {
 			thisView.sharePopupWindow.dismiss();
 		}
 		if (requestCode == thisView.shareView.RESULT_SHAREVIEW && resultCode == Activity.RESULT_OK) {
-			thisView.shareView.onActivityResult(data2);
+			String key = result.getStringExtra("key");
+			String type = result.getStringExtra("type");
+			if ("".equals(key) && "".equals(type)) {
+				if ("message".equals(type)) {
+					sendToChat(key);
+				} else if ("share".equals(type)) {
+					shareToGroup(key);
+				}
+			}
 		}
+
+	}
+
+	public void shareToGroup(String key) {
+
+	}
+
+	public void sendToChat(String key) {
 
 	}
 }

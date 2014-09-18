@@ -1,7 +1,9 @@
 package com.open.welinks;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -65,6 +67,7 @@ public class GroupListActivity extends Activity {
 	public com.open.welinks.view.ThreeChoicesView.OnItemClickListener mOnThreeChoiceItemClickListener;
 
 	public List<String> groups;
+	public String[] friends;
 	public Map<String, Group> groupsMap;
 	public Map<String, Friend> friendsMap;
 	public GroupListAdapter groupListAdapter;
@@ -94,14 +97,19 @@ public class GroupListActivity extends Activity {
 		initView();
 		initializeListeners();
 		bindEvent();
-
 		initData();
 	}
 
 	private void initData() {
+		friends = new String[] {};
 		parser.check();
 		if (status == Status.friend) {
 			friendsMap = data.relationship.friendsMap;
+			Set<String> friends = new HashSet<String>();
+			for (String circles : data.relationship.circles) {
+				friends.addAll(data.relationship.circlesMap.get(circles).friends);
+			}
+			this.friends = friends.toArray(this.friends);
 		} else {
 			if (status == Status.square) {
 				groups = data.relationship.squares;
@@ -213,14 +221,14 @@ public class GroupListActivity extends Activity {
 						public void onClick(AlertInputDialog dialog) {
 							Intent intent = new Intent();
 							if (status == Status.friend) {
-								intent.putExtra("key", "");
-								intent.putExtra("type", "friend");
+								intent.putExtra("key", friendsMap.get(friends[position]).phone);
+								intent.putExtra("type", "message");
 							} else {
 								intent.putExtra("key", String.valueOf(groupsMap.get(groups.get(position)).gid));
 								if (status == Status.share_group || status == Status.square) {
 									intent.putExtra("type", "share");
 								} else if (status == Status.message_group) {
-									intent.putExtra("type", "message_group");
+									intent.putExtra("type", "message");
 								}
 							}
 							setResult(Activity.RESULT_OK, intent);
@@ -242,13 +250,13 @@ public class GroupListActivity extends Activity {
 	public String getDialogTitle(int position) {
 		String title = "是否分享";
 		if (status == Status.friend) {
-			title += "给好友：" + "XXX" + "?";
+			title += "给好友：【" + friendsMap.get(friends[position]).nickName + "】?";
 		} else if (status == Status.message_group) {
-			title += "给群组：" + groupsMap.get(groups.get(position)).name + "?";
+			title += "给群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.square) {
-			title += "到广场：" + groupsMap.get(groups.get(position)).name + "?";
+			title += "到广场：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.share_group) {
-			title += "到群组：" + groupsMap.get(groups.get(position)).name + "?";
+			title += "到群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		}
 		return title;
 	}
@@ -274,7 +282,7 @@ public class GroupListActivity extends Activity {
 		public int getCount() {
 			int size = 0;
 			if (status == Status.friend) {
-
+				size = friends.length;
 			} else {
 				size = groups.size();
 			}
@@ -285,7 +293,7 @@ public class GroupListActivity extends Activity {
 		public Object getItem(int position) {
 			Object item = null;
 			if (status == Status.friend) {
-
+				item = friends[position];
 			} else {
 				item = groups.get(position);
 			}
@@ -311,7 +319,14 @@ public class GroupListActivity extends Activity {
 				holder = (GroupHolder) convertView.getTag();
 			}
 			if (status == Status.friend) {
-
+				Friend friend = friendsMap.get(friends[position]);
+				holder.headView.setImageBitmap(bitmap);
+				if (friend.alias.equals("")) {
+					holder.nameView.setText(friend.nickName);
+				} else {
+					holder.nameView.setText(friend.alias + "(" + friend.nickName + ")");
+				}
+				holder.descriptionView.setText(friend.mainBusiness);
 			} else {
 				Group group = groupsMap.get(groups.get(position));
 				holder.headView.setImageBitmap(bitmap);

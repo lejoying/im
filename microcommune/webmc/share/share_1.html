@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"></meta>
+
+
+<script>
+var www_url = "http://www.we-links.com";
+var web_url = "http://www.we-links.com";
+</script>
+
+<script type="text/javascript"  src="static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript"  src="static/js/common.js"></script>
+<script type="text/javascript"  src="static/js/roominfo.js"></script>
+
+<script>
+if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+   document.write('<meta name="viewport" content="target-densitydpi=320,width=640,user-scalable=no,maximum-scale=1">');
+}else{
+   document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">');
+}
+</script>
+
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache" />
+
+<link href="static/css/common.css"  rel="stylesheet" type="text/css" media="all" />
+<title>微型公社</title>
+</head>
+<body>
+
+<script>
+var durl	= www_url + '/download/android';
+var is_ios	= 0;
+if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+    durl	= www_url + '/download/iphone';
+    is_ios	= 1;
+}else if(/(Android)/i.test(navigator.userAgent)){
+    durl	= www_url + '/download/android';
+}
+</script>
+
+<div id="header-bg">
+    <div id="header">
+      <div id="header-body">
+			<div class="h-d-1"><img src="static/image/we-links-footer-logo.png"/></div>
+			<div class="h-d-2">微型公社</div>
+			<div class="h-d-4">首款社区群组互动应用</div>
+			<div class="h-d-6"><a class="h-d-6-a" href="http://images2.we-links.com/download/wxgs2.0.apk"></a></div>
+	  </div>		
+    </div>
+</div>
+
+<div id="body" >
+    <div id="room-info">
+	<div class="a" >
+	    <div class="a-l">
+			<div id="mask"></div>
+			<img src="http://r.liao.com/a81259c/2014-09-01_13/b346b/40180/1409548991_761707_center_160_160.jpg" width="110" height="110"/>
+	    </div>
+		<div class="a-r">
+	                <p><span class="user-name">勞資TM想妳時妳TM死了</span></p>
+	                <p><i class="icon-girl">20</i>
+	                    	<i class="icon-vip icon-vip-year"></i>	                    		                    		                    		                    	<span class="time"></span></p>
+	               </div>
+	    
+	    <div class="clear"></div>
+	</div>
+		    <div id="hrdiv"></div>
+			<section class="user-describe">
+                <pre></pre>
+            </section>
+		<div class="photos" >
+	    	</div>
+    </div>
+</div>
+
+<div id="footer-frame">
+    
+</div>
+
+<div id="footer">
+    <div id="footer-div">
+	<ul class="foot-ul">
+	    <li style="margin-left:19px"><img src="static/image/we-links-footer-logo.png"/></li>
+	    <li><span class="memo">首款社区群组互动应用</span></li>
+	</ul>
+	<div class="h-d-6 h-d-6-bottom downcal"><a class="h-d-6-a" href="http://images2.we-links.com/download/wxgs2.0.apk"></a></div>
+	<div class="clear"></div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script>
+
+$(function(){
+    if(isFromMobile())	resize();
+    lazyLoad.Run();
+    if(1||is_ios ||/GT-I9300/.test(navigator.userAgent)){
+
+	window.addEventListener("orientationchange",function(){
+	    setTimeout('resize()',400);
+	},false);
+
+    }
+    window.addEventListener("orientationchange",function(){
+	setTimeout('imgfunc(1)',400);
+    },false);
+    $('.photos img').click(function(){
+	imgfunc.bind(this)();
+    });
+});
+
+</script>

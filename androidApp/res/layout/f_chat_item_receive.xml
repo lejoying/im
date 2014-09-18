@@ -31,6 +31,24 @@
             android:paddingRight="20dp"
             android:paddingTop="15dp" >
 
+            <RelativeLayout
+                android:id="@+id/share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <ImageView
+                    android:id="@+id/share_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" />
+
+                <TextView
+                    android:id="@+id/share_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="60dp" />
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/character"
                 android:layout_width="wrap_content"
