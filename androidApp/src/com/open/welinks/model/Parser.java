@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.os.Environment;
@@ -22,7 +25,7 @@ import com.open.welinks.utils.StreamParser;
 
 public class Parser {
 	String tag = "Parser";
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 
 	public static Parser parser;
 
@@ -213,24 +216,31 @@ public class Parser {
 					data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
 				}
 			} catch (Exception e) {
-				throw e;
+				deleteFile(phone, "localData.js");
 			}
 			try {
 				if (data.relationship == null) {
 					log.e(tag, "**data.relationship is null");
 					String relationshipStr = getFromUserForder(phone, "relationship.js");
+					log.e(phone + "------------------");
 					data.relationship = gson.fromJson(relationshipStr, Relationship.class);
+					data.relationship.circles = checkKeyValue(data.relationship.circles, data.relationship.circlesMap);
+					data.relationship.groups = checkKeyValue(data.relationship.groups, data.relationship.groupsMap);
+					data.relationship.squares = checkKeyValue(data.relationship.squares, data.relationship.groupsMap);
 				}
 			} catch (Exception e) {
-				throw e;
+				log.e(e.toString());
+				data.relationship = data.new Relationship();
+				deleteFile(phone, "relationship.js");
 			}
+
 			try {
 				if (data.messages == null) {
 					String messageContent = getFromUserForder(phone, "message.js");
 					data.messages = gson.fromJson(messageContent, Messages.class);
 				}
 			} catch (Exception e) {
-				throw e;
+				deleteFile(phone, "message.js");
 			}
 			try {
 				if (data.shares == null) {
@@ -238,24 +248,55 @@ public class Parser {
 					data.shares = gson.fromJson(shareContent, Shares.class);
 				}
 			} catch (Exception e) {
-				throw e;
+				deleteFile(phone, "share.js");
 			}
 			try {
 				if (data.event == null) {
 					String eventContent = getFromUserForder(phone, "event.js");
 					data.event = gson.fromJson(eventContent, Event.class);
+					data.event.userEvents = checkKeyValue(data.event.userEvents, data.event.userEventsMap);
+					data.event.groupEvents = checkKeyValue(data.event.groupEvents, data.event.groupEventsMap);
 				}
 			} catch (Exception e) {
-				// throw e;
-
+				log.e(e.toString());
+				deleteFile(phone, "event.js");
 			}
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");
 			e.printStackTrace();
-			data = null;
+			DataUtil.clearData();
+			// data = null;
 		}
 
 		return data;
+	}
+
+	public List<String> checkKeyValue(List<String> list, Map map) {
+		List<String> errorList = new ArrayList<String>();
+		for (int i = 0; i < list.size(); i++) {
+			String key = list.get(i);
+			Object object = map.get(key);
+			if (object == null) {
+				errorList.add(key);
+			}
+		}
+		if (errorList.size() > 0) {
+			list.removeAll(errorList);
+		}
+		return list;
+	}
+
+	public void deleteFile(String phone, String fileName) {
+		File sdFile = Environment.getExternalStorageDirectory();
+		File userForder = new File(sdFile, "welinks/" + phone);
+
+		if (!userForder.exists()) {
+			userForder.mkdirs();
+		}
+		File file = new File(userForder, fileName);
+		if (file.exists()) {
+			file.delete();
+		}
 	}
 
 	public void save() {

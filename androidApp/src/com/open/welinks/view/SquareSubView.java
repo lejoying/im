@@ -376,7 +376,7 @@ public class SquareSubView {
 		mainContentView.setLayoutParams(mainContentParams);
 		squaresListBody = new ListBody1();
 		squaresListBody.initialize(displayMetrics, groupsDialogContent);
-		// setGroupsDialogContent();
+		setSquaresDialogContent();
 	}
 
 	public boolean isShowSquareDialog = false;

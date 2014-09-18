@@ -281,17 +281,17 @@ public class DynamicListActivity extends Activity {
 			String contentType = event.type;
 			holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 			if ("group_addmembers".equals(contentType)) {
-				content = nickName + " 邀请了" + event.content + "个好友到 " + groupName + " 群组中.";
+				content = "【" + nickName + "】 邀请了" + event.content + "个好友到 【" + groupName + "】 群组中.";
 			} else if ("group_removemembers".equals(contentType)) {
-				content = nickName + " 从" + groupName + " 移除了" + event.content + "个好友.";
+				content = "【" + nickName + "】 从【" + groupName + "】 移除了" + event.content + "个好友.";
 			} else if ("group_dataupdate".equals(contentType)) {
-				content = nickName + " 更新了 " + groupName + " 的资料信息.";
+				content = "【" + nickName + "】 更新了 【" + groupName + "】 的资料信息.";
 			} else if ("group_create".equals(contentType)) {
-				content = nickName + "创建了新的群组:" + groupName + ".";
+				content = "【" + nickName + "】创建了新的群组:【" + groupName + "】.";
 			} else if ("group_addme".equals(contentType)) {
-				content = nickName + "把你从添加到群组：" + groupName + ".";
+				content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
 			} else if ("group_removeme".equals(contentType)) {
-				content = nickName + "把你从" + groupName + "群组移除.";
+				content = "【" + nickName + "】把你从【" + groupName + "】群组移除.";
 			}
 			holder.eventContentView.setText(content);
 
@@ -361,7 +361,7 @@ public class DynamicListActivity extends Activity {
 						nickName = event.phone;
 					}
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
-					holder.eventContentView.setText(nickName + "  请求加你为好友!验证信息:" + content);
+					holder.eventContentView.setText("【" + nickName + "】  请求加你为好友!验证信息:" + content);
 					if (event.status.equals("waiting")) {
 						holder.eventOperationView.setVisibility(View.VISIBLE);
 						holder.processedView.setVisibility(View.GONE);
@@ -408,7 +408,7 @@ public class DynamicListActivity extends Activity {
 				} else if ("relation_addfriend".equals(event.type)) {
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.VISIBLE);
-					friend = friendsMap.get(event.phone);
+					friend = friendsMap.get(event.phoneTo);
 					if (event.content != null) {
 						content = event.content;
 					}
@@ -424,6 +424,15 @@ public class DynamicListActivity extends Activity {
 						holder.processedView.setText("等待验证");
 					} else if (event.status.equals("success")) {
 						holder.processedView.setText("已添加");
+					}
+					try {
+						if (data.relationship.circlesMap.get("8888888").friends.contains(event.phoneTo)) {
+							event.status = "success";
+							data.event.isModified = true;
+							holder.processedView.setText("已添加");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				} else if ("account_dataupdate".equals(event.type)) {
 					headFileName = data.userInformation.currentUser.head;

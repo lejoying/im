@@ -4,6 +4,7 @@ import java.util.Random;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -101,7 +102,7 @@ public class PushService extends Service {
 	public void startIMLongPull(String phone, String accessKey) {
 		params.addQueryStringParameter("phone", phone);
 		params.addQueryStringParameter("accessKey", accessKey);
-		connect();
+		startLongPull();
 	}
 
 	public void stopLongPull() {
@@ -152,8 +153,22 @@ public class PushService extends Service {
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			System.out.println("fail---------------------");
-			isRunning = false;
-			connect();
+			checkConnect();
 		};
 	};
+
+	public void checkConnect() {
+		ConnectivityManager conManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		if (conManager.getActiveNetworkInfo() != null) {
+			if (conManager.getActiveNetworkInfo().isAvailable()) {
+				if (isRunning) {
+					connect();
+				}
+			} else {
+				isRunning = false;
+			}
+		} else {
+			isRunning = false;
+		}
+	}
 }

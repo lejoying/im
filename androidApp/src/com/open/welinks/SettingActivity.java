@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.welinks.model.Data;
-import com.open.welinks.model.DataUtil;
 import com.open.welinks.model.Parser;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
@@ -99,12 +98,8 @@ public class SettingActivity extends Activity implements OnClickListener {
 		Alert.createDialog(this).setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？").setOnConfirmClickListener(new AlertInputDialog.OnDialogClickListener() {
 			@Override
 			public void onClick(AlertInputDialog dialog) {
-				data = parser.check();
-				data.userInformation.currentUser.accessKey = "";
-				data.userInformation.isModified = true;
 				setResult(Activity.RESULT_OK);
 				finish();
-				DataUtil.clearData();
 			}
 		}).show();
 

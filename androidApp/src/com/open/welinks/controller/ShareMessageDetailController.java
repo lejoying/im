@@ -29,6 +29,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.ImageScanActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
@@ -315,7 +316,7 @@ public class ShareMessageDetailController {
 					String content = tagContent.substring(index + 1);
 					if ("ShareMessageDetailImage".equals(type)) {
 						data.tempData.selectedImageList = thisView.showImages;
-						Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+						Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 						intent.putExtra("position", content);
 						intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_COMMON);
 						thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE);

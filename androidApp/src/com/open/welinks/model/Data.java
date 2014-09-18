@@ -35,6 +35,8 @@ public class Data {
 		public ArrayList<String> selectedImageList;
 
 		public List<String> praiseusersList;
+		
+		public List<ShareMessage> tempShares;
 
 		public Friend tempFriend;
 

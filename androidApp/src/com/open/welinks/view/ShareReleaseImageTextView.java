@@ -139,7 +139,7 @@ public class ShareReleaseImageTextView {
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
 			imageBody.imageView.setTag(i);
 			imageBody.imageView.setOnClickListener(thisController.monClickListener);
-			// imageBody.imageView.setOnTouchListener(thisController.mScrollOnTouchListener);
+			imageBody.imageView.setOnTouchListener(thisController.mScrollOnTouchListener);
 		}
 		myScrollImageBody.contentView.setOnTouchListener(thisController.onTouchListener);
 	}

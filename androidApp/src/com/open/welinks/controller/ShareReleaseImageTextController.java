@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.model.API;
@@ -124,7 +125,7 @@ public class ShareReleaseImageTextController {
 
 				@Override
 				public boolean onSingleTapUp(MotionEvent e) {
-					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 					intent.putExtra("position", "0");
 					intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_OPTION);
 					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
@@ -169,7 +170,7 @@ public class ShareReleaseImageTextController {
 
 				@Override
 				public boolean onSingleTapUp(MotionEvent e) {
-					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 					intent.putExtra("position", "0");
 					intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_OPTION);
 					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
@@ -211,7 +212,7 @@ public class ShareReleaseImageTextController {
 				} else if (view.getTag() != null) {
 					// selected images onclick handle
 					Log.e(tag, view.getTag().toString() + "------------------current");
-					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 					intent.putExtra("position", view.getTag().toString());
 					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
 				}

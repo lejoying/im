@@ -121,11 +121,21 @@ public class SharePraiseusersView {
 			headparams.width = (int) (40 * screenDensity + 0.5f);
 			headparams.height = (int) (40 * screenDensity + 0.5f);
 
-			fileHandlers.getHeadImage(friend.head, holder.head, options);
-
-			holder.name.setText(friend.nickName);
-
-			holder.sign.setText(friend.mainBusiness);
+			String fileName = "";
+			if (friend != null) {
+				fileName = friend.head;
+			}
+			fileHandlers.getHeadImage(fileName, holder.head, options);
+			String nickName = thisController.praiseusersList.get(position);
+			if (friend != null) {
+				nickName = friend.nickName;
+			}
+			holder.name.setText(nickName);
+			String mainBusiness = "";
+			if (friend != null) {
+				mainBusiness = friend.mainBusiness;
+			}
+			holder.sign.setText(mainBusiness);
 
 			return convertView;
 		}

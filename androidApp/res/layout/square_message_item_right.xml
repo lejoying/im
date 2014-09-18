@@ -12,8 +12,8 @@
     <com.open.lib.TouchImageView
         android:layout_width="360dp"
         android:layout_height="115dp"
-        android:visibility="gone"
-        android:background="@drawable/square_message_background" />
+        android:background="@drawable/square_message_background"
+        android:visibility="gone" />
 
     <com.open.lib.TouchTextView
         android:id="@+id/messageContent"
@@ -22,9 +22,10 @@
         android:layout_gravity="right"
         android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
         android:lines="2"
         android:text="“停车做爱枫林晚 ， 霜叶红叶二月红”"
-        android:textColor="#99000000"
+        android:textColor="#fff"
         android:textSize="16sp" />
 
     <com.open.lib.TouchTextView
@@ -36,7 +37,7 @@
         android:layout_marginRight="20dp"
         android:gravity="right"
         android:text="Lucy and Luly"
-        android:textColor="#99000000"
+        android:textColor="#fff"
         android:textSize="18sp" />
 
 </com.open.lib.TouchView>
