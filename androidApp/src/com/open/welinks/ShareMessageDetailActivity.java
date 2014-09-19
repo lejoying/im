@@ -35,8 +35,8 @@ public class ShareMessageDetailActivity extends Activity {
 		this.thisController.thisView = this.thisView;
 
 		thisController.initData();
-		thisController.initializeListeners();
 		thisView.initView();
+		thisController.initializeListeners();
 		thisController.bindEvent();
 	}
 

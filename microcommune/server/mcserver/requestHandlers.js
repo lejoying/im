@@ -19,16 +19,14 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     var operation = pathObject["operation"];
     if (operation == "verifyphone") {
         accountManage.verifyphone(data, response);
-    }else if (operation == "verifycode") {
+    } else if (operation == "verifycode") {
         accountManage.verifycode(data, response, setOauthAccessKey);
     }
     else if (operation == "auth") {
         accountManage.auth(data, response, setOauthAccessKey);
     }
     else if (operation == "get") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            accountManage.get(data, response);
-        });
+        accountManage.get(data, response);
     }
     else if (operation == "modify") {
         oauth6(data.phone, data.accessKey, response, function () {
@@ -52,11 +50,11 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             accountManage.getuserinfomation(data, response);
         });
-    }else if(operation == "modifylocation"){
+    } else if (operation == "modifylocation") {
         oauth6(data.phone, data.accessKey, response, function () {
             accountManage.modifylocation(data, response);
         });
-    }else if (operation == "modifypassword") {
+    } else if (operation == "modifypassword") {
         accountManage.modifypassword(data, response, setOauthAccessKey);
     }
 }
@@ -320,9 +318,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         });
     }
     else if (operation == "getshare") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.getshare(data, response);
-        });
+        shareManage.getshare(data, response);
     }
     else if (operation == "modifyvote") {
         oauth6(data.phone, data.accessKey, response, function () {

@@ -37,6 +37,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.SubData;
+import com.open.welinks.model.Data.Shares;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
@@ -46,12 +47,14 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData.MessageShareContent;
+import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.InnerScrollView.OnScrollChangedListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareMessageDetailView;
+import com.open.welinks.view.ShareView.onWeChatClickListener;
 import com.open.welinks.view.ViewManage;
 
 public class ShareMessageDetailController {
@@ -83,6 +86,7 @@ public class ShareMessageDetailController {
 	public OnTouchListener mOnTouchListener;
 	public OnDownloadListener downloadListener;
 	public TextWatcher textWatcher;
+	public onWeChatClickListener mOnWeChatClickListener;
 
 	public int IMAGEBROWSE_REQUESTCODE = 0x01;
 
@@ -99,6 +103,8 @@ public class ShareMessageDetailController {
 	public int initialHeight;
 
 	public String gid;
+
+	public Bitmap WeChatBitmap;
 
 	public ShareMessageDetailController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -344,6 +350,12 @@ public class ShareMessageDetailController {
 			}
 
 		};
+		mOnWeChatClickListener = thisView.shareView.new onWeChatClickListener() {
+			@Override
+			public void onWeChatClick() {
+				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, gid, gsid);
+			}
+		};
 	}
 
 	public void bindEvent() {
@@ -363,6 +375,8 @@ public class ShareMessageDetailController {
 		thisView.shareView.setOnClickListener(mOnClickListener);
 
 		thisView.commentEditTextView.addTextChangedListener(textWatcher);
+
+		thisView.shareView.setOnWeChatClickListener(mOnWeChatClickListener);
 
 	}
 
@@ -459,7 +473,58 @@ public class ShareMessageDetailController {
 	}
 
 	public void shareToGroup(String key) {
+		parser.check();
+		if (data.shares == null) {
+			data.shares = data.new Shares();
+		}
+		if (data.shares.shareMap.get(key) == null) {
+			Share share = data.shares.new Share();
+			data.shares.shareMap.put(key, share);
+		}
+		long time = new Date().getTime();
+		Share share = data.shares.shareMap.get(key);
 
+		ShareMessage shareMessage = share.new ShareMessage();
+		shareMessage.content = this.shareMessage.content;
+		shareMessage.type = this.shareMessage.type;
+		shareMessage.nickName = currentUser.nickName;
+		shareMessage.head = currentUser.head;
+		shareMessage.phone = currentUser.phone;
+		shareMessage.gsid = currentUser.phone + "_" + time;
+		shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
+		shareMessage.time = time;
+		shareMessage.status = "sending";
+
+		share.shareMessagesOrder.add(0, shareMessage.gsid);
+		share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+		data.shares.isModified = true;
+
+		if (data.relationship.squares.contains(key)) {
+			viewManage.mainView.squareSubView.showSquareMessages();
+		} else {
+			viewManage.mainView.shareSubView.showShareMessages();
+		}
+
+		sendShareToServer(key, shareMessage.content, shareMessage.gsid);
+
+	}
+
+	public void sendShareToServer(String key, String content, String gsid) {
+		SendShareMessage sendShareMessage = subData.new SendShareMessage();
+		sendShareMessage.type = "imagetext";
+		sendShareMessage.content = content;
+
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", key);
+		params.addBodyParameter("ogsid", gsid);
+		params.addBodyParameter("message", gson.toJson(sendShareMessage));
+
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
 	}
 
 	public void sendToChat(String key, String sendType) {

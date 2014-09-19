@@ -16,4 +16,9 @@ public class SubData {
 		public String image;
 		public String text;
 	}
+
+	public class SendShareMessage {
+		public String type;// imagetext voicetext vote
+		public String content;
+	}
 }

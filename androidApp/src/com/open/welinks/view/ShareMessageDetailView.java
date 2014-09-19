@@ -51,6 +51,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.view.ShareView.onWeChatClickListener;
 
 public class ShareMessageDetailView {
 
@@ -299,6 +300,9 @@ public class ShareMessageDetailView {
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						if (thisController.WeChatBitmap == null) {
+							thisController.WeChatBitmap = loadedImage;
+						}
 						int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
 						LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
 						imageView.setLayoutParams(params);
@@ -334,7 +338,11 @@ public class ShareMessageDetailView {
 		// praiseUserContentView.setBackgroundColor(Color.RED);
 		List<String> praiseUsers = thisController.shareMessage.praiseusers;
 
-		int headWidth = (int) (((screenWidth - 40 * screenDensity) / 2.7) * 2.2) / 5;// praiseUserContentView.getWidth() / 5 - 5;
+		int headWidth = (int) (((screenWidth - 40 * screenDensity) / 2.7) * 2.2) / 5;// praiseUserContentView.getWidth()
+																						// /
+																						// 5
+																						// -
+																						// 5;
 		int headHeight = (int) (40 * screenDensity);
 		int padding = (int) (5 * screenDensity);
 		praiseusersNumView.setText("共获得" + praiseUsers.size() + "个赞");
