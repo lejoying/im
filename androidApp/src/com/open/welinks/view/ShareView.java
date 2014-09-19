@@ -102,10 +102,10 @@ public class ShareView extends FrameLayout {
 		Intent intent = new Intent(activity, GroupListActivity.class);
 		if (status == Status.friend_group) {
 			intent.putExtra("type", "message");
+			this.activity.startActivityForResult(intent, RESULT_SHAREVIEW);
 		} else if (status == Status.square_group) {
 			intent.putExtra("type", "share");
 		}
-		this.activity.startActivityForResult(intent, RESULT_SHAREVIEW);
 	}
 
 	private void shareToWechat(Status status) {
