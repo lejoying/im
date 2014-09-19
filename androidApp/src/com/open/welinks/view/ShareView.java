@@ -6,10 +6,12 @@ import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.utils.WeChatShareUtils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +25,12 @@ public class ShareView extends FrameLayout {
 	private LinearLayout layout_one, layout_two, layout_three;
 	private View square_share, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone;
 
-	public int RESULT_SHAREVIEW = 0x99;
+	private WeChatShareUtils weChatShareUtils;
 
-	private Status status;
+	private onWeChatClickListener mWeChatClickListener;
+	private Bitmap bitmap;
+	private String content, phone, gid, gsid;
+	public int RESULT_SHAREVIEW = 0x99;
 
 	private enum Status {
 		square_group, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone
@@ -54,8 +59,27 @@ public class ShareView extends FrameLayout {
 		onCreate();
 	}
 
+	public class onWeChatClickListener {
+		public void onWeChatClick() {
+		}
+	}
+
+	public void setOnWeChatClickListener(onWeChatClickListener mListener) {
+		this.mWeChatClickListener = mListener;
+	}
+
+	public void setWeChatContent(Bitmap bitmap, String content, String phone, String gid, String gsid) {
+		this.bitmap = bitmap;
+		this.content = content;
+		this.phone = phone;
+		this.gid = gid;
+		this.gsid = gsid;
+	}
+
 	private void onCreate() {
 		LayoutInflater.from(context).inflate(R.layout.layout_share, this);
+
+		weChatShareUtils = WeChatShareUtils.getInstance(context);
 
 		layout_one = (LinearLayout) this.findViewById(R.id.layout_one);
 		layout_two = (LinearLayout) this.findViewById(R.id.layout_two);
@@ -77,8 +101,10 @@ public class ShareView extends FrameLayout {
 				} else if (view.equals(friend_group)) {
 					shareToLocal(Status.friend_group);
 				} else if (view.equals(wechat_friend)) {
+					mWeChatClickListener.onWeChatClick();
 					shareToWechat(Status.wechat_friend);
 				} else if (view.equals(wechat_circle)) {
+					mWeChatClickListener.onWeChatClick();
 					shareToWechat(Status.wechat_circle);
 				} else if (view.equals(sina_weibo)) {
 
@@ -89,6 +115,8 @@ public class ShareView extends FrameLayout {
 			}
 		};
 
+		mWeChatClickListener = new onWeChatClickListener();
+
 		square_share.setOnClickListener(mOnClickListener);
 		friend_group.setOnClickListener(mOnClickListener);
 		wechat_friend.setOnClickListener(mOnClickListener);
@@ -98,19 +126,21 @@ public class ShareView extends FrameLayout {
 	}
 
 	private void shareToLocal(Status status) {
-		this.status = status;
 		Intent intent = new Intent(activity, GroupListActivity.class);
 		if (status == Status.friend_group) {
 			intent.putExtra("type", "message");
-			this.activity.startActivityForResult(intent, RESULT_SHAREVIEW);
 		} else if (status == Status.square_group) {
 			intent.putExtra("type", "share");
 		}
+		this.activity.startActivityForResult(intent, RESULT_SHAREVIEW);
 	}
 
 	private void shareToWechat(Status status) {
-		this.status = status;
+		if (status == Status.wechat_friend) {
+			weChatShareUtils.shareMessageToWXFriends(bitmap, content, phone, gid, gsid);
+		} else if (status == Status.wechat_circle) {
+			weChatShareUtils.shareMessageToWXMoments(bitmap, content, phone, gid, gsid);
+		}
 
 	}
-
 }

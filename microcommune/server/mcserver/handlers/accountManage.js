@@ -327,7 +327,7 @@ accountManage.verifycode = function (data, response, next) {
 /***************************************
  *     URL：/api2/account/modifypassword
  ***************************************/
-accountManage.modifypassword=function(data, response, next){
+accountManage.modifypassword = function (data, response, next) {
     response.asynchronous = 1;
     var phone = data.phone;
     var password = data.password;
@@ -363,7 +363,7 @@ accountManage.modifypassword=function(data, response, next){
                 console.error(error);
                 return;
             } else {
-                var accountNode=results.pop().account;
+                var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 if (password != undefined && password != null && password != "") {
                     accountData.password = password.toLowerCase();
@@ -525,10 +525,9 @@ accountManage.exit = function (data, response, next) {
 accountManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    var accessKey = data.accessKey;
     console.log(phone);
     var target = data.target;
-    var arr = [phone, accessKey, target];
+    var arr = [phone, target];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         target = JSON.parse(target);
         getAccountNode(target);

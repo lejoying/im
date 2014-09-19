@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
@@ -93,6 +94,7 @@ public class ShareReleaseImageTextController {
 
 	public String type, gid, gtype;
 
+
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -107,9 +109,11 @@ public class ShareReleaseImageTextController {
 			sdcardThumbnailFolder = fileHandlers.sdcardSquareThumbnailFolder;
 		} else {
 			sdcardThumbnailFolder = fileHandlers.sdcardThumbnailFolder;
-			// showImageHeight = (int) (thisView.displayMetrics.widthPixels * imageHeightScale);
+			// showImageHeight = (int) (thisView.displayMetrics.widthPixels *
+			// imageHeightScale);
 		}
 		data.tempData.selectedImageList = null;
+		
 	}
 
 	public OnTouchListener mScrollOnTouchListener;
@@ -288,7 +292,12 @@ public class ShareReleaseImageTextController {
 
 					@Override
 					public void run() {
-						viewManage.mainView.squareSubView.showSquareMessages();
+						if ("square".equals(gtype)) {
+							viewManage.mainView.squareSubView.showSquareMessages();
+						}
+						if ("share".equals(gtype)) {
+							viewManage.mainView.shareSubView.showShareMessages();
+						}
 					}
 				});
 				// server
