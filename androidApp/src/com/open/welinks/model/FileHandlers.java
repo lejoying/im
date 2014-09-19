@@ -1,12 +1,19 @@
 package com.open.welinks.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Hashtable;
 import java.util.Map;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -18,8 +25,11 @@ import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.OnDownloadListener;
+import com.open.welinks.utils.StreamParser;
 
 public class FileHandlers {
+
+	public String tag = "FileHandlers";
 
 	public static FileHandlers fileHandlers;
 
@@ -164,5 +174,107 @@ public class FileHandlers {
 		});
 		// System.out.println("--------------000------" + onDownloadListener);
 		downloadFileList.addDownloadFile(downloadFile);
+	}
+
+	// TODO file deal with
+	public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+			if (width > height) {
+				inSampleSize = Math.round((float) height / (float) reqHeight);
+			} else {
+				inSampleSize = Math.round((float) width / (float) reqWidth);
+			}
+		}
+		return inSampleSize;
+	}
+
+	public ByteArrayOutputStream decodeSampledBitmapFromFileInputStream(File file, int reqWidth, int reqHeight) throws FileNotFoundException {
+		FileInputStream fileInputStream = new FileInputStream(file);
+
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(fileInputStream, null, options);
+
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		options.inJustDecodeBounds = false;
+		FileInputStream fileInputStream1 = new FileInputStream(file);
+		Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+		bitmap.recycle();
+		return byteArrayOutputStream;
+	}
+
+	public ByteArrayOutputStream decodeSnapBitmapFromFileInputStream(File file, float reqWidth, float reqHeight) throws FileNotFoundException {
+		FileInputStream fileInputStream = new FileInputStream(file);
+
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(fileInputStream, null, options);
+
+		options.inSampleSize = calculateInSampleSize(options, (int) reqWidth, (int) reqHeight);
+
+		options.inJustDecodeBounds = false;
+		FileInputStream fileInputStream1 = new FileInputStream(file);
+		Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
+		float ratio = reqWidth / reqHeight;
+		if (options.outHeight < reqHeight) {
+			reqHeight = options.outHeight;
+			if (reqHeight * ratio < reqWidth) {
+				reqWidth = reqHeight * ratio;
+			}
+		}
+		if (options.outWidth < reqWidth) {
+			reqWidth = options.outWidth;
+			if (reqWidth / ratio < reqHeight) {
+				reqHeight = reqWidth / ratio;
+			}
+		}
+
+		Bitmap snapbitmap = Bitmap.createBitmap(bitmap, 0, 0, (int) reqWidth, (int) reqHeight);
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		snapbitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+		bitmap.recycle();
+		snapbitmap.recycle();
+		return byteArrayOutputStream;
+	}
+
+	public byte[] getImageFileBytes(File fromFile, int width, int height) {
+		byte[] bytes;
+		long fileLength = fromFile.length();
+		try {
+			if (fileLength > 400 * 1024) {
+				ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, width, height);
+				bytes = byteArrayOutputStream.toByteArray();
+			} else {
+				FileInputStream fileInputStream = new FileInputStream(fromFile);
+				bytes = StreamParser.parseToByteArray(fileInputStream);
+				fileInputStream.close();
+			}
+			return bytes;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void makeImageThumbnail(File fromFile, int showImageWidth, int showImageHeight, File toSnapFile, String fileName) {
+		try {
+			ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, showImageHeight);
+			byte[] snapBytes = snapByteStream.toByteArray();
+			FileOutputStream toSnapFileOutputStream = new FileOutputStream(toSnapFile);
+			Log.d(tag, "file saved to " + fileName);
+			StreamParser.parseToFile(snapBytes, toSnapFileOutputStream);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }

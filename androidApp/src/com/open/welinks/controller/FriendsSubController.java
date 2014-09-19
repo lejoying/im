@@ -20,6 +20,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.viewbody.BodyCallback;
+import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
@@ -67,12 +68,25 @@ public class FriendsSubController {
 
 			@Override
 			public void onClick(View view) {
-				Friend friend = null;
-				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
+				if (view.equals(thisView.goInfomationView)) {
+					String phone = (String) view.getTag(R.id.tag_first);
+					Intent intent = new Intent(thisView.mainView.thisActivity, BusinessCardActivity.class);
+					intent.putExtra("key", phone);
+					intent.putExtra("type", "point");
+					thisView.mainView.thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.goChatView)) {
+					String phone = (String) view.getTag(R.id.tag_first);
 					Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
-					intent.putExtra("id", friend.phone);
+					intent.putExtra("id", phone);
 					intent.putExtra("type", "point");
 					thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
+				} else if (view.equals(thisView.userCardMainView)) {
+					thisView.dismissUserCardDialogView();
+				}
+				Friend friend = null;
+				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
+					thisView.setSmallBusinessCardContent(friend);
+					thisView.showUserCardDialogView();
 				}
 			}
 		};
@@ -133,7 +147,9 @@ public class FriendsSubController {
 
 	public void bindEvent() {
 		thisView.friendListBody.bodyCallback = this.bodyCallback;
-
+		thisView.goInfomationView.setOnClickListener(mOnClickListener);
+		thisView.goChatView.setOnClickListener(mOnClickListener);
+		thisView.userCardMainView.setOnClickListener(mOnClickListener);
 	}
 
 	public void onLongPress(MotionEvent event) {
@@ -298,6 +314,5 @@ public class FriendsSubController {
 				}
 			}
 		}).show();
-
 	}
 }

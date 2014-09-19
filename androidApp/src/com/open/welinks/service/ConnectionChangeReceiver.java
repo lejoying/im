@@ -10,7 +10,7 @@ public class ConnectionChangeReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		ConnectivityManager conManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+		ConnectivityManager conManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (conManager.getActiveNetworkInfo() != null) {
 			if (conManager.getActiveNetworkInfo().isAvailable()) {
 				if (!PushService.isRunning) {

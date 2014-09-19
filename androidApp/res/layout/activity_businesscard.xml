@@ -171,6 +171,28 @@
                         android:textColor="#fff"
                         android:textSize="15sp" />
                 </LinearLayout>
+                  <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
+
+                    <TextView
+                        android:id="@+id/creattime_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="距离:  "
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0km"
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView

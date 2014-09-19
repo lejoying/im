@@ -1,8 +1,10 @@
 package com.open.welinks.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.Header;
 
@@ -43,6 +45,10 @@ public class ResponseHandlers {
 
 	public static ResponseHandlers responseHandlers;
 
+	public Gson gson = new Gson();
+
+	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+
 	public static ResponseHandlers getInstance() {
 		if (responseHandlers == null) {
 			responseHandlers = new ResponseHandlers();
@@ -51,6 +57,8 @@ public class ResponseHandlers {
 	}
 
 	public HttpClient httpClient = HttpClient.getInstance();
+
+	// TODO Account
 
 	public ResponseHandler<String> auth = httpClient.new ResponseHandler<String>() {
 
@@ -152,145 +160,6 @@ public class ResponseHandlers {
 			}
 		};
 	};
-
-	Gson gson = new Gson();
-
-	public ResponseHandler<String> getIntimateFriends = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public Relationship relationship;
-
-		}
-
-		@Override
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取密友圈成功")) {
-				log.e(tag, "获取密友圈成功");
-				data.relationship.circles = response.relationship.circles;
-				data.relationship.circlesMap = response.relationship.circlesMap;
-				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
-
-				data.relationship.isModified = true;
-			}
-			if (data.localStatus.debugMode.equals("NONE")) {
-				// viewManage.postNotifyView("UserIntimateView");
-				log.e(tag, "刷新好友分组");
-				viewManage.mainView.friendsSubView.showCircles();
-			}
-		}
-	};
-
-	public ResponseHandler<String> upload = httpClient.new ResponseHandler<String>() {
-		@Override
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			log.e(tag, responseInfo + "-------------");
-			Header[] headers = responseInfo.getAllHeaders();
-			for (int i = 0; i < headers.length; i++) {
-				log.e(tag, "reply upload: " + headers[i]);
-			}
-		}
-	};
-
-	public ResponseHandler<String> checkFile = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public String filename;
-			public boolean exists;
-			public String signature;
-			public long expires;
-			public String OSSAccessKeyId;
-
-		}
-
-		@Override
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			log.e(tag, responseInfo.result);
-			if (response.提示信息.equals("查找成功")) {
-				if (response.exists) {
-
-				} else if (!response.exists) {
-					log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
-					Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
-				}
-			}
-		}
-	};
-
-	public ResponseHandler<String> message_sendMessageCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			// public String 失败原因;
-			public long time;
-			// public String sendType;
-			// public String gid;
-			// public String phoneto;
-		}
-
-		@Override
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("发送成功")) {
-				// if ("point".equals(response.sendType)) {
-				// //
-				// data.messages.friendMessageMap.get(response.phoneto).get(0).time
-				// = String.valueOf(response.time);
-				// } else if ("group".equals(response.sendType)) {
-				// //
-				// data.messages.groupMessageMap.get(response.gid).get(0).time =
-				// String.valueOf(response.time);
-				// }
-			}
-		};
-	};
-
-	// All groups of the current user
-	public ResponseHandler<String> getGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public Relationship relationship;
-		}
-
-		@Override
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取群组成员成功")) {
-				data.relationship.groups = response.relationship.groups;
-				data.relationship.groupsMap.putAll(response.relationship.groupsMap);
-				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
-				data.relationship.isModified = true;
-				// init current share
-				String gid = "";
-				if (response.relationship.groups.size() != 0) {
-					gid = response.relationship.groups.get(0);
-				} else {
-					gid = "";
-					data.localStatus.localData.currentSelectedGroup = gid;
-				}
-				if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
-					if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
-						data.localStatus.localData.currentSelectedGroup = gid;
-					}
-				} else {
-					data.localStatus.localData.currentSelectedGroup = gid;
-				}
-				// Set the option group dialog content
-				log.e(tag, data.relationship.groups.toString());
-				if (!gid.equals("")) {
-					viewManage.mainView.shareSubView.showShareMessages();
-					viewManage.mainView.shareSubView.showGroupMembers();
-					viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
-				}
-				viewManage.mainView.shareSubView.setGroupsDialogContent();
-				viewManage.postNotifyView("GroupListActivity");
-			}
-		};
-	};
-
 	public ResponseHandler<String> account_modify = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
@@ -302,6 +171,8 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("修改用户信息成功")) {
 				if (viewManage.loginView != null) {
 					viewManage.loginView.thisController.modifyUserPasswordCallBack();
+				} else {
+					lbsHandlers.uplodUserLbsData();
 				}
 			} else {
 				viewManage.loginView.thisController.loginFail(response.失败原因);
@@ -514,6 +385,384 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> modifyCircleSequenceCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改分组顺序成功")) {
+				log.e(tag, "---------------------修改分组顺序成功");
+				viewManage.mainView.friendsSubView.showCircles();
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+
+	public RequestCallBack<String> modifyGroupSequenceCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改群组顺序成功")) {
+				log.e(tag, "---------------------修改群组顺序成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+
+	// TODO Relationship
+
+	public ResponseHandler<String> getIntimateFriends = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Relationship relationship;
+
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取密友圈成功")) {
+				log.e(tag, "获取密友圈成功");
+				List<String> circles = response.relationship.circles;
+				data.relationship.circles = circles;
+				Map<String, Circle> circlesMap = response.relationship.circlesMap;
+				data.relationship.circlesMap = circlesMap;
+				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+				if (data.relationship.friends == null) {
+					data.relationship.friends = new ArrayList<String>();
+				} else {
+					data.relationship.friends.clear();
+				}
+				for (int i = 0; i < circles.size(); i++) {
+					Circle circle = circlesMap.get(circles.get(i));
+					data.relationship.friends.addAll(circle.friends);
+				}
+				Set<String> set = new LinkedHashSet<String>();
+				set.addAll(data.relationship.friends);
+				data.relationship.friends.clear();
+				data.relationship.friends.addAll(set);
+
+				data.relationship.isModified = true;
+			}
+			if (data.localStatus.debugMode.equals("NONE")) {
+				// viewManage.postNotifyView("UserIntimateView");
+				log.e(tag, "刷新好友分组");
+				viewManage.mainView.friendsSubView.showCircles();
+			}
+		}
+	};
+	public RequestCallBack<String> getaskfriendsCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public List<Friend> accounts;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取好友请求成功")) {
+					if (response.accounts.size() > 0) {
+						viewManage.postNotifyView("DynamicListActivity");
+					}
+					log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
+				} else {
+					log.e(tag, "---------------------" + response.失败原因);
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+		};
+	};
+	public RequestCallBack<String> addFriendAgreeCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("添加成功")) {
+				log.e(tag, "---------------------添加好友成功");
+				DataUtil.getIntimateFriends();
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	// TODO Upload
+
+	public ResponseHandler<String> upload = httpClient.new ResponseHandler<String>() {
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			log.e(tag, responseInfo + "-------------");
+			Header[] headers = responseInfo.getAllHeaders();
+			for (int i = 0; i < headers.length; i++) {
+				log.e(tag, "reply upload: " + headers[i]);
+			}
+		}
+	};
+
+	public ResponseHandler<String> checkFile = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String filename;
+			public boolean exists;
+			public String signature;
+			public long expires;
+			public String OSSAccessKeyId;
+
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			log.e(tag, responseInfo.result);
+			if (response.提示信息.equals("查找成功")) {
+				if (response.exists) {
+
+				} else if (!response.exists) {
+					log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
+					Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
+				}
+			}
+		}
+	};
+	public ResponseHandler<String> relation_modifyAlias = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改备注成功")) {
+				log.e(tag, "---------------------修改备注成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+
+	};
+	public ResponseHandler<String> relation_deletefriend = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("删除成功")) {
+				log.e(tag, "---------------------删除成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public ResponseHandler<String> relation_addfriend = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("发送请求成功")) {
+				log.e(tag, "---------------------发送请求成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	// TODO Message
+
+	public ResponseHandler<String> message_sendMessageCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			// public String 失败原因;
+			public long time;
+			// public String sendType;
+			// public String gid;
+			// public String phoneto;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("发送成功")) {
+				// if ("point".equals(response.sendType)) {
+				// //
+				// data.messages.friendMessageMap.get(response.phoneto).get(0).time
+				// = String.valueOf(response.time);
+				// } else if ("group".equals(response.sendType)) {
+				// //
+				// data.messages.groupMessageMap.get(response.gid).get(0).time =
+				// String.valueOf(response.time);
+				// }
+			}
+		};
+	};
+	public RequestCallBack<String> getMessageCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String flag;
+			public List<Message> messages;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取成功")) {
+					log.e(tag, "---------------------获取消息成功");
+					List<Message> messages = response.messages;
+					parser.check();
+					data.userInformation.currentUser.flag = response.flag;
+					data.messages.isModified = true;
+					for (int i = 0; i < messages.size(); i++) {
+						Message message = messages.get(i);
+						String sendType = message.sendType;
+						if ("event".equals(sendType)) {
+							if (!data.event.userEvents.contains(message)) {
+								responseEventHandlers.handleEvent(message);
+							}
+						} else if ("point".equals(sendType)) {
+							List<String> phones = gson.fromJson(message.phoneto, new TypeToken<List<String>>() {
+							}.getType());
+							ArrayList<Message> friendMessages = data.messages.friendMessageMap.get(phones.get(0));
+							if (friendMessages == null) {
+								friendMessages = new ArrayList<Message>();
+								data.messages.friendMessageMap.put(phones.get(0), friendMessages);
+							}
+							if (!friendMessages.contains(message)) {
+								friendMessages.add(message);
+							}
+						} else if ("group".equals(sendType)) {
+							ArrayList<Message> groupMessages = data.messages.friendMessageMap.get(message.gid);
+							if (groupMessages == null) {
+								groupMessages = new ArrayList<Message>();
+								data.messages.friendMessageMap.put(message.gid, groupMessages);
+							}
+							if (!groupMessages.contains(message)) {
+								groupMessages.add(message);
+							}
+						}
+					}
+				} else {
+					log.e(tag, "---------------------" + response.失败原因);
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+		};
+	};
+	// TODO Group
+	public RequestCallBack<String> group_create = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String tempGid;
+			public String address;
+			public Group group;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("创建群组成功")) {
+				data = parser.check();
+				data.relationship.groups.remove(response.tempGid);
+				Group tempGroup = data.relationship.groupsMap.remove(response.tempGid);
+				String key = String.valueOf(response.group.gid);
+				Group group = response.group;
+				Group currentGroup = null;
+				if (data.relationship.groups.contains(key)) {
+					currentGroup = data.relationship.groupsMap.get(key);
+					currentGroup.icon = group.icon;
+					currentGroup.name = group.name;
+					currentGroup.longitude = group.longitude;
+					currentGroup.latitude = group.latitude;
+					currentGroup.description = group.description;
+					currentGroup.background = group.background;
+				} else {
+					data.relationship.groups.add(key);
+					currentGroup = null;
+					if (tempGroup != null) {
+						currentGroup = tempGroup;
+					} else {
+						currentGroup = data.relationship.new Group();
+					}
+					currentGroup.gid = response.group.gid;
+					currentGroup.icon = group.icon;
+					currentGroup.name = group.name;
+					currentGroup.longitude = group.longitude;
+					currentGroup.latitude = group.latitude;
+					currentGroup.description = group.description;
+					currentGroup.background = group.background;
+					data.relationship.groupsMap.put(key, currentGroup);
+				}
+				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
+				data.relationship.isModified = true;
+				viewManage.shareSubView.setGroupsDialogContent();
+			} else {
+				log.d("创建群组失败===================" + response.失败原因);
+
+			}
+		};
+	};
+	public ResponseHandler<String> getGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Relationship relationship;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取群组成员成功")) {
+				data.relationship.groups = response.relationship.groups;
+				data.relationship.groupsMap.putAll(response.relationship.groupsMap);
+				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+				data.relationship.isModified = true;
+				// init current share
+				String gid = "";
+				if (response.relationship.groups.size() != 0) {
+					gid = response.relationship.groups.get(0);
+				} else {
+					gid = "";
+					data.localStatus.localData.currentSelectedGroup = gid;
+				}
+				if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
+					if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+						data.localStatus.localData.currentSelectedGroup = gid;
+					}
+				} else {
+					data.localStatus.localData.currentSelectedGroup = gid;
+				}
+				// Set the option group dialog content
+				log.e(tag, data.relationship.groups.toString());
+				if (!gid.equals("")) {
+					viewManage.mainView.shareSubView.showShareMessages();
+					viewManage.mainView.shareSubView.showGroupMembers();
+					viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
+				}
+				viewManage.mainView.shareSubView.setGroupsDialogContent();
+				viewManage.postNotifyView("GroupListActivity");
+			}
+		};
+	};
+
 	public ResponseHandler<String> group_addmembers = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
@@ -542,6 +791,7 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("修改群组信息成功")) {
 				Group group = response.group;
 				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
+				String key = currentGroup.gid + "";
 				currentGroup.icon = group.icon;
 				currentGroup.name = group.name;
 				currentGroup.longitude = group.longitude;
@@ -552,11 +802,189 @@ public class ResponseHandlers {
 				viewManage.postNotifyView("ShareSubView");
 				viewManage.postNotifyView("GroupListActivity");
 				log.e(tag, "---------------------修改群组信息成功");
+				if (data.relationship.squares.contains(key)) {
+					lbsHandlers.uplodSquareLbsData(key);
+				} else if (data.relationship.groups.contains(key)) {
+					lbsHandlers.uplodGroupLbsData(key);
+				}
+
 			} else {
 				log.e(responseInfo.result);
 			}
 		};
 	};
+	public RequestCallBack<String> addMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("加入群组成功")) {
+				log.e(tag, "---------------------加入群组成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+			DataUtil.getUserCurrentAllGroup();
+		};
+	};
+
+	public RequestCallBack<String> removeMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			DataUtil.getUserCurrentAllGroup();
+			if (response.提示信息.equals("退出群组成功")) {
+				log.e(tag, "---------------------退出群组成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public RequestCallBack<String> getGroupInfomationCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Group group;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取群组信息成功")) {
+				Group group = response.group;
+				parser.check();
+				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
+				currentGroup.icon = group.icon;
+				currentGroup.name = group.name;
+				currentGroup.longitude = group.longitude;
+				currentGroup.latitude = group.latitude;
+				currentGroup.description = group.description;
+				currentGroup.background = group.background;
+				data.relationship.isModified = true;
+				viewManage.postNotifyView("ShareSubView");
+				viewManage.postNotifyView("GroupListActivity");
+				log.e(tag, "---------------------获取群组信息成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public RequestCallBack<String> getCurrentNewGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Group group;
+			public List<String> members;
+			public Map<String, Friend> membersMap;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取群组成员成功")) {
+				parser.check();
+				List<String> members = response.members;
+				Group group = response.group;
+				Group currentGroup;
+				String key0 = group.gid + "";
+				if (data.relationship.groups.contains(key0)) {
+					currentGroup = data.relationship.groupsMap.get(key0);
+					currentGroup.icon = group.icon;
+					currentGroup.name = group.name;
+					currentGroup.longitude = group.longitude;
+					currentGroup.latitude = group.latitude;
+					currentGroup.description = group.description;
+					currentGroup.background = group.background;
+					currentGroup.members = members;
+				} else {
+					data.relationship.groups.add(key0);
+					data.relationship.groupsMap.put(key0, group);
+					group.members = members;
+				}
+
+				viewManage.postNotifyView("ShareSubView");
+				viewManage.postNotifyView("GroupListActivity");
+
+				Map<String, Friend> membersMap = response.membersMap;
+
+				for (int i = 0; i < members.size(); i++) {
+					String key = members.get(i);
+					Friend friend = data.relationship.friendsMap.get(key);
+					Friend serverFriend = membersMap.get(key);
+					if (friend == null) {
+						friend = serverFriend;
+						data.relationship.friendsMap.put(key, friend);
+					} else {
+						friend.sex = serverFriend.sex;
+						friend.nickName = serverFriend.nickName;
+						friend.mainBusiness = serverFriend.mainBusiness;
+						friend.head = serverFriend.head;
+						friend.longitude = serverFriend.longitude;
+						friend.latitude = serverFriend.latitude;
+						friend.userBackground = serverFriend.userBackground;
+						friend.lastlogintime = serverFriend.lastlogintime;
+					}
+				}
+				data.relationship.isModified = true;
+
+				log.e(tag, "---------------------获取群组成员成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public RequestCallBack<String> getCurrentGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Group group;
+			public List<String> members;
+			public Map<String, Friend> membersMap;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取群组成员成功")) {
+				parser.check();
+				Group group = data.relationship.groupsMap.get(response.group.gid + "");
+				List<String> members = response.members;
+				group.members = members;
+				Map<String, Friend> membersMap = response.membersMap;
+
+				for (int i = 0; i < members.size(); i++) {
+					String key = members.get(i);
+					Friend friend = data.relationship.friendsMap.get(key);
+					Friend serverFriend = membersMap.get(key);
+					if (friend == null) {
+						friend = serverFriend;
+						data.relationship.friendsMap.put(key, friend);
+					} else {
+						friend.sex = serverFriend.sex;
+						friend.nickName = serverFriend.nickName;
+						friend.mainBusiness = serverFriend.mainBusiness;
+						friend.head = serverFriend.head;
+						friend.longitude = serverFriend.longitude;
+						friend.latitude = serverFriend.latitude;
+						friend.userBackground = serverFriend.userBackground;
+						friend.lastlogintime = serverFriend.lastlogintime;
+					}
+				}
+				data.relationship.isModified = true;
+
+				viewManage.postNotifyView("ShareSubView");
+				viewManage.postNotifyView("GroupListActivity");
+
+				log.e(tag, "---------------------获取群组成员成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	// TODO Share
 
 	public ResponseHandler<String> share_sendShareCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
@@ -758,352 +1186,8 @@ public class ResponseHandlers {
 		};
 	};
 
-	public ResponseHandler<String> relation_modifyAlias = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
+	// TODO LBS
 
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("修改备注成功")) {
-				log.e(tag, "---------------------修改备注成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-
-	};
-	public ResponseHandler<String> relation_deletefriend = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("删除成功")) {
-				log.e(tag, "---------------------删除成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-	public ResponseHandler<String> relation_addfriend = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("发送请求成功")) {
-				log.e(tag, "---------------------发送请求成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-
-	public RequestCallBack<String> modifyCircleSequenceCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("修改分组顺序成功")) {
-				log.e(tag, "---------------------修改分组顺序成功");
-				viewManage.mainView.friendsSubView.showCircles();
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-
-	public RequestCallBack<String> modifyGroupSequenceCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("修改群组顺序成功")) {
-				log.e(tag, "---------------------修改群组顺序成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-
-	public RequestCallBack<String> addMembersCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("加入群组成功")) {
-				log.e(tag, "---------------------加入群组成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-			DataUtil.getUserCurrentAllGroup();
-		};
-	};
-
-	public RequestCallBack<String> removeMembersCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			DataUtil.getUserCurrentAllGroup();
-			if (response.提示信息.equals("退出群组成功")) {
-				log.e(tag, "---------------------退出群组成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-
-	public RequestCallBack<String> getaskfriendsCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public List<Friend> accounts;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			try {
-				Response response = gson.fromJson(responseInfo.result, Response.class);
-				if (response.提示信息.equals("获取好友请求成功")) {
-					if (response.accounts.size() > 0) {
-						viewManage.postNotifyView("DynamicListActivity");
-					}
-					log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
-				} else {
-					log.e(tag, "---------------------" + response.失败原因);
-				}
-			} catch (JsonSyntaxException e) {
-				e.printStackTrace();
-			}
-		};
-	};
-	public RequestCallBack<String> addFriendAgreeCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("添加成功")) {
-				log.e(tag, "---------------------添加好友成功");
-				DataUtil.getIntimateFriends();
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-	public RequestCallBack<String> getGroupInfomationCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public Group group;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取群组信息成功")) {
-				Group group = response.group;
-				parser.check();
-				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
-				currentGroup.icon = group.icon;
-				currentGroup.name = group.name;
-				currentGroup.longitude = group.longitude;
-				currentGroup.latitude = group.latitude;
-				currentGroup.description = group.description;
-				currentGroup.background = group.background;
-				data.relationship.isModified = true;
-				viewManage.postNotifyView("ShareSubView");
-				viewManage.postNotifyView("GroupListActivity");
-				log.e(tag, "---------------------获取群组信息成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-	public RequestCallBack<String> getCurrentNewGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public Group group;
-			public List<String> members;
-			public Map<String, Friend> membersMap;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取群组成员成功")) {
-				parser.check();
-				List<String> members = response.members;
-				Group group = response.group;
-				Group currentGroup;
-				String key0 = group.gid + "";
-				if (data.relationship.groups.contains(key0)) {
-					currentGroup = data.relationship.groupsMap.get(key0);
-					currentGroup.icon = group.icon;
-					currentGroup.name = group.name;
-					currentGroup.longitude = group.longitude;
-					currentGroup.latitude = group.latitude;
-					currentGroup.description = group.description;
-					currentGroup.background = group.background;
-					currentGroup.members = members;
-				} else {
-					data.relationship.groups.add(key0);
-					data.relationship.groupsMap.put(key0, group);
-					group.members = members;
-				}
-
-				viewManage.postNotifyView("ShareSubView");
-				viewManage.postNotifyView("GroupListActivity");
-
-				Map<String, Friend> membersMap = response.membersMap;
-
-				for (int i = 0; i < members.size(); i++) {
-					String key = members.get(i);
-					Friend friend = data.relationship.friendsMap.get(key);
-					Friend serverFriend = membersMap.get(key);
-					if (friend == null) {
-						friend = serverFriend;
-						data.relationship.friendsMap.put(key, friend);
-					} else {
-						friend.sex = serverFriend.sex;
-						friend.nickName = serverFriend.nickName;
-						friend.mainBusiness = serverFriend.mainBusiness;
-						friend.head = serverFriend.head;
-						friend.longitude = serverFriend.longitude;
-						friend.latitude = serverFriend.latitude;
-						friend.userBackground = serverFriend.userBackground;
-						friend.lastlogintime = serverFriend.lastlogintime;
-					}
-				}
-				data.relationship.isModified = true;
-
-				log.e(tag, "---------------------获取群组成员成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-	public RequestCallBack<String> getCurrentGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public Group group;
-			public List<String> members;
-			public Map<String, Friend> membersMap;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取群组成员成功")) {
-				parser.check();
-				Group group = data.relationship.groupsMap.get(response.group.gid + "");
-				List<String> members = response.members;
-				group.members = members;
-				Map<String, Friend> membersMap = response.membersMap;
-
-				for (int i = 0; i < members.size(); i++) {
-					String key = members.get(i);
-					Friend friend = data.relationship.friendsMap.get(key);
-					Friend serverFriend = membersMap.get(key);
-					if (friend == null) {
-						friend = serverFriend;
-						data.relationship.friendsMap.put(key, friend);
-					} else {
-						friend.sex = serverFriend.sex;
-						friend.nickName = serverFriend.nickName;
-						friend.mainBusiness = serverFriend.mainBusiness;
-						friend.head = serverFriend.head;
-						friend.longitude = serverFriend.longitude;
-						friend.latitude = serverFriend.latitude;
-						friend.userBackground = serverFriend.userBackground;
-						friend.lastlogintime = serverFriend.lastlogintime;
-					}
-				}
-				data.relationship.isModified = true;
-
-				viewManage.postNotifyView("ShareSubView");
-				viewManage.postNotifyView("GroupListActivity");
-
-				log.e(tag, "---------------------获取群组成员成功");
-			} else {
-				log.e(tag, "---------------------" + response.失败原因);
-			}
-		};
-	};
-
-	public RequestCallBack<String> getMessageCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public String flag;
-			public List<Message> messages;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			try {
-				Response response = gson.fromJson(responseInfo.result, Response.class);
-				if (response.提示信息.equals("获取成功")) {
-					log.e(tag, "---------------------获取消息成功");
-					List<Message> messages = response.messages;
-					parser.check();
-					data.userInformation.currentUser.flag = response.flag;
-					data.messages.isModified = true;
-					for (int i = 0; i < messages.size(); i++) {
-						Message message = messages.get(i);
-						String sendType = message.sendType;
-						if ("event".equals(sendType)) {
-							if (!data.event.userEvents.contains(message)) {
-								responseEventHandlers.handleEvent(message);
-							}
-						} else if ("point".equals(sendType)) {
-							List<String> phones = gson.fromJson(message.phoneto, new TypeToken<List<String>>() {
-							}.getType());
-							ArrayList<Message> friendMessages = data.messages.friendMessageMap.get(phones.get(0));
-							if (friendMessages == null) {
-								friendMessages = new ArrayList<Message>();
-								data.messages.friendMessageMap.put(phones.get(0), friendMessages);
-							}
-							if (!friendMessages.contains(message)) {
-								friendMessages.add(message);
-							}
-						} else if ("group".equals(sendType)) {
-							ArrayList<Message> groupMessages = data.messages.friendMessageMap.get(message.gid);
-							if (groupMessages == null) {
-								groupMessages = new ArrayList<Message>();
-								data.messages.friendMessageMap.put(message.gid, groupMessages);
-							}
-							if (!groupMessages.contains(message)) {
-								groupMessages.add(message);
-							}
-						}
-					}
-				} else {
-					log.e(tag, "---------------------" + response.失败原因);
-				}
-			} catch (JsonSyntaxException e) {
-				e.printStackTrace();
-			}
-		};
-	};
 	public RequestCallBack<String> lbsdata_create = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public int status;
@@ -1164,58 +1248,9 @@ public class ResponseHandlers {
 			}
 		};
 	};
-	public RequestCallBack<String> group_create = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public String tempGid;
-			public String address;
-			public Group group;
-		}
 
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("创建群组成功")) {
-				data = parser.check();
-				data.relationship.groups.remove(response.tempGid);
-				Group tempGroup = data.relationship.groupsMap.remove(response.tempGid);
-				String key = String.valueOf(response.group.gid);
-				Group group = response.group;
-				Group currentGroup = null;
-				if (data.relationship.groups.contains(key)) {
-					currentGroup = data.relationship.groupsMap.get(key);
-					currentGroup.icon = group.icon;
-					currentGroup.name = group.name;
-					currentGroup.longitude = group.longitude;
-					currentGroup.latitude = group.latitude;
-					currentGroup.description = group.description;
-					currentGroup.background = group.background;
-				} else {
-					data.relationship.groups.add(key);
-					currentGroup = null;
-					if (tempGroup != null) {
-						currentGroup = tempGroup;
-					} else {
-						currentGroup = data.relationship.new Group();
-					}
-					currentGroup.gid = response.group.gid;
-					currentGroup.icon = group.icon;
-					currentGroup.name = group.name;
-					currentGroup.longitude = group.longitude;
-					currentGroup.latitude = group.latitude;
-					currentGroup.description = group.description;
-					currentGroup.background = group.background;
-					data.relationship.groupsMap.put(key, currentGroup);
-				}
-				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
-				data.relationship.isModified = true;
-				viewManage.shareSubView.setGroupsDialogContent();
-			} else {
-				log.d("创建群组失败===================" + response.失败原因);
+	// TODO Circle
 
-			}
-		};
-	};
 	public RequestCallBack<String> circle_modify = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
@@ -1274,5 +1309,4 @@ public class ResponseHandlers {
 			}
 		};
 	};
-
 }

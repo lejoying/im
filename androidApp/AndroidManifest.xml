@@ -62,6 +62,13 @@
         </receiver>
 
         <activity
+            android:name="com.open.welinks.FriendsSortListActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
             android:name="com.open.welinks.ImageScanActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

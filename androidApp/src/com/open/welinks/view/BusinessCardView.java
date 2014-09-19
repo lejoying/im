@@ -22,6 +22,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.utils.MCImageUtils;
 
 public class BusinessCardView {
@@ -35,7 +36,7 @@ public class BusinessCardView {
 	public LayoutInflater mInflater;
 	public RelativeLayout backview;
 	public LinearLayout content, infomation_layout, sex_layout;
-	public TextView spacing_one, spacing_two, spacing_three, title, business_title, lable_title, creattime_title, nickname, id, business, lable, creattime, sex;
+	public TextView spacing_one, spacing_two, spacing_three, title, business_title, lable_title, creattime_title, nickname, id, business, lable, creattime, sex, distance;
 	public ImageView head, tdcode;
 	public Button button_one, button_two, button_three;
 
@@ -77,6 +78,7 @@ public class BusinessCardView {
 		creattime = (TextView) thisActivity.findViewById(R.id.creattime);
 		sex = (TextView) thisActivity.findViewById(R.id.sex);
 		head = (ImageView) thisActivity.findViewById(R.id.head);
+		distance = (TextView) thisActivity.findViewById(R.id.distance);
 
 		tdcode = (ImageView) thisActivity.findViewById(R.id.tdcode);
 		button_one = (Button) thisActivity.findViewById(R.id.button_one);
@@ -88,6 +90,7 @@ public class BusinessCardView {
 
 	String GROUPCARDTYPE = "groupcard";
 	String USERCARDTYPE = "usercard";
+	LBSHandlers lbsHandlers = LBSHandlers.getInstance();
 
 	public void fillData() {
 		businessCard = new BusinessCard();
@@ -96,6 +99,7 @@ public class BusinessCardView {
 			businessCard.id = user.id;
 			businessCard.icon = user.head;
 			businessCard.sex = user.sex;
+			businessCard.distance = "0";
 			businessCard.nickname = user.nickName;
 			businessCard.mainBusiness = user.mainBusiness;
 			businessCard.lable = "暂无标签";
@@ -117,6 +121,8 @@ public class BusinessCardView {
 			} else {
 				nickName = friend.alias + "(" + friend.nickName + ")";
 			}
+			User user = thisController.data.userInformation.currentUser;
+			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
 			businessCard.nickname = nickName;
 			businessCard.mainBusiness = friend.mainBusiness;
 			businessCard.lable = "暂无标签";
@@ -136,6 +142,8 @@ public class BusinessCardView {
 			} else {
 				description = group.description;
 			}
+			User user = thisController.data.userInformation.currentUser;
+			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, group.longitude, group.latitude);
 			businessCard.mainBusiness = description;
 			businessCard.lable = "暂无标签";
 			businessCard.creattime = "2014年 9月 1日";
@@ -148,6 +156,8 @@ public class BusinessCardView {
 			Friend friend = data.tempData.tempFriend;
 			businessCard.id = friend.id;
 			businessCard.icon = friend.head;
+			User user = thisController.data.userInformation.currentUser;
+			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
 			businessCard.nickname = friend.nickName;
 			businessCard.mainBusiness = friend.mainBusiness;
 			businessCard.lable = "暂无标签";
@@ -163,6 +173,8 @@ public class BusinessCardView {
 			businessCard.icon = data.tempData.tempGroup.icon;
 			businessCard.nickname = data.tempData.tempGroup.name;
 			businessCard.mainBusiness = data.tempData.tempGroup.description;
+			User user = thisController.data.userInformation.currentUser;
+			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
 			businessCard.lable = "暂无标签";
 			businessCard.creattime = "2014年 9月 1日";
 			businessCard.button_one = "加入群组";
@@ -174,6 +186,7 @@ public class BusinessCardView {
 		} else if (status.equals(Status.SQUARE)) {
 			businessCard.id = Integer.valueOf(thisController.key);
 			businessCard.icon = "";
+			businessCard.distance = "0";
 			businessCard.nickname = "";
 			businessCard.mainBusiness = "暂无描述";
 			businessCard.lable = "暂无标签";
@@ -224,7 +237,7 @@ public class BusinessCardView {
 		} else {
 			sex.setText("女");
 		}
-
+		distance.setText(businessCard.distance + "km");
 		nickname.setText(businessCard.nickname);
 		id.setText(String.valueOf(businessCard.id));
 		business.setText(businessCard.mainBusiness);
@@ -241,6 +254,7 @@ public class BusinessCardView {
 		public String nickname = "";
 		public String mainBusiness = "";
 		public String sex = "";
+		public String distance;
 		public String lable = "";
 		public String creattime = "";
 		public String button_one = "";

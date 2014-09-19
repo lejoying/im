@@ -226,6 +226,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void finish() {
+		thisController.finish();
 		// parser.saveDataToLocal();
 		super.finish();
 	}

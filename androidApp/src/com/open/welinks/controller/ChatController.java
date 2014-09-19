@@ -1,6 +1,8 @@
 package com.open.welinks.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +51,8 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.utils.SHA1;
+import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ChatView;
 import com.open.welinks.view.ViewManage;
 
@@ -298,7 +301,7 @@ public class ChatController {
 	}
 
 	public void setImageThumbnail(String fileName, ImageView view, int width, int height) {
-		File file = new File(sdFile, "welinks/thumbnail/" + fileName);
+		File file = new File(thisView.fileHandlers.sdcardThumbnailFolder, fileName);
 		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + (int) (width * thisView.displayMetrics.density + 0.5f) / 2 + "w_" + (int) (height * thisView.displayMetrics.density + 0.5f) / 2 + "h_1c_1e_100q";
 		final String path = file.getAbsolutePath();
 		imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
@@ -336,12 +339,10 @@ public class ChatController {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-
 			}
 
 			@Override
 			public void onAnimationRepeat(Animation animation) {
-
 			}
 		});
 		thisView.chat_bottom_bar.startAnimation(outAnimation);
@@ -364,12 +365,10 @@ public class ChatController {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-
 			}
 
 			@Override
 			public void onAnimationRepeat(Animation animation) {
-
 			}
 		});
 		thisView.chat_bottom_bar_selected.startAnimation(outAnimation);
@@ -381,27 +380,68 @@ public class ChatController {
 	}
 
 	public void addImagesToMessage() {
-		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
-		data.tempData.selectedImageList = null;
-		File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
-		ArrayList<String> content = new ArrayList<String>();
-		long time = new Date().getTime();
-		View view = new View(thisActivity);
-		// view.setTag(R.id.tag_first, selectedImageList.size());
-		// view.setTag(R.id.tag_second, 0);
-		view.setTag(R.id.tag_first, String.valueOf(time));
-		for (String filePath : selectedImageList) {
-			Map<String, Object> map = MCImageUtils.processImagesInformation(filePath, targetFolder);
-			content.add((String) map.get("fileName"));
-			uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				ArrayList<String> selectedImageList = data.tempData.selectedImageList;
+				data.tempData.selectedImageList = null;
+				File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
+				ArrayList<String> content = new ArrayList<String>();
+				long time = new Date().getTime();
+				View view = new View(thisActivity);
+				// view.setTag(R.id.tag_first, selectedImageList.size());
+				// view.setTag(R.id.tag_second, 0);
+				view.setTag(R.id.tag_first, String.valueOf(time));
+				int i = 0;
+				for (String filePath : selectedImageList) {
+					Map<String, Object> map = processImagesInformation(i, filePath, targetFolder);
+					i++;
+					content.add((String) map.get("fileName"));
+					uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
+				}
+				String messageContent = gson.toJson(content);
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("content", messageContent);
+				map.put("total", String.valueOf(selectedImageList.size()));
+				map.put("current", String.valueOf(0));
+				unsendMessageInfo.put(String.valueOf(time), map);
+				sendMessageToLocal(gson.toJson(content), "image", time);
+			}
+		}).start();
+	}
+
+	public SHA1 sha1 = new SHA1();
+
+	Map<String, Object> processImagesInformation(int i, String filePath, File targetFolder) {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		String suffixName = filePath.substring(filePath.lastIndexOf("."));
+		if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
+			suffixName = ".osj";
+		} else if (suffixName.equals(".png")) {
+			suffixName = ".osp";
 		}
-		String messageContent = gson.toJson(content);
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("content", messageContent);
-		map.put("total", String.valueOf(selectedImageList.size()));
-		map.put("current", String.valueOf(0));
-		unsendMessageInfo.put(String.valueOf(time), map);
-		sendMessageToLocal(gson.toJson(content), "image", time);
+		String fileName = "";
+		File fromFile = new File(filePath);
+		// long fileLength = fromFile.length();
+		byte[] bytes = thisView.fileHandlers.getImageFileBytes(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+		map.put("bytes", bytes);
+		String sha1FileName = sha1.getDigestOfString(bytes);
+		fileName = sha1FileName + suffixName;
+		map.put("fileName", fileName);
+		File toFile = new File(thisView.fileHandlers.sdcardImageFolder, fileName);
+		try {
+			FileOutputStream fileOutputStream = new FileOutputStream(toFile);
+			StreamParser.parseToFile(bytes, fileOutputStream);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (i == 0) {
+			File toSnapFile = new File(thisView.fileHandlers.sdcardThumbnailFolder, fileName);
+			thisView.fileHandlers.makeImageThumbnail(fromFile, thisView.imageWidth, thisView.imageHeight, toSnapFile, fileName);
+		}
+		return map;
 	}
 
 	public void sendMessageToLocal(String messageContent, String contentType, long time) {
@@ -455,7 +495,13 @@ public class ChatController {
 			}
 			data.messages.friendMessageMap.get(key0).add(message);
 		}
-		thisView.mChatAdapter.notifyDataSetChanged();
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				thisView.mChatAdapter.notifyDataSetChanged();
+			}
+		});
 		if ("text".equals(contentType)) {
 			sendMessageToServer(contentType, messageContent);
 		}

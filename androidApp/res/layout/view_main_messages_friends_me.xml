@@ -29,7 +29,8 @@
             android:layout_width="110dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true" >
+            android:layout_centerVertical="true"
+            android:background="@drawable/backview_background" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -46,7 +47,8 @@
             android:id="@+id/rl_intimatefriends"
             android:layout_width="110dp"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true" >
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/backview_background" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,7 +65,8 @@
             android:id="@+id/rl_userInfomation"
             android:layout_width="110dp"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true" >
+            android:layout_alignParentRight="true"
+            android:background="@drawable/backview_background" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -142,7 +145,7 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:layout_gravity="center_horizontal"
-            android:background="@color/card_color"
+            android:background="@drawable/black_background"
             android:gravity="center_vertical"
             android:translationY="88dp" >
 

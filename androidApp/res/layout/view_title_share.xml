@@ -20,6 +20,7 @@
                 android:layout_height="44dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
+                android:background="@drawable/backview_background"
                 android:clickable="false"
                 android:gravity="center"
                 android:padding="0dp"
@@ -31,18 +32,19 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="60dp" >
+            android:layout_marginLeft="60dp"
+            android:background="@drawable/backview_background" >
 
             <TextView
                 android:id="@+id/shareTopMenuGroupName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
+                android:ellipsize="end"
                 android:gravity="center_vertical"
+                android:maxEms="7"
                 android:singleLine="true"
                 android:text="暂无群组"
-                android:maxEms="7"
-                android:ellipsize="end"
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 

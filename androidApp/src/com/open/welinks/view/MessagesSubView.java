@@ -45,7 +45,7 @@ public class MessagesSubView {
 
 	public MessagesSubController thisController;
 
-	public List<String> messagesKeepOnlyOne;
+	// public List<String> messagesKeepOnlyOne;
 
 	public boolean inited = false;
 
@@ -66,10 +66,10 @@ public class MessagesSubView {
 		messageListBody = new ListBody1();
 		messageListBody.initialize(displayMetrics, messagesView);
 
-		messagesKeepOnlyOne = new ArrayList<String>();
+		// messagesKeepOnlyOne = new ArrayList<String>();
 
 		noMessagesStatusView = (TouchView) messagesView.findViewById(R.id.NoMessagesStatus);
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
 
 	}
 
@@ -96,10 +96,10 @@ public class MessagesSubView {
 
 		this.messageListBody.containerView.removeAllViews();
 		this.messageListBody.listItemsSequence.clear();
-		this.messageListBody.listItemBodiesMap.clear();
+		// this.messageListBody.listItemBodiesMap.clear();
 		this.messageListBody.height = 0;
 
-		messagesKeepOnlyOne.clear();
+		// messagesKeepOnlyOne.clear();
 
 		if (messagesOrder.size() > 0) {
 			noMessagesStatusView.setVisibility(View.GONE);
@@ -108,7 +108,10 @@ public class MessagesSubView {
 			String key = messagesOrder.get(i);
 			Message message = null;
 			String fileName = "";
+			String type = "";
+			String key2 = "";
 			if (key.indexOf("p") == 0) {
+				type = "p";
 				int size = friendMessageMap.get(key).size();
 				if (size != 0) {
 					size--;
@@ -116,6 +119,7 @@ public class MessagesSubView {
 					return;
 				}
 				message = friendMessageMap.get(key).get(size);
+				key2 = "message#" + message.phone + "_" + message.time;
 				try {
 					String phone = "";
 					if (message.phone.equals(data.userInformation.currentUser.phone)) {
@@ -128,6 +132,7 @@ public class MessagesSubView {
 					fileName = "";
 				}
 			} else if (key.indexOf("g") == 0) {
+				type = "g";
 				int size = groupMessageMap.get(key).size();
 				if (size != 0) {
 					size--;
@@ -135,55 +140,38 @@ public class MessagesSubView {
 					return;
 				}
 				message = groupMessageMap.get(key).get(size);
+				key2 = "message#" + message.gid + "_" + message.time;
 				try {
 					fileName = data.relationship.groupsMap.get(message.gid).icon;
 				} catch (Exception e) {
 					fileName = "";
 				}
 			}
+			MessageBody messageBody = null;
+			if (this.messageListBody.listItemBodiesMap.get(key2) != null) {
+				if ("p".equals(type)) {
+					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
 
-			if (messagesKeepOnlyOne.contains(key)) {
-				log.e("消息队列出现重复数据");
-				MessageBody messageBody;
-				if (key.indexOf("p") == 0) {
-					this.messageListBody.listItemsSequence.remove("message#" + message.phone + "_" + message.time);
-					this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
-
-					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.phone + "_" + message.time);
-
-				} else {
-					this.messageListBody.listItemsSequence.remove("message#" + message.gid + "_" + message.time);
-					this.messageListBody.listItemsSequence.add("message#" + message.gid + "_" + message.time);
-
-					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.gid + "_" + message.time);
+				} else if ("g".equals(type)) {
+					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
 				}
 				messageBody.setContent(message, fileName);
 			} else {
-				messagesKeepOnlyOne.add(key);
-
-				MessageBody messageBody = null;
 				messageBody = new MessageBody(this.messageListBody);
 				messageBody.initialize();
 				messageBody.setContent(message, fileName);
-				if (key.indexOf("p") == 0) {
-					this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
-					this.messageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
-				} else {
-					this.messageListBody.listItemsSequence.add("message#" + message.gid + "_" + message.time);
-					this.messageListBody.listItemBodiesMap.put("message#" + message.gid + "_" + message.time, messageBody);
-				}
-
-				TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (70 * displayMetrics.density));
-				messageBody.y = this.messageListBody.height;
-				messageBody.cardView.setY(messageBody.y);
-				messageBody.cardView.setX(0);
-				messageBody.cardView.setTag(R.id.tag_class, "message_view");
-				messageBody.cardView.setTag(R.id.tag_first, key);
-				messageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
-				messageBody.cardView.setOnClickListener(thisController.mOnClickListener);
-				this.messageListBody.height = this.messageListBody.height + 80 * displayMetrics.density;
-				this.messageListBody.containerView.addView(messageBody.cardView, layoutParams);
+				this.messageListBody.listItemBodiesMap.put(key2, messageBody);
 			}
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (70 * displayMetrics.density));
+			messageBody.y = this.messageListBody.height;
+			messageBody.cardView.setY(messageBody.y);
+			// messageBody.cardView.setX(0);
+			messageBody.cardView.setTag(R.id.tag_class, "message_view");
+			messageBody.cardView.setTag(R.id.tag_first, key);
+			messageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
+			messageBody.cardView.setOnClickListener(thisController.mOnClickListener);
+			this.messageListBody.height = this.messageListBody.height + 80 * displayMetrics.density;
+			this.messageListBody.containerView.addView(messageBody.cardView, layoutParams);
 		}
 		this.messageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
 		this.messageListBody.setChildrenPosition();

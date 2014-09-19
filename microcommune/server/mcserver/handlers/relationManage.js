@@ -1454,8 +1454,8 @@ relationManage.intimatefriends = function (data, response) {
                             accessKey: "",
                             distance: 0,
                             notReadMessagesCount: 0,
-                            longitude: "",
-                            latitude: ""
+                            longitude: accountData.longitude || 0,
+                            latitude: accountData.latitude || 0
                         };
                         if (rData.alias != null) {
                             var alias = JSON.parse(rData.alias);

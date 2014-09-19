@@ -1142,8 +1142,8 @@ groupManage.get = function (data, response) {
                     gid: groupData.gid,
                     icon: groupData.icon || "",
                     name: groupData.name,
-                    longitude: location.longitude,
-                    latitude: location.latitude,
+                    longitude: location.longitude || 0,
+                    latitude: location.latitude || 0,
                     description: groupData.description || "",
                     background: groupData.background || ""
                 };
@@ -1428,8 +1428,8 @@ groupManage.getgroupmembers = function (data, response) {
                         accessKey: "",
                         distance: 0,
                         notReadMessagesCount: 0,
-                        longitude: location.longitude,
-                        latitude: location.latitude
+                        longitude: location.longitude || 0,
+                        latitude: location.latitude || 0
                     };
                     friendsMap[account.phone] = account;
                     if (!groupsMap[groupData.gid + ""]) {
@@ -1440,8 +1440,8 @@ groupManage.getgroupmembers = function (data, response) {
                             name: groupData.name,
                             notReadMessagesCount: 0,
                             distance: 0,
-                            longitude: location.longitude,
-                            latitude: location.latitude,
+                            longitude: location.longitude || 0,
+                            latitude: location.latitude || 0,
                             description: groupData.description,
                             background: groupData.background
                         };

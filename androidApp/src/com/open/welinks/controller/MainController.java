@@ -156,6 +156,7 @@ public class MainController {
 		thisView.userTopbarNameView.setText(data.userInformation.currentUser.nickName);
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
+		thisView.friendsSubView.dismissUserCardDialogView();
 		// thisView.shareSubView.onResume();
 		// thisView.messagesSubView.onResume();
 	}
@@ -486,7 +487,7 @@ public class MainController {
 		data._address = userAddress;
 		data.phone = user.phone;
 		data.sex = user.sex;
-		data.haed = user.head;
+		data.head = user.head;
 		data.mainBusiness = user.mainBusiness;
 		data.lastlogintime = user.lastlogintime;
 		HttpUtils httpUtils = new HttpUtils();
@@ -509,7 +510,7 @@ public class MainController {
 		data._address = userAddress;
 		data.phone = user.phone;
 		data.sex = user.sex;
-		data.haed = user.head;
+		data.head = user.head;
 		data.mainBusiness = user.mainBusiness;
 		data.lastlogintime = user.lastlogintime;
 
@@ -550,12 +551,13 @@ public class MainController {
 		public String _address;
 		public String phone;
 		public String sex;
-		public String haed;
+		public String head;
 		public String mainBusiness;
 		public String lastlogintime;
 	}
 
 	public class LBSGroupData {
+		public String _id;
 		public String _name;
 		public String _location;
 		public String _address;
@@ -813,5 +815,8 @@ public class MainController {
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		return shareSubController.onKeyDown(keyCode, event);
+	}
+
+	public void finish() {
 	}
 }

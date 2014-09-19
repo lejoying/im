@@ -40,7 +40,11 @@ import com.open.lib.HttpClient;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.utils.NetworkHandler.ResponseHandler;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.OnLoadingCancelListener;
 import com.open.welinks.view.ScanView;
 
 public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callback, PreviewCallback, AutoFocusCallback {
@@ -330,7 +334,7 @@ public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callba
 			case OPERATE_DECODE_SUCCESS_GROUPCARD:
 				int indexg = ScanContent.indexOf(":", 3);
 				Log.e("Coolspan", indexg + "---");
-				// scanGroupCard(ScanContent.substring(indexg + 1));
+				scanGroupCard(ScanContent.substring(indexg + 1));
 				destoryCamera();
 				break;
 			case OPERATE_DECODE_FAILED:
@@ -385,6 +389,47 @@ public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callba
 		return what;
 	}
 
+	public void scanGroupCard(final String gid) {
+		Log.e("Coolspan-", gid);
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("type", "group");
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public Group group;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取群组信息成功".equals(response.提示信息)) {
+					if (response.group != null) {
+						Intent intent = new Intent(ScanQRCodeActivity.this, BusinessCardActivity.class);
+						String gid = response.group.gid + "";
+						if (data.relationship.groups.contains(gid)) {
+							intent.putExtra("type", "group");
+							intent.putExtra("key", gid);
+						} else {
+							intent.putExtra("type", "group");
+							intent.putExtra("key", gid);
+							intent.putExtra("isTemp", true);
+							data.tempData.tempGroup = response.group;
+						}
+						startActivity(intent);
+					} else {
+						finish();
+					}
+				} else {
+					finish();
+				}
+			};
+		});
+	}
+
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 	HttpClient httpClient = HttpClient.getInstance();
 	Gson gson = new Gson();
@@ -411,16 +456,21 @@ public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callba
 						finish();
 						Log.e("coolspan", gson.toJson(friend));
 						Intent intent = new Intent(ScanQRCodeActivity.this, BusinessCardActivity.class);
-						if (data.relationship.friendsMap.get(friend.phone) != null) {
+						if (data.relationship.friends.contains(friend.phone)) {
 							intent.putExtra("type", "point");
 							intent.putExtra("key", friend.phone);
 						} else {
+							intent.putExtra("type", "point");
+							intent.putExtra("key", friend.phone);
+							intent.putExtra("isTemp", true);
 							data.tempData.tempFriend = friend;
 						}
 						startActivity(intent);
 					} else {
 						finish();
 					}
+				} else {
+					finish();
 				}
 			};
 		});

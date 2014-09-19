@@ -1,11 +1,8 @@
 package com.open.welinks.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,8 +13,6 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
@@ -35,7 +30,6 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
-import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.ShareContent;
@@ -323,74 +317,6 @@ public class ShareReleaseImageTextController {
 		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
 	}
 
-	public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-		// Raw height and width of image
-		final int height = options.outHeight;
-		final int width = options.outWidth;
-		int inSampleSize = 1;
-
-		if (height > reqHeight || width > reqWidth) {
-			if (width > height) {
-				inSampleSize = Math.round((float) height / (float) reqHeight);
-			} else {
-				inSampleSize = Math.round((float) width / (float) reqWidth);
-			}
-		}
-		return inSampleSize;
-	}
-
-	public ByteArrayOutputStream decodeSampledBitmapFromFileInputStream(File file, int reqWidth, int reqHeight) throws FileNotFoundException {
-		FileInputStream fileInputStream = new FileInputStream(file);
-
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(fileInputStream, null, options);
-
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		options.inJustDecodeBounds = false;
-		FileInputStream fileInputStream1 = new FileInputStream(file);
-		Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
-		bitmap.recycle();
-		return byteArrayOutputStream;
-	}
-
-	public ByteArrayOutputStream decodeSnapBitmapFromFileInputStream(File file, float reqWidth, float reqHeight) throws FileNotFoundException {
-		FileInputStream fileInputStream = new FileInputStream(file);
-
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(fileInputStream, null, options);
-
-		options.inSampleSize = calculateInSampleSize(options, (int) reqWidth, (int) reqHeight);
-
-		options.inJustDecodeBounds = false;
-		FileInputStream fileInputStream1 = new FileInputStream(file);
-		Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
-		float ratio = reqWidth / reqHeight;
-		if (options.outHeight < reqHeight) {
-			reqHeight = options.outHeight;
-			if (reqHeight * ratio < reqWidth) {
-				reqWidth = reqHeight * ratio;
-			}
-		}
-		if (options.outWidth < reqWidth) {
-			reqWidth = options.outWidth;
-			if (reqWidth / ratio < reqHeight) {
-				reqHeight = reqWidth / ratio;
-			}
-		}
-
-		Bitmap snapbitmap = Bitmap.createBitmap(bitmap, 0, 0, (int) reqWidth, (int) reqHeight);
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		snapbitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
-		bitmap.recycle();
-		snapbitmap.recycle();
-		return byteArrayOutputStream;
-	}
-
 	public float imageHeightScale = 0.5686505598114319f;
 
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
@@ -409,16 +335,16 @@ public class ShareReleaseImageTextController {
 				String fileName = "";
 				File fromFile = new File(key);
 				byte[] bytes = null;
-				long fileLength = fromFile.length();
-
-				if (fileLength > 400 * 1024) {
-					ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
-					bytes = byteArrayOutputStream.toByteArray();
-				} else {
-					FileInputStream fileInputStream = new FileInputStream(fromFile);
-					bytes = StreamParser.parseToByteArray(fileInputStream);
-					fileInputStream.close();
-				}
+				// long fileLength = fromFile.length();
+				bytes = fileHandlers.getImageFileBytes(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+				// if (fileLength > 400 * 1024) {
+				// ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+				// bytes = byteArrayOutputStream.toByteArray();
+				// } else {
+				// FileInputStream fileInputStream = new FileInputStream(fromFile);
+				// bytes = StreamParser.parseToByteArray(fileInputStream);
+				// fileInputStream.close();
+				// }
 
 				String sha1FileName = sha1.getDigestOfString(bytes);
 				fileName = sha1FileName + suffixName;
@@ -428,13 +354,13 @@ public class ShareReleaseImageTextController {
 
 				if (i == 0) {
 					int showImageWidth = thisView.displayMetrics.widthPixels;
-
-					ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, thisView.showImageHeight);
-					byte[] snapBytes = snapByteStream.toByteArray();
 					File toSnapFile = new File(sdcardThumbnailFolder, fileName);
-					FileOutputStream toSnapFileOutputStream = new FileOutputStream(toSnapFile);
-					Log.d(tag, "file saved to " + fileName);
-					StreamParser.parseToFile(snapBytes, toSnapFileOutputStream);
+					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, thisView.showImageHeight, toSnapFile, fileName);
+					// ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, thisView.showImageHeight);
+					// byte[] snapBytes = snapByteStream.toByteArray();
+					// FileOutputStream toSnapFileOutputStream = new FileOutputStream(toSnapFile);
+					// Log.d(tag, "file saved to " + fileName);
+					// StreamParser.parseToFile(snapBytes, toSnapFileOutputStream);
 				}
 
 				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
@@ -448,8 +374,6 @@ public class ShareReleaseImageTextController {
 				uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}

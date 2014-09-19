@@ -64,6 +64,9 @@ public class ChatView {
 
 	public ChatAdapter mChatAdapter;
 
+	public int imageWidth;
+	public int imageHeight;
+
 	// public Bitmap bitmap;
 
 	public DisplayImageOptions headOptions;
@@ -80,6 +83,9 @@ public class ChatView {
 		mInflater = thisActivity.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+		imageWidth = (int) (178 * thisView.displayMetrics.density);
+		imageHeight = (int) (106 * thisView.displayMetrics.density);
 
 		thisActivity.setContentView(R.layout.activity_chat);
 

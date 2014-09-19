@@ -15,6 +15,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welinks.FriendsSortListActivity;
 import com.open.welinks.InviteFriendActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
@@ -100,7 +101,7 @@ public class GroupMemberManageController {
 					String type = tagContent.substring(0, index);
 					// String content = tagContent.substring(index + 1);
 					if ("invitafriendgroup".equals(type)) {
-						Intent intent = new Intent(thisActivity, InviteFriendActivity.class);
+						Intent intent = new Intent(thisActivity, FriendsSortListActivity.class);
 						intent.putExtra("type", InviteFriendActivity.INVITA_FRIEND_GROUP);
 						intent.putExtra("gid", currentGroup.gid + "");
 						thisActivity.startActivityForResult(intent, REQUESTCODE_INVITEFRIEND);

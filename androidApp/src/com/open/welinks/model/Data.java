@@ -35,7 +35,7 @@ public class Data {
 		public ArrayList<String> selectedImageList;
 
 		public List<String> praiseusersList;
-		
+
 		public List<ShareMessage> tempShares;
 
 		public Friend tempFriend;
@@ -134,6 +134,7 @@ public class Data {
 	public class Relationship {
 		public boolean isModified = false;
 
+		public List<String> friends = new ArrayList<String>();
 		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
 
 		public List<String> circles = new ArrayList<String>();
@@ -147,6 +148,7 @@ public class Data {
 		public class Friend {
 			public int id;
 			public String sex = "";
+			public int age;
 			public String phone = "";
 			public int distance;
 			public String nickName = "";

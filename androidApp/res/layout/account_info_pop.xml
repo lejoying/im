@@ -14,26 +14,113 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="5dp"
             android:background="@drawable/account_info_pop"
             android:orientation="vertical" >
 
             <RelativeLayout
+                android:id="@+id/userBusinessView"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_margin="10dp" >
+                android:layout_height="300dp"
+                android:layout_margin="5dp" >
 
                 <ImageView
+                    android:id="@+id/userHead"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+                    android:layout_height="300dp" />
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="70dp"
                     android:layout_alignParentBottom="true"
                     android:background="#51000000"
-                    android:padding="10dp" >
-                </RelativeLayout>
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp" >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp" >
+
+                        <TextView
+                            android:id="@+id/userNickName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="黑魔"
+                            android:textColor="#fff"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="10dp"
+                            android:gravity="center_vertical"
+                            android:text="已是好友"
+                            android:textColor="#fff"
+                            android:textSize="13sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp" >
+
+                        <TextView
+                            android:id="@+id/userAge"
+                            android:layout_width="40dp"
+                            android:layout_height="20dp"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/personalinfo_male"
+                            android:gravity="right|center_vertical"
+                            android:paddingRight="5dp"
+                            android:text="23"
+                            android:textColor="#fff"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="45dp"
+                            android:text=""
+                            android:textColor="#fff"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="55dp"
+                            android:layout_marginTop="5dp"
+                            android:background="#fff" />
+
+                        <TextView
+                            android:id="@+id/lastLoginTime"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:text="2小时前"
+                            android:textColor="#fff"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/userDistance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="60dp"
+                            android:text="24.5km"
+                            android:textColor="#fff"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+                </LinearLayout>
             </RelativeLayout>
 
             <ImageView
@@ -44,26 +131,29 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_height="50dp"
+                android:background="@drawable/account_info_pop"
                 android:orientation="horizontal" >
 
                 <TextView
+                    android:id="@+id/goInfomation"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
+                    android:background="@drawable/button_white"
                     android:gravity="center"
-                    android:text="私聊"
+                    android:text="资料"
                     android:textColor="#000"
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/goChat"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
+                    android:background="@drawable/button_white"
                     android:gravity="center"
-                    android:text="关注"
+                    android:text="聊天"
                     android:textColor="#000"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -77,7 +167,8 @@
                 android:gravity="center"
                 android:text="资料"
                 android:textColor="#000"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone" />
         </LinearLayout>
 
         <ImageView
