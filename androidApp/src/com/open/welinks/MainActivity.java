@@ -25,6 +25,7 @@ import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.service.PushService;
+import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.MeSubView;
@@ -49,10 +50,13 @@ public class MainActivity extends Activity {
 
 	public boolean islinked = false;
 
+	public static MainActivity instance;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
+		instance = this;
 		initImageLoader(getApplicationContext());
 
 		startPushService();
@@ -231,4 +235,25 @@ public class MainActivity extends Activity {
 		super.finish();
 	}
 
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		if ("chatFriend".equals(NotificationUtils.showFragment)) {
+			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			intent.putExtra("id", NotificationUtils.message.phone);
+			intent.putExtra("type", "point");
+			startActivityForResult(intent, R.id.tag_second);
+		} else if ("chatGroup".equals(NotificationUtils.showFragment)) {
+			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			intent.putExtra("id", NotificationUtils.message.gid);
+			intent.putExtra("type", "group");
+			startActivityForResult(intent, R.id.tag_second);
+		} else if ("chatList".equals(NotificationUtils.showFragment)) {
+			thisView.mainPagerBody.active();
+			thisView.messages_friends_me_PagerBody.inActive();
+			thisView.mainPagerBody.flipTo(2);
+			thisView.messages_friends_me_PagerBody.flipTo(0);
+		}
+		NotificationUtils.cancelNotification(MainActivity.this);
+		super.onWindowFocusChanged(hasFocus);
+	}
 }

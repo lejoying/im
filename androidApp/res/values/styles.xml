@@ -63,6 +63,7 @@
 
     <style name="CommonStyle" parent="android:Theme.NoTitleBar">
         <item name="android:windowAnimationStyle">@style/CommonAnimation2</item>
+         <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="AlertInputDialog" parent="android:Theme.Dialog">

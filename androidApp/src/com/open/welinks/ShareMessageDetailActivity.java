@@ -1,5 +1,7 @@
 package com.open.welinks;
 
+import me.imid.swipebacklayout.lib.SwipeBackLayout;
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +9,10 @@ import android.os.Bundle;
 
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.model.Data;
+import com.open.welinks.utils.PreferenceUtils;
 import com.open.welinks.view.ShareMessageDetailView;
 
-public class ShareMessageDetailActivity extends Activity {
+public class ShareMessageDetailActivity extends SwipeBackActivity {
 
 	public Data data = Data.getInstance();
 	public String tag = "ShareMessageDetailActivity";
@@ -19,11 +22,24 @@ public class ShareMessageDetailActivity extends Activity {
 	public ShareMessageDetailController thisController;
 	public Activity thisActivity;
 
+	private SwipeBackLayout mSwipeBackLayout;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//
+		mSwipeBackLayout = getSwipeBackLayout();
+		int edgeFlag;
+		edgeFlag = SwipeBackLayout.EDGE_LEFT;
+		mSwipeBackLayout.setEdgeTrackingEnabled(edgeFlag);
+		saveTrackingMode(edgeFlag);
+		//
 
 		linkViewController();
+	}
+
+	private void saveTrackingMode(int flag) {
+		PreferenceUtils.setPrefInt(getApplicationContext(), "key_tracking_mode", flag);
 	}
 
 	public void linkViewController() {

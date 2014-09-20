@@ -79,6 +79,7 @@ public final class NotificationUtils {
 		vibrate(context, VIBRATE_COMMON, false);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void showNotification(Context context, int notificationId, int icon, Uri sound, String tickerText, String contentTitle, String contentText, int notificationDefaults, int flags, Intent intent) {
 		Notification notification = new Notification();
 		notification.icon = icon;

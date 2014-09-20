@@ -1,5 +1,8 @@
 package com.open.welinks;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -15,7 +18,20 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.MyLog;
+import com.open.welinks.model.API;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.ResponseHandlers;
+
 public class FeedBackActivity extends Activity implements OnClickListener, TextWatcher {
+	public Data data = Data.getInstance();
+	public String tag = "FeedBackActivity";
+	public MyLog log = new MyLog(tag, true);
 
 	public View backView;
 	public ImageView send;
@@ -27,6 +43,8 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 
 	public String content = "";
 	public InputMethodManager inputMethodManager;
+
+	public Gson gson = new Gson();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +79,33 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 	@Override
 	public void onClick(View view) {
 		if (view.equals(send)) {
-
+			String content = opinion.getText().toString().trim();
+			if ("".equals(content)) {
+				return;
+			}
+			sendMessageToServer(content);
+			finish();
 		} else if (view.equals(backView)) {
 			finish();
 		}
+	}
 
+	public void sendMessageToServer(String content) {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("sendType", "point");
+		params.addBodyParameter("contentType", "text");
+		params.addBodyParameter("content", content);
+		List<String> phoneto = new ArrayList<String>();
+		phoneto.add("151");
+		params.addBodyParameter("phoneto", gson.toJson(phoneto));
+		params.addBodyParameter("gid", "");
+
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
 	}
 
 	@Override

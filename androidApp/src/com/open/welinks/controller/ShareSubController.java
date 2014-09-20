@@ -340,13 +340,19 @@ public class ShareSubController {
 					groups.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
 				}
 				// modify local data
+				String oldSequece = gson.toJson(data.relationship.groups);
 				data.relationship.groups = groups;
 				data.relationship.isModified = true;
 
 				String sequenceListString = gson.toJson(groups);
 
 				// modify server data
-				modifyGroupSequence(sequenceListString);
+				if (!sequenceListString.equals(oldSequece)) {
+					modifyGroupSequence(sequenceListString);
+					log.e("群组顺序发生改动");
+				} else {
+					log.e("群组顺序没有改动");
+				}
 			}
 		};
 	}

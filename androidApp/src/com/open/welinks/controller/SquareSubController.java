@@ -312,8 +312,18 @@ public class SquareSubController {
 					groups.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
 				}
 				// modify local data
-				data.relationship.groups = groups;
+				String oldSequece = gson.toJson(data.relationship.squares);
+				data.relationship.squares = groups;
 				data.relationship.isModified = true;
+
+				String sequenceListString = gson.toJson(data.relationship.squares);
+
+				// modify server data
+				if (!sequenceListString.equals(oldSequece)) {
+					log.e("广场顺序发生改动");
+				} else {
+					log.e("广场顺序没有改动");
+				}
 			}
 		};
 	}

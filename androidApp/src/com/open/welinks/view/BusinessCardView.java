@@ -3,11 +3,15 @@ package com.open.welinks.view;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,7 +43,7 @@ public class BusinessCardView {
 	public TextView spacing_one, spacing_two, spacing_three, title, business_title, lable_title, creattime_title, nickname, id, business, lable, creattime, sex, distance;
 	public ImageView head, tdcode;
 	public Button button_one, button_two, button_three;
-
+	public RelativeLayout rightContainer;
 	public BusinessCard businessCard;
 
 	public Status status = Status.SELF;
@@ -56,18 +60,24 @@ public class BusinessCardView {
 		thisView = this;
 	}
 
+	public TextView rightTopButton;
+
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_businesscard);
 
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
 		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		title = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		content = (LinearLayout) thisActivity.findViewById(R.id.content);
 		infomation_layout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
 		sex_layout = (LinearLayout) thisActivity.findViewById(R.id.sex_layout);
 		spacing_one = (TextView) thisActivity.findViewById(R.id.spacing_one);
 		spacing_two = (TextView) thisActivity.findViewById(R.id.spacing_two);
 		spacing_three = (TextView) thisActivity.findViewById(R.id.spacing_three);
-		title = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		business_title = (TextView) thisActivity.findViewById(R.id.business_title);
 		lable_title = (TextView) thisActivity.findViewById(R.id.lable_title);
 		creattime_title = (TextView) thisActivity.findViewById(R.id.creattime_title);
@@ -86,6 +96,18 @@ public class BusinessCardView {
 		button_three = (Button) thisActivity.findViewById(R.id.button_three);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(45)).build();
 
+		rightTopButton = new TextView(thisActivity);
+		int dp_5 = (int) (5 * displayMetrics.density);
+		rightTopButton.setGravity(Gravity.CENTER);
+		rightTopButton.setTextColor(Color.WHITE);
+		rightTopButton.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
+		rightTopButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		rightTopButton.setText("修改资料");
+		rightTopButton.setBackgroundResource(R.drawable.textview_bg);
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
+		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		this.rightContainer.addView(rightTopButton, layoutParams);
 	}
 
 	String GROUPCARDTYPE = "groupcard";
@@ -95,6 +117,7 @@ public class BusinessCardView {
 	public void fillData() {
 		businessCard = new BusinessCard();
 		if (status.equals(Status.SELF)) {
+			rightTopButton.setText("修改资料");
 			User user = thisController.data.userInformation.currentUser;
 			businessCard.id = user.id;
 			businessCard.icon = user.head;
@@ -112,6 +135,7 @@ public class BusinessCardView {
 			button_three.setVisibility(View.GONE);
 			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, user.phone));
 		} else if (status.equals(Status.FRIEND)) {
+			rightTopButton.setText("发起聊天");
 			Friend friend = thisController.data.relationship.friendsMap.get(thisController.key);
 			businessCard.id = friend.id;
 			businessCard.icon = friend.head;
@@ -132,6 +156,7 @@ public class BusinessCardView {
 			businessCard.button_three = "解除好友关系";
 			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
 		} else if (status.equals(Status.JOINEDGROUP)) {
+			rightTopButton.setText("发起群聊");
 			Group group = thisController.data.relationship.groupsMap.get(thisController.key);
 			businessCard.id = group.gid;
 			businessCard.icon = group.icon;
@@ -153,6 +178,7 @@ public class BusinessCardView {
 			button_three.setVisibility(View.GONE);
 			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
 		} else if (status.equals(Status.TEMPFRIEND)) {
+			rightTopButton.setText("加为好友");
 			Friend friend = data.tempData.tempFriend;
 			businessCard.id = friend.id;
 			businessCard.icon = friend.head;
@@ -169,6 +195,7 @@ public class BusinessCardView {
 			button_three.setVisibility(View.GONE);
 			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempFriend.phone));
 		} else if (status.equals(Status.NOTJOINGROUP)) {
+			rightTopButton.setText("加入群组");
 			businessCard.id = data.tempData.tempGroup.gid;
 			businessCard.icon = data.tempData.tempGroup.icon;
 			businessCard.nickname = data.tempData.tempGroup.name;
@@ -184,6 +211,7 @@ public class BusinessCardView {
 			button_three.setVisibility(View.GONE);
 			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
 		} else if (status.equals(Status.SQUARE)) {
+			// rightTopButton.setText("修改资料");
 			businessCard.id = Integer.valueOf(thisController.key);
 			businessCard.icon = "";
 			businessCard.distance = "0";

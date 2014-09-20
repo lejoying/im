@@ -94,12 +94,18 @@ public class FileHandlers {
 	public FileHandlers() {
 		sdcard = Environment.getExternalStorageDirectory();
 		if (!sdcard.exists()) {
-			// TODO
+			sdcard = Environment.getDataDirectory();
+			// sdcard = Environment.getRootDirectory();
+			// sdcard = MainActivity.instance.getFilesDir();
+			System.out.println(sdcard.getAbsolutePath() + "---Memory");
 		}
 		sdcardFolder = new File(sdcard, "welinks");
+		System.out.println(sdcardFolder.getAbsolutePath() + "---Memory1");
 		if (!sdcardFolder.exists()) {
-			sdcardFolder.mkdirs();
+			boolean falg = sdcardFolder.mkdirs();
+			System.out.println(sdcardFolder.exists() + "--" + falg + "-Memory3");
 		}
+		System.out.println(sdcardFolder.exists() + "---Memory2");
 		sdcardImageFolder = new File(sdcardFolder, "images");
 		if (!sdcardImageFolder.exists()) {
 			sdcardImageFolder.mkdirs();

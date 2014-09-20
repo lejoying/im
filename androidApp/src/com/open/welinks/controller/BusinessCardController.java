@@ -154,8 +154,19 @@ public class BusinessCardController {
 					}
 				} else if (view.equals(thisView.backview)) {
 					thisActivity.finish();
+				} else if (view.equals(thisView.rightTopButton)) {
+					if (thisView.status.equals(Status.SELF)) {
+						modifyInformation();
+					} else if (thisView.status.equals(Status.FRIEND)) {
+						startChat("point");
+					} else if (thisView.status.equals(Status.JOINEDGROUP)) {
+						startChat("group");
+					} else if (thisView.status.equals(Status.TEMPFRIEND)) {
+						addFriend();
+					} else if (thisView.status.equals(Status.NOTJOINGROUP)) {
+						joinGroup();
+					}
 				}
-
 			}
 		};
 		mOnTouchListener = new OnTouchListener() {
@@ -186,11 +197,11 @@ public class BusinessCardController {
 	}
 
 	public void bindEvent() {
+		thisView.rightTopButton.setOnClickListener(mOnClickListener);
 		thisView.backview.setOnClickListener(mOnClickListener);
 		thisView.button_one.setOnClickListener(mOnClickListener);
 		thisView.button_two.setOnClickListener(mOnClickListener);
 		thisView.button_three.setOnClickListener(mOnClickListener);
-
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

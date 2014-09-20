@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
@@ -41,6 +42,7 @@ public class FriendsSubController {
 	public Parser parser = Parser.getInstance();
 
 	public String tag = "UserIntimateActivity";
+	public MyLog log = new MyLog(tag, true);
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
@@ -135,12 +137,20 @@ public class FriendsSubController {
 					circles.add(key.substring(key.indexOf("#") + 1));
 				}
 				// modify local data
+				Gson gson = new Gson();
+				String oldSequece = gson.toJson(data.relationship.circles);
 				data.relationship.circles = circles;
 				data.relationship.isModified = true;
-				Gson gson = new Gson();
 				String ridSequence = gson.toJson(circles);
 				// modify server data
-				modifyGroupSequence(ridSequence);
+				if (!oldSequece.equals(ridSequence)) {
+					modifyGroupSequence(ridSequence);
+					log.e("分组顺序发生改动");
+				} else {
+					log.e(oldSequece);
+					log.e(ridSequence);
+					log.e("分组顺序没有改动");
+				}
 			}
 		};
 	}
