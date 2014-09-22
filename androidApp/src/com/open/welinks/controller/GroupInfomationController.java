@@ -18,6 +18,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.BusinessCardActivity;
+import com.open.welinks.CirclesListActivity;
 import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -112,7 +113,7 @@ public class GroupInfomationController {
 						}
 					}).show();
 				} else if (view.equals(thisView.groupMemberControlView)) {
-					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);
+					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);//GroupMemberManageActivity
 					intent.putExtra("gid", currentGroup.gid + "");
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.groupNameLayoutView)) {

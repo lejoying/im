@@ -181,15 +181,25 @@ public class FriendsSubView {
 			this.gripView.setTag(R.id.tag_first, circle);
 			this.gripView.setTag(R.id.tag_class, "card_grip");
 
-			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (55 * displayMetrics.density), (int) (78 * displayMetrics.density));
-
 			int lineCount = circle.friends.size() / 4;
 			if (lineCount == 0) {
 				lineCount = 1;
 			}
-			itemHeight = (174 + lineCount * 96) * displayMetrics.density;
+			int membrane = circle.friends.size() % 4;
+			if (membrane != 0) {
+				lineCount++;
+			}
+			itemHeight = (78 + lineCount * 96) * displayMetrics.density;// 174 to 78
 
+			//
+			int containerWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density);
+			int spacing = (int) (20 * displayMetrics.density);
+			int singleWidth = (containerWidth - spacing * 5) / 4;
+			//
+
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(singleWidth, (int) (78 * displayMetrics.density));
 			this.friendsSequence.clear();
+			// Log.e(tag, circle.friends.size() + "---size");
 			for (int i = 0; i < circle.friends.size(); i++) {
 				String phone = circle.friends.get(i);
 				Friend friend = friendsMap.get(phone);
@@ -199,9 +209,18 @@ public class FriendsSubView {
 				friendBody.setData(friend);
 
 				this.cardView.addView(friendBody.friendView, layoutParams);
+				int x = (i % 4 + 1) * spacing + (i % 4) * singleWidth;
+				int y = (int) ((i / 4) * (95 * displayMetrics.density) + 64 * displayMetrics.density);
+				// int x = 120 * (int) displayMetrics.density * (i % 4) + (int) itemWidth / 16;
+				// int y = 140 * (int) displayMetrics.density * (i / 4) + 96 * (int) displayMetrics.density;
 
-				int x = 120 * (int) displayMetrics.density * (i % 4) + (int) itemWidth / 16;
-				int y = 140 * (int) displayMetrics.density * (i / 4) + 96 * (int) displayMetrics.density;
+				// int rows = i / 4;
+				// int membrane = i % 4;
+				// if (membrane != 0) {
+				// rows = rows + 1;
+				// }
+				// int x = 120 * (int) displayMetrics.density * membrane + (int) itemWidth / 16;
+				// int y = 140 * (int) displayMetrics.density * rows + 96 * (int) displayMetrics.density;
 
 				friendBody.friendView.setX(x);
 				friendBody.friendView.setY(y);
@@ -389,6 +408,7 @@ public class FriendsSubView {
 	}
 
 	LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+
 	public void setSmallBusinessCardContent(Friend friend) {
 		User user = data.userInformation.currentUser;
 		goInfomationView.setTag(R.id.tag_first, friend.phone);

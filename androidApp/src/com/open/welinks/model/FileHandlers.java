@@ -94,7 +94,7 @@ public class FileHandlers {
 	public FileHandlers() {
 		sdcard = Environment.getExternalStorageDirectory();
 		if (!sdcard.exists()) {
-			sdcard = Environment.getDataDirectory();
+//			sdcard = Environment.getDataDirectory();
 			// sdcard = Environment.getRootDirectory();
 			// sdcard = MainActivity.instance.getFilesDir();
 			System.out.println(sdcard.getAbsolutePath() + "---Memory");

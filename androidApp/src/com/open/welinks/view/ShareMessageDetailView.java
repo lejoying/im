@@ -51,7 +51,6 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
-import com.open.welinks.view.ShareView.onWeChatClickListener;
 
 public class ShareMessageDetailView {
 
@@ -210,7 +209,7 @@ public class ShareMessageDetailView {
 
 		shareView = new ShareView(thisActivity);
 		sharePopupWindow = new PopupWindow(shareView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
-
+		thisController.initShareListener();
 		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
 		detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
 

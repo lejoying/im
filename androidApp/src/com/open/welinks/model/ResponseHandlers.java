@@ -174,8 +174,14 @@ public class ResponseHandlers {
 				} else {
 					lbsHandlers.uplodUserLbsData();
 				}
+				viewManage.postNotifyView("ChangePasswordActivitySuccess");
+				log.e(response.提示信息);
 			} else {
-				viewManage.loginView.thisController.loginFail(response.失败原因);
+				log.e(response.失败原因);
+				viewManage.postNotifyView("ChangePasswordActivityFailed");
+				if (viewManage.loginView != null) {
+					viewManage.loginView.thisController.loginFail(response.失败原因);
+				}
 			}
 		};
 

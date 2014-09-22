@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,10 @@ public class GroupMemberManageView {
 
 	public DisplayImageOptions options;
 
+	public DisplayMetrics displayMetrics;
+
+	public LinearLayout alreadyListContainer;
+
 	public GroupMemberManageView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
@@ -61,8 +66,12 @@ public class GroupMemberManageView {
 	}
 
 	public void initView() {
-		thisActivity.setContentView(R.layout.activity_group_member_manage);
 
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+		thisActivity.setContentView(R.layout.activity_group_member_manage);
+		alreadyListContainer = (LinearLayout) thisActivity.findViewById(R.id.alreadyListContainer);
 		backView = (LinearLayout) thisActivity.findViewById(R.id.backView);
 		groupMemberCountView = (TextView) thisActivity.findViewById(R.id.groupMemberCount);
 		confirmButtonView = (TextView) thisActivity.findViewById(R.id.confirmButton);
@@ -77,6 +86,24 @@ public class GroupMemberManageView {
 	public void showCurrentGroupMembers() {
 		groupMembersAdapter = new GroupMembersAdapter();
 		this.groupMemberGridView.setAdapter(groupMembersAdapter);
+	}
+
+	public void showAlreayList() {
+		int width = (int) (40 * displayMetrics.density);
+		int spacing = (int) (5 * displayMetrics.density);
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, width);
+		layoutParams.setMargins(spacing, spacing, spacing, spacing);
+		alreadyListContainer.removeAllViews();
+		for (int i = 0; i < subtractMembers.size(); i++) {
+			String key = subtractMembers.get(i);
+			Friend friend = data.relationship.friendsMap.get(key);
+			ImageView imageView = new ImageView(thisActivity);
+			imageView.setTag(R.id.tag_class, "already_friend");
+			imageView.setTag(R.id.tag_first, friend.phone);
+			imageView.setOnClickListener(thisController.mOnClickListener);
+			alreadyListContainer.addView(imageView, layoutParams);
+			fileHandlers.getHeadImage(friend.head, imageView, options);
+		}
 	}
 
 	public List<String> subtractMembers = new ArrayList<String>();

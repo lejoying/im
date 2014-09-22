@@ -74,6 +74,14 @@ public class ImagesGridController {
 					thisActivity.finish();
 				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
+				} else if (view.getTag(R.id.tag_class) != null) {
+					String tag_class = (String) view.getTag(R.id.tag_class);
+					if ("already_image".equals(tag_class)) {
+						String path = (String) view.getTag(R.id.tag_first);
+						thisView.alreadyListContainer.removeView(view);
+						ImagesDirectoryController.selectedImage.remove(path);
+						thisView.mImageAdapter.notifyDataSetChanged();
+					}
 				}
 			}
 		};
@@ -85,9 +93,11 @@ public class ImagesGridController {
 				if (v.getVisibility() == View.GONE) {
 					v.setVisibility(View.VISIBLE);
 					ImagesDirectoryController.selectedImage.add(imagesSource.get(postion));
+					thisView.showAlreayList();
 				} else {
 					v.setVisibility(View.GONE);
 					ImagesDirectoryController.selectedImage.remove(imagesSource.get(postion));
+					thisView.showAlreayList();
 				}
 				handler.post(new Runnable() {
 

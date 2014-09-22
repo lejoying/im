@@ -86,7 +86,9 @@ public class DownloadFile {
 						Header header = headers[i];
 						if (header.getName().equals("Content-Length")) {
 							imageBean.size = Long.valueOf(header.getValue());
-							downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+							if (downloadListener != null) {
+								downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+							}
 							break;
 						}
 					}
@@ -100,7 +102,9 @@ public class DownloadFile {
 			time.received = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_LOADINGING;
 			uploadPrecent = (int) ((((double) current / (double) total)) * 100);
-			downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+			if (downloadListener != null) {
+				downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+			}
 			// Log.e(tag, "-----onLoading-----");
 		}
 
@@ -108,7 +112,9 @@ public class DownloadFile {
 		public void onSuccess(ResponseInfo<File> responseInfo) {
 			time.received = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_SUCCESS;
-			downloadListener.onSuccess(instance, isDownloadStatus);
+			if (downloadListener != null) {
+				downloadListener.onSuccess(instance, isDownloadStatus);
+			}
 			Log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 

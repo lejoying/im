@@ -30,14 +30,11 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.ImageScanActivity;
-import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.SubData;
-import com.open.welinks.model.Data.Shares;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
@@ -46,6 +43,7 @@ import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.view.Alert;
@@ -131,6 +129,15 @@ public class ShareMessageDetailController {
 				getShareFromServer(gid, gsid);
 			}
 		}
+	}
+
+	public void initShareListener() {
+		mOnWeChatClickListener = thisView.shareView.new onWeChatClickListener() {
+			@Override
+			public void onWeChatClick() {
+				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, gid, thisController.gsid);
+			}
+		};
 	}
 
 	public void getShareFromServer(String gid, String gsid) {
@@ -349,12 +356,6 @@ public class ShareMessageDetailController {
 				}
 			}
 
-		};
-		mOnWeChatClickListener = thisView.shareView.new onWeChatClickListener() {
-			@Override
-			public void onWeChatClick() {
-				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, gid, gsid);
-			}
 		};
 	}
 
