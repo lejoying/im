@@ -1,11 +1,12 @@
 package com.open.welinks.view;
 
+import android.os.Handler;
+import android.util.Log;
+
+import com.open.welinks.ChangePasswordActivity;
 import com.open.welinks.DynamicListActivity;
 import com.open.welinks.GroupListActivity;
 import com.open.welinks.SearchFriendActivity;
-
-import android.os.Handler;
-import android.util.Log;
 
 public class ViewManage {
 
@@ -24,6 +25,7 @@ public class ViewManage {
 	public DynamicListActivity dynamicListActivity = null;
 	public GroupListActivity groupListActivity = null;
 	public SearchFriendActivity searchFriendActivity = null;
+	public ChangePasswordActivity changePasswordActivity = null;
 
 	public DownloadOssFileView downloadOssFileView = null;
 
@@ -73,6 +75,14 @@ public class ViewManage {
 		} else if (viewName.equals("ShareSubView")) {
 			if (mainView.shareSubView != null) {
 				mainView.shareSubView.setGroupsDialogContent();
+			}
+		} else if (viewName.equals("ChangePasswordActivitySuccess")) {
+			if (changePasswordActivity != null) {
+				changePasswordActivity.modifySuccess();
+			}
+		} else if (viewName.equals("ChangePasswordActivityFailed")) {
+			if (changePasswordActivity != null) {
+				changePasswordActivity.modifyFailed();
 			}
 		}
 	}

@@ -11,6 +11,15 @@
         android:layout_gravity="top|center_horizontal"
         tools:ignore="ContentDescription" />
 
+    <ImageView
+        android:id="@+id/head_image_status"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@drawable/group_members_add"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
     <TextView
         android:id="@+id/nickname"
         android:layout_width="wrap_content"

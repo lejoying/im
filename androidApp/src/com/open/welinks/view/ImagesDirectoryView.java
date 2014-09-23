@@ -10,7 +10,9 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,6 +29,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
 import com.open.welinks.controller.ImagesDirectoryController;
+import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
 
 public class ImagesDirectoryView {
 
@@ -47,6 +50,9 @@ public class ImagesDirectoryView {
 	DisplayImageOptions options;
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 
+	public ThreeChoicesView threeChoicesView;
+	public RelativeLayout rightContainerView;
+
 	public ImagesDirectoryView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -58,7 +64,23 @@ public class ImagesDirectoryView {
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		backTitileView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitileView.setText("相册");
+		rightContainerView = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 
+		threeChoicesView = new ThreeChoicesView(thisActivity, 1);
+		threeChoicesView.setTwoChoice();
+		threeChoicesView.setButtonOneText("本地");
+		threeChoicesView.setButtonThreeText("云端");
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.CENTER_IN_PARENT);
+		rightContainerView.addView(threeChoicesView, params);
+
+		OnItemClickListener mOnItemClickListener = threeChoicesView.new OnItemClickListener() {
+			@Override
+			public void onButtonCilck(int position) {
+
+			}
+		};
+		threeChoicesView.setOnItemClickListener(mOnItemClickListener);
 	}
 
 	public class MyGridViewAdapter extends BaseAdapter {

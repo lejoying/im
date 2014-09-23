@@ -22,7 +22,10 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.view.Alert;
 import com.open.welinks.view.GroupMemberManageView;
+import com.open.welinks.view.Alert.AlertInputDialog;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 
 public class GroupMemberManageController {
 
@@ -72,12 +75,31 @@ public class GroupMemberManageController {
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.confirmButtonView)) {
-					thisView.isSubtract = thisView.MANAGE_COMMON;
-					thisView.groupMembersAdapter.notifyDataSetChanged();
-					thisView.confirmButtonView.setVisibility(View.GONE);
-					thisController.currentGroup.members.removeAll(thisView.subtractMembers);
-					modifyGroupMembers(API.GROUP_REMOVEMEMBERS, gson.toJson(thisView.subtractMembers), responseHandlers.removeMembersCallBack);
-					thisView.subtractMembers.clear();
+					Alert.createDialog(thisActivity).setTitle("您确定要移除已选择的群成员？").setOnConfirmClickListener(new OnDialogClickListener() {
+
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+							thisView.isSubtract = thisView.MANAGE_COMMON;
+							thisView.groupMembersAdapter.notifyDataSetChanged();
+							thisView.confirmButtonView.setVisibility(View.GONE);
+							thisController.currentGroup.members.removeAll(thisView.subtractMembers);
+							modifyGroupMembers(API.GROUP_REMOVEMEMBERS, gson.toJson(thisView.subtractMembers), responseHandlers.removeMembersCallBack);
+							thisView.subtractMembers.clear();
+							thisView.showAlreayList();
+						}
+					}).setOnCancelClickListener(new OnDialogClickListener() {
+
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+							thisView.isSubtract = thisView.MANAGE_COMMON;
+							thisView.confirmButtonView.setVisibility(View.GONE);
+							thisView.groupMembersAdapter.members.addAll(thisView.subtractMembers);
+							thisView.groupMembersAdapter.notifyDataSetChanged();
+							thisView.subtractMembers.clear();
+							thisView.showAlreayList();
+						}
+					}).show();
+
 				} else if (view.getTag(R.id.iv_image) != null) {
 					String tagContent = (String) view.getTag(R.id.iv_image);
 					int index = tagContent.lastIndexOf("#");
@@ -91,11 +113,23 @@ public class GroupMemberManageController {
 							thisView.subtractMembers.add(content);
 							thisView.groupMembersAdapter.members.remove(content);
 							thisView.groupMembersAdapter.notifyDataSetChanged();
+							thisView.showAlreayList();
 						}
 					} else if (thisView.isSubtract == thisView.MANAGE_COMMON) {
 						Toast.makeText(thisActivity, "好友资料", Toast.LENGTH_SHORT).show();
 					}
+				} else if (view.getTag(R.id.tag_class) != null) {
+					String tag_class = (String) view.getTag(R.id.tag_class);
+					if ("already_friend".equals(tag_class)) {
+						String phone = (String) view.getTag(R.id.tag_first);
+						thisView.subtractMembers.remove(phone);
+						thisView.groupMembersAdapter.members.add(phone);
+						thisView.groupMembersAdapter.notifyDataSetChanged();
+						thisView.alreadyListContainer.removeView(view);
+						// thisView.showAlreayList();
+					}
 				} else if (view.getTag() != null) {
+					// option button
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
 					String type = tagContent.substring(0, index);

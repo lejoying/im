@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -78,6 +80,7 @@ public class FriendsSortListActivity extends Activity {
 	public RelativeLayout rightContainerView;
 
 	public TextView backTitleView;
+	public Handler handler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +125,18 @@ public class FriendsSortListActivity extends Activity {
 						setResult(Activity.RESULT_OK, intent);
 					}
 					finish();
+				} else if (view.getTag(R.id.tag_class) != null) {
+					String tag_class = (String) view.getTag(R.id.tag_class);
+					if ("already_friend".equals(tag_class)) {
+						String phone = (String) view.getTag(R.id.tag_first);
+						invitaFriends.remove(phone);
+						alreadyListContainer.removeView(view);
+						adapter.notifyDataSetChanged();
+						// if (invitaFriends.size() == 0) {
+						// FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
+						// layoutParams.bottomMargin = 0;
+						// }
+					}
 				}
 			}
 		};
@@ -148,11 +163,36 @@ public class FriendsSortListActivity extends Activity {
 		SourceDateList = filledData(list);
 	}
 
+	DisplayMetrics displayMetrics;
+
+	public void showAlreayList() {
+		int width = (int) (40 * displayMetrics.density);
+		int spacing = (int) (5 * displayMetrics.density);
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, width);
+		layoutParams.setMargins(spacing, spacing, spacing, spacing);
+		alreadyListContainer.removeAllViews();
+		for (int i = 0; i < invitaFriends.size(); i++) {
+			String key = invitaFriends.get(i);
+			Friend friend = data.relationship.friendsMap.get(key);
+			ImageView imageView = new ImageView(this);
+			imageView.setTag(R.id.tag_class, "already_friend");
+			imageView.setTag(R.id.tag_first, friend.phone);
+			imageView.setOnClickListener(mOnClickListener);
+			alreadyListContainer.addView(imageView, layoutParams);
+			fileHandlers.getHeadImage(friend.head, imageView, options);
+		}
+	}
+
+	public LinearLayout alreadyListContainer;
+	public FrameLayout mainContainer;
+
 	private void initViews() {
-		DisplayMetrics displayMetrics = new DisplayMetrics();
+		displayMetrics = new DisplayMetrics();
 
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		setContentView(R.layout.activity_sortlist);
+		mainContainer = (FrameLayout) findViewById(R.id.mainContainer);
+		alreadyListContainer = (LinearLayout) findViewById(R.id.alreadyListContainer);
 		backView = (RelativeLayout) findViewById(R.id.backView);
 		backTitleView = (TextView) findViewById(R.id.backTitleView);
 		backTitleView.setText("选择好友");
@@ -175,7 +215,7 @@ public class FriendsSortListActivity extends Activity {
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainerView.addView(mConfirm, layoutParams);
 
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		sideBar.setOnTouchingLetterChangedListener(new OnTouchingLetterChangedListener() {
 
@@ -328,6 +368,12 @@ public class FriendsSortListActivity extends Activity {
 
 			viewHolder.tvTitle.setText(name2);
 
+			if (invitaFriends.contains(friend.phone)) {
+				viewHolder.friendHeadStatus.setVisibility(View.VISIBLE);
+			} else {
+				viewHolder.friendHeadStatus.setVisibility(View.GONE);
+			}
+
 			final ViewHolder viewHolder0 = viewHolder;
 			viewHolder.friendInfoLLView.setOnClickListener(new OnClickListener() {
 
@@ -336,9 +382,32 @@ public class FriendsSortListActivity extends Activity {
 					if (viewHolder0.friendHeadStatus.getVisibility() == View.GONE) {
 						viewHolder0.friendHeadStatus.setVisibility(View.VISIBLE);
 						invitaFriends.add(friend.phone);
+						handler.post(new Runnable() {
+
+							@Override
+							public void run() {
+//								if (invitaFriends.size() == 1) {
+//									FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
+//									layoutParams.bottomMargin = (int) (50 * displayMetrics.density);
+//								}
+								showAlreayList();
+							}
+						});
+
 					} else {
 						viewHolder0.friendHeadStatus.setVisibility(View.GONE);
 						invitaFriends.remove(friend.phone);
+						handler.post(new Runnable() {
+
+							@Override
+							public void run() {
+//								if (invitaFriends.size() == 0) {
+//									FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
+//									layoutParams.bottomMargin = 0;
+//								}
+								showAlreayList();
+							}
+						});
 					}
 				}
 			});

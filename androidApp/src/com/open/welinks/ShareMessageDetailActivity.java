@@ -28,19 +28,19 @@ public class ShareMessageDetailActivity extends SwipeBackActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//
-		mSwipeBackLayout = getSwipeBackLayout();
-		int edgeFlag;
-		edgeFlag = SwipeBackLayout.EDGE_LEFT;
-		mSwipeBackLayout.setEdgeTrackingEnabled(edgeFlag);
-		saveTrackingMode(edgeFlag);
+		 mSwipeBackLayout = getSwipeBackLayout();
+		 int edgeFlag;
+		 edgeFlag = SwipeBackLayout.EDGE_LEFT;
+		 mSwipeBackLayout.setEdgeTrackingEnabled(edgeFlag);
+		 saveTrackingMode(edgeFlag);
 		//
 
 		linkViewController();
 	}
 
-	private void saveTrackingMode(int flag) {
-		PreferenceUtils.setPrefInt(getApplicationContext(), "key_tracking_mode", flag);
-	}
+	 private void saveTrackingMode(int flag) {
+	 PreferenceUtils.setPrefInt(getApplicationContext(), "key_tracking_mode", flag);
+	 }
 
 	public void linkViewController() {
 		this.thisActivity = this;
@@ -51,8 +51,8 @@ public class ShareMessageDetailActivity extends SwipeBackActivity {
 		this.thisController.thisView = this.thisView;
 
 		thisController.initData();
-		thisView.initView();
 		thisController.initializeListeners();
+		thisView.initView();
 		thisController.bindEvent();
 	}
 

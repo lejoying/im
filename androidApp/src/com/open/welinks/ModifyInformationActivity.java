@@ -13,13 +13,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -120,6 +125,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		}
 	}
 
+	public RelativeLayout rightContainer;
+	public TextView rightTopButton;
+
 	private void initView() {
 		backView = findViewById(R.id.backView);
 		head_layout = findViewById(R.id.head_layout);
@@ -162,38 +170,32 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		album.setOnClickListener(this);
 		confirm.setOnClickListener(this);
 		cancel.setOnClickListener(this);
+
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		if ("point".equals(type)) {
+			rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
+			rightTopButton = new TextView(this);
+			int dp_5 = (int) (5 * displayMetrics.density);
+			rightTopButton.setGravity(Gravity.CENTER);
+			rightTopButton.setTextColor(Color.WHITE);
+			rightTopButton.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
+			rightTopButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+			rightTopButton.setText("修改密码");
+			rightTopButton.setBackgroundResource(R.drawable.textview_bg);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
+			layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+			this.rightContainer.addView(rightTopButton, layoutParams);
+			rightTopButton.setOnClickListener(this);
+		}
 		fillData();
 	}
 
 	public void initializeListeners() {
 		uploadLoadingListener = new OnUploadLoadingListener() {
-
-			@Override
-			public void onSuccess(UploadMultipart instance, int time) {
-
-			}
-
-			@Override
-			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
-
-			}
 		};
 		downloadListener = new OnDownloadListener() {
-
-			@Override
-			public void onSuccess(DownloadFile instance, int status) {
-
-			}
-
-			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
-
-			}
-
-			@Override
-			public void onFailure(DownloadFile instance, int status) {
-
-			}
 		};
 	}
 
@@ -292,8 +294,10 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			} else if (view.getTag().equals(TAG_EXIT)) {
 				finish();
 			}
+		} else if (view.equals(rightTopButton)) {
+			Intent intent = new Intent(ModifyInformationActivity.this, ChangePasswordActivity.class);
+			startActivity(intent);
 		}
-
 	}
 
 	public void sendData() {
