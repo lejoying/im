@@ -396,8 +396,8 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		intent.putExtra("crop", "true");
 		intent.putExtra("aspectX", 1);
 		intent.putExtra("aspectY", 1);
-		intent.putExtra("outputX", 100);
-		intent.putExtra("outputY", 100);
+		intent.putExtra("outputX", 300);// 100
+		intent.putExtra("outputY", 300);// 100
 		intent.putExtra("return-data", false);
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
 		startActivityForResult(intent, REQUESTCODE_CAT);

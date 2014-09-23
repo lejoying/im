@@ -1,5 +1,9 @@
 package com.open.welinks;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -26,6 +30,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.FileHandlers;
+import com.open.welinks.utils.StreamParser;
 
 public class ImageScanActivity extends FragmentActivity {
 
@@ -54,6 +60,10 @@ public class ImageScanActivity extends FragmentActivity {
 
 	public RelativeLayout rightContainer;
 
+	public RelativeLayout menuOptionsView;
+	public RelativeLayout saveOptionsView;
+	public RelativeLayout shareOptionsView;
+
 	public DisplayImageOptions options;
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -63,34 +73,43 @@ public class ImageScanActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.image_detail_pager);
 
 		currentPosition = Integer.valueOf(getIntent().getStringExtra("position"));
 		currentType = getIntent().getIntExtra("type", IMAGEBROWSE_COMMON);
-		if (data.tempData.selectedImageList != null)
+		if (data.tempData.selectedImageList != null) {
 			imagesBrowseList = data.tempData.selectedImageList;
-		else
+		} else {
 			imagesBrowseList = new ArrayList<String>();
+		}
 
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
+		setContentView(R.layout.image_detail_pager);
+		menuOptionsView = (RelativeLayout) findViewById(R.id.menuOptions);
+		saveOptionsView = (RelativeLayout) findViewById(R.id.saveOption);
+		shareOptionsView = (RelativeLayout) findViewById(R.id.shareOption);
 		backView = (RelativeLayout) findViewById(R.id.backView);
 		imageNumberView = (TextView) findViewById(R.id.backTitleView);
 		titleView = (TextView) findViewById(R.id.titleContent);
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true).displayer(new FadeInBitmapDisplayer(300)).build();
 
-		imageNumberView.setText((currentPosition + 1) + "/" + imagesBrowseList.size());
-		titleView.setText("浏览");
+		imageNumberView.setText("浏览  (" + (currentPosition + 1) + "/" + imagesBrowseList.size() + ")");
+		// titleView.setText("浏览");
 		deleteButtonView = new ImageView(this);
-		deleteButtonView.setImageResource(R.drawable.image_delete);
-		deleteButtonView.setPadding((int) (30 * displaymetrics.density), (int) (15 * displaymetrics.density), (int) (30 * displaymetrics.density), (int) (15 * displaymetrics.density));
+		int padding = (int) (10 * displaymetrics.density);
+
+		deleteButtonView.setBackgroundResource(R.drawable.backview_background);
 		rightContainer.addView(deleteButtonView);
+
+		menuOptionsView.setVisibility(View.GONE);
+
 		if (currentType == IMAGEBROWSE_COMMON) {
-			deleteButtonView.setVisibility(View.GONE);
+			deleteButtonView.setImageResource(R.drawable.share_to_group_icon);
 		} else if (currentType == IMAGEBROWSE_OPTION) {
-			deleteButtonView.setVisibility(View.VISIBLE);
+			deleteButtonView.setImageResource(R.drawable.image_delete);
+			deleteButtonView.setPadding(padding, padding, padding, padding);
 		}
 
 		mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), imagesBrowseList.size());
@@ -113,7 +132,6 @@ public class ImageScanActivity extends FragmentActivity {
 		final int extraCurrentItem = getIntent().getIntExtra(EXTRA_IMAGE, -1);
 		if (extraCurrentItem != -1) {
 			mPager.setCurrentItem(extraCurrentItem);
-
 		}
 
 		initializeListeners();
@@ -134,7 +152,7 @@ public class ImageScanActivity extends FragmentActivity {
 			@Override
 			public void onPageSelected(int position) {
 				currentPosition = position;
-				imageNumberView.setText(position + 1 + "/" + imagesBrowseList.size());
+				imageNumberView.setText("浏览  (" + (position + 1) + "/" + imagesBrowseList.size() + ")");
 			}
 		};
 		mOnClickListener = new OnClickListener() {
@@ -145,25 +163,79 @@ public class ImageScanActivity extends FragmentActivity {
 					setResult(Activity.RESULT_CANCELED);
 					finish();
 				} else if (view.equals(deleteButtonView)) {
-					imagesBrowseList.remove(currentPosition);
-					if (imagesBrowseList.size() == 0) {
-						finish();
-					} else if (currentPosition > imagesBrowseList.size() - 1) {
-						currentPosition = imagesBrowseList.size() - 1;
-						// thisView.imageViewPageContent.setCurrentItem(currentPosition);
+					if (currentType == IMAGEBROWSE_COMMON) {
+						if (menuOptionsView.getVisibility() == View.GONE) {
+							menuOptionsView.setVisibility(View.VISIBLE);
+						} else {
+							menuOptionsView.setVisibility(View.GONE);
+						}
+					} else if (currentType == IMAGEBROWSE_OPTION) {
+						imagesBrowseList.remove(currentPosition);
+						if (imagesBrowseList.size() == 0) {
+							finish();
+						} else if (currentPosition > imagesBrowseList.size() - 1) {
+							currentPosition = imagesBrowseList.size() - 1;
+							// thisView.imageViewPageContent.setCurrentItem(currentPosition);
+						}
+						mAdapter.notifyDataSetChanged();
+						imageNumberView.setText("浏览  (" + (currentPosition + 1) + "/" + imagesBrowseList.size() + ")");
+						// Toast.makeText(ImageScanActivity.this, "deleteButtonView", Toast.LENGTH_SHORT).show();
 					}
-					mAdapter.notifyDataSetChanged();
-					imageNumberView.setText(currentPosition + 1 + "/" + imagesBrowseList.size());
-					Toast.makeText(ImageScanActivity.this, "deleteButtonView", Toast.LENGTH_SHORT).show();
+				} else if (view.equals(saveOptionsView)) {
+					menuOptionsView.setVisibility(View.GONE);
+					saveCloudFile();
+				} else if (view.equals(shareOptionsView)) {
+					menuOptionsView.setVisibility(View.GONE);
 				}
 			}
 		};
 	}
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public void saveCloudFile() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				String path = imagesBrowseList.get(currentPosition);
+				if (path.lastIndexOf("/") == -1) {
+					File file = new File(fileHandlers.sdcardImageFolder, path);
+					path = file.getAbsolutePath();
+				}
+				String fileName = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
+				String suffixName = path.substring(path.lastIndexOf("."));
+				if (".osj".equals(suffixName)) {
+					suffixName = ".jpg";
+				} else if (".osp".equals(suffixName)) {
+					suffixName = ".png";
+				}
+				fileName = fileName + suffixName;
+				try {
+					FileInputStream fileInputStream = new FileInputStream(new File(path));
+					final File saveFile = new File(fileHandlers.sdcardSaveImageFolder, fileName);
+					FileOutputStream fileOutputStream = new FileOutputStream(saveFile);
+					StreamParser.parseToFile(fileInputStream, fileOutputStream);
+					fileHandlers.handler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(ImageScanActivity.this, "文件位置:" + saveFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+						}
+					});
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
 	public void bindEvent() {
-		backView.setOnClickListener(mOnClickListener);
-		deleteButtonView.setOnClickListener(mOnClickListener);
-		mPager.setOnPageChangeListener(mOnPageChangeListener);
+		this.backView.setOnClickListener(mOnClickListener);
+		this.deleteButtonView.setOnClickListener(mOnClickListener);
+		this.mPager.setOnPageChangeListener(mOnPageChangeListener);
+		this.saveOptionsView.setOnClickListener(mOnClickListener);
+		this.shareOptionsView.setOnClickListener(mOnClickListener);
 	}
 
 	@Override

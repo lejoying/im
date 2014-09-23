@@ -7,9 +7,6 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -28,17 +25,19 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.ThreeChoicesView;
 import com.open.welinks.view.ViewManage;
-import com.open.welinks.view.Alert.AlertInputDialog;
 
 public class GroupListActivity extends Activity {
 
@@ -72,7 +71,10 @@ public class GroupListActivity extends Activity {
 	public Map<String, Friend> friendsMap;
 	public GroupListAdapter groupListAdapter;
 
-	public Bitmap bitmap;
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public DisplayImageOptions options;
+
+	// public Bitmap bitmap;
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -131,10 +133,11 @@ public class GroupListActivity extends Activity {
 		this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 		mInflater = this.getLayoutInflater();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
 
-		Resources resources = getResources();
-		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		// Resources resources = getResources();
+		// bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+		// bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 		setContentView(R.layout.activity_group_list);
 		this.backView = (RelativeLayout) findViewById(R.id.backView);
@@ -325,7 +328,8 @@ public class GroupListActivity extends Activity {
 			}
 			if (status == Status.friend) {
 				Friend friend = friendsMap.get(friends[position]);
-				holder.headView.setImageBitmap(bitmap);
+				// holder.headView.setImageBitmap(bitmap);
+				fileHandlers.getHeadImage(friend.head, holder.headView, options);
 				if (friend.alias.equals("")) {
 					holder.nameView.setText(friend.nickName);
 				} else {
@@ -334,7 +338,8 @@ public class GroupListActivity extends Activity {
 				holder.descriptionView.setText(friend.mainBusiness);
 			} else {
 				Group group = groupsMap.get(groups.get(position));
-				holder.headView.setImageBitmap(bitmap);
+				// holder.headView.setImageBitmap(bitmap);
+				fileHandlers.getHeadImage(group.icon, holder.headView, options);
 				holder.nameView.setText(group.name);
 				holder.descriptionView.setText(group.description);
 			}

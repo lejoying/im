@@ -249,8 +249,9 @@ public class BusinessCardController {
 
 			@Override
 			public void onClick(AlertInputDialog dialog) {
-				thisController.data.relationship.friendsMap.remove(key);
+				thisController.data.relationship.friends.remove(key);
 				thisView.status = Status.TEMPFRIEND;
+				data.tempData.tempFriend = friend;
 				thisView.fillData();
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();

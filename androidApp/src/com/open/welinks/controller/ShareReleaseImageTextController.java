@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.model.API;
@@ -88,7 +87,6 @@ public class ShareReleaseImageTextController {
 
 	public String type, gid, gtype;
 
-
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -107,7 +105,7 @@ public class ShareReleaseImageTextController {
 			// imageHeightScale);
 		}
 		data.tempData.selectedImageList = null;
-		
+
 	}
 
 	public OnTouchListener mScrollOnTouchListener;
@@ -392,7 +390,7 @@ public class ShareReleaseImageTextController {
 		if (requestCode == RESULT_REQUESTCODE_SELECTIMAGE && resultCode == Activity.RESULT_OK) {
 			thisView.showSelectedImages();
 		} else {
-			Log.e(tag, "------------------result");
+			// Log.e(tag, "------------------result");
 			ArrayList<String> selectedImageList = data.tempData.selectedImageList;
 			if (selectedImageList != null) {
 				if (selectedImageList.size() > 0) {

@@ -104,6 +104,10 @@ public class FriendsSubView {
 
 		for (int i = 0; i < circles.size(); i++) {
 			Circle circle = circlesMap.get(circles.get(i));
+			// TODO why circle is null from user infomation update event
+			if (circle == null) {
+				continue;
+			}
 
 			CircleBody circleBody = null;
 			circleBody = new CircleBody(this.friendListBody);
@@ -122,7 +126,6 @@ public class FriendsSubView {
 			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight;
 			// Log.d(tag, "addView");
 			Log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);
-
 		}
 
 		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
@@ -388,6 +391,7 @@ public class FriendsSubView {
 	public TextView userAgeView;
 	public TextView distanceView;
 	public TextView lastLoginTimeView;
+	public TextView singleButtonView;
 
 	public void initSmallBusinessCardDialog() {
 		userCardMainView = mInflater.inflate(R.layout.account_info_pop, null);
@@ -400,6 +404,8 @@ public class FriendsSubView {
 		userBusinessContainer.getLayoutParams().height = height;
 		goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
 		goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);
+		singleButtonView = (TextView) userCardMainView.findViewById(R.id.singleButton);
+		singleButtonView.setVisibility(View.GONE);
 		userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
 		userHeadView.getLayoutParams().height = height;
 		userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
@@ -448,5 +454,4 @@ public class FriendsSubView {
 		}
 		return statusBarHeight;
 	}
-
 }

@@ -28,7 +28,6 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ImagesDirectoryController;
 import com.open.welinks.controller.ImagesGridController;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
 
 public class ImagesGridView {
@@ -104,7 +103,7 @@ public class ImagesGridView {
 		if (data.tempData.selectedImageList != null) {
 			size = data.tempData.selectedImageList.size();
 		} else {
-			size = ImagesDirectoryController.selectedImage.size();
+			size = ImagesDirectoryController.instance.selectedImage.size();
 		}
 		this.mConfirm.setText("确定(" + size + ")");
 		this.directoryNameView.setText(thisController.parentName);
@@ -117,8 +116,8 @@ public class ImagesGridView {
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, width);
 		layoutParams.setMargins(spacing, spacing, spacing, spacing);
 		alreadyListContainer.removeAllViews();
-		for (int i = 0; i < ImagesDirectoryController.selectedImage.size(); i++) {
-			String key = ImagesDirectoryController.selectedImage.get(i);
+		for (int i = 0; i < ImagesDirectoryController.instance.selectedImage.size(); i++) {
+			String key = ImagesDirectoryController.instance.selectedImage.get(i);
 			ImageView imageView = new ImageView(thisActivity);
 			imageView.setTag(R.id.tag_class, "already_image");
 			imageView.setTag(R.id.tag_first, key);
@@ -173,12 +172,12 @@ public class ImagesGridView {
 			}
 			String path = thisController.imagesSource.get(position);
 			try {
-				if (ImagesDirectoryController.selectedImage == null)
+				if (ImagesDirectoryController.instance.selectedImage == null)
 					return view;
 			} catch (Exception e) {
 				return view;
 			}
-			if (ImagesDirectoryController.selectedImage.contains(path)) {
+			if (ImagesDirectoryController.instance.selectedImage.contains(path)) {
 				holder.imageStatusView.setVisibility(View.VISIBLE);
 			} else {
 				holder.imageStatusView.setVisibility(View.GONE);

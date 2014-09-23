@@ -42,9 +42,6 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.utils.NetworkHandler.ResponseHandler;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.OnLoadingCancelListener;
 import com.open.welinks.view.ScanView;
 
 public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callback, PreviewCallback, AutoFocusCallback {

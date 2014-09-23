@@ -98,7 +98,7 @@ public class ResponseHandlers {
 					user.mainBusiness = friend.mainBusiness;
 					user.head = friend.head;
 					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
-
+						
 						if (!user.circlesOrderString.equals(friend.circlesOrderString)) {
 							user.circlesOrderString = friend.circlesOrderString;
 							try {

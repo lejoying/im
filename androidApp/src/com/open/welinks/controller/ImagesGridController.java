@@ -79,7 +79,7 @@ public class ImagesGridController {
 					if ("already_image".equals(tag_class)) {
 						String path = (String) view.getTag(R.id.tag_first);
 						thisView.alreadyListContainer.removeView(view);
-						ImagesDirectoryController.selectedImage.remove(path);
+						ImagesDirectoryController.instance.selectedImage.remove(path);
 						thisView.mImageAdapter.notifyDataSetChanged();
 					}
 				}
@@ -92,18 +92,18 @@ public class ImagesGridController {
 				View v = view.findViewById(R.id.iv_imageContentStatus);
 				if (v.getVisibility() == View.GONE) {
 					v.setVisibility(View.VISIBLE);
-					ImagesDirectoryController.selectedImage.add(imagesSource.get(postion));
+					ImagesDirectoryController.instance.selectedImage.add(imagesSource.get(postion));
 					thisView.showAlreayList();
 				} else {
 					v.setVisibility(View.GONE);
-					ImagesDirectoryController.selectedImage.remove(imagesSource.get(postion));
+					ImagesDirectoryController.instance.selectedImage.remove(imagesSource.get(postion));
 					thisView.showAlreayList();
 				}
 				handler.post(new Runnable() {
 
 					@Override
 					public void run() {
-						thisView.mConfirm.setText("确定(" + ImagesDirectoryController.selectedImage.size() + ")");
+						thisView.mConfirm.setText("确定(" + ImagesDirectoryController.instance.selectedImage.size() + ")");
 					}
 				});
 			}

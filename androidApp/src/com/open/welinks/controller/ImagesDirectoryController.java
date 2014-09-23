@@ -3,6 +3,7 @@ package com.open.welinks.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,6 +23,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.open.welinks.ImageGridActivity;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.view.ImagesDirectoryView;
 import com.open.welinks.view.ImagesDirectoryView.MyGridViewAdapter;
 
@@ -39,14 +41,16 @@ public class ImagesDirectoryController {
 
 	public ArrayList<String> imageDirectorys = new ArrayList<String>();
 	public HashMap<String, ArrayList<String>> mImageDirectorysMap = new HashMap<String, ArrayList<String>>();
-	public static HashMap<String, ImageBean> mImagesDescription = new HashMap<String, ImageBean>();
+	public HashMap<String, ImageBean> mImagesDescription = new HashMap<String, ImageBean>();
 
-	public static ArrayList<String> selectedImage = new ArrayList<String>();
+	public ArrayList<String> selectedImage = new ArrayList<String>();
 
 	public OnClickListener onClickListener;
-	OnItemClickListener onItemClickListener;
+	public OnItemClickListener onItemClickListener;
 
 	public int RESULT_REQUESTCODE_SELECTIMAGE = 0x01;
+
+	public static ImagesDirectoryController instance;
 
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
@@ -64,6 +68,7 @@ public class ImagesDirectoryController {
 	public ImagesDirectoryController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
+		instance = this;
 	}
 
 	public void initializeListeners() {
@@ -101,6 +106,7 @@ public class ImagesDirectoryController {
 			selectedImage = new ArrayList<String>();
 		}
 		getImages();
+		getCloudFileAccess();
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -116,6 +122,28 @@ public class ImagesDirectoryController {
 			System.out.println("confirm selected image");
 		} else {
 			System.out.println("cancle selected image");
+		}
+	}
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public List<String> cloudAccessFile = new ArrayList<String>();
+
+	public void getCloudFileAccess() {
+		File imageFile = fileHandlers.sdcardImageFolder;
+		if (imageFile.exists()) {
+			if (imageFile.isDirectory()) {
+				File[] files = imageFile.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					File file = files[i];
+					if (file.isFile()) {
+						String fileName = file.getName();
+						if (fileName.indexOf(".osj") != -1 || fileName.indexOf(".osp") != -1) {
+							cloudAccessFile.add(file.getAbsolutePath());
+							// Log.e(tag, file.getAbsolutePath());
+						}
+					}
+				}
+			}
 		}
 	}
 

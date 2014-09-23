@@ -13,6 +13,7 @@ import java.util.Map;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,6 +42,9 @@ public class FileHandlers {
 	public File sdcardBackImageFolder;
 	public File sdcardThumbnailFolder;
 	public File sdcardSquareThumbnailFolder;
+	public File sdcardSaveImageFolder;
+
+	public Handler handler = new Handler();
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -94,7 +98,7 @@ public class FileHandlers {
 	public FileHandlers() {
 		sdcard = Environment.getExternalStorageDirectory();
 		if (!sdcard.exists()) {
-//			sdcard = Environment.getDataDirectory();
+			// sdcard = Environment.getDataDirectory();
 			// sdcard = Environment.getRootDirectory();
 			// sdcard = MainActivity.instance.getFilesDir();
 			System.out.println(sdcard.getAbsolutePath() + "---Memory");
@@ -109,6 +113,10 @@ public class FileHandlers {
 		sdcardImageFolder = new File(sdcardFolder, "images");
 		if (!sdcardImageFolder.exists()) {
 			sdcardImageFolder.mkdirs();
+		}
+		sdcardSaveImageFolder = new File(sdcardFolder, "SaveImages");
+		if (!sdcardSaveImageFolder.exists()) {
+			sdcardSaveImageFolder.mkdirs();
 		}
 		sdcardVoiceFolder = new File(sdcardFolder, "voices");
 		if (!sdcardVoiceFolder.exists()) {

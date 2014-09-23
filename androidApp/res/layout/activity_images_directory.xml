@@ -7,7 +7,7 @@
     <include layout="@layout/view_back_view" />
 
     <GridView
-        android:id="@+id/main_grid"
+        android:id="@+id/album_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"

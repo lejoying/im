@@ -1,18 +1,15 @@
 package com.open.welinks.view;
 
-import com.open.welinks.R;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+
+import com.open.welinks.R;
 
 public class ThreeChoicesView extends FrameLayout {
 	private Context context;

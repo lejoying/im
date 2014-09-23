@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -60,7 +59,7 @@ public class ImagesDirectoryView {
 
 	public void initViews() {
 		thisActivity.setContentView(R.layout.activity_images_directory);
-		mGridView = (GridView) thisActivity.findViewById(R.id.main_grid);
+		mGridView = (GridView) thisActivity.findViewById(R.id.album_grid);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		backTitileView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitileView.setText("相册");

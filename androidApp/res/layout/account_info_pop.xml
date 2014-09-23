@@ -54,6 +54,7 @@
                             android:textSize="18sp" />
 
                         <TextView
+                            android:id="@+id/cardStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
@@ -130,6 +131,7 @@
             </ImageView>
 
             <LinearLayout
+                android:id="@+id/optionTwo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/account_info_pop"
@@ -159,16 +161,15 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/singleButton"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_height="50dp"
+                android:background="@drawable/account_info_pop"
                 android:gravity="center"
                 android:text="资料"
                 android:textColor="#000"
                 android:textSize="16sp"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </LinearLayout>
 
         <ImageView
