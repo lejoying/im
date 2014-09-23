@@ -64,7 +64,7 @@ public class WeChatShareUtils {
 		if (api.getWXAppSupportAPI() >= 0x21020001) {
 			localReq.scene = SendMessageToWX.Req.WXSceneTimeline;
 		}
-		if (status == Status.friends) {
+		if (status == Status.moments) {
 			localReq.scene = SendMessageToWX.Req.WXSceneSession;
 		}
 		localReq.transaction = System.currentTimeMillis() + "";
