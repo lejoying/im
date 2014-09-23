@@ -203,6 +203,7 @@ ol, ul {
     top: 10px;
     left: 15px;
 }
+
 .a-l img {
     margin-top: 10px;
     margin-left: 15px;
@@ -222,6 +223,7 @@ ol, ul {
 }
 
 .photos img {
+    width: 100%;
     margin: 9px;
 }
 
@@ -322,9 +324,10 @@ ol, ul {
 
 .user-describe {
     padding-top: 40px;
-    font-size: 28px;
+    margin-bottom: 15px;
     line-height: 42px;
-    color: #8e8880;
+    font-size: 36px;
+    color: #8b8780;
 }
 
 .user-describe p {
@@ -360,6 +363,10 @@ ol, ul {
     font-size: 28px;
     padding: 10px 20px 0px;
     margin: 0 -20px;
+}
+
+.user-comment li.comment-list img {
+    border-radius: 50px;
 }
 
 .user-comment li.comment-list:last-child {

@@ -12,5 +12,5 @@ public class Constant {
 	public static String LBS_KSY = "32b48639b260edd1916960614151eec3";
 
 	// wechat id
-	public static String WECHAT_ADDID = "";
+	public static String WECHAT_ADDID = "wxbbf27e2f87ef9083";
 }

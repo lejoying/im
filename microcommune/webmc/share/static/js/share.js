@@ -33,8 +33,6 @@
     });
 }
 function getAccount() {
-    var target = [];
-    target.push(Request.QueryString("phone"));
     $.ajax({
         type: "POST",
         timeout: 32000,
@@ -71,7 +69,7 @@ function getTemplate(id) {
     string = string.replace(/\<\!\-\-\?/g, "<?");
     string = string.replace(/\?\-\-\>/g, "?>");
     string = string.replace(/比较符号大于/g, ">");
-    string = string.replace(/比较符号兄小于/g, "<");
+    string = string.replace(/比较符号小于/g, "<");
     var template = new tenjin.Template();
     template.convert(string);
     return template;
