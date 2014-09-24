@@ -362,8 +362,8 @@ relationManage.deletefriend = function (data, response) {
                     }
                 }
             } else {
-                console.log("数据异常0" + "---" + results.length);
-                console.log(phoneTo[0] == 121);
+//                console.log("数据异常0" + "---" + results.length);
+//                console.log(phoneTo[0] == 121);
                 response.write(JSON.stringify({
                     "提示信息": "删除失败",
                     "失败原因": "数据异常"
@@ -1416,7 +1416,7 @@ relationManage.intimatefriends = function (data, response) {
     function getAccountsNode(circles, circlesMap, phone) {
         var query = [
             'MATCH (account:Account)-[r:FRIEND]-(account1:Account)',
-            'WHERE account.phone={phone}',// AND r.friendStatus IN ["success","delete" ] //1,2,3  r不 等于phone
+            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete"] AND r.phone<>{phone}',// AND r.friendStatus IN ["success","delete" ] //1,2,3  r不 等于phone
             'RETURN r, account1'
         ].join('\n');
         var params = {
