@@ -20,6 +20,7 @@ messageManage.send = function (data, response) {
     var phoneto = [];
     var contentType = data.contentType;
     var content = data.content;
+    var oldTime = data.time;
     try {
         phoneto = JSON.parse(phoneToStr);
     } catch (e) {
@@ -52,7 +53,8 @@ messageManage.send = function (data, response) {
             time: time,
             sendType: sendType,
             gid: gid,
-            phoneTo: phoneToStr
+            phoneTo: phoneToStr,
+            oldTime: oldTime
         }));
         response.end();
         return;
@@ -66,7 +68,8 @@ messageManage.send = function (data, response) {
                 time: time,
                 sendType: sendType,
                 gid: gid,
-                phoneTo: phoneToStr
+                phoneTo: phoneToStr,
+                oldTime: oldTime
             }));
             response.end();
             console.log(err);
@@ -100,7 +103,8 @@ messageManage.send = function (data, response) {
                         time: time,
                         sendType: sendType,
                         gid: gid,
-                        phoneTo: phoneToStr
+                        phoneTo: phoneToStr,
+                        oldTime: oldTime
                     }));
                     response.end();
                     console.log(err);
@@ -122,7 +126,8 @@ messageManage.send = function (data, response) {
             time: time,
             sendType: sendType,
             gid: gid,
-            phoneTo: phoneToStr
+            phoneTo: phoneToStr,
+            oldTime: oldTime
         }));
         response.end();
     });
