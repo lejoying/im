@@ -98,9 +98,9 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("sendType", "point");
 		params.addBodyParameter("contentType", "text");
-		params.addBodyParameter("content", content);
+		params.addBodyParameter("content", "【意见反馈】：" + content);
 		List<String> phoneto = new ArrayList<String>();
-		phoneto.add("151");
+		phoneto.add("15120088197");
 		params.addBodyParameter("phoneto", gson.toJson(phoneto));
 		params.addBodyParameter("gid", "");
 
