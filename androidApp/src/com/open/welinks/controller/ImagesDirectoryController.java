@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -152,6 +153,8 @@ public class ImagesDirectoryController {
 
 			@Override
 			public void run() {
+				File file = Environment.getExternalStorageDirectory();
+				thisActivity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file.getAbsolutePath())));
 				Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 				ContentResolver mContentResolver = thisActivity.getContentResolver();
 				Cursor mCursor = mContentResolver.query(mImageUri, null, MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?", new String[] { "image/jpeg", "image/png" }, MediaStore.Images.Media.DATE_MODIFIED);
