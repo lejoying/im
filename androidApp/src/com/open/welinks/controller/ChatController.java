@@ -221,7 +221,8 @@ public class ChatController {
 				int current = Integer.valueOf(unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).get("current"));
 				unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).put("current", String.valueOf(++current));
 				if (current == total) {
-					sendMessageToServer("image", unsendMessageInfo.remove((String) instance.view.getTag(R.id.tag_first)).get("content"));
+					String time0 = (String) instance.view.getTag(R.id.tag_first);
+					sendMessageToServer("image", unsendMessageInfo.remove(time0).get("content"), time0);
 				}
 				thisView.mChatAdapter.notifyDataSetChanged();
 			}
@@ -503,11 +504,11 @@ public class ChatController {
 			}
 		});
 		if ("text".equals(contentType)) {
-			sendMessageToServer(contentType, messageContent);
+			sendMessageToServer(contentType, messageContent, message.time);
 		}
 	}
 
-	public void sendMessageToServer(String contentType, String content) {
+	public void sendMessageToServer(String contentType, String content, String time) {
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 
@@ -516,6 +517,7 @@ public class ChatController {
 		params.addBodyParameter("sendType", type);
 		params.addBodyParameter("contentType", contentType);
 		params.addBodyParameter("content", content);
+		params.addBodyParameter("time", time);
 		if ("group".equals(type)) {
 			Group group = data.relationship.groupsMap.get(key);
 			if (group == null) {

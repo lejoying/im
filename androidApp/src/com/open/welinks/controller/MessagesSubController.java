@@ -13,6 +13,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.DataUtil;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.view.MessagesSubView;
 
@@ -42,6 +43,7 @@ public class MessagesSubController {
 	public MessagesSubController(MainController mainController) {
 		this.mainController = mainController;
 		thisconController = this;
+		DataUtil.getMessages(data.userInformation.currentUser.flag);
 	}
 
 	public void initializeListeners() {

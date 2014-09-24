@@ -60,6 +60,7 @@ public class ResponseEventHandlers {
 				} else {
 					NotificationUtils.commonVibrate(viewManage.mainView.context);
 				}
+				DataUtil.getMessages(data.userInformation.currentUser.flag);
 			} else {
 				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
 				if ("account_dataupdate".equals(contentType)) {

@@ -210,6 +210,31 @@ public class Data {
 			public String contentType;
 			public String content;
 			public String phoneto;
+
+			@Override
+			public boolean equals(Object o) {
+				boolean flag = false;
+				if (o != null) {
+					try {
+						Message m = (Message) o;
+						if (!"".equals(m.gid) && m.gid != null) {
+							if (gid.equals(m.gid) && phone.equals(m.phone) && time.equals(m.time) && content.equals(m.content) && contentType.equals(m.contentType) && sendType.equals(m.sendType)) {
+								flag = true;
+								// Log.e("Data", "聊天记录已存在group");
+							}
+						} else {
+							if (phone.equals(m.phone) && phoneto.equals(m.phoneto) && time.equals(m.time) && content.equals(m.content) && contentType.equals(m.contentType) && sendType.equals(m.sendType)) {
+								flag = true;
+								// Log.e("Data", "聊天记录已存在point");
+							}
+						}
+
+					} catch (Exception e) {
+						flag = false;
+					}
+				}
+				return flag;
+			}
 		}
 	}
 

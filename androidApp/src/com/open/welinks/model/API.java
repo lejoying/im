@@ -101,6 +101,10 @@ public class API {
 	 * http://www.we-links.com/api2/message/send
 	 */
 	public static String MESSAGE_SEND = API_DOMAIN + "api2/message/send";
+	/**
+	 * http://www.we-links.com/api2/message/get
+	 */
+	public static String MESSAGE_GET = API_DOMAIN + "api2/message/get";
 
 	// session
 	/**

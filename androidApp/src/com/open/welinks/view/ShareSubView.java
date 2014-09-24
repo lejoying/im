@@ -59,7 +59,7 @@ public class ShareSubView {
 
 	public String tag = "ShareSubView";
 
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
@@ -619,6 +619,9 @@ public class ShareSubView {
 			// log.e(a + "--------" + groups.get(i) + "---" +
 			// groupsMap.get("1765"));
 			Group group = groupsMap.get(groups.get(i));
+			if(group==null){
+				continue;
+			}
 			String key = "group#" + group.gid + "_" + group.name;
 			GroupDialogItem groupDialogItem;
 			View view = null;

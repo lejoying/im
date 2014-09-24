@@ -37,6 +37,7 @@ import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.BusinessCardView;
 import com.open.welinks.view.BusinessCardView.Status;
+import com.open.welinks.view.ViewManage;
 
 public class BusinessCardController {
 
@@ -63,6 +64,8 @@ public class BusinessCardController {
 	public GestureDetector backDetector;
 
 	public Handler handler;
+
+	public ViewManage viewManage = ViewManage.getInstance();
 
 	public static final int REQUESTCODE_MODIFY = 0x1, REQUESTCODE_ADD = 0x2;
 
@@ -253,6 +256,7 @@ public class BusinessCardController {
 				thisView.status = Status.TEMPFRIEND;
 				data.tempData.tempFriend = friend;
 				thisView.fillData();
+				viewManage.mainView.friendsSubView.showCircles();
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();
 				params.addBodyParameter("phone", data.userInformation.currentUser.phone);

@@ -3,7 +3,6 @@ package com.open.welinks.model;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.model.Data.UserInformation.User;
 
@@ -18,24 +17,28 @@ public class DataUtil {
 		data = parser.check();
 		RequestParams params = new RequestParams();
 		User user = data.userInformation.currentUser;
-		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("phone", user.phone);
+		params.addBodyParameter("accessKey", user.accessKey);
 
 		HttpUtils http = new HttpUtils();
 
-		http.send(HttpRequest.HttpMethod.POST, API.RELATION_GETINTIMATEFRIENDS, params, responseHandlers.getIntimateFriends);
+		http.send(HttpMethod.POST, API.RELATION_GETINTIMATEFRIENDS, params, responseHandlers.getIntimateFriends);
 	}
 
 	public static void getMessages(String flag) {
+		if (flag.equals("")) {
+			flag = "none";
+		}
 		data = parser.check();
 		RequestParams params = new RequestParams();
 		User user = data.userInformation.currentUser;
+		params.addBodyParameter("phone", user.phone);
 		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("flag", flag);
 
 		HttpUtils http = new HttpUtils();
 
-		http.send(HttpRequest.HttpMethod.POST, API.RELATION_GETINTIMATEFRIENDS, params, responseHandlers.getMessageCallBack);
+		http.send(HttpMethod.POST, API.MESSAGE_GET, params, responseHandlers.getMessageCallBack);
 	}
 
 	public static void getUserCurrentGroupInfomation(String gid) {

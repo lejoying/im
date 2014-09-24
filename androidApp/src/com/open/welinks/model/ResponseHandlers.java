@@ -98,7 +98,7 @@ public class ResponseHandlers {
 					user.mainBusiness = friend.mainBusiness;
 					user.head = friend.head;
 					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
-						
+
 						if (!user.circlesOrderString.equals(friend.circlesOrderString)) {
 							user.circlesOrderString = friend.circlesOrderString;
 							try {
@@ -596,26 +596,84 @@ public class ResponseHandlers {
 	public ResponseHandler<String> message_sendMessageCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
-			// public String 失败原因;
-			public long time;
-			// public String sendType;
-			// public String gid;
-			// public String phoneto;
+			public String 失败原因;
+			public String time;
+			public String oldTime;
+			public String sendType;
+			public String gid;
+			public String phoneTo;
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发送成功")) {
+				// log.e(responseInfo.result);
+				parser.check();
+				if (response.sendType != null) {
+					if ("point".equals(response.sendType)) {
+						// TODO
+						List<String> phones = gson.fromJson(response.phoneTo, new TypeToken<List<String>>() {
+						}.getType());
+						String key = phones.get(0);
+						ArrayList<Message> messages = data.messages.friendMessageMap.get("p" + key);
+						if (messages != null) {
+							Message message0 = null;
+							for (int i = 0; i < messages.size(); i++) {
+								Message message = messages.get(i);
+								if (message.time.equals(response.oldTime)) {
+									message0 = message;
+									break;
+								}
+							}
+							if (message0 != null) {
+								log.e("修改聊天数据成功point");
+								message0.time = response.time;
+							} else {
+								log.e("修改聊天数据失败point");
+							}
+						}
+					} else if ("group".equals(response.sendType)) {
+						ArrayList<Message> messages = data.messages.groupMessageMap.get("g" + response.gid);
+						if (messages != null) {
+							Message message0 = null;
+							for (int i = 0; i < messages.size(); i++) {
+								Message message = messages.get(i);
+								if (message.time.equals(response.oldTime)) {
+									message0 = message;
+									break;
+								}
+							}
+							if (message0 != null) {
+								log.e("修改发送数据成功group");
+								message0.time = response.time;
+							} else {
+								log.e("修改发送数据失败group");
+							}
+						}
+					}
+				}
+
+				// TODO modify local data
+
 				// if ("point".equals(response.sendType)) {
 				// //
-				// data.messages.friendMessageMap.get(response.phoneto).get(0).time
-				// = String.valueOf(response.time);
+				// data.messages.friendMessageMap.get(response.phoneto).get(0).time = String.valueOf(response.time);
 				// } else if ("group".equals(response.sendType)) {
 				// //
-				// data.messages.groupMessageMap.get(response.gid).get(0).time =
-				// String.valueOf(response.time);
+				// data.messages.groupMessageMap.get(response.gid).get(0).time = String.valueOf(response.time);
 				// }
+			} else if (response.提示信息.equals("发送失败")) {
+				if (response.sendType != null) {
+					if ("point".equals(response.sendType)) {
+
+					} else if ("group".equals(response.sendType)) {
+
+					}
+				}
+				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
+			} else {
+				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -624,52 +682,125 @@ public class ResponseHandlers {
 			public String 提示信息;
 			public String 失败原因;
 			public String flag;
-			public List<Message> messages;
+			public List<String> messages;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			try {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取成功")) {
-					log.e(tag, "---------------------获取消息成功");
-					List<Message> messages = response.messages;
+					log.e(tag, response.提示信息 + "---------------------获取消息成功" + response.flag);
+					List<String> messages = response.messages;
 					parser.check();
-					data.userInformation.currentUser.flag = response.flag;
+					User user = data.userInformation.currentUser;
+					if (messages.size() == 0) {
+						user.flag = "none";
+					} else {
+						user.flag = response.flag;
+					}
+					data.userInformation.isModified = true;
 					data.messages.isModified = true;
+					log.e("message size:" + messages.size());
 					for (int i = 0; i < messages.size(); i++) {
-						Message message = messages.get(i);
+						Message message = null;
+						try {
+							message = gson.fromJson(messages.get(i), Message.class);
+						} catch (Exception e) {
+							e.printStackTrace();
+							continue;
+						}
 						String sendType = message.sendType;
 						if ("event".equals(sendType)) {
-							if (!data.event.userEvents.contains(message)) {
-								responseEventHandlers.handleEvent(message);
-							}
+							// if (!data.event.userEvents.contains(message)) {
+							responseEventHandlers.handleEvent(message);
+							// }
 						} else if ("point".equals(sendType)) {
-							List<String> phones = gson.fromJson(message.phoneto, new TypeToken<List<String>>() {
-							}.getType());
-							ArrayList<Message> friendMessages = data.messages.friendMessageMap.get(phones.get(0));
+							String key = message.phone;
+							message.type = Constant.MESSAGE_TYPE_RECEIVE;
+							if (key.equals(user.phone)) {
+								List<String> phones = gson.fromJson(message.phoneto, new TypeToken<List<String>>() {
+								}.getType());
+								key = phones.get(0);
+								message.type = Constant.MESSAGE_TYPE_SEND;
+							}
+							String messageKey = "p" + key;
+							ArrayList<Message> friendMessages = data.messages.friendMessageMap.get(messageKey);
 							if (friendMessages == null) {
 								friendMessages = new ArrayList<Message>();
-								data.messages.friendMessageMap.put(phones.get(0), friendMessages);
+								data.messages.friendMessageMap.put(messageKey, friendMessages);
 							}
-							if (!friendMessages.contains(message)) {
-								friendMessages.add(message);
+							if (!data.messages.messagesOrder.contains(messageKey)) {
+								if (data.relationship.friends.contains(key)) {
+									data.messages.messagesOrder.add(0, messageKey);
+									if (!friendMessages.contains(message)) {
+										friendMessages.add(message);
+										Friend friend = data.relationship.friendsMap.get(key);
+										if (friend != null) {
+											friend.notReadMessagesCount++;
+										}
+									}
+								}
+							} else {
+								if (data.relationship.friends.contains(key)) {
+									data.messages.messagesOrder.remove(messageKey);
+									data.messages.messagesOrder.add(0, messageKey);
+									if (!friendMessages.contains(message)) {
+										friendMessages.add(message);
+										Friend friend = data.relationship.friendsMap.get(key);
+										if (friend != null) {
+											friend.notReadMessagesCount++;
+										}
+									}
+								}
 							}
 						} else if ("group".equals(sendType)) {
-							ArrayList<Message> groupMessages = data.messages.friendMessageMap.get(message.gid);
+							String key = message.gid;
+							String messageKey = "g" + message.gid;
+							if (message.phone.equals(user.phone)) {
+								message.type = Constant.MESSAGE_TYPE_SEND;
+							} else {
+								message.type = Constant.MESSAGE_TYPE_RECEIVE;
+							}
+							ArrayList<Message> groupMessages = data.messages.groupMessageMap.get(messageKey);
 							if (groupMessages == null) {
 								groupMessages = new ArrayList<Message>();
-								data.messages.friendMessageMap.put(message.gid, groupMessages);
+								data.messages.groupMessageMap.put(messageKey, groupMessages);
 							}
-							if (!groupMessages.contains(message)) {
-								groupMessages.add(message);
+							if (!data.messages.messagesOrder.contains(messageKey)) {
+								if (data.relationship.groups.contains(key)) {
+									data.messages.messagesOrder.add(messageKey);
+									if (!groupMessages.contains(message)) {
+										groupMessages.add(message);
+										Group group = data.relationship.groupsMap.get(key);
+										if (group != null) {
+											group.notReadMessagesCount++;
+										}
+									}
+								}
+							} else {
+								if (data.relationship.groups.contains(key)) {
+									data.messages.messagesOrder.remove(messageKey);
+									data.messages.messagesOrder.add(0, messageKey);
+									if (!groupMessages.contains(message)) {
+										groupMessages.add(message);
+										Group group = data.relationship.groupsMap.get(key);
+										if (group != null) {
+											group.notReadMessagesCount++;
+										}
+									}
+								}
 							}
 						}
 					}
+					data.event.isModified = true;
+					data.messages.isModified = true;
+					viewManage.messagesSubView.showMessagesSequence();
 				} else {
-					log.e(tag, "---------------------" + response.失败原因);
+					log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
+				log.e(tag, e.toString() + "");
 			}
 		};
 	};
@@ -865,15 +996,18 @@ public class ResponseHandlers {
 				Group group = response.group;
 				parser.check();
 				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
-				currentGroup.icon = group.icon;
-				currentGroup.name = group.name;
-				currentGroup.longitude = group.longitude;
-				currentGroup.latitude = group.latitude;
-				currentGroup.description = group.description;
-				currentGroup.background = group.background;
-				data.relationship.isModified = true;
-				viewManage.postNotifyView("ShareSubView");
-				viewManage.postNotifyView("GroupListActivity");
+				if (currentGroup != null) {
+					currentGroup.icon = group.icon;
+					currentGroup.name = group.name;
+					currentGroup.longitude = group.longitude;
+					currentGroup.latitude = group.latitude;
+					currentGroup.description = group.description;
+					currentGroup.background = group.background;
+					data.relationship.isModified = true;
+					viewManage.postNotifyView("ShareSubView");
+					viewManage.postNotifyView("GroupListActivity");
+				}
+
 				log.e(tag, "---------------------获取群组信息成功");
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
@@ -957,33 +1091,34 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("获取群组成员成功")) {
 				parser.check();
 				Group group = data.relationship.groupsMap.get(response.group.gid + "");
-				List<String> members = response.members;
-				group.members = members;
-				Map<String, Friend> membersMap = response.membersMap;
+				if (group != null) {
+					List<String> members = response.members;
+					group.members = members;
+					Map<String, Friend> membersMap = response.membersMap;
 
-				for (int i = 0; i < members.size(); i++) {
-					String key = members.get(i);
-					Friend friend = data.relationship.friendsMap.get(key);
-					Friend serverFriend = membersMap.get(key);
-					if (friend == null) {
-						friend = serverFriend;
-						data.relationship.friendsMap.put(key, friend);
-					} else {
-						friend.sex = serverFriend.sex;
-						friend.nickName = serverFriend.nickName;
-						friend.mainBusiness = serverFriend.mainBusiness;
-						friend.head = serverFriend.head;
-						friend.longitude = serverFriend.longitude;
-						friend.latitude = serverFriend.latitude;
-						friend.userBackground = serverFriend.userBackground;
-						friend.lastlogintime = serverFriend.lastlogintime;
+					for (int i = 0; i < members.size(); i++) {
+						String key = members.get(i);
+						Friend friend = data.relationship.friendsMap.get(key);
+						Friend serverFriend = membersMap.get(key);
+						if (friend == null) {
+							friend = serverFriend;
+							data.relationship.friendsMap.put(key, friend);
+						} else {
+							friend.sex = serverFriend.sex;
+							friend.nickName = serverFriend.nickName;
+							friend.mainBusiness = serverFriend.mainBusiness;
+							friend.head = serverFriend.head;
+							friend.longitude = serverFriend.longitude;
+							friend.latitude = serverFriend.latitude;
+							friend.userBackground = serverFriend.userBackground;
+							friend.lastlogintime = serverFriend.lastlogintime;
+						}
 					}
+					data.relationship.isModified = true;
+
+					viewManage.postNotifyView("ShareSubView");
+					viewManage.postNotifyView("GroupListActivity");
 				}
-				data.relationship.isModified = true;
-
-				viewManage.postNotifyView("ShareSubView");
-				viewManage.postNotifyView("GroupListActivity");
-
 				log.e(tag, "---------------------获取群组成员成功");
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
