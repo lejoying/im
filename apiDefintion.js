@@ -606,11 +606,11 @@ api = {
             url: "/api2/message/send"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], gid: "XXX", sendType: ["point" || "group" || "tempGroup"],contentType: "text" || "image" || "voice", content: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], gid: "XXX", sendType: ["point" || "group" || "tempGroup"], contentType: "text" || "image" || "voice", content: "XXX"}
         },
         response: {
-            success: {"提示信息": "发送成功", time: "XXX"},
-            failed: {"提示信息": "发送失败", "失败原因": "数据异常"}
+            success: {"提示信息": "发送成功", time: "XXX", sendType: "XXX", gidL: "NNN", phoneTo: JSON.stringify(["XXX"])},
+            failed: {"提示信息": "发送失败", "失败原因": "数据异常", time: "XXX", sendType: "XXX", gidL: "NNN", phoneTo: JSON.stringify(["XXX"])}
         }
     },
     /***************************************

@@ -48,7 +48,11 @@ messageManage.send = function (data, response) {
     } else {
         response.write(JSON.stringify({
             "提示信息": "发送失败",
-            "失败原因": "数据格式不正确"
+            "失败原因": "数据格式不正确",
+            time: time,
+            sendType: sendType,
+            gid: gid,
+            phoneTo: phoneToStr
         }));
         response.end();
         return;
@@ -58,7 +62,11 @@ messageManage.send = function (data, response) {
         if (err != null) {
             response.write(JSON.stringify({
                 "提示信息": "发送失败",
-                "失败原因": "数据异常"
+                "失败原因": "数据异常",
+                time: time,
+                sendType: sendType,
+                gid: gid,
+                phoneTo: phoneToStr
             }));
             response.end();
             console.log(err);
@@ -88,7 +96,11 @@ messageManage.send = function (data, response) {
                 if (err != null) {
                     response.write(JSON.stringify({
                         "提示信息": "发送失败",
-                        "失败原因": "数据异常"
+                        "失败原因": "数据异常",
+                        time: time,
+                        sendType: sendType,
+                        gid: gid,
+                        phoneTo: phoneToStr
                     }));
                     response.end();
                     console.log(err);
@@ -107,7 +119,10 @@ messageManage.send = function (data, response) {
         }
         response.write(JSON.stringify({
             "提示信息": "发送成功",
-            time: time
+            time: time,
+            sendType: sendType,
+            gid: gid,
+            phoneTo: phoneToStr
         }));
         response.end();
     });
