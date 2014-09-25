@@ -162,16 +162,20 @@ public class MessagesSubView {
 				messageBody.setContent(message, fileName);
 				this.messageListBody.listItemBodiesMap.put(key2, messageBody);
 			}
+			this.messageListBody.listItemsSequence.add(key2);
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (70 * displayMetrics.density));
 			messageBody.y = this.messageListBody.height;
 			messageBody.cardView.setY(messageBody.y);
 			// messageBody.cardView.setX(0);
+			messageBody.itemHeight = 80 * displayMetrics.density;
+			this.messageListBody.height = this.messageListBody.height + 80 * displayMetrics.density;
+			this.messageListBody.containerView.addView(messageBody.cardView, layoutParams);
+
 			messageBody.cardView.setTag(R.id.tag_class, "message_view");
 			messageBody.cardView.setTag(R.id.tag_first, key);
 			messageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 			messageBody.cardView.setOnClickListener(thisController.mOnClickListener);
-			this.messageListBody.height = this.messageListBody.height + 80 * displayMetrics.density;
-			this.messageListBody.containerView.addView(messageBody.cardView, layoutParams);
+
 		}
 		this.messageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
 		this.messageListBody.setChildrenPosition();
@@ -202,6 +206,7 @@ public class MessagesSubView {
 			this.notReadNumberView = (TextView) this.cardView.findViewById(R.id.tv_notread);
 			this.groupIconView = (TextView) this.cardView.findViewById(R.id.groupIcon);
 
+			this.itemHeight = 80 * displayMetrics.density;
 			super.initialize(cardView);
 			return cardView;
 		}

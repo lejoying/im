@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout.LayoutParams;
@@ -41,9 +40,9 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.SquareSubView;
-import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.SquareSubView.GroupDialogItem;
 import com.open.welinks.view.SquareSubView.SharesMessageBody;
 
@@ -64,7 +63,7 @@ public class SquareSubController {
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-	public OnClickListener mOnClickListener;
+	public MyOnClickListener mOnClickListener;
 	public OnTouchListener mOnTouchListener;
 	public OnDownloadListener downloadListener;
 	public BodyCallback bodyCallback;
@@ -206,10 +205,9 @@ public class SquareSubController {
 				return false;
 			}
 		};
-		mOnClickListener = new OnClickListener() {
+		mOnClickListener = new MyOnClickListener() {
 
-			@Override
-			public void onClick(View view) {
+			public void onClickEffective(View view) {
 				if (view.equals(thisView.leftImageButton)) {
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };

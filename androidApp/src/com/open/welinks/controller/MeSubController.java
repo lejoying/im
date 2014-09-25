@@ -66,10 +66,9 @@ public class MeSubController {
 				return true;
 			}
 		};
-		onClickListener = new OnClickListener() {
+		onClickListener = new MyOnClickListener() {
 
-			@Override
-			public void onClick(View view) {
+			public void onClickEffective(View view) {
 				if (view.equals(thisView.myBusiness)) {
 					Intent intent = new Intent(mainController.thisActivity, BusinessCardActivity.class);
 					intent.putExtra("type", "point");
@@ -102,7 +101,7 @@ public class MeSubController {
 
 	public void onSingleTapUp(MotionEvent event) {
 		if (onTouchDownView != null) {
-			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			// String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			// if (view_class.equals("share_view")) {
 			onTouchDownView.performClick();
 			// }

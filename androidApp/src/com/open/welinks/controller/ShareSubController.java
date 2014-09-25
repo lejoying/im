@@ -10,15 +10,17 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -64,10 +66,12 @@ public class ShareSubController {
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-	public OnClickListener mOnClickListener;
+	// public OnClickListener mOnClickListener;
 	public OnTouchListener mOnTouchListener;
 	public OnDownloadListener downloadListener;
 	public BodyCallback bodyCallback;
+
+	public MyOnClickListener mOnClickListener;
 
 	public View onTouchDownView;
 	public View onLongPressView;;
@@ -92,7 +96,46 @@ public class ShareSubController {
 		this.mainController = mainController;
 	}
 
+	public OnTouchListener onTouchListener2;
+
 	public void initializeListeners() {
+		onTouchListener2 = new OnTouchListener() {
+			GestureDetector mGesture = new GestureDetector(thisActivity, new GestureListener());
+
+			class GestureListener extends SimpleOnGestureListener {
+
+				@Override
+				public boolean onSingleTapConfirmed(MotionEvent e) {
+					thisView.showGroupsDialog();
+					log.e("onSingleTapConfirmed");
+					return super.onSingleTapConfirmed(e);
+				}
+
+				public boolean onSingleTapUp(MotionEvent event) {
+					// log.e("onSingleTapUp");
+					return false;
+				}
+
+				public boolean onDoubleTap(MotionEvent event) {
+					thisView.shareMessageListBody.y = 0;
+					thisView.shareMessageListBody.setChildrenPosition();
+					log.e("onDoubleTap");
+					return false;
+				}
+
+				public boolean onDoubleTapEvent(MotionEvent event) {
+					// log.e("onDoubleTapEvent");
+					return false;
+				}
+			}
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				mGesture.onTouchEvent(event);
+				return true;
+			}
+		};
+
 		shareBodyCallback = new BodyCallback() {
 			@Override
 			public void onRefresh(int direction) {
@@ -201,6 +244,22 @@ public class ShareSubController {
 					} else if (view_class.equals("share_release")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("title_share")) {
+						long currentTime = System.currentTimeMillis();
+						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
+							long time = (Long) view.getTag(R.id.tag_first);
+							if (currentTime - time < 500) {
+								thisView.shareMessageListBody.y = 0;
+								thisView.shareMessageListBody.setChildrenPosition();
+								Toast.makeText(thisActivity, "double", Toast.LENGTH_SHORT).show();
+								view.setTag(R.id.tag_first, 0);
+							} else {
+								view.setTag(R.id.tag_first, currentTime);
+							}
+						} else {
+							view.setTag(R.id.tag_first, currentTime);
+						}
+						onTouchDownView = view;
 					}
 					if (view.equals(thisView.groupDialogView)) {
 						Log.i(tag, "ACTION_DOWN---groupDialogView");
@@ -215,10 +274,10 @@ public class ShareSubController {
 				return false;
 			}
 		};
-		mOnClickListener = new OnClickListener() {
 
-			@Override
-			public void onClick(View view) {
+		mOnClickListener = new MyOnClickListener() {
+
+			public void onClickEffective(View view) {
 				if (view.equals(thisView.leftImageButton)) {
 					Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
@@ -358,10 +417,12 @@ public class ShareSubController {
 	}
 
 	public void bindEvent() {
+		thisView.shareTitleView.setOnTouchListener(mOnTouchListener);
 		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
-		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
+		thisView.shareTopMenuGroupNameParent.setOnTouchListener(onTouchListener2);
+		// thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);

@@ -180,7 +180,7 @@ accountManage.verifyphone = function (data, response) {
     }
 
     function sendSMSMessage(account, code, promptMessage, response) {
-        var message = "微型公社手机验证码：" + code + "，欢迎您使用";
+        var message = "微型公社手机验证码：" + code + "，10分钟内有效，请勿泄漏，欢迎您使用【微型公社】";
         console.log(message);
         if (sms_power == true) {
             push.smsSend(account.phone, message, function (data) {

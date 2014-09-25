@@ -459,11 +459,13 @@ public class ResponseHandlers {
 				data.relationship.friends.addAll(set);
 
 				data.relationship.isModified = true;
-			}
-			if (data.localStatus.debugMode.equals("NONE")) {
-				// viewManage.postNotifyView("UserIntimateView");
-				log.e(tag, "刷新好友分组");
-				viewManage.mainView.friendsSubView.showCircles();
+				if (data.localStatus.debugMode.equals("NONE")) {
+					// viewManage.postNotifyView("UserIntimateView");
+					log.e(tag, "刷新好友分组");
+					viewManage.mainView.friendsSubView.showCircles();
+				}
+			} else {
+				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
 			}
 		}
 	};

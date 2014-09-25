@@ -66,10 +66,9 @@ public class FriendsSubController {
 	}
 
 	public void initializeListeners() {
-		mOnClickListener = new OnClickListener() {
+		mOnClickListener = new MyOnClickListener() {
 
-			@Override
-			public void onClick(View view) {
+			public void onClickEffective(View view) {
 				if (view.equals(thisView.goInfomationView)) {
 					String phone = (String) view.getTag(R.id.tag_first);
 					Intent intent = new Intent(thisView.mainView.thisActivity, BusinessCardActivity.class);
@@ -206,9 +205,7 @@ public class FriendsSubController {
 					onClickView = null;
 				}
 			}
-
 		}
-
 	}
 
 	public void onDoubleTapEvent(MotionEvent event) {

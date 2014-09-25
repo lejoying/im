@@ -1474,10 +1474,11 @@ relationManage.intimatefriends = function (data, response) {
     }
 
     function getCircleFriendsNode(accounts, circles, circlesMap, phone) {
+        console.log(circles);
         var query = [
             'MATCH (circle:Circle)-[r2:HAS_FRIEND]->(account:Account)',//(account1:Account)-[r1:HAS_CIRCLE]->
             'WHERE circle.rid IN {circles}',//account1.phone={phone}
-            'RETURN circle, account'
+            'RETURN circle,account'
         ].join('\n');
         var params = {
             circles: circles
