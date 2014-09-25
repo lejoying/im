@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="2014.09.03"
-        android:textColor="@android:color/white"
+        android:textColor="@color/icon_color"
         android:textSize="25sp"
         android:visibility="visible" />
 

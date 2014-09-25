@@ -91,6 +91,9 @@ public class ShareSubView {
 	public ViewGroup groupMembersListContentView;
 	public ImageView releaseShareView;
 
+	public ImageView groupCoverView;
+	public ImageView groupHeadView;
+
 	public View groupManageView;
 	public View groupsManageButtons;
 	public View groupListButtonView;
@@ -148,9 +151,13 @@ public class ShareSubView {
 		releaseShareView = (TouchImageView) this.groupMembersView.findViewById(R.id.releaseShare);
 		releaseShareView.setTag(R.id.tag_class, "share_release");
 
+		groupCoverView = (TouchImageView) this.groupMembersView.findViewById(R.id.groupCover);
+
+		groupHeadView = (ImageView) this.groupMembersView.findViewById(R.id.group_head);
+
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
-
+		bigHeadOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
 		myScrollImageBody = new MyScrollImageBody();
 		myScrollImageBody.initialize(groupMembersListContentView);
 
@@ -173,8 +180,10 @@ public class ShareSubView {
 	}
 
 	public void showShareMessages() {
-		showGroupMembers();
 		data = parser.check();
+
+		showGroupMembers();
+
 		boolean flag0 = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		if (!flag0) {
 			if (data.relationship.groups.size() == 0) {
@@ -184,6 +193,11 @@ public class ShareSubView {
 				data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
 			}
 		}
+
+		// imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
+
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		SharesMessageBody sharesMessageBody0 = null;
@@ -201,11 +215,11 @@ public class ShareSubView {
 			sharesMessageBody0.setContent(null, "");
 			this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
 			this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
-			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (50 * displayMetrics.density));
-			sharesMessageBody0.y = 60 * displayMetrics.density * 0 + 2 * displayMetrics.density;
+			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (300 * displayMetrics.density));
+			sharesMessageBody0.y = -48 * displayMetrics.density;
 			sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
 			// sharesMessageBody0.cardView.setX(0);
-			this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
+			this.shareMessageListBody.height = this.shareMessageListBody.height + (255 - 48) * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 		} else {
 			this.shareMessageListBody.listItemsSequence.clear();
@@ -619,7 +633,7 @@ public class ShareSubView {
 			// log.e(a + "--------" + groups.get(i) + "---" +
 			// groupsMap.get("1765"));
 			Group group = groupsMap.get(groups.get(i));
-			if(group==null){
+			if (group == null) {
 				continue;
 			}
 			String key = "group#" + group.gid + "_" + group.name;
@@ -724,6 +738,7 @@ public class ShareSubView {
 	public int width;
 	public File mImageFile;
 	public DisplayImageOptions headOptions;
+	public DisplayImageOptions bigHeadOptions;
 
 	public void showGroupMembers() {
 		data = parser.check();

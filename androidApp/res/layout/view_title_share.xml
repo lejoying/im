@@ -12,7 +12,8 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true" >
+            android:layout_alignParentLeft="true"
+            android:visibility="gone" >
 
             <ImageView
                 android:id="@+id/leftImageButton"
@@ -32,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="60dp"
+            android:translationX="20dp"
             android:background="@drawable/backview_background" >
 
             <TextView
@@ -45,7 +46,7 @@
                 android:maxEms="7"
                 android:singleLine="true"
                 android:text="暂无群组"
-                android:textColor="@color/text_color"
+                android:textColor="@color/icon_color"
                 android:textSize="18sp" />
 
             <ImageView
@@ -55,7 +56,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"
-                android:src="@drawable/subscript_triangle" />
+                android:src="@drawable/subscript_triangle"
+                android:tint="@color/icon_color" />
         </RelativeLayout>
     </RelativeLayout>
 

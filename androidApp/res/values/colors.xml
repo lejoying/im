@@ -2,9 +2,14 @@
 <resources>
 
     <color name="Transparent">#00ffffff</color>
-    <color name="background_white">#2fff</color>
-    <color name="card_color">#38000000</color>
-    <color name="card_color2">#38000000</color>
-    <color name="text_color">#ffffffff</color>
+    <color name="background_white">#ffffff</color>
+    <color name="card_color">#380099cd</color>
+    <color name="card_color2">#380099cd</color>
+    <color name="text_color">#eeffffff</color>
+    <color name="text_color_black">#99000000</color>
+    <color name="text_color_black_2">#66000000</color>
+    <color name="background_gray">#f4f4ec</color>
+    <color name="icon_color">#0099cd</color>
+    <color name="TransparentGrey">#7F000000</color>
 
 </resources>

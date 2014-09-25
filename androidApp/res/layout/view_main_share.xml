@@ -11,10 +11,9 @@
         android:id="@+id/groupShareMessageContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:translationY="48dp"
         android:visibility="visible" >
 
         <ImageView

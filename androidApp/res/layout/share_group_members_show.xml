@@ -6,7 +6,13 @@
     <com.open.lib.TouchView
         android:id="@+id/shareTopBar"
         android:layout_width="fill_parent"
-        android:layout_height="50dp" >
+        android:layout_height="360dp" >
+
+        <com.open.lib.TouchImageView
+            android:id="@+id/groupCover"
+            android:layout_width="fill_parent"
+            android:layout_height="220dp"
+            android:background="#006611" />
 
         <com.open.lib.TouchView
             android:id="@+id/groupMembersListContent"
@@ -14,22 +20,56 @@
             android:layout_height="50dp"
             android:layout_gravity="left|center_vertical"
             android:layout_marginRight="60dp"
+            android:background="@drawable/backview_background"
             android:paddingBottom="5dp"
-             android:background="@drawable/backview_background"
-            android:paddingTop="5dp" >
+            android:paddingTop="5dp"
+            android:visibility="gone" >
         </com.open.lib.TouchView>
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="left"
+            android:background="@drawable/head_draw_background"
+            android:translationX="8dp"
+            android:translationY="188dp" />
+
+        <ImageView
+            android:id="@+id/group_head"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="left"
+            android:translationX="10dp"
+            android:translationY="190dp" />
+
+        <TextView
+            android:id="@+id/share_praise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:shadowColor="@color/TransparentGrey"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="0.01"
+            android:text="群分享"
+            android:textColor="#eeffffff"
+            android:textSize="18sp"
+            android:translationX="80dp"
+            android:translationY="192dp" />
 
         <com.open.lib.TouchImageView
             android:id="@+id/releaseShare"
             android:layout_width="60dp"
             android:layout_height="50dp"
             android:layout_gravity="right"
+            android:background="@drawable/backview_background"
             android:paddingBottom="10dp"
             android:paddingLeft="10dp"
-             android:background="@drawable/backview_background"
             android:paddingRight="10dp"
             android:paddingTop="10dp"
-            android:src="@drawable/square_release" />
+            android:src="@drawable/square_release"
+            android:tint="@color/icon_color"
+            android:translationY="245dp" />
     </com.open.lib.TouchView>
 
 </com.open.lib.TouchView>
