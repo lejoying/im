@@ -35,13 +35,12 @@ push.notifywebcodelogin = function (phone, accessKey, sessionID, next) {
                 "information": "notifywebcodelogin error"
             }));
         }
-
     });
 }
 push.smsSend = function (phone, message, next) {
     ajax.ajax({
         type: "POST",
-        url: "http://115.28.51.197:8074/api2/sms/notify?",
+        url: "http://127.0.0.1:8074/api2/sms/notify?",
         data: {
             phone: phone,
             message: message
