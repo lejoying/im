@@ -25,20 +25,20 @@ var sms_power = true;
 //});
 var accountID = -1;
 var redis = require("redis");
-var client = redis.createClient("6379", "127.0.0.1");
-var IDclient = redis.createClient("6379", "115.28.51.197");
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
+var IDclient = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 IDclient.get("ID", function (err, reply) {
     if (err != null) {
         console.error(err + "as");
-        throw "用户ID初始化失败...请查看115.28.51.197服务器";
+        throw "用户ID初始化失败...请查看112.126.71.175服务器";
         return;
     } else {
         if (reply == null) {
             console.warn(reply + "a");
-            throw "用户ID初始化失败...请查看115.28.51.197服务器";
+            throw "用户ID初始化失败...请查看112.126.71.175服务器";
             return;
         } else {
-            console.log("ID:" + reply + "...init data,from server...115.28.51.197");
+            console.log("ID:" + reply + "...init data,from server...112.126.71.1757");
             accountID = reply;
         }
     }
