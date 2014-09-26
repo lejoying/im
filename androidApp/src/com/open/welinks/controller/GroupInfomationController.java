@@ -18,18 +18,21 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.CirclesListActivity;
+import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupMemberManageActivity;
+import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.Alert;
-import com.open.welinks.view.GroupInfomationView;
-import com.open.welinks.view.ViewManage;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.view.GroupInfomationView;
+import com.open.welinks.view.ViewManage;
 
 public class GroupInfomationController {
 
@@ -66,7 +69,7 @@ public class GroupInfomationController {
 			if (currentGroup == null) {
 				thisActivity.finish();
 			} else {
-				thisView.showGroupMembers();
+				// thisView.showGroupMembers();
 			}
 		} else {
 			thisActivity.finish();
@@ -113,7 +116,7 @@ public class GroupInfomationController {
 						}
 					}).show();
 				} else if (view.equals(thisView.groupMemberControlView)) {
-					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);//GroupMemberManageActivity
+					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);// GroupMemberManageActivity
 					intent.putExtra("gid", currentGroup.gid + "");
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.groupNameLayoutView)) {
@@ -149,12 +152,45 @@ public class GroupInfomationController {
 					thisView.dialogContentView.setVisibility(View.GONE);
 					// modify server data
 					modifyGroupName(groupName);
+				} else if (view.equals(thisView.userCardMainView)) {
+					thisView.dismissUserCardDialogView();
+				} else if (view.equals(thisView.singleButtonView) || view.equals(thisView.goInfomationView)) {
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("key", (String) view.getTag(R.id.tag_first));
+					intent.putExtra("type", (String) view.getTag(R.id.tag_second));
+					if (view.getTag(R.id.tag_third) != null) {
+						intent.putExtra("isTemp", (Boolean) view.getTag(R.id.tag_third));
+					}
+					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.goChatView)) {
+					Intent intent = new Intent(thisActivity, ChatActivity.class);
+					intent.putExtra("id", (String) view.getTag(R.id.tag_first));
+					intent.putExtra("type", "point");
+					thisActivity.startActivity(intent);
+				} else if (view.getTag(R.id.tag_class) != null) {
+					String tag_class = (String) view.getTag(R.id.tag_class);
+					if ("head_click".equals(tag_class)) {
+						String phone = (String) view.getTag(R.id.tag_first);
+						User user = data.userInformation.currentUser;
+						if (user.phone.equals(phone)) {
+							thisView.setSmallBusinessCardContent(phone, user.head, user.nickName, user.age, user.longitude, user.latitude);
+						} else {
+							Friend friend = data.relationship.friendsMap.get(phone);
+							thisView.setSmallBusinessCardContent(phone, friend.head, friend.nickName, friend.age + "", friend.longitude, friend.latitude);
+						}
+						thisView.showUserCardDialogView();
+					}
 				}
 			}
 		};
+		thisView.showGroupMembers();
 	}
 
 	public void bindEvent() {
+		thisView.userCardMainView.setOnClickListener(mOnClickListener);
+		thisView.singleButtonView.setOnClickListener(mOnClickListener);
+		thisView.goChatView.setOnClickListener(mOnClickListener);
+		thisView.goInfomationView.setOnClickListener(mOnClickListener);
 		thisView.dialogConfirmView.setOnClickListener(mOnClickListener);
 		thisView.dialogCancleView.setOnClickListener(mOnClickListener);
 		thisView.groupNameLayoutView.setOnClickListener(mOnClickListener);
@@ -217,5 +253,9 @@ public class GroupInfomationController {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFY, params, responseHandlers.group_modify);
+	}
+
+	public void onResume() {
+		thisView.dismissUserCardDialogView();
 	}
 }

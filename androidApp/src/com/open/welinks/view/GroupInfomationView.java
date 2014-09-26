@@ -1,5 +1,6 @@
 package com.open.welinks.view;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,22 +8,29 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.FrameLayout.LayoutParams;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.GroupInfomationController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 
 public class GroupInfomationView {
@@ -59,11 +67,15 @@ public class GroupInfomationView {
 	public TextView dialogConfirmView;
 	public TextView dialogCancleView;
 
+	public View maxView;
+
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public DisplayImageOptions options;
 
 	public InputMethodManager inputMethodManager;
+
+	public DisplayMetrics displayMetrics;
 
 	public GroupInfomationView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -72,13 +84,16 @@ public class GroupInfomationView {
 	}
 
 	public void initView() {
+
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-		thisActivity.setContentView(R.layout.activity_group_infomation);
-
 		mInflater = thisActivity.getLayoutInflater();
 
+		thisActivity.setContentView(R.layout.activity_group_infomation);
+		maxView = thisActivity.findViewById(R.id.maxView);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		groupCountView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		groupNameView = (TextView) thisActivity.findViewById(R.id.groupName);
@@ -111,6 +126,8 @@ public class GroupInfomationView {
 		dialogCancleView = (TextView) thisActivity.findViewById(R.id.cancel);
 
 		dialogContentView.setVisibility(View.GONE);
+
+		initSmallBusinessCardDialog();
 	}
 
 	public void showGroupMembers() {
@@ -152,6 +169,9 @@ public class GroupInfomationView {
 				params.leftMargin = friendBody.position.x;
 				friendBody.friendView.setLayoutParams(params);
 				// friendBody.friendView.setBackgroundColor(Color.RED);
+				friendBody.headImageView.setTag(R.id.tag_class, "head_click");
+				friendBody.headImageView.setTag(R.id.tag_first, friend.phone);
+				friendBody.headImageView.setOnClickListener(thisController.mOnClickListener);
 				if (i > 8)
 					break A;
 			}
@@ -231,5 +251,108 @@ public class GroupInfomationView {
 			position.x = (int) (baseLeft + head + headSpace + head + headSpace + head + headSpace + baseX);
 		}
 		return position;
+	}
+
+	// small businesscard
+	public DisplayImageOptions smallBusinessCardOptions;
+	public View userCardMainView;
+	public PopupWindow userCardPopWindow;
+	public RelativeLayout userBusinessContainer;
+	public TextView goInfomationView;
+	public TextView goChatView;
+	public ImageView userHeadView;
+	public TextView userNickNameView;
+	public TextView userAgeView;
+	public TextView distanceView;
+	public TextView lastLoginTimeView;
+	public LinearLayout optionTwoView;
+	public TextView singleButtonView;
+	public TextView cardStatusView;
+
+	@SuppressWarnings("deprecation")
+	public void initSmallBusinessCardDialog() {
+		userCardMainView = mInflater.inflate(R.layout.account_info_pop, null);
+		optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
+		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
+		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);
+		distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);
+		lastLoginTimeView = (TextView) userCardMainView.findViewById(R.id.lastLoginTime);
+		userBusinessContainer = (RelativeLayout) userCardMainView.findViewById(R.id.userBusinessView);
+		int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + getStatusBarHeight(thisActivity);
+		userBusinessContainer.getLayoutParams().height = height;
+		goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
+		goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);
+		singleButtonView = (TextView) userCardMainView.findViewById(R.id.singleButton);
+		cardStatusView = (TextView) userCardMainView.findViewById(R.id.cardStatus);
+		// singleButtonView.setVisibility(View.GONE);
+		userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
+		userHeadView.getLayoutParams().height = height;
+		userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
+		smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
+	}
+
+	LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+
+	public void setSmallBusinessCardContent(String phone, String head, String nickName, String age, String longitude, String latitude) {
+		User user = data.userInformation.currentUser;
+		goInfomationView.setTag(R.id.tag_first, phone);
+		goChatView.setTag(R.id.tag_first, phone);
+		singleButtonView.setTag(R.id.tag_first, phone);
+		fileHandlers.getHeadImage(head, userHeadView, smallBusinessCardOptions);
+		userNickNameView.setText(nickName);
+		userAgeView.setText(age + "");
+		distanceView.setText(lbsHandlers.pointDistance(user.longitude, user.latitude, longitude, latitude) + "km");
+		lastLoginTimeView.setText("0小时前");
+		if (user.phone.equals(phone)) {
+			optionTwoView.setVisibility(View.GONE);
+			singleButtonView.setVisibility(View.VISIBLE);
+			cardStatusView.setText("自己");
+			singleButtonView.setTag(R.id.tag_second, "point");
+		} else {
+			if (data.relationship.friends.contains(phone)) {
+				optionTwoView.setVisibility(View.VISIBLE);
+				singleButtonView.setVisibility(View.GONE);
+				cardStatusView.setText("已是好友");
+				goInfomationView.setTag(R.id.tag_second, "point");
+				goInfomationView.setTag(R.id.tag_third, false);
+			} else {
+				optionTwoView.setVisibility(View.GONE);
+				singleButtonView.setVisibility(View.VISIBLE);
+				cardStatusView.setText("不是好友");
+				goInfomationView.setTag(R.id.tag_second, "point");
+				goInfomationView.setTag(R.id.tag_third, true);
+				data.tempData.tempFriend = data.relationship.friendsMap.get(phone);
+			}
+		}
+	}
+
+	public void showUserCardDialogView() {
+		if (userCardPopWindow != null && !userCardPopWindow.isShowing()) {
+			userCardPopWindow.showAtLocation(maxView, Gravity.CENTER, 0, 0);
+		}
+	}
+
+	public void dismissUserCardDialogView() {
+		if (userCardPopWindow != null && userCardPopWindow.isShowing()) {
+			userCardPopWindow.dismiss();
+		}
+	}
+
+	public static int getStatusBarHeight(Context context) {
+		Class<?> c = null;
+		Object obj = null;
+		Field field = null;
+		int x = 0, statusBarHeight = 0;
+		try {
+			c = Class.forName("com.android.internal.R$dimen");
+			obj = c.newInstance();
+			field = c.getField("status_bar_height");
+			x = Integer.parseInt(field.get(obj).toString());
+			statusBarHeight = context.getResources().getDimensionPixelSize(x);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		return statusBarHeight;
 	}
 }

@@ -244,6 +244,9 @@ public class ShareSubController {
 					} else if (view_class.equals("share_release")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("group_head")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					} else if (view_class.equals("title_share")) {
 						long currentTime = System.currentTimeMillis();
 						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
@@ -302,6 +305,22 @@ public class ShareSubController {
 				} else if (view.equals(thisView.groupDialogView)) {
 					thisView.groupDialogView.isIntercept = false;
 					thisView.dismissGroupDialog();
+				} else if (view.equals(thisView.groupHeadView) || view.equals(thisView.groupCoverView)) {
+					parser.check();
+					Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+					thisView.setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude);
+					thisView.showUserCardDialogView();
+				} else if (view.equals(thisView.userCardMainView)) {
+					thisView.dismissUserCardDialogView();
+				} else if (view.equals(thisView.goChatView)) {
+					Intent intent = new Intent(thisActivity, ChatActivity.class);
+					intent.putExtra("type", "group");
+					intent.putExtra("id", data.localStatus.localData.currentSelectedGroup);
+					thisActivity.startActivityForResult(intent, R.id.tag_second);
+				} else if (view.equals(thisView.goInfomationView)) {
+					Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
+					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.releaseShareView)) {
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };
@@ -417,6 +436,10 @@ public class ShareSubController {
 	}
 
 	public void bindEvent() {
+		thisView.userCardMainView.setOnClickListener(mOnClickListener);
+		thisView.goChatView.setOnClickListener(mOnClickListener);
+		thisView.goInfomationView.setOnClickListener(mOnClickListener);
+
 		thisView.shareTitleView.setOnTouchListener(mOnTouchListener);
 		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
@@ -516,6 +539,8 @@ public class ShareSubController {
 			} else if (view_class.equals("group_members")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("share_release")) {
+				onTouchDownView.performClick();
+			} else if (view_class.equals("group_head")) {
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;

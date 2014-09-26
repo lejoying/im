@@ -157,6 +157,7 @@ public class MainController {
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
 		thisView.friendsSubView.dismissUserCardDialogView();
+		thisView.shareSubView.dismissUserCardDialogView();
 		// thisView.shareSubView.onResume();
 		// thisView.messagesSubView.onResume();
 	}
