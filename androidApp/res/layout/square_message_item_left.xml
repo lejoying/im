@@ -3,39 +3,125 @@
     android:layout_width="match_parent"
     android:layout_height="115dp" >
 
-    <com.open.lib.TouchImageView
-        android:id="@+id/messageImage"
-        android:layout_width="360dp"
-        android:layout_height="115dp"
-        android:src="@drawable/square_temp" />
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="196dp"
+        android:shadowColor="@color/TransparentGrey"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowRadius="0.01"
+        android:src="@drawable/background_square_item" />
 
-    <com.open.lib.TouchImageView
-        android:layout_width="360dp"
-        android:layout_height="115dp"
-        android:visibility="gone"
-        android:background="@drawable/square_message_background1" />
+    <com.open.lib.TouchView
+        android:id="@+id/gshare_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" >
 
-    <com.open.lib.TouchTextView
-        android:id="@+id/messageContent"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="15dp"
-        android:lines="2"
-        android:gravity="center_horizontal"
-        android:text="“停车”"
-        android:textColor="#fff"
-        android:textSize="16sp" />
+        <ImageView
+            android:id="@+id/share_head"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:translationX="10dp"
+            android:translationY="10dp" />
 
-    <com.open.lib.TouchTextView
-        android:id="@+id/messageAuthor"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
+        <TextView
+            android:id="@+id/share_nickName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ABCD"
+            android:textColor="@color/text_color_black"
+            android:textSize="16sp"
+            android:translationX="60dp"
+            android:translationY="10dp" />
+
+        <ImageView
+            android:id="@+id/gshare_time_iv"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/time_icon"
+            android:tint="@color/icon_color"
+            android:translationX="60dp"
+            android:translationY="32dp" />
+
+        <TextView
+            android:id="@+id/share_releaseTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="08:08"
+            android:textColor="@color/text_color_black_2"
+            android:textSize="12sp"
+            android:translationX="75dp"
+            android:translationY="30dp" />
+
+        <ImageView
+            android:id="@+id/share_praise_icon"
+            android:layout_width="27dp"
+            android:layout_height="26dp"
+            android:layout_gravity="right"
+            android:src="@drawable/praise_icon"
+            android:tint="@color/icon_color"
+            android:translationX="-35dp"
+            android:translationY="15dp" />
+
+        <TextView
+            android:id="@+id/share_praise"
+            android:layout_width="20dp"
+            android:layout_height="26dp"
+            android:layout_gravity="right"
+            android:text="0"
+            android:textColor="@color/text_color_black_2"
+            android:translationX="-10dp"
+            android:translationY="17dp" />
+
+        <ImageView
+            android:id="@+id/share_comment_icon"
+            android:layout_width="31dp"
+            android:layout_height="26dp"
+            android:layout_gravity="right"
+            android:src="@drawable/comment_icon"
+            android:tint="@color/icon_color"
+            android:translationX="-100dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/share_comment"
+            android:layout_width="20dp"
+            android:layout_height="26dp"
+            android:layout_gravity="right"
+            android:text="0"
+            android:textColor="@color/text_color_black"
+            android:translationX="-80dp"
+            android:visibility="gone" />
+    </com.open.lib.TouchView>
+
+    <com.open.lib.TouchView
+        android:layout_width="match_parent"
+        android:layout_height="136dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="20dp"
-        android:text="Lucy and Luly"
-        android:textColor="#fff"
-        android:textSize="18sp" />
+        android:translationY="-14dp" >
+
+        <ImageView
+            android:id="@+id/share_imageContent"
+            android:layout_width="match_parent"
+            android:layout_height="136dp"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="#51000000" />
+
+        <TextView
+            android:id="@+id/share_textContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:maxLines="3"
+            android:padding="5dp"
+            android:text="分享内容"
+            android:textColor="@color/text_color_on_background" />
+    </com.open.lib.TouchView>
 
 </com.open.lib.TouchView>
