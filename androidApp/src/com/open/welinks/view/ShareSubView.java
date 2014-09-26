@@ -167,8 +167,8 @@ public class ShareSubView {
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 		bigHeadOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(56)).build();
-		myScrollImageBody = new MyScrollImageBody();
-		myScrollImageBody.initialize(groupMembersListContentView);
+		// myScrollImageBody = new MyScrollImageBody();
+		// myScrollImageBody.initialize(groupMembersListContentView);
 
 		mImageFile = fileHandlers.sdcardHeadImageFolder;
 		if (!mImageFile.exists())
@@ -217,15 +217,16 @@ public class ShareSubView {
 			if (sharesMessageBody0 == null) {
 				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
 				sharesMessageBody0.initialize(-1);
+				sharesMessageBody0.itemHeight = (280 - 48) * displayMetrics.density;
 			}
 			sharesMessageBody0.setContent(null, "");
 			this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
 			this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
-			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (300 * displayMetrics.density));
+			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (250 * displayMetrics.density));
 			sharesMessageBody0.y = -48 * displayMetrics.density;
 			sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
 			// sharesMessageBody0.cardView.setX(0);
-			this.shareMessageListBody.height = this.shareMessageListBody.height + (255 - 48) * displayMetrics.density;
+			this.shareMessageListBody.height = this.shareMessageListBody.height + (215 - 48) * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 		} else {
 			this.shareMessageListBody.listItemsSequence.clear();
@@ -272,7 +273,7 @@ public class ShareSubView {
 				RelativeLayout.LayoutParams layoutParams_2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (40 * displayMetrics.density));
 				sharesMessageBody0.y = this.shareMessageListBody.height;
 				sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
-				sharesMessageBody0.cardView.setX(0);
+				sharesMessageBody0.cardView.setX(10 * displayMetrics.density);
 				this.shareMessageListBody.height = this.shareMessageListBody.height + 50 * displayMetrics.density;
 				this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams_2);
 				// i--;
@@ -750,7 +751,7 @@ public class ShareSubView {
 		}
 	}
 
-	public MyScrollImageBody myScrollImageBody;
+	// public MyScrollImageBody myScrollImageBody;
 	public int width;
 	public File mImageFile;
 	public DisplayImageOptions headOptions;
@@ -769,87 +770,87 @@ public class ShareSubView {
 			shareTopMenuGroupName.setText("暂无群组");
 			return;
 		}
-		List<String> groupMembers = group.members;
-		Map<String, Friend> friendsMap = data.relationship.friendsMap;
+		// List<String> groupMembers = group.members;
+		// Map<String, Friend> friendsMap = data.relationship.friendsMap;
 
 		width = (int) (displayMetrics.density * 40);
-		int size = groupMembers.size();
-		if (size > 6) {
-			size = 6;
-		}
-		for (int i = 0; i < size; i++) {
-			String key = groupMembers.get(i);
-			Friend friend = friendsMap.get(key);
-
-			ImageBody imageBody = new ImageBody();
-			imageBody.initialize();
-
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
-			myScrollImageBody.contentView.addView(imageBody.imageView, layoutParams);
-			float x = i * (width + 5 * displayMetrics.density) + 5 * displayMetrics.density;
-			if (i == 0) {
-				x = 5 * displayMetrics.density;
-			}
-			imageBody.imageView.setX(x);// Translation
-			fileHandlers.getHeadImage(friend.head, imageBody.imageView, headOptions);
-			myScrollImageBody.selectedImagesSequence.add(key);
-			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
-			imageBody.imageView.setTag("head");
-			// imageBody.imageView.setOnClickListener(thisController.monClickListener);
-		}
+		// int size = groupMembers.size();
+		// if (size > 6) {
+		// size = 6;
+		// }
+		// for (int i = 0; i < size; i++) {
+		// String key = groupMembers.get(i);
+		// Friend friend = friendsMap.get(key);
+		//
+		// ImageBody imageBody = new ImageBody();
+		// imageBody.initialize();
+		//
+		// RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
+		// myScrollImageBody.contentView.addView(imageBody.imageView, layoutParams);
+		// float x = i * (width + 5 * displayMetrics.density) + 5 * displayMetrics.density;
+		// if (i == 0) {
+		// x = 5 * displayMetrics.density;
+		// }
+		// imageBody.imageView.setX(x);// Translation
+		// fileHandlers.getHeadImage(friend.head, imageBody.imageView, headOptions);
+		// myScrollImageBody.selectedImagesSequence.add(key);
+		// myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
+		// imageBody.imageView.setTag("head");
+		// // imageBody.imageView.setOnClickListener(thisController.monClickListener);
+		// }
 	}
 
-	public class MyScrollImageBody {
-		public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
-		public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
-
-		public ViewGroup contentView;
-
-		public ViewGroup initialize(ViewGroup view) {
-			this.contentView = view;
-			return view;
-		}
-
-		public void recordChildrenPosition() {
-			for (int i = 0; i < selectedImagesSequence.size(); i++) {
-				String key = selectedImagesSequence.get(i);
-				ImageBody imageBody = selectedImagesSequenceMap.get(key);
-				imageBody.x = imageBody.imageView.getX();
-				imageBody.y = imageBody.imageView.getY();
-			}
-		}
-
-		public void setChildrenPosition(float deltaX, float deltaY) {
-			float screenWidth = displayMetrics.widthPixels;
-			float totalLength = selectedImagesSequence.size() * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;
-			if (totalLength < screenWidth) {
-				return;
-			}
-			for (int i = 0; i < selectedImagesSequence.size(); i++) {
-				String key = selectedImagesSequence.get(i);
-				ImageBody imageBody = selectedImagesSequenceMap.get(key);
-				if ((imageBody.x + deltaX) < (screenWidth - totalLength))
-					break;
-				if (i == 0 && (imageBody.x + deltaX) > (5 * displayMetrics.density))
-					break;
-				imageBody.imageView.setX(imageBody.x + deltaX);
-				imageBody.imageView.setY(imageBody.y + deltaY);
-			}
-		}
-	}
-
-	public class ImageBody {
-		public int i;
-
-		public float x;
-		public float y;
-		public TouchImageView imageView;
-
-		public TouchImageView initialize() {
-			this.imageView = new TouchImageView(mainView.context);
-			return this.imageView;
-		}
-	}
+	// public class MyScrollImageBody {
+	// public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
+	// public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
+	//
+	// public ViewGroup contentView;
+	//
+	// public ViewGroup initialize(ViewGroup view) {
+	// this.contentView = view;
+	// return view;
+	// }
+	//
+	// public void recordChildrenPosition() {
+	// for (int i = 0; i < selectedImagesSequence.size(); i++) {
+	// String key = selectedImagesSequence.get(i);
+	// ImageBody imageBody = selectedImagesSequenceMap.get(key);
+	// imageBody.x = imageBody.imageView.getX();
+	// imageBody.y = imageBody.imageView.getY();
+	// }
+	// }
+	//
+	// public void setChildrenPosition(float deltaX, float deltaY) {
+	// float screenWidth = displayMetrics.widthPixels;
+	// float totalLength = selectedImagesSequence.size() * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;
+	// if (totalLength < screenWidth) {
+	// return;
+	// }
+	// for (int i = 0; i < selectedImagesSequence.size(); i++) {
+	// String key = selectedImagesSequence.get(i);
+	// ImageBody imageBody = selectedImagesSequenceMap.get(key);
+	// if ((imageBody.x + deltaX) < (screenWidth - totalLength))
+	// break;
+	// if (i == 0 && (imageBody.x + deltaX) > (5 * displayMetrics.density))
+	// break;
+	// imageBody.imageView.setX(imageBody.x + deltaX);
+	// imageBody.imageView.setY(imageBody.y + deltaY);
+	// }
+	// }
+	// }
+	//
+	// public class ImageBody {
+	// public int i;
+	//
+	// public float x;
+	// public float y;
+	// public TouchImageView imageView;
+	//
+	// public TouchImageView initialize() {
+	// this.imageView = new TouchImageView(mainView.context);
+	// return this.imageView;
+	// }
+	// }
 
 	public void onResume() {
 	}

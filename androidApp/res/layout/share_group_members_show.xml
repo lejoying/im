@@ -11,7 +11,7 @@
         <com.open.lib.TouchImageView
             android:id="@+id/groupCover"
             android:layout_width="fill_parent"
-            android:layout_height="220dp"
+            android:layout_height="190dp"
             android:background="#006611"
             android:scaleType="centerCrop" />
 
@@ -33,7 +33,7 @@
             android:layout_gravity="left"
             android:background="@drawable/head_draw_background"
             android:translationX="8dp"
-            android:translationY="188dp" />
+            android:translationY="158dp" />
 
         <com.open.lib.TouchImageView
             android:id="@+id/group_head"
@@ -41,7 +41,7 @@
             android:layout_height="56dp"
             android:layout_gravity="left"
             android:translationX="12dp"
-            android:translationY="192dp" />
+            android:translationY="162dp" />
 
         <com.open.lib.TouchTextView
             android:id="@+id/share_praise"
@@ -56,7 +56,7 @@
             android:textColor="#eeffffff"
             android:textSize="18sp"
             android:translationX="80dp"
-            android:translationY="192dp" />
+            android:translationY="162dp" />
 
         <com.open.lib.TouchImageView
             android:id="@+id/releaseShare"
@@ -66,11 +66,11 @@
             android:background="@drawable/backview_background"
             android:paddingBottom="10dp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingRight="15dp"
             android:paddingTop="10dp"
             android:src="@drawable/square_release"
             android:tint="@color/text_color_on_background"
-            android:translationY="245dp" />
+            android:translationY="202dp" />
     </com.open.lib.TouchView>
 
 </com.open.lib.TouchView>
