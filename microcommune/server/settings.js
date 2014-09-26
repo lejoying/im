@@ -58,7 +58,7 @@ if (serverSetting.environment == "local") {
 else if (serverSetting.environment == "server") {
     serverSetting.imageFolder = "/alidata/upload/images/";
     serverSetting.voicesFolder = "/alidata/upload/voices/";
-    serverSetting.neo4jUrl = "http://112.126.71.175:7474/";
+    serverSetting.neo4jUrl = "http://112.126.71.175:7474/";//112.126.71.175
     serverSetting.redisIP = "127.0.0.1";
     serverSetting.redisPort = "6379";
 }
