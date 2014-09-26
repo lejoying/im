@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import android.util.Log;
 
+import com.amap.api.maps2d.AMapUtils;
+import com.amap.api.maps2d.model.LatLng;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -233,14 +235,15 @@ public class LBSHandlers {
 		else if (distance < -1.0)
 			distance = -1.0;
 		distance = DEF_R * Math.acos(distance);
-		return distance;
+		return distance / 1000;
 	}
 
 	public String pointDistance(String longitude, String latitude, String longitude2, String latitude2) {
 		String distance = GetLongDistance(checkNumber(longitude), checkNumber(latitude), checkNumber(longitude2), checkNumber(latitude2)) + "";
-		// LatLng latLng1 = new LatLng(checkNumber(longitude), checkNumber(latitude));
-		// LatLng latLng2 = new LatLng(checkNumber(longitude2), checkNumber(latitude2));
-		// String distance = AMapUtils.calculateLineDistance(latLng1, latLng2) + "";
+		LatLng latLng1 = new LatLng(checkNumber(longitude), checkNumber(latitude));
+		LatLng latLng2 = new LatLng(checkNumber(longitude2), checkNumber(latitude2));
+		String distance0 = AMapUtils.calculateLineDistance(latLng1, latLng2) + "";
+		Log.e(tag, "distance0:      " + distance0);
 		Log.e(tag, "distance:      " + distance);
 		if (distance.indexOf(".") != -1) {
 			if (distance.substring(distance.indexOf(".") + 1).length() > 2) {

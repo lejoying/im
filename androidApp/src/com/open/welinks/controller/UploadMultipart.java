@@ -34,7 +34,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
-import android.util.Log;
 import android.view.View;
 
 import com.aliyun.android.oss.Base64;
@@ -48,13 +47,21 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
+import com.open.lib.MyLog;
+import com.open.welinks.model.API;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.Debug1View.TransportingList.TransportingItem;
 
 public class UploadMultipart {
 
-	public static String tag = "MultipartUpload";
+	public Data data = Data.getInstance();
+
+	public static String tag = "UploadMultipart";
+
+	public MyLog log = new MyLog(tag, true);
 
 	public static HttpClient httpClient = HttpClient.getInstance();
 
@@ -149,7 +156,7 @@ public class UploadMultipart {
 	public void startUpload() {
 		instance = this;
 		if (!"".equals(fileName)) {
-			initiateMultipartupload();
+			checkFileExists();
 		} else {
 			initiateMultipartUploadParams();
 		}
@@ -184,7 +191,54 @@ public class UploadMultipart {
 		}
 
 		this.fileName = OSS_DIRECTORY + sha1FileName + suffixName;
+		checkFileExists();
 	}
+
+	public void checkFileExists() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User user = data.userInformation.currentUser;
+		params.addBodyParameter("phone", user.phone);
+		params.addBodyParameter("accessKey", user.accessKey);
+		params.addBodyParameter("fileName", fileName);
+
+		httpUtils.send(HttpMethod.POST, API.IMAGE_CHECKFILEEXIST, params, checkFileExists);
+	}
+
+	public ResponseHandler<String> checkFileExists = httpClient.new ResponseHandler<String>() {
+
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String fileName;
+			public boolean exists;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("查找成功")) {
+				if (response.fileName.equals(fileName) && response.exists == true) {
+					isUploadStatus = UPLOAD_SUCCESS;
+					if (uploadLoadingListener != null) {
+						uploadLoadingListener.onSuccess(instance, 0);
+					}
+					log.e("上传成功**********************服务器已经存在");
+				} else {
+					initiateMultipartupload();
+				}
+			} else {
+				log.e("上传失败**********************" + response.失败原因);
+			}
+		};
+
+		@Override
+		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
+			isUploadStatus = UPLOAD_INITFAILED;
+			uploadLoadingListener.onLoading(instance, 0, 0, UPLOAD_FAILED);
+			initiateMultipartupload();
+		};
+	};
 
 	public void initiateMultipartupload() {
 		isUploadStatus = UPLOAD_INIT;
@@ -230,7 +284,6 @@ public class UploadMultipart {
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			isUploadStatus = UPLOAD_INITFAILED;
-			initiateMultipartupload();
 		};
 	};
 
@@ -239,7 +292,7 @@ public class UploadMultipart {
 		partSuccessCount = 0;
 		partCount = (int) Math.ceil((double) bytes.length / (double) partSize);
 
-		// Log.e(tag, "partCount:" + partCount);
+		// log.e("partCount:" + partCount);
 
 		for (int i = 0; i < partCount; i++) {
 			int partID = i + 1;
@@ -347,7 +400,7 @@ public class UploadMultipart {
 		public void onLoading(long total, long current, boolean isUploading) {
 			super.onLoading(total, current, isUploading);
 			time.received = System.currentTimeMillis();
-			// Log.e(tag, total + "--*****---" + current + "_+_+_+_+_+_+" +
+			// log.e(total + "--*****---" + current + "_+_+_+_+_+_+" +
 			// isUploading);
 		}
 
@@ -357,7 +410,7 @@ public class UploadMultipart {
 			part.setStatus(Part.PART_SUCCESS);
 			uploadPrecent = (int) ((((double) partSuccessCount / (double) partCount)) * 100);
 			uploadLoadingListener.onLoading(instance, uploadPrecent, (time.received - time.start), UPLOAD_SUCCESS);
-			// Log.e(tag, partSuccessCount + "-----" + partCount + "------" +
+			// log.e(partSuccessCount + "-----" + partCount + "------" +
 			// part.eTag);
 			if (partSuccessCount == partCount) {
 				time.received = System.currentTimeMillis();
@@ -367,7 +420,7 @@ public class UploadMultipart {
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
-			// Log.e(tag, error + "-----************---" + msg);
+			// log.e( error + "-----************---" + msg);
 			// instance.isUploadStatus = UPLOAD_FAILED;
 			part.setStatus(Part.PART_FAILED);
 			if (isUploadStatus != UPLOAD_CANCLE) {
@@ -411,8 +464,9 @@ public class UploadMultipart {
 			completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
 			isUploadStatus = UPLOAD_SUCCESS;
 			uploadLoadingListener.onSuccess(instance, (int) (time.received - time.start));
-			Log.e("Coolspan", "上传成功**********************");
-			// Log.e(tag, completeMultipartUploadResult.location + "---" +
+			log.e("上传成功**********************");
+			uploadFileName();
+			// log.e(completeMultipartUploadResult.location + "---" +
 			// completeMultipartUploadResult.bucket + "---" +
 			// completeMultipartUploadResult.key + "---" +
 			// completeMultipartUploadResult.eTag);
@@ -421,6 +475,42 @@ public class UploadMultipart {
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			isUploadStatus = UPLOAD_FAILED;
+		};
+	};
+
+	public void uploadFileName() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User user = data.userInformation.currentUser;
+		params.addBodyParameter("phone", user.phone);
+		params.addBodyParameter("accessKey", user.accessKey);
+		params.addBodyParameter("fileName", fileName);
+
+		httpUtils.send(HttpMethod.POST, API.IMAGE_UPLOADFILENAME, params, uploadFileName);
+	}
+
+	public ResponseHandler<String> uploadFileName = httpClient.new ResponseHandler<String>() {
+
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("上传成功")) {
+				log.e("上传文件名到服务器成功");
+			} else {
+				log.e("上传文件名到服务器失败**********************" + response.失败原因);
+			}
+		};
+
+		@Override
+		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
+			isUploadStatus = UPLOAD_INITFAILED;
+			uploadLoadingListener.onLoading(instance, 0, 0, UPLOAD_FAILED);
+			initiateMultipartupload();
 		};
 	};
 

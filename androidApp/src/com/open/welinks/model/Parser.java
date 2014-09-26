@@ -6,8 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.content.Context;
 import android.os.Environment;
@@ -238,6 +240,23 @@ public class Parser {
 				if (data.messages == null) {
 					String messageContent = getFromUserForder(phone, "message.js");
 					data.messages = gson.fromJson(messageContent, Messages.class);
+
+					// Duplicate data processing
+					List<String> messageOrder = data.messages.messagesOrder;
+					Set<String> set = new HashSet<String>();
+					set.addAll(messageOrder);
+					if (set.size() != messageOrder.size()) {
+						data.messages.messagesOrder.clear();
+						data.messages.messagesOrder.addAll(set);
+					}
+					List<String> messageOrder2 = new ArrayList<String>();
+					for (int i = 0; i < messageOrder.size(); i++) {
+						String key = (messageOrder.get(i)).substring(1);
+						if (!data.relationship.friends.contains(key)) {
+							messageOrder2.add(messageOrder.get(i));
+						}
+					}
+					messageOrder.removeAll(messageOrder2);
 				}
 			} catch (Exception e) {
 				deleteFile(phone, "message.js");

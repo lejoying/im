@@ -42,7 +42,6 @@ public class MessagesSubController {
 	public MessagesSubController(MainController mainController) {
 		this.mainController = mainController;
 		thisconController = this;
-		DataUtil.getMessages(data.userInformation.currentUser.flag);
 	}
 
 	public void initializeListeners() {

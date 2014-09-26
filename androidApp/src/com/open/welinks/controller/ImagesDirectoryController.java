@@ -22,10 +22,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.open.welinks.ImageGridActivity;
+import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.view.ImagesDirectoryView;
+import com.open.welinks.view.ImagesDirectoryView.ImageAdapter;
 import com.open.welinks.view.ImagesDirectoryView.MyGridViewAdapter;
 
 public class ImagesDirectoryController {
@@ -48,6 +50,7 @@ public class ImagesDirectoryController {
 
 	public OnClickListener onClickListener;
 	public OnItemClickListener onItemClickListener;
+	public OnItemClickListener onItemClickListener2;
 
 	public int RESULT_REQUESTCODE_SELECTIMAGE = 0x01;
 
@@ -78,7 +81,24 @@ public class ImagesDirectoryController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.backView)) {
+					ArrayList<ImageBean> images = new ArrayList<ImageBean>();
+					for (int i = 0; i < selectedImage.size(); i++) {
+						images.add(mImagesDescription.get(selectedImage.get(i)));
+					}
+					data.tempData.selectedImageList = selectedImage;
+					selectedImage = new ArrayList<String>();
+					thisActivity.setResult(Activity.RESULT_OK);
 					thisActivity.finish();
+				} else if (view.getTag(R.id.tag_class) != null) {
+					String tag_class = (String) view.getTag(R.id.tag_class);
+					if ("already_image".equals(tag_class)) {
+						String path = (String) view.getTag(R.id.tag_first);
+						thisView.alreadyListContainer.removeView(view);
+						ImagesDirectoryController.instance.selectedImage.remove(path);
+						if (path.indexOf("osj") != -1 || path.indexOf("osp") != -1) {
+							imageAdapter.notifyDataSetChanged();
+						}
+					}
 				}
 			}
 		};
@@ -93,10 +113,27 @@ public class ImagesDirectoryController {
 				thisActivity.startActivityForResult(intent, RESULT_REQUESTCODE_SELECTIMAGE);
 			}
 		};
+		onItemClickListener2 = new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
+				View v = view.findViewById(R.id.iv_imageContentStatus);
+				if (v.getVisibility() == View.GONE) {
+					v.setVisibility(View.VISIBLE);
+					ImagesDirectoryController.instance.selectedImage.add(cloudAccessFile.get(postion));
+					thisView.showAlreayList();
+				} else {
+					v.setVisibility(View.GONE);
+					ImagesDirectoryController.instance.selectedImage.remove(cloudAccessFile.get(postion));
+					thisView.showAlreayList();
+				}
+			}
+		};
 	}
 
 	public void bindEvent() {
 		thisView.mGridView.setOnItemClickListener(onItemClickListener);
+		thisView.cloud_gridView.setOnItemClickListener(onItemClickListener2);
 		thisView.backView.setOnClickListener(onClickListener);
 	}
 
@@ -129,6 +166,8 @@ public class ImagesDirectoryController {
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public List<String> cloudAccessFile = new ArrayList<String>();
 
+	public ImageAdapter imageAdapter;
+
 	public void getCloudFileAccess() {
 		File imageFile = fileHandlers.sdcardImageFolder;
 		if (imageFile.exists()) {
@@ -146,6 +185,8 @@ public class ImagesDirectoryController {
 				}
 			}
 		}
+		imageAdapter = thisView.new ImageAdapter();
+		thisView.cloud_gridView.setAdapter(imageAdapter);
 	}
 
 	private void getImages() {
@@ -185,5 +226,9 @@ public class ImagesDirectoryController {
 				mHandler.sendEmptyMessage(SCAN_OK);
 			}
 		}).start();
+	}
+
+	public void onResume() {
+		thisView.showAlreayList();
 	}
 }

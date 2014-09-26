@@ -55,10 +55,20 @@ public class ResponseEventHandlers {
 			if ("message".equals(contentType)) {
 				Message messageGson = gson.fromJson(message.content, Message.class);
 				updateLocalMessage(messageGson);
-				if (NotificationUtils.isLeave(viewManage.mainView.context)) {
-					NotificationUtils.showMessageNotification(viewManage.mainView.context, messageGson);
-				} else {
-					NotificationUtils.commonVibrate(viewManage.mainView.context);
+				boolean isNotify = false;
+				String sendType = messageGson.sendType;
+				if ("point".equals(sendType)) {
+					isNotify = data.relationship.friends.contains(messageGson.phone);
+				} else if ("group".equals(sendType)) {
+					isNotify = data.relationship.groups.contains(messageGson.gid);
+				}
+
+				if (isNotify) {
+					if (NotificationUtils.isLeave(viewManage.mainView.context)) {
+						NotificationUtils.showMessageNotification(viewManage.mainView.context, messageGson);
+					} else {
+						NotificationUtils.commonVibrate(viewManage.mainView.context);
+					}
 				}
 				DataUtil.getMessages(data.userInformation.currentUser.flag);
 			} else {

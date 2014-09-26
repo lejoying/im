@@ -10,6 +10,7 @@
         android:id="@+id/album_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
         android:layout_marginTop="50dp"
         android:cacheColorHint="@android:color/transparent"
         android:columnWidth="90dip"
@@ -18,7 +19,60 @@
         android:listSelector="@android:color/transparent"
         android:numColumns="2"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="20dip" >
+        android:verticalSpacing="20dip"
+        android:visibility="visible" >
     </GridView>
+
+    <GridView
+        android:id="@+id/cloud_grid"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:horizontalSpacing="4dip"
+        android:numColumns="3"
+        android:padding="4dip"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="4dip"
+        android:visibility="gone" >
+    </GridView>
+
+    <HorizontalScrollView
+        android:id="@+id/alreadyList"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="75dp"
+        android:background="#38000000"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/alreadyListContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <RelativeLayout
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" >
+
+        <TextView
+            android:id="@+id/tv_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/textview_bg"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="确定"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
 </RelativeLayout>

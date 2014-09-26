@@ -154,6 +154,16 @@ public class API {
 	 */
 	public static String CIRCLE_ADDCIRCLE = API_DOMAIN + "api2/circle/addcircle";
 
+	// image
+
+	/**
+	 * http://www.we-links.com/image/checkfileexist
+	 */
+	public static String IMAGE_CHECKFILEEXIST = API_DOMAIN + "image/checkfileexist";
+	/**
+	 * http://www.we-links.com/image/uploadfilename
+	 */
+	public static String IMAGE_UPLOADFILENAME = API_DOMAIN + "image/uploadfilename";
 	// lbs
 	public static String LBS_DATA_CREATE = "http://yuntuapi.amap.com/datamanage/data/create";
 	public static String LBS_DATA_UPDATA = "http://yuntuapi.amap.com/datamanage/data/update";

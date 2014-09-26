@@ -45,7 +45,7 @@
             android:name="com.open.welinks.LaunchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" >
+            android:theme="@style/CommonStyle0" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -60,7 +60,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
+      <activity
+            android:name="com.open.welinks.MainActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle0"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
         <activity
             android:name="com.open.welinks.CirclesListActivity"
             android:label="@string/app_name"
@@ -219,7 +226,7 @@
             android:name="com.open.welinks.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle"
+            android:theme="@style/CommonStyle0"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
@@ -231,14 +238,6 @@
         </activity>
         <activity
             android:name="com.open.welinks.Debug1Activity"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle"
-            android:windowSoftInputMode="adjustPan" >
-        </activity>
-        <activity
-            android:name="com.open.welinks.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

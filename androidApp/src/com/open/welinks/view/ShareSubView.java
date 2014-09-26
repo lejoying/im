@@ -197,10 +197,6 @@ public class ShareSubView {
 			}
 		}
 
-		// imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
-		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
-
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		SharesMessageBody sharesMessageBody0 = null;
@@ -235,7 +231,11 @@ public class ShareSubView {
 		if (!flag || share == null) {
 			return;
 		}
-
+		//set conver
+		// imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
+		
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
 		ShareMessage lastShareMessage = null;

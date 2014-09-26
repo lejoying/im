@@ -42,4 +42,10 @@ public class ImagesDirectoryActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		thisController.onActivityResult(requestCode, resultCode, data);
 	}
+	
+	@Override
+	protected void onResume() {
+		thisController.onResume();
+		super.onResume();
+	}
 }
