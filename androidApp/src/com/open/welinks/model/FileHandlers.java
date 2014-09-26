@@ -66,7 +66,7 @@ public class FileHandlers {
 			public void onFailure(DownloadFile instance, int status) {
 				super.onFailure(instance, status);
 				// Log.e("FileHandlers", instance.path + "----" + instance.url);
-				imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
+				// imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
 			}
 		};
 	}
@@ -141,9 +141,8 @@ public class FileHandlers {
 	}
 
 	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
-		if (fileName.equals("")) {
-			imageLoader.displayImage("drawable://" + R.drawable.face_man, imageView, options);
-		} else {
+		imageLoader.displayImage("drawable://" + R.drawable.face_man, imageView, options);
+		if (!fileName.equals("")) {
 			File imageFile = new File(sdcardHeadImageFolder, fileName);
 			final String path = imageFile.getAbsolutePath();
 			final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
@@ -183,7 +182,7 @@ public class FileHandlers {
 			public void onFailure(DownloadFile instance, int status) {
 				super.onFailure(instance, status);
 				// Log.e("FileHandlers", instance.path + "----" + instance.url);
-				imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
+				// imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
 			}
 		});
 		// System.out.println("--------------000------" + onDownloadListener);

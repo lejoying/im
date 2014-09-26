@@ -63,8 +63,9 @@ public class ImagesGridView {
 	public DisplayImageOptions smallOptions;
 
 	public void initViews() {
-		smallOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
-
+//		smallOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
+		smallOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
+		
 		displayMetrics = new DisplayMetrics();
 
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -123,7 +124,7 @@ public class ImagesGridView {
 			imageView.setTag(R.id.tag_first, key);
 			imageView.setOnClickListener(thisController.onClickListener);
 			alreadyListContainer.addView(imageView, layoutParams);
-			imageLoader.displayImage("file://" + key, imageView, options);
+			imageLoader.displayImage("file://" + key, imageView, smallOptions);
 			// fileHandlers.getHeadImagssse(key, imageView, options);
 		}
 	}
@@ -133,7 +134,7 @@ public class ImagesGridView {
 		this.thisActivity = thisActivity;
 	}
 
-	static class ViewHolder {
+	class ViewHolder {
 		ImageView imageView;
 		ProgressBar progressBar;
 		ImageView imageStatusView;

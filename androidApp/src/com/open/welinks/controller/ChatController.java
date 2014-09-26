@@ -47,6 +47,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
@@ -111,8 +112,8 @@ public class ChatController {
 		}
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		sdFile = Environment.getExternalStorageDirectory();
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.defaultimage).showImageForEmptyUri(R.drawable.defaultimage).showImageOnFail(R.drawable.defaultimage).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 		unsendMessageInfo = new HashMap<String, Map<String, String>>();
 		thisView.showChatViews();
 	}
@@ -123,6 +124,7 @@ public class ChatController {
 	}
 
 	public void onResume() {
+		thisView.dismissUserCardDialogView();
 	}
 
 	public void onPause() {
@@ -138,19 +140,19 @@ public class ChatController {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
-				if (view.getTag(R.id.tag_first) != null) {
-					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
-					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
-					intent.putExtra("position", String.valueOf(0));
-					thisActivity.startActivity(intent);
-				} else if (view.getTag(R.id.tag_second) != null) {
-					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
-					intent.putExtra("gid", (String) view.getTag(R.id.tag_second));
-					intent.putExtra("gsid", (String) view.getTag(R.id.tag_third));
-					thisActivity.startActivity(intent);
-				} else if (view.equals(thisView.backview)) {
+				if (view.equals(thisView.backview)) {
 					thisActivity.finish();
 					// mFinish();
+				} else if (view.equals(thisView.userCardMainView)) {
+					thisView.dismissUserCardDialogView();
+				} else if (view.equals(thisView.singleButtonView)) {
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("key", (String) view.getTag(R.id.tag_first));
+					intent.putExtra("type", (String) view.getTag(R.id.tag_second));
+					if(view.getTag(R.id.tag_third)!=null){
+						intent.putExtra("isTemp", (Boolean) view.getTag(R.id.tag_third));
+					}
+					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.infomation_layout)) {
 					if ("point".equals(type)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
@@ -165,7 +167,6 @@ public class ChatController {
 				} else if (view.equals(thisView.send)) {
 					String text = thisView.input.getText().toString();
 					sendMessageToLocal(text, "text", new Date().getTime());
-					thisView.input.setText("");
 				} else if (view.equals(thisView.more)) {
 					showSelectTab();
 				} else if (view.equals(thisView.selectedface)) {
@@ -191,14 +192,35 @@ public class ChatController {
 									@Override
 									public void run() {
 										thisView.chat_content.setSelection(thisView.mChatAdapter.getCount());
-
 									}
 								});
 							};
 						}.start();
 					}
+				} else if (view.getTag(R.id.tag_class) != null) {
+					String tag_class = (String) view.getTag(R.id.tag_class);
+					if ("head_click".equals(tag_class)) {
+						String phone = (String) view.getTag(R.id.tag_first);
+						User user = data.userInformation.currentUser;
+						if (user.phone.equals(phone)) {
+							thisView.setSmallBusinessCardContent(phone, user.head, user.nickName, user.age, user.longitude, user.latitude);
+						} else {
+							Friend friend = data.relationship.friendsMap.get(phone);
+							thisView.setSmallBusinessCardContent(phone, friend.head, friend.nickName, friend.age + "", friend.longitude, friend.latitude);
+						}
+						thisView.showUserCardDialogView();
+					}
+				} else if (view.getTag(R.id.tag_first) != null) {
+					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
+					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
+					intent.putExtra("position", String.valueOf(0));
+					thisActivity.startActivity(intent);
+				} else if (view.getTag(R.id.tag_second) != null) {
+					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+					intent.putExtra("gid", (String) view.getTag(R.id.tag_second));
+					intent.putExtra("gsid", (String) view.getTag(R.id.tag_third));
+					thisActivity.startActivity(intent);
 				}
-
 			}
 		};
 		onTouchListener = new OnTouchListener() {
@@ -283,6 +305,8 @@ public class ChatController {
 	}
 
 	public void bindEvent() {
+		thisView.userCardMainView.setOnClickListener(mOnClickListener);
+		thisView.singleButtonView.setOnClickListener(mOnClickListener);
 		thisView.backview.setOnClickListener(mOnClickListener);
 		thisView.infomation_layout.setOnClickListener(mOnClickListener);
 		thisView.send.setOnClickListener(mOnClickListener);
@@ -386,6 +410,9 @@ public class ChatController {
 			@Override
 			public void run() {
 				ArrayList<String> selectedImageList = data.tempData.selectedImageList;
+				if (selectedImageList.size() == 0) {
+					return;
+				}
 				data.tempData.selectedImageList = null;
 				File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
 				ArrayList<String> content = new ArrayList<String>();
@@ -447,19 +474,33 @@ public class ChatController {
 
 	public void sendMessageToLocal(String messageContent, String contentType, long time) {
 		// TODO
+		if ("text".equals(contentType)) {
+			if ("".equals(messageContent.trim())) {
+				return;
+			}
+		} else if ("image".equals(contentType)) {
+			// TODO
+		}
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				thisView.input.setText("");
+			}
+		});
 		parser.check();
 		List<String> messagesOrder = data.messages.messagesOrder;
-		String key0 = null;
+		String key0 = "";
 		if ("point".equals(type)) {
 			key0 = "p" + key;
-			if (data.messages.messagesOrder.contains(key0)) {
-				data.messages.messagesOrder.remove(key0);
+			if (messagesOrder.contains(key0)) {
+				messagesOrder.remove(key0);
 			}
 			messagesOrder.add(0, key0);
 		} else if ("group".equals(type)) {
 			key0 = "g" + key;
-			if (data.messages.messagesOrder.contains(key0)) {
-				data.messages.messagesOrder.remove(key0);
+			if (messagesOrder.contains(key0)) {
+				messagesOrder.remove(key0);
 			}
 			messagesOrder.add(0, key0);
 		}
@@ -477,24 +518,36 @@ public class ChatController {
 		if ("group".equals(type)) {
 			message.gid = key;
 			message.sendType = "group";
+
+			parser.check();
+			// TODO null point exception ?
 			message.phoneto = data.relationship.groupsMap.get(key).members.toString();
-			if (data.messages.groupMessageMap == null) {
-				data.messages.groupMessageMap = new HashMap<String, ArrayList<Message>>();
+			Map<String, ArrayList<Message>> groupMessageMap = data.messages.groupMessageMap;
+			if (groupMessageMap == null) {
+				groupMessageMap = new HashMap<String, ArrayList<Message>>();
+				data.messages.groupMessageMap = groupMessageMap;
 			}
-			if (data.messages.groupMessageMap.get(key0) == null) {
-				data.messages.groupMessageMap.put(key0, new ArrayList<Message>());
+			ArrayList<Message> messages = groupMessageMap.get(key0);
+			if (messages == null) {
+				messages = new ArrayList<Message>();
+				groupMessageMap.put(key0, messages);
 			}
-			data.messages.groupMessageMap.get(key0).add(message);
+			messages.add(message);
 		} else if ("point".equals(type)) {
 			message.sendType = "point";
 			message.phoneto = "[\"" + key + "\"]";
-			if (data.messages.friendMessageMap == null) {
-				data.messages.friendMessageMap = new HashMap<String, ArrayList<Message>>();
+			parser.check();
+			Map<String, ArrayList<Message>> friendMessageMap = data.messages.friendMessageMap;
+			if (friendMessageMap == null) {
+				friendMessageMap = new HashMap<String, ArrayList<Message>>();
+				data.messages.friendMessageMap = friendMessageMap;
 			}
-			if (data.messages.friendMessageMap.get(key0) == null) {
-				data.messages.friendMessageMap.put(key0, new ArrayList<Message>());
+			ArrayList<Message> messages = friendMessageMap.get(key0);
+			if (messages == null) {
+				messages = new ArrayList<Message>();
+				friendMessageMap.put(key0, messages);
 			}
-			data.messages.friendMessageMap.get(key0).add(message);
+			messages.add(message);
 		}
 		handler.post(new Runnable() {
 

@@ -99,6 +99,7 @@ public class Data {
 			public String userBackground = "Back";
 			public String sex = "";
 			public int id;
+			public String age;
 			public String phone = "";
 			public String nickName = "";
 			public String mainBusiness = "";

@@ -212,12 +212,14 @@ public class ResponseHandlers {
 	public ResponseHandler<String> account_modifylocation = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 			public User account;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
+				log.e("修改用户信息成功");
 				data = parser.check();
 				User user = data.userInformation.currentUser;
 				user.latitude = response.account.latitude;
@@ -225,6 +227,8 @@ public class ResponseHandlers {
 				user.lastlogintime = response.account.lastlogintime;
 				data.userInformation.isModified = true;
 				viewManage.mainView.thisController.chackLBSAccount();
+			} else {
+				log.e("修改用户信息失败---" + response.失败原因);
 			}
 		};
 
@@ -464,6 +468,7 @@ public class ResponseHandlers {
 					log.e(tag, "刷新好友分组");
 					viewManage.mainView.friendsSubView.showCircles();
 				}
+				DataUtil.getMessages(data.userInformation.currentUser.flag);
 			} else {
 				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
 			}
@@ -709,6 +714,7 @@ public class ResponseHandlers {
 							message = gson.fromJson(messages.get(i), Message.class);
 						} catch (Exception e) {
 							e.printStackTrace();
+							log.e(tag, "gson message Exception");
 							continue;
 						}
 						String sendType = message.sendType;

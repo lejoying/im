@@ -58,7 +58,6 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.DataUtil;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.service.ConnectionChangeReceiver;
@@ -146,6 +145,7 @@ public class MainController {
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
 
 		getIntimatefriends();
+
 		requestLocation();
 	}
 
@@ -759,11 +759,12 @@ public class MainController {
 			thisActivity.stopService(new Intent(thisActivity, PushService.class));
 			if (this.connectionChangeReceiver != null) {
 				thisActivity.unregisterReceiver(this.connectionChangeReceiver);
+				connectionChangeReceiver = null;
 			}
 			parser.save();
 			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 			thisActivity.finish();
-			DataUtil.clearData();
+			// DataUtil.clearData();
 		} else if (requestCode == R.id.tag_second) {
 			messagesSubController.onActivityResult(requestCode, resultCode, data2);
 		} else {
@@ -818,5 +819,9 @@ public class MainController {
 	}
 
 	public void finish() {
+		if (this.connectionChangeReceiver != null) {
+			thisActivity.unregisterReceiver(this.connectionChangeReceiver);
+			connectionChangeReceiver = null;
+		}
 	}
 }
