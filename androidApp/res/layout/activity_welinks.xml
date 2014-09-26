@@ -3,7 +3,13 @@
     android:id="@+id/main_container"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/background_gray" >
+    android:background="#eeffffff" >
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#75c2b8" >
+    </ImageView>
 
     <RelativeLayout
         android:layout_width="fill_parent"

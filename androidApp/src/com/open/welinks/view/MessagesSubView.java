@@ -163,7 +163,7 @@ public class MessagesSubView {
 				this.messageListBody.listItemBodiesMap.put(key2, messageBody);
 			}
 			this.messageListBody.listItemsSequence.add(key2);
-			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (70 * displayMetrics.density));
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels), (int) (80 * displayMetrics.density));
 			messageBody.y = this.messageListBody.height;
 			messageBody.cardView.setY(messageBody.y);
 			// messageBody.cardView.setX(0);

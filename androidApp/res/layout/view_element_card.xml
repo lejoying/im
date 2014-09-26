@@ -15,7 +15,7 @@
             android:clickable="true"
             android:paddingBottom="10dp"
             android:paddingTop="12dp"
-            android:textColor="@color/text_color"
+            android:textColor="@color/text_color_blue"
             android:textSize="16sp" />
     </com.open.lib.TouchView>
 
@@ -60,7 +60,7 @@
         android:id="@+id/cardTopLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/text_color"
+        android:background="@color/text_color_black_2"
         android:contentDescription="white_line"
         android:translationY="44dp" />
 

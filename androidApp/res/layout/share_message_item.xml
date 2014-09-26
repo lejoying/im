@@ -4,11 +4,15 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp" >
 
-    <com.open.lib.TouchView
+    <ImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="336dp"
-        android:background="@drawable/background_group_share_item" />
+        android:src="@drawable/background_group_share_item"
+        android:shadowColor="@color/TransparentGrey"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowRadius="0.01" />
 
     <com.open.lib.TouchView
         android:id="@+id/gshare_title"

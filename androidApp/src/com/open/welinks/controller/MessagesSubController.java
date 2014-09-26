@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
 
 import com.google.gson.Gson;
@@ -88,6 +89,10 @@ public class MessagesSubController {
 					if (view_class.equals("message_view")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+						try {
+							((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.VISIBLE);
+						} catch (Exception e) {
+						}
 					}
 					Log.e(tag, "ACTION_DOWN---" + view_class);
 				}
@@ -135,6 +140,10 @@ public class MessagesSubController {
 		if (onTouchDownView != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class.equals("message_view")) {
+				try {
+					((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
+				} catch (Exception e) {
+				}
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;
@@ -164,6 +173,10 @@ public class MessagesSubController {
 	}
 
 	public void onScroll() {
+		try {
+			((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
+		} catch (Exception e) {
+		}
 		onTouchDownView = null;
 	}
 }

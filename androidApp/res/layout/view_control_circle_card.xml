@@ -8,7 +8,7 @@
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     android:layout_marginTop="10dp"
-    android:background="@drawable/card_login_background_normal"
+    android:background="@drawable/background_group_share_item"
     android:visibility="visible" >
 
     <com.open.lib.TouchImageView
