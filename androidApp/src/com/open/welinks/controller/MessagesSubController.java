@@ -90,7 +90,7 @@ public class MessagesSubController {
 						onTouchDownView = view;
 						isTouchDown = true;
 						try {
-							((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.VISIBLE);
+							((ViewGroup) onTouchDownView).getChildAt(1).setVisibility(View.VISIBLE);
 						} catch (Exception e) {
 						}
 					}
@@ -141,7 +141,7 @@ public class MessagesSubController {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class.equals("message_view")) {
 				try {
-					((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
+					((ViewGroup) onTouchDownView).getChildAt(1).setVisibility(View.INVISIBLE);
 				} catch (Exception e) {
 				}
 				onTouchDownView.performClick();
@@ -174,7 +174,7 @@ public class MessagesSubController {
 
 	public void onScroll() {
 		try {
-			((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
+			((ViewGroup) onTouchDownView).getChildAt(1).setVisibility(View.INVISIBLE);
 		} catch (Exception e) {
 		}
 		onTouchDownView = null;
