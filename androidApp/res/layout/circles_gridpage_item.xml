@@ -27,7 +27,7 @@
         android:layout_gravity="bottom|center_horizontal"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="#eee"
+        android:textColor="@color/text_color_black"
         android:textSize="12sp" />
 
 </com.open.lib.TouchView>

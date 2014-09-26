@@ -160,7 +160,7 @@ public class ShareSubView {
 
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
-		bigHeadOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
+		bigHeadOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(56)).build();
 		myScrollImageBody = new MyScrollImageBody();
 		myScrollImageBody.initialize(groupMembersListContentView);
 
@@ -231,11 +231,11 @@ public class ShareSubView {
 		if (!flag || share == null) {
 			return;
 		}
-		//set conver
-		// imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+		// set conver
+		imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
-		
+
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
@@ -296,9 +296,10 @@ public class ShareSubView {
 			}
 			sharesMessageBody.setContent(shareMessage, fileName);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (340 * displayMetrics.density));
 			sharesMessageBody.y = this.shareMessageListBody.height;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
+			sharesMessageBody.cardView.setX(displayMetrics.density * 10);
 			// sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
 			if (isExists) {

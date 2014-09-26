@@ -12,7 +12,8 @@
             android:id="@+id/groupCover"
             android:layout_width="fill_parent"
             android:layout_height="220dp"
-            android:background="#006611" />
+            android:background="#006611"
+            android:scaleType="centerCrop" />
 
         <com.open.lib.TouchView
             android:id="@+id/groupMembersListContent"
@@ -36,11 +37,11 @@
 
         <ImageView
             android:id="@+id/group_head"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_gravity="left"
-            android:translationX="10dp"
-            android:translationY="190dp" />
+            android:translationX="12dp"
+            android:translationY="192dp" />
 
         <TextView
             android:id="@+id/share_praise"
@@ -68,7 +69,7 @@
             android:paddingRight="10dp"
             android:paddingTop="10dp"
             android:src="@drawable/square_release"
-            android:tint="@color/icon_color"
+            android:tint="@color/text_color_on_background"
             android:translationY="245dp" />
     </com.open.lib.TouchView>
 
