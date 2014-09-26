@@ -66,6 +66,16 @@ requestHandlers.imagesManage = function (request, response, pathObject, data) {
             imagesManage.checkfile4(data, response);
         });
     }
+    else if (operation == "checkfileexist") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            imagesManage.checkfileexist(data, response);
+        });
+    }
+    else if (operation == "uploadfilename") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            imagesManage.uploadfilename(data, response);
+        });
+    }
 };
 function oauth6(phone, accessKey, response, next) {
     response.asynchronous = 1;

@@ -717,19 +717,32 @@ api = {
         }
     },
     /***************New Api******************
-     *     URL：/image/uploadimagesname
+     *     URL：/image/uploadfilename
      ***************************************/
-    "image_uploadimagesname": {
+    "image_uploadfilename": {
         description: {
             id: 1000705,
-            url: "/image/uploadimagesname"
+            url: "/image/uploadfilename"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", filenames: ["XXX", "XXX", "XXX"]}
+            typical: {phone: "XXX", accessKey: "XXX", fileName: "XXX"}
         },
         response: {
-            success: {"提示信息": "上传图片成功", "filenames": ["XXX", "XXX", "XXX"]},
-            failed: {"提示信息": "上传图片失败", "失败原因": "数据异常"}
+            success: {"提示信息": "上传成功", "fileName": "XXX"},
+            failed: {"提示信息": "上传失败", "失败原因": "数据异常"}
+        }
+    },
+    "image_checkfileexist": {
+        description: {
+            id: 1000706,
+            url: "/image/checkfileexist"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", fileName: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "查找成功", "fileName": "XXX", exists: true || false},
+            failed: {"提示信息": "查找失败", "失败原因": "数据异常"}
         }
     }
 }
