@@ -1183,10 +1183,10 @@ groupManage.getgroupsandmembers = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
-                response.write({
+                response.write(JSON.stringify({
                     "提示信息": "获取群组成员失败",
                     "失败原因": "数据异常"
-                });
+                }));
                 response.end();
                 console.error(error);
                 return;
@@ -1290,11 +1290,10 @@ groupManage.getgroupmembers = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
-                response.write({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取群组成员失败",
                     "失败原因": "数据异常"
-                });
-                response.end();
+                }), response);
                 console.error(error);
                 return;
             } else if (results.length > 0) {

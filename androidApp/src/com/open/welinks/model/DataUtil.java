@@ -102,6 +102,8 @@ public class DataUtil {
 
 			data.relationship.isModified = false;
 			data.relationship.circles.clear();
+			data.relationship.friends.clear();
+			data.relationship.friendsMap.clear();
 			data.relationship.circlesMap.clear();
 			data.relationship.groups.clear();
 			data.relationship.groupsMap.clear();

@@ -200,9 +200,46 @@ public class ResponseHandlers {
 				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 				params.addBodyParameter("target", "[\"" + data.userInformation.currentUser.phone + "\"]");
-				ResponseHandlers responseHandlers = getInstance();
-				httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, responseHandlers.account_get);
-				viewManage.loginView.thisController.loginSuccessful(data.userInformation.currentUser.phone);
+				httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {
+					class Response {
+						public String 提示信息;
+						public String 失败原因;
+						public List<Account> accounts;
+					}
+
+					class Account {
+						public int ID;
+						public String phone;
+						public String nickName;
+						public String mainBusiness;
+						public String head;
+						public String sex;
+						public String byPhone;
+						public String userBackground;
+					}
+
+					public void onSuccess(ResponseInfo<String> responseInfo) {
+						Response response = gson.fromJson(responseInfo.result, Response.class);
+						if ("获取用户信息成功".equals(response.提示信息)) {
+							User user = data.userInformation.currentUser;
+							if (response.accounts.size() > 0) {
+								Account account = response.accounts.get(0);
+								if (user.phone.equals(account.phone)) {
+									user.id = account.ID;
+									user.head = account.head;
+									user.mainBusiness = account.mainBusiness;
+									user.nickName = account.nickName;
+									user.sex = account.sex;
+									user.userBackground = account.userBackground;
+									data.userInformation.isModified = true;
+									viewManage.loginView.thisController.loginSuccessful(data.userInformation.currentUser.phone);
+								}
+							}
+						} else {
+							log.e("获取用户信息失败---" + response.失败原因);
+						}
+					};
+				});
 			} else {
 				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}

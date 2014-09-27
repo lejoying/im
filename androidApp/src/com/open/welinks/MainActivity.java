@@ -67,6 +67,7 @@ public class MainActivity extends Activity {
 
 	public void startPushService() {
 		Intent service = new Intent(thisActivity, PushService.class);
+		PushService.isRunning = false;
 		Log.e(tag, "* startPushService *check data");
 		parser.initialize(thisActivity);
 		data = parser.check();
