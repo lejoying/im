@@ -149,7 +149,7 @@ public class ChatController {
 					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
 					intent.putExtra("key", (String) view.getTag(R.id.tag_first));
 					intent.putExtra("type", (String) view.getTag(R.id.tag_second));
-					if(view.getTag(R.id.tag_third)!=null){
+					if (view.getTag(R.id.tag_third) != null) {
 						intent.putExtra("isTemp", (Boolean) view.getTag(R.id.tag_third));
 					}
 					thisActivity.startActivity(intent);
@@ -239,9 +239,11 @@ public class ChatController {
 
 			@Override
 			public void onSuccess(UploadMultipart instance, int time) {
-				int total = Integer.valueOf(unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).get("total"));
-				int current = Integer.valueOf(unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).get("current"));
-				unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).put("current", String.valueOf(++current));
+				String first_param = (String) instance.view.getTag(R.id.tag_first);
+				int total = Integer.valueOf(unsendMessageInfo.get(first_param).get("total"));
+				int current = Integer.valueOf(unsendMessageInfo.get(first_param).get("current"));
+				current++;
+				unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).put("current", current + "");
 				if (current == total) {
 					String time0 = (String) instance.view.getTag(R.id.tag_first);
 					sendMessageToServer("image", unsendMessageInfo.remove(time0).get("content"), time0);
@@ -421,19 +423,20 @@ public class ChatController {
 				// view.setTag(R.id.tag_first, selectedImageList.size());
 				// view.setTag(R.id.tag_second, 0);
 				view.setTag(R.id.tag_first, String.valueOf(time));
-				int i = 0;
-				for (String filePath : selectedImageList) {
+
+				Map<String, String> map0 = new HashMap<String, String>();
+				map0.put("total", selectedImageList.size() + "");
+				map0.put("current", 0 + "");
+				unsendMessageInfo.put(time + "", map0);
+
+				for (int i = 0; i < selectedImageList.size(); i++) {
+					String filePath = selectedImageList.get(i);
 					Map<String, Object> map = processImagesInformation(i, filePath, targetFolder);
-					i++;
 					content.add((String) map.get("fileName"));
 					uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
 				}
 				String messageContent = gson.toJson(content);
-				Map<String, String> map = new HashMap<String, String>();
-				map.put("content", messageContent);
-				map.put("total", String.valueOf(selectedImageList.size()));
-				map.put("current", String.valueOf(0));
-				unsendMessageInfo.put(String.valueOf(time), map);
+				map0.put("content", messageContent);
 				sendMessageToLocal(gson.toJson(content), "image", time);
 			}
 		}).start();

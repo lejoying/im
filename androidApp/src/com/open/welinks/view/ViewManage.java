@@ -84,6 +84,10 @@ public class ViewManage {
 			if (changePasswordActivity != null) {
 				changePasswordActivity.modifyFailed();
 			}
+		} else if (viewName.equals("MessagesSubView")) {
+			if (messagesSubView != null) {
+				messagesSubView.showMessagesSequence();
+			}
 		}
 	}
 }

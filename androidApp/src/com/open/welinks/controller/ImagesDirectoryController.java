@@ -198,7 +198,7 @@ public class ImagesDirectoryController {
 				thisActivity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file.getAbsolutePath())));
 				Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 				ContentResolver mContentResolver = thisActivity.getContentResolver();
-				Cursor mCursor = mContentResolver.query(mImageUri, null, MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?", new String[] { "image/jpeg", "image/png" }, MediaStore.Images.Media.DATE_MODIFIED);
+				Cursor mCursor = mContentResolver.query(mImageUri, null, MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?", new String[] { "image/jpeg", "image/png" }, MediaStore.Images.Media.DATE_MODIFIED + " desc");
 				while (mCursor.moveToNext()) {
 					String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.DATA));
 					long size = mCursor.getLong(mCursor.getColumnIndex(MediaStore.Images.Media.SIZE)) / 1024;

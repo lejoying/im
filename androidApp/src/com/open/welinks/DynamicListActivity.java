@@ -108,6 +108,13 @@ public class DynamicListActivity extends Activity {
 		getRequareAddFriendList();
 	}
 
+	@Override
+	public void finish() {
+		viewManage.postNotifyView("MessagesSubView");
+		viewManage.postNotifyView("MeSubView");
+		super.finish();
+	}
+
 	public void initData(String type) {
 		parser.check();
 		if ("user".equals(type) || "all".equals(type)) {
@@ -146,11 +153,17 @@ public class DynamicListActivity extends Activity {
 			if (groupEventListAdapter == null) {
 				groupEventListAdapter = new GroupEventListAdapter();
 				groupEventContainer.setAdapter(groupEventListAdapter);
+				parser.check();
+				data.event.groupNotReadMessage = false;
+				data.event.isModified = true;
 			}
 		} else if (selectType == 3) {
 			if (userEventListAdapter == null) {
 				userEventListAdapter = new UserEventListAdapter();
 				userEventContainer.setAdapter(userEventListAdapter);
+				parser.check();
+				data.event.userNotReadMessage = false;
+				data.event.isModified = true;
 			}
 		}
 	}
@@ -379,7 +392,7 @@ public class DynamicListActivity extends Activity {
 			} else if ("group_addme".equals(contentType)) {
 				content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
 			} else if ("group_removeme".equals(contentType)) {
-				content = "【" + nickName + "】把你从【" + groupName + "】群组移除.";
+				content = "【" + nickName + "】退出了【" + groupName + "】群组.";
 			}
 			holder.eventContentView.setText(content);
 

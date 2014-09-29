@@ -287,10 +287,12 @@ public class Data {
 
 		public boolean isModified = false;
 
+		public boolean groupNotReadMessage = false;
 		public List<String> groupEvents = new ArrayList<String>();
 
 		public Map<String, EventMessage> groupEventsMap = new HashMap<String, EventMessage>();
 
+		public boolean userNotReadMessage = false;
 		public List<String> userEvents = new ArrayList<String>();
 
 		public Map<String, EventMessage> userEventsMap = new HashMap<String, EventMessage>();

@@ -192,6 +192,9 @@ public class SquareSubController {
 					} else if (view_class.equals("group_setting")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("share_release")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					}
 					if (view.equals(thisView.squareDialogView)) {
 						Log.i(tag, "ACTION_DOWN---groupDialogView");
@@ -208,7 +211,7 @@ public class SquareSubController {
 		mOnClickListener = new MyOnClickListener() {
 
 			public void onClickEffective(View view) {
-				if (view.equals(thisView.leftImageButton)) {
+				if (view.equals(thisView.releaseShareView)) {// leftImageButton
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };
 					vibrator.vibrate(pattern, -1);
@@ -447,6 +450,8 @@ public class SquareSubController {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_setting")) {
 				onTouchDownView.performClick();
+			} else if (view_class.equals("share_release")) {
+				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;
 		}
@@ -473,9 +478,10 @@ public class SquareSubController {
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SHARE) {
+		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SQUARE) {
 			if (thisView.isShowSquareDialog) {
 				thisView.dismissSquareDialog();
+				thisView.isShowSquareDialog = false;
 				return false;
 			}
 		}

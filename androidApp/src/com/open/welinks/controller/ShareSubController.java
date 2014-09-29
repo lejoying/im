@@ -444,8 +444,8 @@ public class ShareSubController {
 		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
-		thisView.shareTopMenuGroupNameParent.setOnTouchListener(onTouchListener2);
-		// thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
+//		thisView.shareTopMenuGroupNameParent.setOnTouchListener(onTouchListener2);
+		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);
@@ -567,6 +567,7 @@ public class ShareSubController {
 		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SHARE) {
 			if (thisView.isShowGroupDialog) {
 				thisView.dismissGroupDialog();
+				thisView.isShowGroupDialog = false;
 				return false;
 			}
 		}

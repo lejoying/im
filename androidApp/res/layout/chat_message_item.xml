@@ -63,6 +63,7 @@
         android:layout_gravity="right|center_vertical"
         android:background="@drawable/icon_background"
         android:singleLine="true"
+        android:visibility="gone"
         android:text="群"
         android:textColor="#fff"
         android:textSize="14sp"

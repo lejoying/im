@@ -792,32 +792,44 @@ public class MainController {
 		return statusBarHeight;
 	}
 
+	boolean isShowDialg = false;
+
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (isExit) {
 				thisActivity.finish();
 			} else {
-				Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-				isExit = true;
-				new Thread() {
-					@Override
-					public void run() {
-						try {
-							sleep(2000);
-							isExit = false;
-						} catch (InterruptedException e) {
-							e.printStackTrace();
+				if (!shareSubController.thisView.isShowGroupDialog && !squareSubController.thisView.isShowSquareDialog && !isShowDialg) {
+					Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+					isExit = true;
+					new Thread() {
+						@Override
+						public void run() {
+							try {
+								sleep(2000);
+								isExit = false;
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							super.run();
 						}
-						super.run();
-					}
-				}.start();
+					}.start();
+				}
 			}
 		}
 		return true;
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return shareSubController.onKeyDown(keyCode, event);
+		isShowDialg = false;
+		boolean flag = shareSubController.onKeyDown(keyCode, event);
+		if (flag) {
+			flag = squareSubController.onKeyDown(keyCode, event);
+		}
+		if (!flag) {
+			isShowDialg = true;
+		}
+		return flag;
 	}
 
 	public void finish() {

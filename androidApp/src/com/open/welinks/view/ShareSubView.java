@@ -2,8 +2,6 @@ package com.open.welinks.view;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +43,6 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.ShareContent;
@@ -55,6 +52,7 @@ import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
 

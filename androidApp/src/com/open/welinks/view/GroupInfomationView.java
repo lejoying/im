@@ -320,8 +320,8 @@ public class GroupInfomationView {
 				optionTwoView.setVisibility(View.GONE);
 				singleButtonView.setVisibility(View.VISIBLE);
 				cardStatusView.setText("不是好友");
-				goInfomationView.setTag(R.id.tag_second, "point");
-				goInfomationView.setTag(R.id.tag_third, true);
+				singleButtonView.setTag(R.id.tag_second, "point");
+				singleButtonView.setTag(R.id.tag_third, true);
 				data.tempData.tempFriend = data.relationship.friendsMap.get(phone);
 			}
 		}

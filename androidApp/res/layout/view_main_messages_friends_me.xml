@@ -264,6 +264,15 @@
                 android:text="动态列表"
                 android:textColor="@color/text_color_on_background"
                 android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/dynamicListStatus"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/noread_message"
+                android:visibility="gone" />
         </com.open.lib.TouchView>
 
         <ImageView
