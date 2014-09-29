@@ -32,14 +32,15 @@ import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.ShareContent;
-import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.SubData;
+import com.open.welinks.model.SubData.ShareContent;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.PictureBrowseView;
@@ -74,6 +75,7 @@ public class ShareReleaseImageTextController {
 	public ViewManage viewManage = ViewManage.getInstance();
 
 	public int currentUploadCount = 0;
+	public int totalUploadCount = 0;
 	public Map<String, String> uploadFileNameMap = new HashMap<String, String>();
 
 	public String currentSelectedGroup = "";
@@ -86,6 +88,8 @@ public class ShareReleaseImageTextController {
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
 	public String type, gid, gtype;
+
+	public ShareMessage shareMessage;
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
@@ -153,6 +157,8 @@ public class ShareReleaseImageTextController {
 				currentUploadCount++;
 				if (currentUploadCount == 1) {
 					viewManage.mainView.shareSubView.showShareMessages();
+				} else if (totalUploadCount == currentUploadCount) {
+					sendMessageToServer(shareMessage.content, shareMessage.gsid);
 				}
 			}
 		};
@@ -252,7 +258,7 @@ public class ShareReleaseImageTextController {
 				}
 				long time = new Date().getTime();
 				Share share = data.shares.shareMap.get(currentSelectedGroup);
-				ShareMessage shareMessage = share.new ShareMessage();
+				shareMessage = share.new ShareMessage();
 				shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 				shareMessage.gsid = currentUser.phone + "_" + time;
 				shareMessage.type = "imagetext";
@@ -260,14 +266,20 @@ public class ShareReleaseImageTextController {
 				shareMessage.time = time;
 				shareMessage.status = "sending";
 
-				ShareContent shareContent = data.new ShareContent();
+				ShareContent shareContent = SubData.getInstance().new ShareContent();
 				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 				shareContentItem.type = "text";
 				shareContentItem.detail = sendContent;
 				shareContent.shareContentItems.add(shareContentItem);
 
 				if (data.tempData.selectedImageList != null) {
-					copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems);
+					totalUploadCount = data.tempData.selectedImageList.size();
+					if (totalUploadCount != 0) {
+						copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems);
+					} else {
+						String content = gson.toJson(shareContent.shareContentItems);
+						sendMessageToServer(content, shareMessage.gsid);
+					}
 				}
 
 				String content = gson.toJson(shareContent.shareContentItems);
@@ -292,8 +304,6 @@ public class ShareReleaseImageTextController {
 						}
 					}
 				});
-				// server
-				sendMessageToServer(content, shareMessage.gsid);
 
 				// init tempData data
 				data.tempData.selectedImageList = null;

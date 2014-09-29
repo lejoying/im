@@ -17,13 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.FrameLayout.LayoutParams;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -31,12 +31,12 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.utils.DateUtil;
@@ -54,20 +54,20 @@ public class ChatView {
 	public Context context;
 	public ChatView thisView;
 
-	public RelativeLayout backview;
-	public TextView name;
+	public RelativeLayout backView;
+	public TextView backNameView;
 	public ImageView infomation;
-	public ListView chat_content;
+	public ListView chatContentListView;
 	public RelativeLayout chat_bottom_bar;
-	public ImageView send;
-	public ImageView more;
-	public EditText input;
+	public ImageView sendMessageView;
+	public ImageView moreOptions;
+	public EditText inputMessageContentView;
 	public RelativeLayout chat_bottom_bar_selected;
 	public RelativeLayout infomation_layout;
-	public RelativeLayout selectedface;
-	public RelativeLayout selectpicture;
-	public RelativeLayout makeaudio;
-	public ImageView more_selected;
+	public RelativeLayout selectedFaceview;
+	public RelativeLayout selectPictureView;
+	public RelativeLayout makeAudioView;
+	public ImageView moreSelectedView;
 
 	public ChatAdapter mChatAdapter;
 
@@ -102,8 +102,8 @@ public class ChatView {
 
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
-		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		name = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		backNameView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		// infomation = (ImageView) thisActivity.findViewById(R.id.infomation);
 		infomation = new ImageView(context);
@@ -112,20 +112,16 @@ public class ChatView {
 		infomationParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		infomation_layout.addView(infomation, infomationParams);
 
-		chat_content = (ListView) thisActivity.findViewById(R.id.chat_content);
+		chatContentListView = (ListView) thisActivity.findViewById(R.id.chat_content);
 		chat_bottom_bar = (RelativeLayout) thisActivity.findViewById(R.id.chat_bottom_bar);
-		send = (ImageView) thisActivity.findViewById(R.id.send);
-		more = (ImageView) thisActivity.findViewById(R.id.more);
-		input = (EditText) thisActivity.findViewById(R.id.input);
+		sendMessageView = (ImageView) thisActivity.findViewById(R.id.send);
+		moreOptions = (ImageView) thisActivity.findViewById(R.id.more);
+		inputMessageContentView = (EditText) thisActivity.findViewById(R.id.input);
 		chat_bottom_bar_selected = (RelativeLayout) thisActivity.findViewById(R.id.chat_bottom_bar_selected);
-		selectedface = (RelativeLayout) thisActivity.findViewById(R.id.selectedface);
-		selectpicture = (RelativeLayout) thisActivity.findViewById(R.id.selectpicture);
-		makeaudio = (RelativeLayout) thisActivity.findViewById(R.id.makeaudio);
-		more_selected = (ImageView) thisActivity.findViewById(R.id.more_selected);
-
-		// bitmap = BitmapFactory.decodeResource(thisActivity.getResources(),
-		// R.drawable.face_man);
-		// bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		selectedFaceview = (RelativeLayout) thisActivity.findViewById(R.id.selectedface);
+		selectPictureView = (RelativeLayout) thisActivity.findViewById(R.id.selectpicture);
+		makeAudioView = (RelativeLayout) thisActivity.findViewById(R.id.makeaudio);
+		moreSelectedView = (ImageView) thisActivity.findViewById(R.id.more_selected);
 
 		initSmallBusinessCardDialog();
 	}
@@ -143,9 +139,9 @@ public class ChatView {
 			Group group = data.relationship.groupsMap.get(key);
 			if (group != null) {
 				group.notReadMessagesCount = 0;
-				name.setText(group.name + "(" + group.members.size() + ")");
+				backNameView.setText(group.name + "(" + group.members.size() + ")");
 			} else {
-				name.setText("Group");
+				backNameView.setText("Group");
 			}
 		} else if ("point".equals(type)) {
 			messages = data.messages.friendMessageMap.get("p" + key);
@@ -158,19 +154,19 @@ public class ChatView {
 				friend.notReadMessagesCount = 0;
 				fileHandlers.getHeadImage(friend.head, infomation, headOptions);
 				if ("".equals(friend.alias)) {
-					name.setText(friend.nickName);
+					backNameView.setText(friend.nickName);
 				} else {
-					name.setText(friend.alias);
+					backNameView.setText(friend.alias);
 				}
 			} else {
-				name.setText("Name");
+				backNameView.setText("Name");
 				fileHandlers.getHeadImage("", infomation, headOptions);
 			}
 		}
 		data.relationship.isModified = true;
 		mChatAdapter = new ChatAdapter(messages);
-		chat_content.setAdapter(mChatAdapter);
-		chat_content.setSelection(mChatAdapter.getCount());
+		chatContentListView.setAdapter(mChatAdapter);
+		chatContentListView.setSelection(mChatAdapter.getCount());
 	}
 
 	public class ChatAdapter extends BaseAdapter {
@@ -181,7 +177,7 @@ public class ChatView {
 		@Override
 		public void notifyDataSetChanged() {
 			super.notifyDataSetChanged();
-			chat_content.setSelection(this.getCount());
+			chatContentListView.setSelection(this.getCount());
 		}
 
 		public ChatAdapter(ArrayList<Message> messages) {

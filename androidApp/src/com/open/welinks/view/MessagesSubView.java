@@ -6,7 +6,6 @@ import java.util.Map;
 
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -166,22 +165,28 @@ public class MessagesSubView {
 					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
 					messageBody.setContent(message, fileName);
 				} else {
-					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
+					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key);
 					messageBody.setContent(null, "");
 				}
 			} else {
 				messageBody = new MessageBody(this.messageListBody);
 				if (key.indexOf("event_user") == 0) {
 					messageBody.initialize(-1);
+					messageBody.setContent(null, "");
+					this.messageListBody.listItemsSequence.add(key2);
+					this.messageListBody.listItemBodiesMap.put(key2, messageBody);
 				} else if (key.indexOf("event_group") == 0) {
 					messageBody.initialize(-2);
+					messageBody.setContent(null, "");
+					this.messageListBody.listItemsSequence.add(key2);
+					this.messageListBody.listItemBodiesMap.put(key2, messageBody);
 				} else {
 					messageBody.initialize(i);
 					messageBody.setContent(message, fileName);
+					this.messageListBody.listItemsSequence.add(key);
+					this.messageListBody.listItemBodiesMap.put(key, messageBody);
 				}
-				this.messageListBody.listItemBodiesMap.put(key2, messageBody);
 			}
-			this.messageListBody.listItemsSequence.add(key2);
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels), (int) (80 * displayMetrics.density));
 			messageBody.y = this.messageListBody.height;
 			messageBody.cardView.setY(messageBody.y);

@@ -45,8 +45,6 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.ShareContent;
-import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
@@ -54,6 +52,8 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.SubData.ShareContent;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
 
 public class ShareSubView {

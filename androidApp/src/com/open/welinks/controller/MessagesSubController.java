@@ -142,7 +142,7 @@ public class MessagesSubController {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == R.id.tag_second) {
-			thisView.showMessagesSequence();
+			// thisView.showMessagesSequence();
 		}
 	}
 

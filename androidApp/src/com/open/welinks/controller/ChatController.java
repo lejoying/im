@@ -95,6 +95,8 @@ public class ChatController {
 
 	public File sdFile;
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public ChatController(ChatActivity thisActivity) {
 		this.thisActivity = thisActivity;
 		context = thisActivity;
@@ -116,6 +118,14 @@ public class ChatController {
 		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 		unsendMessageInfo = new HashMap<String, Map<String, String>>();
 		thisView.showChatViews();
+
+		if (data.localStatus.localData.notSentMessagesMap != null) {
+			String content = data.localStatus.localData.notSentMessagesMap.get(type + key);
+			if (content != null) {
+				thisView.inputMessageContentView.setText(content);
+				// Log.e(tag, content);
+			}
+		}
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
@@ -140,7 +150,7 @@ public class ChatController {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.backview)) {
+				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 					// mFinish();
 				} else if (view.equals(thisView.userCardMainView)) {
@@ -164,21 +174,21 @@ public class ChatController {
 						intent.putExtra("gid", key);
 						thisActivity.startActivity(intent);
 					}
-				} else if (view.equals(thisView.send)) {
-					String text = thisView.input.getText().toString();
+				} else if (view.equals(thisView.sendMessageView)) {
+					String text = thisView.inputMessageContentView.getText().toString();
 					sendMessageToLocal(text, "text", new Date().getTime());
-				} else if (view.equals(thisView.more)) {
+				} else if (view.equals(thisView.moreOptions)) {
 					showSelectTab();
-				} else if (view.equals(thisView.selectedface)) {
+				} else if (view.equals(thisView.selectedFaceview)) {
 					// TODO
-				} else if (view.equals(thisView.selectpicture)) {
+				} else if (view.equals(thisView.selectPictureView)) {
 					data.tempData.selectedImageList = null;
 					thisActivity.startActivityForResult(new Intent(thisActivity, ImagesDirectoryActivity.class), R.id.chat_content);
-				} else if (view.equals(thisView.makeaudio)) {
+				} else if (view.equals(thisView.makeAudioView)) {
 					// TODO
-				} else if (view.equals(thisView.more_selected)) {
+				} else if (view.equals(thisView.moreSelectedView)) {
 					hideSelectTab();
-				} else if (view.equals(thisView.input)) {
+				} else if (view.equals(thisView.inputMessageContentView)) {
 					if (inputMethodManager.isActive()) {
 						new Thread() {
 							public void run() {
@@ -191,7 +201,7 @@ public class ChatController {
 
 									@Override
 									public void run() {
-										thisView.chat_content.setSelection(thisView.mChatAdapter.getCount());
+										thisView.chatContentListView.setSelection(thisView.mChatAdapter.getCount());
 									}
 								});
 							};
@@ -227,9 +237,9 @@ public class ChatController {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				if (view.equals(thisView.chat_content) && event.getAction() == MotionEvent.ACTION_DOWN) {
+				if (view.equals(thisView.chatContentListView) && event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (inputMethodManager.isActive()) {
-						inputMethodManager.hideSoftInputFromWindow(thisView.input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+						inputMethodManager.hideSoftInputFromWindow(thisView.inputMessageContentView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					}
 				}
 				return false;
@@ -309,16 +319,16 @@ public class ChatController {
 	public void bindEvent() {
 		thisView.userCardMainView.setOnClickListener(mOnClickListener);
 		thisView.singleButtonView.setOnClickListener(mOnClickListener);
-		thisView.backview.setOnClickListener(mOnClickListener);
+		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.infomation_layout.setOnClickListener(mOnClickListener);
-		thisView.send.setOnClickListener(mOnClickListener);
-		thisView.more.setOnClickListener(mOnClickListener);
-		thisView.selectedface.setOnClickListener(mOnClickListener);
-		thisView.selectpicture.setOnClickListener(mOnClickListener);
-		thisView.makeaudio.setOnClickListener(mOnClickListener);
-		thisView.more_selected.setOnClickListener(mOnClickListener);
-		thisView.input.setOnClickListener(mOnClickListener);
-		thisView.chat_content.setOnTouchListener(onTouchListener);
+		thisView.sendMessageView.setOnClickListener(mOnClickListener);
+		thisView.moreOptions.setOnClickListener(mOnClickListener);
+		thisView.selectedFaceview.setOnClickListener(mOnClickListener);
+		thisView.selectPictureView.setOnClickListener(mOnClickListener);
+		thisView.makeAudioView.setOnClickListener(mOnClickListener);
+		thisView.moreSelectedView.setOnClickListener(mOnClickListener);
+		thisView.inputMessageContentView.setOnClickListener(mOnClickListener);
+		thisView.chatContentListView.setOnTouchListener(onTouchListener);
 
 	}
 
@@ -353,7 +363,7 @@ public class ChatController {
 
 	public void showSelectTab() {
 		if (inputMethodManager.isActive()) {
-			inputMethodManager.hideSoftInputFromWindow(thisView.input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			inputMethodManager.hideSoftInputFromWindow(thisView.inputMessageContentView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 		}
 		Animation outAnimation = new TranslateAnimation(0, thisView.chat_bottom_bar.getWidth(), 0, 0);
 		outAnimation.setDuration(150);
@@ -488,7 +498,7 @@ public class ChatController {
 
 			@Override
 			public void run() {
-				thisView.input.setText("");
+				thisView.inputMessageContentView.setText("");
 			}
 		});
 		parser.check();
@@ -626,12 +636,20 @@ public class ChatController {
 
 	public void onBackPressed() {
 		// mFinish();
-		thisActivity.finish();
+		// thisActivity.finish();
 	}
 
-	public ViewManage viewManage = ViewManage.getInstance();
-
 	public void finish() {
+		String content = thisView.inputMessageContentView.getText().toString();
+		if (!"".equals(content)) {
+			Map<String, String> notSentMessagesMap = data.localStatus.localData.notSentMessagesMap;
+			if (notSentMessagesMap == null) {
+				notSentMessagesMap = new HashMap<String, String>();
+				data.localStatus.localData.notSentMessagesMap = notSentMessagesMap;
+			}
+			notSentMessagesMap.put(type + key, content);
+		}
+		// log.e(content + "------message");
 		viewManage.chatView = null;
 		viewManage.messagesSubView.showMessagesSequence();
 	}

@@ -777,7 +777,7 @@ public class ResponseHandlers {
 							if (!data.messages.messagesOrder.contains(messageKey)) {
 								if (data.relationship.friends.contains(key)) {
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!friendMessages.contains(message)) {
+									if (!DataUtil.contains(friendMessages, message)) {
 										friendMessages.add(message);
 										Friend friend = data.relationship.friendsMap.get(key);
 										if (friend != null) {
@@ -789,7 +789,7 @@ public class ResponseHandlers {
 								if (data.relationship.friends.contains(key)) {
 									data.messages.messagesOrder.remove(messageKey);
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!friendMessages.contains(message)) {
+									if (!DataUtil.contains(friendMessages, message)) {
 										friendMessages.add(message);
 										Friend friend = data.relationship.friendsMap.get(key);
 										if (friend != null) {
@@ -814,7 +814,7 @@ public class ResponseHandlers {
 							if (!data.messages.messagesOrder.contains(messageKey)) {
 								if (data.relationship.groups.contains(key)) {
 									data.messages.messagesOrder.add(messageKey);
-									if (!groupMessages.contains(message)) {
+									if (!DataUtil.contains(groupMessages, message)) {
 										groupMessages.add(message);
 										Group group = data.relationship.groupsMap.get(key);
 										if (group != null) {
@@ -826,7 +826,7 @@ public class ResponseHandlers {
 								if (data.relationship.groups.contains(key)) {
 									data.messages.messagesOrder.remove(messageKey);
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!groupMessages.contains(message)) {
+									if (!DataUtil.contains(groupMessages, message)) {
 										groupMessages.add(message);
 										Group group = data.relationship.groupsMap.get(key);
 										if (group != null) {
