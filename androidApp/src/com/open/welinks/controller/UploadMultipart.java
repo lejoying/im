@@ -400,8 +400,7 @@ public class UploadMultipart {
 		public void onLoading(long total, long current, boolean isUploading) {
 			super.onLoading(total, current, isUploading);
 			time.received = System.currentTimeMillis();
-			// log.e(total + "--*****---" + current + "_+_+_+_+_+_+" +
-			// isUploading);
+			// log.e(total + "--*****---" + current + "_+_+_+_+_+_+" + isUploading);
 		}
 
 		@Override

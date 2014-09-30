@@ -129,10 +129,6 @@ public class ShareReleaseImageTextController {
 	Map<String, Integer> fileTotalLengthMap = new HashMap<String, Integer>();
 	Map<String, Integer> currentUploadLength = new HashMap<String, Integer>();
 
-	public void progressControlFunction(UploadMultipart instance) {
-
-	}
-
 	public void initializeListeners() {
 		uploadLoadingListener = new OnUploadLoadingListener() {
 
@@ -329,7 +325,17 @@ public class ShareReleaseImageTextController {
 	public void sendImageTextShare() {
 		viewManage.shareSubView.isShowFirstMessageAnimation = true;
 		final String sendContent = thisView.mEditTextView.getText().toString().trim();
-		if ("".equals(sendContent) && data.tempData.selectedImageList.size() == 0)
+		boolean flag = false;
+		if (data.tempData.selectedImageList == null) {
+			flag = true;
+		} else {
+			if (data.tempData.selectedImageList.size() == 0) {
+				flag = true;
+			} else {
+				flag = false;
+			}
+		}
+		if ("".equals(sendContent) && flag)
 			return;
 		thisActivity.finish();
 		new Thread(new Runnable() {
@@ -570,7 +576,7 @@ public class ShareReleaseImageTextController {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			saveDraftDialog();
 		}
-		return false;
+		return true;
 	}
 
 	public void saveDraftDialog() {
@@ -623,6 +629,9 @@ public class ShareReleaseImageTextController {
 					thisActivity.finish();
 				}
 			}).show();
+		} else {
+			data.tempData.selectedImageList = null;
+			thisActivity.finish();
 		}
 	}
 }
