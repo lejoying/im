@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,6 +29,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.MyLog;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.model.API;
@@ -45,12 +47,16 @@ import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareReleaseImageTextView;
+import com.open.welinks.view.ShareSubView.ControlProgress;
+import com.open.welinks.view.ShareSubView.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
 public class ShareReleaseImageTextController {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareReleaseImageTextController";
+
+	public MyLog log = new MyLog(tag, true);
 
 	public Context context;
 	public ShareReleaseImageTextView thisView;
@@ -114,7 +120,102 @@ public class ShareReleaseImageTextController {
 
 	public OnTouchListener mScrollOnTouchListener;
 
+	int totalLength = 0;
+	Map<String, Integer> fileTotalLengthMap = new HashMap<String, Integer>();
+	Map<String, Integer> currentUploadLength = new HashMap<String, Integer>();
+
+	public void progressControlFunction(UploadMultipart instance) {
+
+	}
+
 	public void initializeListeners() {
+		uploadLoadingListener = new OnUploadLoadingListener() {
+
+			@Override
+			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
+				double currentLength = 0;
+				String path = instance.path;
+				int singleLength = fileTotalLengthMap.get(path);
+				int length = singleLength * precent / 100;
+				currentUploadLength.put(path, length);
+				// currentLength += length;
+
+				for (Entry<String, Integer> entry : currentUploadLength.entrySet()) {
+					String key = entry.getKey();
+					int value = entry.getValue();
+					if (key != null && !"".equals(key)) {
+						currentLength += value;
+					}
+				}
+				final double currentPrecent = currentLength / totalLength;
+				fileHandlers.handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						if (shareMessage != null) {
+							String keyName = "message#" + shareMessage.gsid;
+							SharesMessageBody listItemBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
+							if (listItemBody != null) {
+								ControlProgress controlProgress = listItemBody.controlProgress;
+								if (controlProgress != null) {
+									controlProgress.moveTo((int) (currentPrecent * 100));
+								}
+							}
+						}
+					}
+				});
+			}
+
+			@Override
+			public void onSuccess(UploadMultipart instance, int time) {
+				// progress bar down
+				int singleLength = fileTotalLengthMap.get(instance.path);
+				currentUploadLength.put(instance.path, singleLength);
+				double currentLength = 0;
+				for (Entry<String, Integer> entry : currentUploadLength.entrySet()) {
+					String key = entry.getKey();
+					int value = entry.getValue();
+					if (key != null && !"".equals(key)) {
+						currentLength += value;
+					}
+				}
+				final double currentPrecent = currentLength / totalLength;
+				log.e("currentPrecent：" + currentPrecent);
+				fileHandlers.handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						if (shareMessage != null) {
+							log.e("shareMessage：" + shareMessage);
+							String keyName = "message#" + shareMessage.gsid;
+							SharesMessageBody listItemBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
+							if (listItemBody != null) {
+								log.e("listItemBody：" + listItemBody);
+								ControlProgress controlProgress = listItemBody.controlProgress;
+								if (controlProgress != null) {
+									log.e("controlProgress：" + controlProgress);
+									controlProgress.moveTo((int) (currentPrecent * 100));
+								} else {
+									log.e("controlProgress");
+								}
+							} else {
+								log.e("listItemBody");
+							}
+						} else {
+							log.e("shareMessage：null");
+						}
+					}
+				});
+				// progress bar up
+
+				currentUploadCount++;
+				if (currentUploadCount == 1) {
+					viewManage.mainView.shareSubView.showShareMessages();
+				} else if (totalUploadCount == currentUploadCount) {
+					sendMessageToServer(shareMessage.content, shareMessage.gsid);
+				}
+			}
+		};
 		mScrollOnTouchListener = new OnTouchListener() {
 			GestureDetector backviewDetector = new GestureDetector(thisActivity, new GestureDetector.SimpleOnGestureListener() {
 
@@ -137,29 +238,12 @@ public class ShareReleaseImageTextController {
 					// TODO Auto-generated method stub
 					return super.onScroll(e1, e2, distanceX, distanceY);
 				}
-
 			});
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				return backviewDetector.onTouchEvent(event);
-			}
-		};
-		uploadLoadingListener = new OnUploadLoadingListener() {
-
-			@Override
-			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
-			}
-
-			@Override
-			public void onSuccess(UploadMultipart instance, int time) {
-				currentUploadCount++;
-				if (currentUploadCount == 1) {
-					viewManage.mainView.shareSubView.showShareMessages();
-				} else if (totalUploadCount == currentUploadCount) {
-					sendMessageToServer(shareMessage.content, shareMessage.gsid);
-				}
 			}
 		};
 		onTouchListener = new OnTouchListener() {
@@ -339,6 +423,7 @@ public class ShareReleaseImageTextController {
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
 		// The current selected pictures gallery
 		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
+		totalLength = 0;
 		for (int i = 0; i < selectedImageList.size(); i++) {
 			String key = selectedImageList.get(i);
 			String suffixName = key.substring(key.lastIndexOf("."));
@@ -354,6 +439,9 @@ public class ShareReleaseImageTextController {
 				byte[] bytes = null;
 				// long fileLength = fromFile.length();
 				bytes = fileHandlers.getImageFileBytes(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+				int fileLength = bytes.length;
+				totalLength += fileLength;
+				fileTotalLengthMap.put(key, fileLength);
 				// if (fileLength > 400 * 1024) {
 				// ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
 				// bytes = byteArrayOutputStream.toByteArray();
@@ -388,6 +476,7 @@ public class ShareReleaseImageTextController {
 				// upload file to oss server
 				uploadFileNameMap.put(key, fileName);
 				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
+				multipart.path = key;
 				uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			} catch (FileNotFoundException e) {

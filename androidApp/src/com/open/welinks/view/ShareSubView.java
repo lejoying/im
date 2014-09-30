@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -126,6 +127,7 @@ public class ShareSubView {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
+	// first share View Animation true or false
 	public boolean isShowFirstMessageAnimation = false;
 
 	public ShareSubView(MainView mainView) {
@@ -281,6 +283,9 @@ public class ShareSubView {
 			// .........................
 			log.e("message#---" + shareMessage.gsid);
 			String keyName = "message#" + shareMessage.gsid;
+			if(this.shareMessageListBody.listItemsSequence.contains(keyName)){
+				continue;
+			}
 			// Data duplication problem
 			if (this.shareMessageListBody.listItemsSequence.contains(keyName)) {
 				// continue;
@@ -315,7 +320,6 @@ public class ShareSubView {
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 			if (i == 0 && isShowFirstMessageAnimation) {
-				isShowFirstMessageAnimation = false;
 				shareMessageRootView = sharesMessageBody.cardView;
 				dialogSpring.addListener(dialogSpringListener);
 				dialogSpring.setCurrentValue(0);
@@ -328,8 +332,10 @@ public class ShareSubView {
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 		}
 
+		this.isShowFirstMessageAnimation = false;
+
 		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
-		shareMessageListBody.setChildrenPosition();
+		this.shareMessageListBody.setChildrenPosition();
 	}
 
 	public class SharesMessageBody extends MyListItemBody {
@@ -360,6 +366,9 @@ public class ShareSubView {
 
 		public int i;
 
+		public ControlProgress controlProgress;
+		public View controlProgressView;
+
 		public View initialize(int i) {
 			this.i = i;
 			if (i == -1) {
@@ -382,6 +391,10 @@ public class ShareSubView {
 				this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
 				this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
 				this.shareCommentIconView = (ImageView) this.cardView.findViewById(R.id.share_comment_icon);
+
+				// TODO
+				// progress bar
+				this.controlProgressView = this.cardView.findViewById(R.id.list_item_progress_container);
 			}
 			super.initialize(cardView);
 			return cardView;
@@ -403,6 +416,17 @@ public class ShareSubView {
 			} else if (i == -2) {
 				this.messageTimeView.setText(DateUtil.formatYearMonthDay(shareMessage.time));
 			} else {
+				this.controlProgressView.setVisibility(View.GONE);
+				if (shareMessage != null) {
+					if (shareMessage.status != null) {
+						if ("sending".equals(shareMessage.status)) {
+							this.controlProgressView.setVisibility(View.VISIBLE);
+							this.controlProgress = new ControlProgress();
+							this.controlProgress.initialize(this.controlProgressView);
+							// this.controlProgress.moveTo(70);
+						}
+					}
+				}
 				this.message = shareMessage;
 				this.fileName = fileName;
 				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
@@ -849,6 +873,51 @@ public class ShareSubView {
 	// return this.imageView;
 	// }
 	// }
+
+	public class ControlProgress {
+
+		public View controlProgressView;
+
+		public ImageView progress_line1;
+
+		public ImageView progress_line2;
+		public TranslateAnimation move_progress_line1;
+
+		public int percentage = 0;
+		public int width = 0;
+
+		public void initialize(View container) {
+			// DisplayMetrics displayMetrics = new DisplayMetrics();
+			// mainView.thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
+
+			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
+			controlProgressView = container;
+
+			width = displayMetrics.widthPixels;
+
+		}
+
+		public void moveTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
+			// TODO old animation becomes memory fragment
+			move_progress_line1.setStartOffset(0);
+			move_progress_line1.setDuration(200);
+
+			progress_line1.startAnimation(move_progress_line1);
+
+			progress_line1.setX(position);
+			percentage = targetPercentage;
+		}
+
+		public void setTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			progress_line1.setX(position);
+			percentage = targetPercentage;
+		}
+	}
 
 	public void onResume() {
 	}

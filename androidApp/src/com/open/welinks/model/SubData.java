@@ -33,5 +33,4 @@ public class SubData {
 			public String detail;
 		}
 	}
-
 }

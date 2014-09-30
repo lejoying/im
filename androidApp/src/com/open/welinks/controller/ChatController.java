@@ -273,7 +273,7 @@ public class ChatController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 
 			}
 
@@ -290,7 +290,7 @@ public class ChatController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 
 			}
 

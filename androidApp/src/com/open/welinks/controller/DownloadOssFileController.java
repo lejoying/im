@@ -100,7 +100,7 @@ public class DownloadOssFileController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 				// TODO
 				instance.transportingItem.controlProgress.moveTo(precent);
 				instance.transportingItem.text_transport_time_view.setText((instance.time.received - instance.time.start) + "ms");

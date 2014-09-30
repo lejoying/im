@@ -52,6 +52,8 @@ public class DownloadFile {
 
 	public int uploadPrecent;
 
+	public long bytesLength = 0;
+
 	public DownloadFile(String url, String path) {
 		this.url = url;
 		this.path = path;
@@ -80,6 +82,16 @@ public class DownloadFile {
 
 		@Override
 		public void onConneced(Header[] headers) {
+			for (int i = 0; i < headers.length; i++) {
+				Header header = headers[i];
+				if (header.getName().equals("Content-Length")) {
+					bytesLength = Long.valueOf(header.getValue());
+					if (downloadListener != null) {
+						downloadListener.onLoadingStarted(instance, uploadPrecent, isDownloadStatus);
+					}
+					break;
+				}
+			}
 			if (imageBean != null) {
 				if (imageBean.size == 0) {
 					for (int i = 0; i < headers.length; i++) {
@@ -87,7 +99,7 @@ public class DownloadFile {
 						if (header.getName().equals("Content-Length")) {
 							imageBean.size = Long.valueOf(header.getValue());
 							if (downloadListener != null) {
-								downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+								downloadListener.onLoadingStarted(instance, uploadPrecent, isDownloadStatus);
 							}
 							break;
 						}
@@ -103,7 +115,7 @@ public class DownloadFile {
 			isDownloadStatus = DOWNLOAD_LOADINGING;
 			uploadPrecent = (int) ((((double) current / (double) total)) * 100);
 			if (downloadListener != null) {
-				downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+				downloadListener.onLoading(instance, uploadPrecent, isDownloadStatus);
 			}
 			// Log.e(tag, "-----onLoading-----");
 		}

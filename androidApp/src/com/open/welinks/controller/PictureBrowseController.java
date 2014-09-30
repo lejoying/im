@@ -99,7 +99,7 @@ public class PictureBrowseController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 				// TODO Auto-generated method stub
 
 			}
