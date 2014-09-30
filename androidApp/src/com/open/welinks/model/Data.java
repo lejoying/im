@@ -74,7 +74,11 @@ public class Data {
 			public String currentSelectedSquare = "";
 
 			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
-			public Map<String, ShareMessage> notSendShareMessagesMap = new HashMap<String, ShareMessage>();
+			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();
+			public class ShareDraft {
+				public String content;
+				public String imagesContent;
+			}
 		}
 	}
 

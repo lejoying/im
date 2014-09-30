@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,6 +35,7 @@ import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -45,6 +47,9 @@ import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareReleaseImageTextView;
 import com.open.welinks.view.ShareSubView.ControlProgress;
@@ -288,9 +293,12 @@ public class ShareReleaseImageTextController {
 			@Override
 			public void onClick(View view) {
 				if (view == thisView.mCancleButtonView) {
-					thisActivity.finish();
-					data.tempData.selectedImageList = null;
+					saveDraftDialog();
 				} else if (view == thisView.mConfirmButtonView) {
+					parser.check();
+					if (data.localStatus.localData.notSendShareMessagesMap != null) {
+						data.localStatus.localData.notSendShareMessagesMap.remove(gtype);
+					}
 					sendImageTextShare();
 				} else if (view == thisView.mSelectImageButtonView) {
 					Intent intent = new Intent(thisActivity, ImagesDirectoryActivity.class);
@@ -513,7 +521,7 @@ public class ShareReleaseImageTextController {
 	}
 
 	public void onBackPressed() {
-		data.tempData.selectedImageList = null;
+
 	}
 
 	public void finish() {
@@ -556,5 +564,65 @@ public class ShareReleaseImageTextController {
 			}
 		}
 		return true;
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			saveDraftDialog();
+		}
+		return false;
+	}
+
+	public void saveDraftDialog() {
+		String content = thisView.mEditTextView.getText().toString();
+		boolean flag = false;
+		if (data.tempData.selectedImageList == null) {
+			flag = false;
+		} else {
+			if (data.tempData.selectedImageList.size() == 0) {
+				flag = false;
+			} else {
+				flag = true;
+			}
+		}
+		if (!"".equals(content) || flag) {
+			Alert.createDialog(thisActivity).setTitle("是否保存草稿？").setOnConfirmClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					parser.check();
+					ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
+					shareDraft.content = thisView.mEditTextView.getText().toString();
+					if (data.tempData.selectedImageList != null) {
+						if (data.tempData.selectedImageList.size() != 0) {
+							shareDraft.imagesContent = gson.toJson(data.tempData.selectedImageList);
+						} else {
+							shareDraft.imagesContent = "";
+						}
+					} else {
+						shareDraft.imagesContent = "";
+					}
+					data.tempData.selectedImageList = null;
+					if (data.localStatus.localData.notSendShareMessagesMap == null) {
+						data.localStatus.localData.notSendShareMessagesMap = new HashMap<String, ShareDraft>();
+					}
+					data.localStatus.localData.notSendShareMessagesMap.put(gtype, shareDraft);
+					thisActivity.finish();
+				}
+			}).setOnCancelClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					parser.check();
+					if (data.localStatus.localData.notSendShareMessagesMap == null) {
+						data.localStatus.localData.notSendShareMessagesMap = new HashMap<String, ShareDraft>();
+					} else {
+						data.localStatus.localData.notSendShareMessagesMap.remove(gtype);
+					}
+					data.tempData.selectedImageList = null;
+					thisActivity.finish();
+				}
+			}).show();
+		}
 	}
 }
