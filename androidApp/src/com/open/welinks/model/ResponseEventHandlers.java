@@ -70,7 +70,7 @@ public class ResponseEventHandlers {
 						NotificationUtils.commonVibrate(viewManage.mainView.context);
 					}
 				}
-				DataUtil.getMessages(data.userInformation.currentUser.flag);
+				DataHandlers.getMessages(data.userInformation.currentUser.flag);
 			} else {
 				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
 				if ("account_dataupdate".equals(contentType)) {
@@ -121,7 +121,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getUserCurrentAllGroup();
+		DataHandlers.getUserCurrentAllGroup();
 	}
 
 	// OK
@@ -134,7 +134,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "create");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "create");
 	}
 
 	// OK
@@ -147,7 +147,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "create");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "create");
 	}
 
 	// OK
@@ -160,7 +160,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getUserCurrentGroupInfomation(message.gid);
+		DataHandlers.getUserCurrentGroupInfomation(message.gid);
 	}
 
 	// OK
@@ -173,7 +173,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "removemembers");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "removemembers");
 	}
 
 	// OK
@@ -186,7 +186,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "addmembers");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "addmembers");
 	}
 
 	public void handleRelationBlacklistEvent(EventMessage message) {
@@ -197,7 +197,7 @@ public class ResponseEventHandlers {
 		String eventKey = "event_user";
 		checkEventIsMessageOrder(eventKey);
 		// viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getIntimateFriends();
+		DataHandlers.getIntimateFriends();
 	}
 
 	public void handleRelationDeletefriendEvent(EventMessage message) {
@@ -208,7 +208,7 @@ public class ResponseEventHandlers {
 		String eventKey = "event_user";
 		checkEventIsMessageOrder(eventKey);
 		// viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getIntimateFriends();
+		DataHandlers.getIntimateFriends();
 	}
 
 	// OK
@@ -225,7 +225,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getIntimateFriends();
+		DataHandlers.getIntimateFriends();
 		// data.event.userEventsMap.put(message.gid, message);
 	}
 
@@ -237,9 +237,13 @@ public class ResponseEventHandlers {
 			String key = userEvents.get(i);
 			EventMessage message0 = data.event.userEventsMap.get(key);
 			if ("relation_newfriend".equals(message0.type)) {
-				if (message.phone.equals(message0.phone) && message.phoneTo.equals(message0.phoneTo)) {
-					dealMessage = message0;
-					break;
+				try {
+					if (message.phone.equals(message0.phone) && message.phoneTo.equals(message0.phoneTo)) {
+						dealMessage = message0;
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -296,7 +300,7 @@ public class ResponseEventHandlers {
 		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataUtil.getUserInfomation();
+		DataHandlers.getUserInfomation();
 	}
 
 	public static abstract class Response<T> {

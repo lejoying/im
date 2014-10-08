@@ -23,7 +23,7 @@ import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.DataUtil;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.service.PushService;
 import com.open.welinks.utils.NotificationUtils;

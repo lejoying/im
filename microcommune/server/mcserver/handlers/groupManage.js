@@ -675,6 +675,7 @@ groupManage.getallmembers = function (data, response) {
                     name: groupData.name,
                     longitude: location.longitude,
                     latitude: location.latitude,
+                    createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || ""
                 };
@@ -719,6 +720,7 @@ groupManage.getallmembers = function (data, response) {
                         mainBusiness: member.mainBusiness || "",
                         head: member.head || "Head",
                         sex: member.sex,
+                        age: member.age,
                         byPhone: member.byPhone,
                         longitude: member.longitude || "",
                         latitude: member.latitude || "",
@@ -1145,6 +1147,7 @@ groupManage.get = function (data, response) {
                     name: groupData.name,
                     longitude: location.longitude || 0,
                     latitude: location.latitude || 0,
+                    createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || ""
                 };
@@ -1244,6 +1247,7 @@ groupManage.getgroupsandmembers = function (data, response) {
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
                         sex: accountData.sex,
+                        age: accountData.age,
                         byPhone: accountData.byPhone,
                         nickName: accountData.nickName,
                         userBackground: accountData.userBackground
@@ -1416,6 +1420,7 @@ groupManage.getgroupmembers = function (data, response) {
                     var account = {
                         id: accountData.ID,
                         sex: accountData.sex,
+                        age: accountData.age,
                         phone: accountData.phone,
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
@@ -1441,6 +1446,7 @@ groupManage.getgroupmembers = function (data, response) {
                             name: groupData.name,
                             notReadMessagesCount: 0,
                             distance: 0,
+                            createTime: groupData.createTime,
                             longitude: location.longitude || 0,
                             latitude: location.latitude || 0,
                             description: groupData.description,

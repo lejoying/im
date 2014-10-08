@@ -9,7 +9,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.UserInformation.User;
 
-public class DataUtil {
+public class DataHandlers {
 
 	public String tag = "DataUtil";
 	public static Data data = Data.getInstance();

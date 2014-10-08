@@ -75,6 +75,7 @@ public class Data {
 
 			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
 			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();
+
 			public class ShareDraft {
 				public String content;
 				public String imagesContent;
@@ -104,6 +105,7 @@ public class Data {
 			public String head = "Head";
 			public String accessKey = "";
 			public String flag = "none";
+			public String createTime;
 
 			public String lastlogintime;
 			public String longitude;
@@ -127,7 +129,6 @@ public class Data {
 		public class ServerConfig {
 
 		}
-
 	}
 
 	public class Relationship {
@@ -162,6 +163,7 @@ public class Data {
 			public String userBackground = "Back";
 			public String alias = "";
 			public String lastlogintime;
+			public String createTime;
 
 			public String groupsSequenceString;
 			public String circlesOrderString;
@@ -183,6 +185,7 @@ public class Data {
 			public String latitude;
 			public String description;
 			public String background;
+			public String createTime;
 
 			public List<String> members = new ArrayList<String>();
 		}

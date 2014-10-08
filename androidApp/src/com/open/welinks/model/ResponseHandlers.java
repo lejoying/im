@@ -95,6 +95,7 @@ public class ResponseHandlers {
 					user.id = friend.id;
 					user.phone = friend.phone;
 					user.nickName = friend.nickName;
+					user.createTime = friend.createTime;
 					user.mainBusiness = friend.mainBusiness;
 					user.head = friend.head;
 					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
@@ -214,7 +215,9 @@ public class ResponseHandlers {
 						public String mainBusiness;
 						public String head;
 						public String sex;
+						public String age;
 						public String byPhone;
+						public String createTime;
 						public String userBackground;
 					}
 
@@ -230,6 +233,8 @@ public class ResponseHandlers {
 									user.mainBusiness = account.mainBusiness;
 									user.nickName = account.nickName;
 									user.sex = account.sex;
+									user.age = account.age;
+									user.createTime = account.createTime;
 									user.userBackground = account.userBackground;
 									data.userInformation.isModified = true;
 									viewManage.loginView.thisController.loginSuccessful(data.userInformation.currentUser.phone);
@@ -365,7 +370,9 @@ public class ResponseHandlers {
 			public String mainBusiness;
 			public String head;
 			public String sex;
+			public String age;
 			public String byPhone;
+			public String createTime;
 			public String userBackground;
 		}
 
@@ -381,6 +388,8 @@ public class ResponseHandlers {
 						user.mainBusiness = account.mainBusiness;
 						user.nickName = account.nickName;
 						user.sex = account.sex;
+						user.age = account.age;
+						user.createTime = account.createTime;
 						user.userBackground = account.userBackground;
 						data.userInformation.isModified = true;
 					} else {
@@ -405,6 +414,8 @@ public class ResponseHandlers {
 							friend.nickName = account.nickName;
 							friend.mainBusiness = account.mainBusiness;
 							friend.sex = account.sex;
+							friend.age = Integer.valueOf(account.age);
+							friend.createTime = account.createTime;
 							friend.userBackground = account.userBackground;
 							friend.id = account.ID;
 
@@ -418,6 +429,8 @@ public class ResponseHandlers {
 								friend.nickName = account.nickName;
 								friend.mainBusiness = account.mainBusiness;
 								friend.sex = account.sex;
+								friend.age = Integer.valueOf(account.age);
+								friend.createTime = account.createTime;
 								friend.userBackground = account.userBackground;
 							}
 						}
@@ -505,7 +518,7 @@ public class ResponseHandlers {
 					log.e(tag, "刷新好友分组");
 					viewManage.mainView.friendsSubView.showCircles();
 				}
-				DataUtil.getMessages(data.userInformation.currentUser.flag);
+				DataHandlers.getMessages(data.userInformation.currentUser.flag);
 			} else {
 				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
 			}
@@ -544,7 +557,7 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("添加成功")) {
 				log.e(tag, "---------------------添加好友成功");
-				DataUtil.getIntimateFriends();
+				DataHandlers.getIntimateFriends();
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
 			}
@@ -777,7 +790,7 @@ public class ResponseHandlers {
 							if (!data.messages.messagesOrder.contains(messageKey)) {
 								if (data.relationship.friends.contains(key)) {
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!DataUtil.contains(friendMessages, message)) {
+									if (!DataHandlers.contains(friendMessages, message)) {
 										friendMessages.add(message);
 										Friend friend = data.relationship.friendsMap.get(key);
 										if (friend != null) {
@@ -789,7 +802,7 @@ public class ResponseHandlers {
 								if (data.relationship.friends.contains(key)) {
 									data.messages.messagesOrder.remove(messageKey);
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!DataUtil.contains(friendMessages, message)) {
+									if (!DataHandlers.contains(friendMessages, message)) {
 										friendMessages.add(message);
 										Friend friend = data.relationship.friendsMap.get(key);
 										if (friend != null) {
@@ -814,7 +827,7 @@ public class ResponseHandlers {
 							if (!data.messages.messagesOrder.contains(messageKey)) {
 								if (data.relationship.groups.contains(key)) {
 									data.messages.messagesOrder.add(messageKey);
-									if (!DataUtil.contains(groupMessages, message)) {
+									if (!DataHandlers.contains(groupMessages, message)) {
 										groupMessages.add(message);
 										Group group = data.relationship.groupsMap.get(key);
 										if (group != null) {
@@ -826,7 +839,7 @@ public class ResponseHandlers {
 								if (data.relationship.groups.contains(key)) {
 									data.messages.messagesOrder.remove(messageKey);
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!DataUtil.contains(groupMessages, message)) {
+									if (!DataHandlers.contains(groupMessages, message)) {
 										groupMessages.add(message);
 										Group group = data.relationship.groupsMap.get(key);
 										if (group != null) {
@@ -875,6 +888,7 @@ public class ResponseHandlers {
 					currentGroup.longitude = group.longitude;
 					currentGroup.latitude = group.latitude;
 					currentGroup.description = group.description;
+					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 				} else {
 					data.relationship.groups.add(key);
@@ -890,6 +904,7 @@ public class ResponseHandlers {
 					currentGroup.longitude = group.longitude;
 					currentGroup.latitude = group.latitude;
 					currentGroup.description = group.description;
+					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
@@ -954,7 +969,7 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("加入群组成功")) {
 				parser.check();
-				DataUtil.getUserCurrentAllGroup();
+				DataHandlers.getUserCurrentAllGroup();
 				log.e(tag, "---------------------加入群组成功");
 			}
 		};
@@ -978,6 +993,7 @@ public class ResponseHandlers {
 				currentGroup.name = group.name;
 				currentGroup.longitude = group.longitude;
 				currentGroup.latitude = group.latitude;
+				currentGroup.createTime = group.createTime;
 				currentGroup.description = group.description;
 				currentGroup.background = group.background;
 				data.relationship.isModified = true;
@@ -1008,7 +1024,7 @@ public class ResponseHandlers {
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
 			}
-			DataUtil.getUserCurrentAllGroup();
+			DataHandlers.getUserCurrentAllGroup();
 		};
 	};
 
@@ -1020,7 +1036,7 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			DataUtil.getUserCurrentAllGroup();
+			DataHandlers.getUserCurrentAllGroup();
 			if (response.提示信息.equals("退出群组成功")) {
 				log.e(tag, "---------------------退出群组成功");
 			} else {
@@ -1047,6 +1063,7 @@ public class ResponseHandlers {
 					currentGroup.longitude = group.longitude;
 					currentGroup.latitude = group.latitude;
 					currentGroup.description = group.description;
+					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					data.relationship.isModified = true;
 					viewManage.postNotifyView("ShareSubView");
@@ -1083,6 +1100,7 @@ public class ResponseHandlers {
 					currentGroup.longitude = group.longitude;
 					currentGroup.latitude = group.latitude;
 					currentGroup.description = group.description;
+					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					currentGroup.members = members;
 				} else {
@@ -1110,6 +1128,7 @@ public class ResponseHandlers {
 						friend.head = serverFriend.head;
 						friend.longitude = serverFriend.longitude;
 						friend.latitude = serverFriend.latitude;
+						friend.createTime = serverFriend.createTime;
 						friend.userBackground = serverFriend.userBackground;
 						friend.lastlogintime = serverFriend.lastlogintime;
 					}
@@ -1155,6 +1174,7 @@ public class ResponseHandlers {
 							friend.head = serverFriend.head;
 							friend.longitude = serverFriend.longitude;
 							friend.latitude = serverFriend.latitude;
+							friend.createTime = serverFriend.createTime;
 							friend.userBackground = serverFriend.userBackground;
 							friend.lastlogintime = serverFriend.lastlogintime;
 						}

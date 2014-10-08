@@ -9,7 +9,7 @@ public class Constant {
 	public static String GROUPTABLEID = "53eacbb9e4b0693fbf5fd0f6";
 	public static String SQUARETABLEID = "54101cade4b0dfd37f863ace";
 	// lbs key
-	public static String LBS_KSY = "32b48639b260edd1916960614151eec3";
+	public static String LBS_KSY = "7b7b0483c25df5414ba05d81957dac5a";// old key ： 32b48639b260edd1916960614151eec3
 
 	// wechat id
 	public static String WECHAT_ADDID = "wxbbf27e2f87ef9083";

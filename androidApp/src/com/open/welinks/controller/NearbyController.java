@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -125,13 +126,13 @@ public class NearbyController {
 
 		mOnClickListener = new OnClickListener() {
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
 					boolean isTemp = judgeTempRelation((Map<String, Object>) view.getTag(R.id.tag_third));
 					String type = (String) view.getTag(R.id.tag_first);
 					String key = (String) view.getTag(R.id.tag_second);
+					Log.e("hahha", "phone:::" + key);
 					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
 					intent.putExtra("type", type);
 					intent.putExtra("key", key);
@@ -140,9 +141,7 @@ public class NearbyController {
 				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				}
-
 			}
-
 		};
 
 		mOnItemClickListener = thisView.threeChoicesView.new OnItemClickListener() {
@@ -203,33 +202,24 @@ public class NearbyController {
 
 			@Override
 			public void onCloudItemDetailSearched(CloudItemDetail detail, int rCode) {
-				// unused
-
 			}
 		};
 		mAMapLocationListener = new AMapLocationListener() {
 
 			@Override
 			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-				// unused
-
 			}
 
 			@Override
 			public void onProviderEnabled(String arg0) {
-				// unused
-
 			}
 
 			@Override
 			public void onProviderDisabled(String arg0) {
-				// unused
-
 			}
 
 			@Override
 			public void onLocationChanged(Location location) {
-				// unused
 			}
 
 			@Override
@@ -309,6 +299,7 @@ public class NearbyController {
 			}
 			if (isTemp) {
 				Friend tempFriend = data.relationship.new Friend();
+				tempFriend.phone = (String) infomation.get("phone");
 				tempFriend.head = (String) infomation.get("head");
 				tempFriend.nickName = (String) infomation.get("name");
 				tempFriend.mainBusiness = (String) infomation.get("mainBusiness");

@@ -16,7 +16,7 @@ import com.open.welinks.R;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
-import com.open.welinks.model.DataUtil;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.view.MessagesSubView;
 
 public class MessagesSubController {

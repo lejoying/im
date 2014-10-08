@@ -525,7 +525,7 @@ accountManage.exit = function (data, response, next) {
 accountManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    console.log(phone);
+    console.log(data);
     var target = data.target;
     var arr = [phone, target];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
@@ -566,6 +566,7 @@ accountManage.get = function (data, response) {
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
                         sex: accountData.sex,
+                        age: accountData.age,
                         byPhone: accountData.byPhone,
                         createTime: accountData.createTime,
                         userBackground: accountData.userBackground,
@@ -766,10 +767,10 @@ accountManage.modify = function (data, response) {
 //sha1Pwd();
 function sha1Pwd() {
     var query = [
-        'MATCH (account:Account)',
+        'MATCH (account:Group)',
         'RETURN account'
     ].join('\n');
-    var arr = [18, 19, 20, 21, 22, 23, 24, 25]
+    var arr = [1412751055571, 1412664655571, 1412578255571, 1412491855571, 1412405455571]
     db.query(query, {}, function (error, results) {
         if (error) {
             console.error(error);
@@ -778,7 +779,7 @@ function sha1Pwd() {
             for (var i = 0; i < results.length; i++) {
                 var accountNode = results[i].account;
                 var accountData = accountNode.data;
-                var phone = accountData.phone;
+                var phone = accountData.gid;
                 console.error(phone);
 //                if (accountdata.password) {
 //                    if ((accountdata.password).length < 30 && accountdata.password != null && accountdata.status == "active") {
@@ -788,7 +789,7 @@ function sha1Pwd() {
 //                    });
 //                }
 
-                accountData.age = arr[i % 8];
+                accountData.createTime = arr[i % 5];
                 accountNode.save(function (err, node) {
                 });
             }
@@ -850,6 +851,7 @@ accountManage.getuserinfomation = function (data, response) {
                     mainBusiness: accountData.mainBusiness,
                     head: accountData.head,
                     sex: accountData.sex,
+                    age: accountData.age,
                     userBackground: accountData.userBackground,
 //                    accessKey: accessKey,
 //                    flag: 0

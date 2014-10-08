@@ -715,6 +715,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                         var account = {
                             ID: accountData.ID,
                             sex: accountData.sex,
+                            age:accountData.age,
                             phone: accountData.phone,
                             mainBusiness: accountData.mainBusiness,
                             head: accountData.head,
@@ -1206,6 +1207,7 @@ relationManage.getaskfriends = function (data, response) {
                         uid: accountData.uid,
                         ID: accountData.ID,
                         sex: accountData.sex,
+                        age:accountData.age,
                         phone: accountData.phone,
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
@@ -1441,6 +1443,7 @@ relationManage.intimatefriends = function (data, response) {
                         var account = {
                             id: accountData.ID,
                             sex: accountData.sex,
+                            age: accountData.age,
                             phone: accountData.phone,
                             mainBusiness: accountData.mainBusiness,
                             head: accountData.head,

@@ -243,8 +243,8 @@ public class LBSHandlers {
 		LatLng latLng1 = new LatLng(checkNumber(longitude), checkNumber(latitude));
 		LatLng latLng2 = new LatLng(checkNumber(longitude2), checkNumber(latitude2));
 		String distance0 = AMapUtils.calculateLineDistance(latLng1, latLng2) + "";
-		Log.e(tag, "distance0:      " + distance0);
-		Log.e(tag, "distance:      " + distance);
+		// Log.e(tag, "distance0:      " + distance0);
+		// Log.e(tag, "distance:      " + distance);
 		if (distance.indexOf(".") != -1) {
 			if (distance.substring(distance.indexOf(".") + 1).length() > 2) {
 				distance = distance.substring(0, distance.indexOf(".") + 3);

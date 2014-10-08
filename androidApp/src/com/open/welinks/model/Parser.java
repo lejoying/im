@@ -290,7 +290,7 @@ public class Parser {
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");
 			e.printStackTrace();
-			DataUtil.clearData();
+			DataHandlers.clearData();
 			// data = null;
 		}
 

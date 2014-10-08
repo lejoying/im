@@ -59,7 +59,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.DataUtil;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.service.ConnectionChangeReceiver;
@@ -143,7 +143,9 @@ public class MainController {
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
-
+		
+		DataHandlers.getUserInfomation();
+		DataHandlers.getUserCurrentAllGroup();
 		getIntimatefriends();
 
 		requestLocation();
@@ -765,7 +767,7 @@ public class MainController {
 			parser.save();
 			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 			thisActivity.finish();
-			DataUtil.clearData();
+			DataHandlers.clearData();
 		} else if (requestCode == R.id.tag_second) {
 			messagesSubController.onActivityResult(requestCode, resultCode, data2);
 		} else {

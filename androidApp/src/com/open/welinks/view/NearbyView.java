@@ -169,7 +169,11 @@ public class NearbyView {
 				holder.address.setText((String) infomation.get("address"));
 				holder.members.setText("10/100");
 				holder.chatNum.setText("10");
-				convertView.setTag(R.id.tag_first, "group");
+				if (thisController.status == Status.group) {
+					convertView.setTag(R.id.tag_first, "group");
+				} else if (thisController.status == Status.square) {
+					convertView.setTag(R.id.tag_first, "square");
+				}
 				convertView.setTag(R.id.tag_second, (String) infomation.get("gid"));
 				convertView.setTag(R.id.tag_third, infomation);
 			}
