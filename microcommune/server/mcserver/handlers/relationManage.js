@@ -1451,9 +1451,10 @@ relationManage.intimatefriends = function (data, response) {
                             friendStatus: rData.friendStatus,
                             alias: "",
                             flag: "none",
-                            accessKey: "",
+//                            accessKey: "",
                             distance: 0,
-                            notReadMessagesCount: 0,
+//                            notReadMessagesCount: 0,
+                            createTime: accountData.createTime,
                             longitude: accountData.longitude || 0,
                             latitude: accountData.latitude || 0
                         };

@@ -567,6 +567,7 @@ accountManage.get = function (data, response) {
                         head: accountData.head,
                         sex: accountData.sex,
                         byPhone: accountData.byPhone,
+                        createTime: accountData.createTime,
                         userBackground: accountData.userBackground,
                         circlesOrderString: accountData.circlesOrderString,
                         groupsSequenceString: accountData.groupsSequenceString
@@ -768,6 +769,7 @@ function sha1Pwd() {
         'MATCH (account:Account)',
         'RETURN account'
     ].join('\n');
+    var arr = [18, 19, 20, 21, 22, 23, 24, 25]
     db.query(query, {}, function (error, results) {
         if (error) {
             console.error(error);
@@ -778,20 +780,20 @@ function sha1Pwd() {
                 var accountData = accountNode.data;
                 var phone = accountData.phone;
                 console.error(phone);
-                if (accountData.password) {
-                    if ((accountData.password).length < 30 && accountData.password != null && accountData.status == "active") {
-                        accountData.password = sha1.hex_sha1(accountData.password);
-                    }
-                    accountNode.save(function (err, node) {
+//                if (accountdata.password) {
+//                    if ((accountdata.password).length < 30 && accountdata.password != null && accountdata.status == "active") {
+//                        accountdata.password = sha1.hex_sha1(accountdata.password);
+//                    }
+//                    accountnode.save(function (err, node) {
+//                    });
+//                }
 
-                    });
-                }
+                accountData.age = arr[i % 8];
+                accountNode.save(function (err, node) {
+                });
             }
-
-
         }
     });
-
 }
 accountManage.oauth6 = function (data, response) {
     response.asynchronous = 1;
@@ -849,8 +851,8 @@ accountManage.getuserinfomation = function (data, response) {
                     head: accountData.head,
                     sex: accountData.sex,
                     userBackground: accountData.userBackground,
-                    accessKey: accessKey,
-                    flag: 0
+//                    accessKey: accessKey,
+//                    flag: 0
                 };
                 response.write(JSON.stringify({
                     "提示信息": "获取用户信息成功",

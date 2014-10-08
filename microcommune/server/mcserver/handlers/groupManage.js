@@ -722,6 +722,7 @@ groupManage.getallmembers = function (data, response) {
                         byPhone: member.byPhone,
                         longitude: member.longitude || "",
                         latitude: member.latitude || "",
+                        createTime: member.createTime,
                         lastlogintime: member.lastlogintime || "",
                         userBackground: member.userBackground || "Back"
                     };
@@ -1423,10 +1424,11 @@ groupManage.getgroupmembers = function (data, response) {
                         addMessage: "",
                         friendStatus: "",
                         alias: "",
-                        flag: "none",
-                        accessKey: "",
+//                        flag: "none",
+//                        accessKey: "",
                         distance: 0,
-                        notReadMessagesCount: 0,
+                        createTime: accountData.createTime,
+//                        notReadMessagesCount: 0,
                         longitude: location.longitude || 0,
                         latitude: location.latitude || 0
                     };
