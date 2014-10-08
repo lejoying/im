@@ -26,7 +26,8 @@
         android:name="android.test.InstrumentationTestRunner"
         android:label="Tests for My App"
         android:targetPackage="com.open.welinks" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -60,7 +61,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-      <activity
+
+        <activity
             android:name="com.open.welinks.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -132,13 +134,6 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name="com.open.welinks.InviteFriendActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle"
-            android:windowSoftInputMode="adjustPan" >
-        </activity>
-        <activity
             android:name="com.open.welinks.GroupMemberManageActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -179,13 +174,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustResize" >
-        </activity>
-        <activity
-            android:name="com.open.welinks.controller.TestHttpLongPull"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle"
-            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="com.open.welinks.SettingActivity"

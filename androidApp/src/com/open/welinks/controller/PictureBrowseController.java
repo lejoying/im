@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.PictureBrowseView;
 

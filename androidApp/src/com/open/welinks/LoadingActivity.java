@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.open.welinks.controller.LoginController;
-import com.open.welinks.controller.TestHttpLongPull;
 import com.open.welinks.controller.TestMultipartUpload;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;
@@ -105,7 +104,7 @@ public class LoadingActivity extends Activity {
 			startActivity(new Intent(LoadingActivity.this, TestMultipartUpload.class));
 		} else if (item.getItemId() == R.id.csubmenu2_3) {
 			Log.d(tag, "csubmenu2_3");
-			startActivity(new Intent(LoadingActivity.this, TestHttpLongPull.class));
+//			startActivity(new Intent(LoadingActivity.this, TestHttpLongPull.class));
 		} else if (item.getItemId() == R.id.csubmenu2_4) {
 			Log.d(tag, "csubmenu2_4");
 			startActivity(new Intent(LoadingActivity.this, DownloadOssFileActivity.class));

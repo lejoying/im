@@ -951,7 +951,7 @@ public class ShareSubView {
 
 	@SuppressWarnings("deprecation")
 	public void initSmallBusinessCardDialog() {
-		userCardMainView = mainView.mInflater.inflate(R.layout.account_info_pop, null);
+		userCardMainView = mainView.mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
 		optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
 		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
 		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);

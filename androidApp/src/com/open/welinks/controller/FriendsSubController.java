@@ -24,6 +24,7 @@ import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
+import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;

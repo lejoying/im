@@ -7,7 +7,7 @@
 
     <include layout="@layout/view_back_view" />
 
-    <com.open.welinks.utils.ClearEditText
+    <com.open.welinks.customView.ClearEditText
         android:id="@+id/filter_edit"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             android:textSize="30.0dip"
             android:visibility="invisible" />
 
-        <com.open.welinks.utils.SideBar
+        <com.open.welinks.customView.SideBar
             android:id="@+id/sidrbar"
             android:layout_width="30.0dip"
             android:layout_height="fill_parent"

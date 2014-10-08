@@ -136,7 +136,7 @@ public class LBSHandlers {
 	RequestCallBack<String> LBSAccountDataSearch = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public int status;
-			public String info;
+			// public String info;
 			public int count;
 			public ArrayList<data> datas;
 
@@ -164,7 +164,7 @@ public class LBSHandlers {
 	RequestCallBack<String> LBSGroupDataSearch = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public int status;
-			public String info;
+			// public String info;
 			public int count;
 			public ArrayList<data> datas;
 
@@ -192,7 +192,7 @@ public class LBSHandlers {
 	RequestCallBack<String> LBSSquareDataSearch = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public int status;
-			public String info;
+			// public String info;
 			public int count;
 			public ArrayList<data> datas;
 
@@ -266,4 +266,11 @@ public class LBSHandlers {
 		return Double.valueOf(num);
 	}
 
+	public static String getDistance(int distance) {
+		if (distance < 1000) {
+			return distance + "m";
+		} else {
+			return Math.round(distance / 1000 / 1.0) + "km";
+		}
+	}
 }

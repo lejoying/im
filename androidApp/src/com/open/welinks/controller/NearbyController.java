@@ -40,13 +40,14 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
+import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.view.NearbyView;
-import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
 
 public class NearbyController {
 	public Data data = Data.getInstance();

@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;

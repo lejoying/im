@@ -35,6 +35,8 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
+import com.open.welinks.customView.ThreeChoicesView;
+import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Event.EventMessage;
@@ -46,8 +48,6 @@ import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.view.ThreeChoicesView;
-import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.view.ViewManage;
 
 public class DynamicListActivity extends Activity {
@@ -593,7 +593,7 @@ public class DynamicListActivity extends Activity {
 
 	@SuppressWarnings("deprecation")
 	public void initSmallBusinessCardDialog() {
-		userCardMainView = mInflater.inflate(R.layout.account_info_pop, null);
+		userCardMainView = mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
 		optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
 		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
 		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);

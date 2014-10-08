@@ -271,7 +271,7 @@ public class GroupInfomationView {
 
 	@SuppressWarnings("deprecation")
 	public void initSmallBusinessCardDialog() {
-		userCardMainView = mInflater.inflate(R.layout.account_info_pop, null);
+		userCardMainView = mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
 		optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
 		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
 		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);

@@ -60,10 +60,10 @@ import com.amap.api.services.geocoder.GeocodeSearch.OnGeocodeSearchListener;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.help.Inputtips;
-import com.amap.api.services.help.Tip;
 import com.amap.api.services.help.Inputtips.InputtipsListener;
+import com.amap.api.services.help.Tip;
 import com.open.welinks.model.Constant;
-import com.open.welinks.utils.DistanceUtils;
+import com.open.welinks.model.LBSHandlers;
 
 public class CreateGroupLocationActivity extends Activity {
 
@@ -464,7 +464,7 @@ public class CreateGroupLocationActivity extends Activity {
 				holder = (GroupListHolder) convertView.getTag();
 			}
 			holder.name.setText((String) infomation.get("name"));
-			holder.distance.setText(DistanceUtils.getDistance((Integer) infomation.get("distance")));
+			holder.distance.setText(LBSHandlers.getDistance((Integer) infomation.get("distance")));
 
 			com.amap.api.cloud.model.LatLonPoint point = (com.amap.api.cloud.model.LatLonPoint) infomation.get("location");
 			LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());

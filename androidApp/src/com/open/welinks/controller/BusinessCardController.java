@@ -27,6 +27,7 @@ import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;

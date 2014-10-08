@@ -43,6 +43,8 @@ import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
+import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;

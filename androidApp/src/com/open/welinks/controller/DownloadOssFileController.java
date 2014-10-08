@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TestHttp;
 import com.open.welinks.R;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.ResponseHandlers;

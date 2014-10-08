@@ -12,6 +12,7 @@ import com.open.welinks.DynamicListActivity;
 import com.open.welinks.FindMoreActivity;
 import com.open.welinks.R;
 import com.open.welinks.SettingActivity;
+import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.MeSubView;
 import android.view.ViewGroup;

@@ -394,7 +394,7 @@ public class FriendsSubView {
 	public TextView singleButtonView;
 
 	public void initSmallBusinessCardDialog() {
-		userCardMainView = mInflater.inflate(R.layout.account_info_pop, null);
+		userCardMainView = mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
 		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
 		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);
 		distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);

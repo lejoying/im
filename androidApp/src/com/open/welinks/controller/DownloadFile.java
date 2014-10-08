@@ -14,6 +14,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.view.DownloadOssFileView.TransportingList.TransportingItem;
 

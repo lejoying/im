@@ -13,6 +13,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.DynamicListActivity;
 import com.open.welinks.R;
+import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.DataUtil;

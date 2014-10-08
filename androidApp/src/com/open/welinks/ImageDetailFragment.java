@@ -20,7 +20,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
-import com.open.welinks.controller.OnDownloadListener;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 
 public class ImageDetailFragment extends Fragment {

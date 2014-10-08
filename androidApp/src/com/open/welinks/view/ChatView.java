@@ -208,15 +208,15 @@ public class ChatView {
 			chatHolder = new ChatHolder();
 			if (message.sendType.equals("point")) {
 				if (message.phone.equals(user.phone)) {
-					convertView = mInflater.inflate(R.layout.f_chat_item_send, null);
+					convertView = mInflater.inflate(R.layout.chat_item_send, null);
 				} else if (type == Constant.MESSAGE_TYPE_RECEIVE) {
-					convertView = mInflater.inflate(R.layout.f_chat_item_receive, null);
+					convertView = mInflater.inflate(R.layout.chat_item_receive, null);
 				}
 			} else if (message.sendType.equals("group")) {
 				if (message.phone.equals(user.phone)) {
-					convertView = mInflater.inflate(R.layout.f_chat_item_send, null);
+					convertView = mInflater.inflate(R.layout.chat_item_send, null);
 				} else if (type == Constant.MESSAGE_TYPE_RECEIVE) {
-					convertView = mInflater.inflate(R.layout.f_chat_item_receive, null);
+					convertView = mInflater.inflate(R.layout.chat_item_receive, null);
 				}
 			}
 			chatHolder.time = (TextView) convertView.findViewById(R.id.time);
@@ -341,7 +341,7 @@ public class ChatView {
 
 	@SuppressWarnings("deprecation")
 	public void initSmallBusinessCardDialog() {
-		userCardMainView = mInflater.inflate(R.layout.account_info_pop, null);
+		userCardMainView = mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
 		optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
 		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
 		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);

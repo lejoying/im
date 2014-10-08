@@ -161,12 +161,15 @@ public class MessagesSubView {
 				if ("p".equals(type)) {
 					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
 					messageBody.setContent(message, fileName);
+					this.messageListBody.listItemsSequence.add(key2);
 				} else if ("g".equals(type)) {
 					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
 					messageBody.setContent(message, fileName);
+					this.messageListBody.listItemsSequence.add(key2);
 				} else {
 					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key);
 					messageBody.setContent(null, "");
+					this.messageListBody.listItemsSequence.add(key);
 				}
 			} else {
 				messageBody = new MessageBody(this.messageListBody);

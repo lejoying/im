@@ -77,7 +77,7 @@ public class ShareView extends FrameLayout {
 	}
 
 	private void onCreate() {
-		LayoutInflater.from(context).inflate(R.layout.layout_share, this);
+		LayoutInflater.from(context).inflate(R.layout.view_dialog_share, this);
 
 		weChatShareUtils = WeChatShareUtils.getInstance(context);
 

@@ -35,14 +35,14 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.welinks.customView.ClearEditText;
+import com.open.welinks.customView.SideBar;
+import com.open.welinks.customView.SideBar.OnTouchingLetterChangedListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.CharacterParser;
-import com.open.welinks.utils.ClearEditText;
-import com.open.welinks.utils.SideBar;
-import com.open.welinks.utils.SideBar.OnTouchingLetterChangedListener;
 
 public class FriendsSortListActivity extends Activity {
 
@@ -190,7 +190,7 @@ public class FriendsSortListActivity extends Activity {
 		displayMetrics = new DisplayMetrics();
 
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		setContentView(R.layout.activity_sortlist);
+		setContentView(R.layout.activity_friendlist_sort);
 		mainContainer = (FrameLayout) findViewById(R.id.mainContainer);
 		alreadyListContainer = (LinearLayout) findViewById(R.id.alreadyListContainer);
 		backView = (RelativeLayout) findViewById(R.id.backView);
@@ -337,7 +337,7 @@ public class FriendsSortListActivity extends Activity {
 			final SortModel mContent = list.get(position);
 			if (view == null) {
 				viewHolder = new ViewHolder();
-				view = LayoutInflater.from(mContext).inflate(R.layout.item, null);
+				view = LayoutInflater.from(mContext).inflate(R.layout.activity_friendlist_sort_item, null);
 				viewHolder.tvTitle = (TextView) view.findViewById(R.id.tv_friendNickName);
 				viewHolder.tvLetter = (TextView) view.findViewById(R.id.tv_nickNameFirst);
 				viewHolder.tvLetterParent = (LinearLayout) view.findViewById(R.id.ll_nickNameType);
@@ -487,5 +487,4 @@ public class FriendsSortListActivity extends Activity {
 			this.sortLetters = sortLetters;
 		}
 	}
-
 }

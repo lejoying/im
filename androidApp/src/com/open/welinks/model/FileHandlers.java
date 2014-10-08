@@ -25,7 +25,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
-import com.open.welinks.controller.OnDownloadListener;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.utils.StreamParser;
 
 public class FileHandlers {

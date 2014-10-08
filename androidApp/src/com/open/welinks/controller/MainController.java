@@ -52,6 +52,7 @@ import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.LoginActivity;
 import com.open.welinks.R;
 import com.open.welinks.ScanQRCodeActivity;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
@@ -63,7 +64,6 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
-import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
 
 public class MainController {
@@ -98,7 +98,6 @@ public class MainController {
 	public FriendsSubController friendsSubController;
 	public MeSubController meSubController;
 
-	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
 	Handler handler = new Handler();
 	String url_userInfomation = "http://www.we-links.com/api2/account/getuserinfomation";
 	String url_intimateFriends = "http://www.we-links.com/api2/relation/intimatefriends";

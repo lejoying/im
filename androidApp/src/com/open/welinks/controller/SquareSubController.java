@@ -33,6 +33,8 @@ import com.open.welinks.FindMoreActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
+import com.open.welinks.customListener.MyOnClickListener;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;

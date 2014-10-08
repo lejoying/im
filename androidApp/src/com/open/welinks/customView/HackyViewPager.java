@@ -1,4 +1,4 @@
-package com.open.welinks.view;
+package com.open.welinks.customView;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
