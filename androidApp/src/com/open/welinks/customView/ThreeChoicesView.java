@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 import com.open.welinks.R;
 
 public class ThreeChoicesView extends FrameLayout {
-	private Context context;
 	private Button button_one, button_two, button_three;
 	private View layout_two;
 	private OnClickListener mOnClickListener;
@@ -21,7 +20,6 @@ public class ThreeChoicesView extends FrameLayout {
 
 	public ThreeChoicesView(Context context) {
 		super(context);
-		this.context = context;
 		OnCreate(context);
 	}
 
@@ -30,19 +28,16 @@ public class ThreeChoicesView extends FrameLayout {
 		if (defaultItem > 0 && defaultItem < 4) {
 			clickedItem = defaultItem;
 		}
-		this.context = context;
 		OnCreate(context);
 	}
 
 	public ThreeChoicesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.context = context;
 		OnCreate(context);
 	}
 
 	public ThreeChoicesView(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		this.context = context;
 		OnCreate(context);
 	}
 

@@ -1,12 +1,10 @@
 package com.open.welinks.view;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,12 +34,11 @@ import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.FriendsSubController;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
-import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -87,7 +84,13 @@ public class FriendsSubView {
 		friendListBody.initialize(displayMetrics, friendsView);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
-		initSmallBusinessCardDialog();
+		initPop();
+	}
+
+	public SmallBusinessCardPopView businessCardPopView;
+
+	private void initPop() {
+		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 	}
 
 	public void showCircles() {
@@ -377,81 +380,5 @@ public class FriendsSubView {
 					inputDialigView.setTranslationY(y0);
 			}
 		}
-	}
-
-	// small businesscard
-	public DisplayImageOptions smallBusinessCardOptions;
-	public View userCardMainView;
-	public PopupWindow userCardPopWindow;
-	public RelativeLayout userBusinessContainer;
-	public TextView goInfomationView;
-	public TextView goChatView;
-	public ImageView userHeadView;
-	public TextView userNickNameView;
-	public TextView userAgeView;
-	public TextView distanceView;
-	public TextView lastLoginTimeView;
-	public TextView singleButtonView;
-
-	public void initSmallBusinessCardDialog() {
-		userCardMainView = mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
-		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
-		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);
-		distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);
-		lastLoginTimeView = (TextView) userCardMainView.findViewById(R.id.lastLoginTime);
-		userBusinessContainer = (RelativeLayout) userCardMainView.findViewById(R.id.userBusinessView);
-		int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + getStatusBarHeight(mainView.thisActivity);
-		userBusinessContainer.getLayoutParams().height = height;
-		goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
-		goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);
-		singleButtonView = (TextView) userCardMainView.findViewById(R.id.singleButton);
-		singleButtonView.setVisibility(View.GONE);
-		userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
-		userHeadView.getLayoutParams().height = height;
-		userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
-		userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
-		smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(5)).build();
-	}
-
-	LBSHandlers lbsHandlers = LBSHandlers.getInstance();
-
-	public void setSmallBusinessCardContent(Friend friend) {
-		User user = data.userInformation.currentUser;
-		goInfomationView.setTag(R.id.tag_first, friend.phone);
-		goChatView.setTag(R.id.tag_first, friend.phone);
-		fileHandlers.getHeadImage(friend.head, userHeadView, smallBusinessCardOptions);
-		userNickNameView.setText(friend.nickName);
-		userAgeView.setText(friend.age + "");
-		distanceView.setText(lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude) + "km");
-		lastLoginTimeView.setText("0小时前");
-	}
-
-	public void showUserCardDialogView() {
-		if (userCardPopWindow != null && !userCardPopWindow.isShowing()) {
-			userCardPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
-		}
-	}
-
-	public void dismissUserCardDialogView() {
-		if (userCardPopWindow != null && userCardPopWindow.isShowing()) {
-			userCardPopWindow.dismiss();
-		}
-	}
-
-	public static int getStatusBarHeight(Context context) {
-		Class<?> c = null;
-		Object obj = null;
-		Field field = null;
-		int x = 0, statusBarHeight = 0;
-		try {
-			c = Class.forName("com.android.internal.R$dimen");
-			obj = c.newInstance();
-			field = c.getField("status_bar_height");
-			x = Integer.parseInt(field.get(obj).toString());
-			statusBarHeight = context.getResources().getDimensionPixelSize(x);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		return statusBarHeight;
 	}
 }

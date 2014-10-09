@@ -107,7 +107,7 @@ public class Data {
 			public String flag = "none";
 			public String createTime;
 
-			public String lastlogintime;
+			public String lastLoginTime;
 			public String longitude;
 			public String latitude;
 
@@ -162,7 +162,7 @@ public class Data {
 			public String latitude;
 			public String userBackground = "Back";
 			public String alias = "";
-			public String lastlogintime;
+			public String lastLoginTime;
 			public String createTime;
 
 			public String groupsSequenceString;

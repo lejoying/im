@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Service;
-import android.content.Intent;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -21,20 +20,18 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
-import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Parser;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Parser;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.FriendsSubView;
-import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.FriendsSubView.CircleBody;
 
 public class FriendsSubController {
@@ -70,25 +67,12 @@ public class FriendsSubController {
 		mOnClickListener = new MyOnClickListener() {
 
 			public void onClickEffective(View view) {
-				if (view.equals(thisView.goInfomationView)) {
-					String phone = (String) view.getTag(R.id.tag_first);
-					Intent intent = new Intent(thisView.mainView.thisActivity, BusinessCardActivity.class);
-					intent.putExtra("key", phone);
-					intent.putExtra("type", "point");
-					thisView.mainView.thisActivity.startActivity(intent);
-				} else if (view.equals(thisView.goChatView)) {
-					String phone = (String) view.getTag(R.id.tag_first);
-					Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
-					intent.putExtra("id", phone);
-					intent.putExtra("type", "point");
-					thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
-				} else if (view.equals(thisView.userCardMainView)) {
-					thisView.dismissUserCardDialogView();
-				}
 				Friend friend = null;
 				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
-					thisView.setSmallBusinessCardContent(friend);
-					thisView.showUserCardDialogView();
+					// thisView.setSmallBusinessCardContent(friend);
+					// thisView.showUserCardDialogView();
+					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, friend.phone);
+					thisView.businessCardPopView.showUserCardDialogView();
 				}
 			}
 		};
@@ -157,9 +141,6 @@ public class FriendsSubController {
 
 	public void bindEvent() {
 		thisView.friendListBody.bodyCallback = this.bodyCallback;
-		thisView.goInfomationView.setOnClickListener(mOnClickListener);
-		thisView.goChatView.setOnClickListener(mOnClickListener);
-		thisView.userCardMainView.setOnClickListener(mOnClickListener);
 	}
 
 	public void onLongPress(MotionEvent event) {

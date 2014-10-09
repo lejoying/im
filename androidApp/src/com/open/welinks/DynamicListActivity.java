@@ -1,18 +1,13 @@
 package com.open.welinks;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +17,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,6 +29,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
@@ -42,7 +37,6 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
@@ -107,7 +101,11 @@ public class DynamicListActivity extends Activity {
 		changData(selectType);
 		getRequareAddFriendList();
 	}
-
+	@Override
+	protected void onResume() {
+		businessCardPopView.dismissUserCardDialogView();
+		super.onResume();
+	}
 	@Override
 	public void finish() {
 		viewManage.postNotifyView("MessagesSubView");
@@ -168,6 +166,8 @@ public class DynamicListActivity extends Activity {
 		}
 	}
 
+	public SmallBusinessCardPopView businessCardPopView;
+
 	public void initView() {
 		mInflater = this.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
@@ -190,8 +190,7 @@ public class DynamicListActivity extends Activity {
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainerView.addView(threeChoicesView, params);
-
-		initSmallBusinessCardDialog();
+		businessCardPopView = new SmallBusinessCardPopView(this, maxView);
 	}
 
 	public OnItemClickListener mOnItemClickListener;
@@ -203,75 +202,50 @@ public class DynamicListActivity extends Activity {
 			public void onClick(View view) {
 				if (view.equals(backView)) {
 					finish();
-				} else if (view.equals(userCardMainView)) {
-					dismissUserCardDialogView();
-				} else if (view.equals(goChatView)) {
-					Intent intent = new Intent(DynamicListActivity.this, ChatActivity.class);
-					intent.putExtra("id", (String) view.getTag(R.id.tag_first));
-					intent.putExtra("type", (String) view.getTag(R.id.tag_second));
-					startActivityForResult(intent, R.id.tag_second);
-					dismissUserCardDialogView();
-				} else if (view.equals(goInfomationView)) {
-					Intent intent = new Intent(DynamicListActivity.this, BusinessCardActivity.class);
-					intent.putExtra("key", (String) view.getTag(R.id.tag_first));
-					intent.putExtra("type", (String) view.getTag(R.id.tag_second));
-					startActivity(intent);
-					dismissUserCardDialogView();
-				} else if (view.equals(singleButtonView)) {
-					Intent intent = new Intent(DynamicListActivity.this, BusinessCardActivity.class);
-					String key = (String) view.getTag(R.id.tag_first);
-					String type = (String) view.getTag(R.id.tag_second);
-					intent.putExtra("key", key);
-					intent.putExtra("type", type);
-					intent.putExtra("isTemp", true);
-					if ("point".equals(type)) {
-						data.tempData.tempFriend = data.relationship.friendsMap.get(key);
-					} else if ("group".equals(type)) {
-						data.tempData.tempGroup = data.relationship.groupsMap.get(key);
-					}
-					startActivity(intent);
-					dismissUserCardDialogView();
 				} else if (view.getTag(R.id.tag_class) != null) {
 					String tag_class = (String) view.getTag(R.id.tag_class);
 					if ("event_group".equals(tag_class)) {
 						String key = (String) view.getTag(R.id.tag_first);
-						parser.check();
-						boolean isExists = data.relationship.groups.contains(key);
-						if (isExists) {
-							Group group = data.relationship.groupsMap.get(key);
-							setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, TYPE_CARD_GROUP, isExists);
-						} else {
-							Group group = data.relationship.groupsMap.get(key);
-							if (group != null) {
-								setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, TYPE_CARD_GROUP, isExists);
-							} else {
-								setSmallBusinessCardContent(key, "", "", "", "0", "0", TYPE_CARD_GROUP, isExists);
-							}
-							scanGroupCard(key);
-						}
-						showUserCardDialogView();
+						businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_GROUP, key);
+						// parser.check();
+						// boolean isExists = data.relationship.groups.contains(key);
+						// if (isExists) {
+						// // Group group = data.relationship.groupsMap.get(key);
+						// businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_GROUP, key);
+						// // setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, 0, isExists);
+						// } else {
+						// Group group = data.relationship.groupsMap.get(key);
+						// if (group != null) {
+						// setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, TYPE_CARD_GROUP, isExists);
+						// } else {
+						// setSmallBusinessCardContent(key, "", "", "", "0", "0", TYPE_CARD_GROUP, isExists);
+						// }
+						// scanGroupCard(key);
+						// }
+						businessCardPopView.showUserCardDialogView();
 					} else if ("event_user".equals(tag_class)) {
 						String key = (String) view.getTag(R.id.tag_first);
-						parser.check();
-						User user = data.userInformation.currentUser;
-						if (user.phone.equals(key)) {
-							setSmallBusinessCardContent(user.phone + "", user.head, user.nickName, "", user.longitude, user.latitude, TYPE_CARD_FRIEND, true);
-						} else {
-							boolean isExists = data.relationship.friends.contains(key);
-							if (isExists) {
-								Friend friend = data.relationship.friendsMap.get(key);
-								setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, true);
-							} else {
-								Friend friend = data.relationship.friendsMap.get(key);
-								if (friend != null) {
-									setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, false);
-								} else {
-									setSmallBusinessCardContent(key, "", "", "", "0", "0", TYPE_CARD_FRIEND, false);
-								}
-							}
-							scanUserCard(key);
-						}
-						showUserCardDialogView();
+						businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_POINT, key);
+						// parser.check();
+						// User user = data.userInformation.currentUser;
+						// if (user.phone.equals(key)) {
+						// setSmallBusinessCardContent(user.phone + "", user.head, user.nickName, "", user.longitude, user.latitude, TYPE_CARD_FRIEND, true);
+						// } else {
+						// boolean isExists = data.relationship.friends.contains(key);
+						// if (isExists) {
+						// Friend friend = data.relationship.friendsMap.get(key);
+						// setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, true);
+						// } else {
+						// Friend friend = data.relationship.friendsMap.get(key);
+						// if (friend != null) {
+						// setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, false);
+						// } else {
+						// setSmallBusinessCardContent(key, "", "", "", "0", "0", TYPE_CARD_FRIEND, false);
+						// }
+						// }
+						// scanUserCard(key);
+						// }
+						businessCardPopView.showUserCardDialogView();
 					}
 				}
 			}
@@ -306,7 +280,6 @@ public class DynamicListActivity extends Activity {
 	public void bindEvent() {
 		threeChoicesView.setOnItemClickListener(mOnItemClickListener);
 		this.backView.setOnClickListener(mOnClickListener);
-		this.userCardMainView.setOnClickListener(mOnClickListener);
 	}
 
 	public class GroupEventListAdapter extends BaseAdapter {
@@ -575,121 +548,9 @@ public class DynamicListActivity extends Activity {
 		public TextView processedView;
 	}
 
-	// small businesscard
-	public DisplayImageOptions smallBusinessCardOptions;
-	public View userCardMainView;
-	public PopupWindow userCardPopWindow;
-	public RelativeLayout userBusinessContainer;
-	public TextView goInfomationView;
-	public TextView goChatView;
-	public ImageView userHeadView;
-	public TextView userNickNameView;
-	public TextView userAgeView;
-	public TextView distanceView;
-	public TextView lastLoginTimeView;
-	public LinearLayout optionTwoView;
-	public TextView singleButtonView;
-	public TextView cardStatusView;
-
-	@SuppressWarnings("deprecation")
-	public void initSmallBusinessCardDialog() {
-		userCardMainView = mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
-		optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
-		userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
-		userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);
-		distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);
-		lastLoginTimeView = (TextView) userCardMainView.findViewById(R.id.lastLoginTime);
-		userBusinessContainer = (RelativeLayout) userCardMainView.findViewById(R.id.userBusinessView);
-		int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + getStatusBarHeight(this);
-		userBusinessContainer.getLayoutParams().height = height;
-		goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
-		goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);
-		singleButtonView = (TextView) userCardMainView.findViewById(R.id.singleButton);
-		cardStatusView = (TextView) userCardMainView.findViewById(R.id.cardStatus);
-		// singleButtonView.setVisibility(View.GONE);
-		userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
-		userHeadView.getLayoutParams().height = height;
-		userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
-		userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
-		smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
-	}
-
-	public int TYPE_CARD_FRIEND = 0x01;
-	public int TYPE_CARD_GROUP = 0x02;
-
-	public void setSmallBusinessCardContent(String key, String head, String nickName, String age, String longitude, String latitude, int type, boolean isRelationship) {
-		User user = data.userInformation.currentUser;
-		String cardStatus = "";
-		goInfomationView.setTag(R.id.tag_class, type);
-		goInfomationView.setTag(R.id.tag_first, key);
-		if (isRelationship) {
-			goChatView.setTag(R.id.tag_class, type);
-			goChatView.setTag(R.id.tag_first, key);
-			goInfomationView.setOnClickListener(mOnClickListener);
-			goChatView.setOnClickListener(mOnClickListener);
-			singleButtonView.setVisibility(View.GONE);
-			if (type == TYPE_CARD_FRIEND) {
-				cardStatus = "已是好友";
-				goChatView.setTag(R.id.tag_second, "point");
-				// goInfomationView.setTag(R.id.tag_third, true);
-				goInfomationView.setTag(R.id.tag_second, "point");
-				// goInfomationView.setTag(R.id.tag_third, true);
-			} else if (type == TYPE_CARD_GROUP) {
-				cardStatus = "已加入群组";
-				goChatView.setTag(R.id.tag_second, "group");
-				goInfomationView.setTag(R.id.tag_second, "group");
-			}
-			if (user.phone.equals(key)) {
-				singleButtonView.setTag(R.id.tag_class, type);
-				singleButtonView.setTag(R.id.tag_first, key);
-				singleButtonView.setTag(R.id.tag_second, "point");
-				optionTwoView.setVisibility(View.GONE);
-				singleButtonView.setVisibility(View.VISIBLE);
-				singleButtonView.setOnClickListener(mOnClickListener);
-			}
-		} else {
-			singleButtonView.setTag(R.id.tag_class, type);
-			singleButtonView.setTag(R.id.tag_first, key);
-			singleButtonView.setOnClickListener(mOnClickListener);
-			optionTwoView.setVisibility(View.GONE);
-			singleButtonView.setVisibility(View.VISIBLE);
-			if (type == TYPE_CARD_FRIEND) {
-				cardStatus = "不是好友";
-				singleButtonView.setTag(R.id.tag_second, "point");
-			} else if (type == TYPE_CARD_GROUP) {
-				cardStatus = "未加入群组";
-				singleButtonView.setTag(R.id.tag_second, "group");
-			}
-		}
-		cardStatusView.setText(cardStatus);
-		fileHandlers.getHeadImage(head, userHeadView, smallBusinessCardOptions);
-		userNickNameView.setText(nickName);
-		distanceView.setText(lbsHandlers.pointDistance(user.longitude, user.latitude, longitude, latitude) + "km");
-		if (type == TYPE_CARD_GROUP) {
-			lastLoginTimeView.setVisibility(View.GONE);
-			userAgeView.setVisibility(View.GONE);
-		} else {
-			lastLoginTimeView.setText("0小时前");
-			userAgeView.setText(age + "");
-		}
-	}
-
-	public void showUserCardDialogView() {
-		if (userCardPopWindow != null && !userCardPopWindow.isShowing()) {
-			userCardPopWindow.showAtLocation(maxView, Gravity.CENTER, 0, 0);
-		}
-	}
-
-	public void dismissUserCardDialogView() {
-		if (userCardPopWindow != null && userCardPopWindow.isShowing()) {
-			userCardPopWindow.dismiss();
-		}
-	}
-
 	public HttpClient httpClient = HttpClient.getInstance();
 
 	public void scanGroupCard(final String gid) {
-		Log.e("Coolspan-DynamicList", gid);
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
@@ -711,7 +572,7 @@ public class DynamicListActivity extends Activity {
 						parser.check();
 						String gid = group.gid + "";
 						Group group0 = data.relationship.groupsMap.get(gid);
-						boolean flag = data.relationship.groups.contains(gid);
+//						boolean flag = data.relationship.groups.contains(gid);
 						if (group0 != null) {
 							group0.icon = group.icon;
 							group0.name = group.name;
@@ -723,13 +584,13 @@ public class DynamicListActivity extends Activity {
 							data.relationship.groupsMap.put(gid, group);
 						}
 						data.relationship.isModified = true;
-						int type = (Integer) goInfomationView.getTag(R.id.tag_class);
-						if (type == TYPE_CARD_GROUP) {
-							String key = (String) goInfomationView.getTag(R.id.tag_first);
-							if (gid.equals(key)) {
-								setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, TYPE_CARD_GROUP, flag);
-							}
-						}
+//						int type = (Integer) goInfomationView.getTag(R.id.tag_class);
+//						if (type == TYPE_CARD_GROUP) {
+//							String key = (String) goInfomationView.getTag(R.id.tag_first);
+//							if (gid.equals(key)) {
+//								setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, TYPE_CARD_GROUP, flag);
+//							}
+//						}
 					}
 				}
 			};
@@ -737,7 +598,6 @@ public class DynamicListActivity extends Activity {
 	}
 
 	public void scanUserCard(String phone) {
-		Log.e("Coolspan-DynamicList", phone);
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
@@ -757,7 +617,7 @@ public class DynamicListActivity extends Activity {
 					if (friend != null) {
 						parser.check();
 						Friend friend0 = data.relationship.friendsMap.get(friend.phone);
-						boolean flag = data.relationship.friends.contains(friend.phone);
+//						boolean flag = data.relationship.friends.contains(friend.phone);
 						if (friend0 != null) {
 							friend0.sex = friend.sex;
 							friend0.nickName = friend.nickName;
@@ -766,39 +626,22 @@ public class DynamicListActivity extends Activity {
 							friend0.longitude = friend.longitude;
 							friend0.latitude = friend.latitude;
 							friend0.userBackground = friend.userBackground;
-							friend0.lastlogintime = friend.lastlogintime;
+							friend0.lastLoginTime = friend.lastLoginTime;
 						} else {
 							data.relationship.friendsMap.put(friend.phone, friend);
 						}
 						data.relationship.isModified = true;
-						int type = (Integer) goInfomationView.getTag(R.id.tag_class);
-						if (type == TYPE_CARD_FRIEND) {
-							String key = (String) goInfomationView.getTag(R.id.tag_first);
-							if (friend.phone.equals(key)) {
-								setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, flag);
-							}
-						}
+						// int type = (Integer) goInfomationView.getTag(R.id.tag_class);
+						// if (type == TYPE_CARD_FRIEND) {
+						// String key = (String) goInfomationView.getTag(R.id.tag_first);
+						// if (friend.phone.equals(key)) {
+						// setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, flag);
+						// }
+						// }
 					}
 				}
 			};
 		});
-	}
-
-	public static int getStatusBarHeight(Context context) {
-		Class<?> c = null;
-		Object obj = null;
-		Field field = null;
-		int x = 0, statusBarHeight = 0;
-		try {
-			c = Class.forName("com.android.internal.R$dimen");
-			obj = c.newInstance();
-			field = c.getField("status_bar_height");
-			x = Integer.parseInt(field.get(obj).toString());
-			statusBarHeight = context.getResources().getDimensionPixelSize(x);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		return statusBarHeight;
 	}
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();

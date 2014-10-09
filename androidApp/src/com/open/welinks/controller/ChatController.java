@@ -49,7 +49,6 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
-import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
@@ -136,7 +135,7 @@ public class ChatController {
 	}
 
 	public void onResume() {
-		thisView.dismissUserCardDialogView();
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 
 	public void onPause() {
@@ -155,16 +154,6 @@ public class ChatController {
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 					// mFinish();
-				} else if (view.equals(thisView.userCardMainView)) {
-					thisView.dismissUserCardDialogView();
-				} else if (view.equals(thisView.singleButtonView)) {
-					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
-					intent.putExtra("key", (String) view.getTag(R.id.tag_first));
-					intent.putExtra("type", (String) view.getTag(R.id.tag_second));
-					if (view.getTag(R.id.tag_third) != null) {
-						intent.putExtra("isTemp", (Boolean) view.getTag(R.id.tag_third));
-					}
-					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.infomation_layout)) {
 					if ("point".equals(type)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
@@ -213,14 +202,10 @@ public class ChatController {
 					String tag_class = (String) view.getTag(R.id.tag_class);
 					if ("head_click".equals(tag_class)) {
 						String phone = (String) view.getTag(R.id.tag_first);
-						User user = data.userInformation.currentUser;
-						if (user.phone.equals(phone)) {
-							thisView.setSmallBusinessCardContent(phone, user.head, user.nickName, user.age, user.longitude, user.latitude);
-						} else {
-							Friend friend = data.relationship.friendsMap.get(phone);
-							thisView.setSmallBusinessCardContent(phone, friend.head, friend.nickName, friend.age + "", friend.longitude, friend.latitude);
-						}
-						thisView.showUserCardDialogView();
+						// User user = data.userInformation.currentUser;
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
+						thisView.businessCardPopView.cardView.setMenu(false);
+						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (view.getTag(R.id.tag_first) != null) {
 					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
@@ -319,8 +304,6 @@ public class ChatController {
 	}
 
 	public void bindEvent() {
-		thisView.userCardMainView.setOnClickListener(mOnClickListener);
-		thisView.singleButtonView.setOnClickListener(mOnClickListener);
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.infomation_layout.setOnClickListener(mOnClickListener);
 		thisView.sendMessageView.setOnClickListener(mOnClickListener);

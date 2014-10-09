@@ -187,25 +187,31 @@ public class BusinessCardView {
 			ageLayout.setVisibility(View.VISIBLE);
 			rightTopButton.setText("加为好友");
 			Friend friend = data.tempData.tempFriend;
-			log.e("temp phone:" + friend.phone);
-			if (!isGetData)
-				thisController.getFriendCard(friend.phone);
-			businessCard.id = friend.id;
-			businessCard.icon = friend.head;
-			businessCard.sex = friend.sex;
-			businessCard.age = friend.age + "";
-			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
-			businessCard.nickname = friend.nickName;
-			businessCard.mainBusiness = friend.mainBusiness;
-			businessCard.lable = "暂无标签";
-			businessCard.creattime = friend.createTime;
-			businessCard.button_one = "加为好友";
-			businessCard.button_two = "";
-			businessCard.button_three = "";
-			buttonTwo.setVisibility(View.GONE);
-			buttonThree.setVisibility(View.GONE);
-			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempFriend.phone));
+			if (friend == null) {
+				thisController.getFriendCard(thisController.key);
+			}
+			if (data.relationship.friendsMap.get(thisController.key) != null) {
+				friend = data.relationship.friendsMap.get(thisController.key);
+				log.e("temp phone:" + friend.phone);
+				if (!isGetData)
+					thisController.getFriendCard(friend.phone);
+				businessCard.id = friend.id;
+				businessCard.icon = friend.head;
+				businessCard.sex = friend.sex;
+				businessCard.age = friend.age + "";
+				User user = thisController.data.userInformation.currentUser;
+				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
+				businessCard.nickname = friend.nickName;
+				businessCard.mainBusiness = friend.mainBusiness;
+				businessCard.lable = "暂无标签";
+				businessCard.creattime = friend.createTime;
+				businessCard.button_one = "加为好友";
+				businessCard.button_two = "";
+				businessCard.button_three = "";
+				buttonTwo.setVisibility(View.GONE);
+				buttonThree.setVisibility(View.GONE);
+				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
+			}
 		} else if (status.equals(Status.JOINEDGROUP)) {
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
@@ -236,22 +242,28 @@ public class BusinessCardView {
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText("加入群组");
-			businessCard.id = data.tempData.tempGroup.gid;
-			if (!isGetData)
-				thisController.getGroupCard(data.tempData.tempGroup.gid + "", "group");
-			businessCard.icon = data.tempData.tempGroup.icon;
-			businessCard.nickname = data.tempData.tempGroup.name;
-			businessCard.mainBusiness = data.tempData.tempGroup.description;
-			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
-			businessCard.lable = "暂无标签";
-			businessCard.creattime = data.tempData.tempGroup.createTime;
-			businessCard.button_one = "加入群组";
-			businessCard.button_two = "";
-			businessCard.button_three = "";
-			buttonTwo.setVisibility(View.GONE);
-			buttonThree.setVisibility(View.GONE);
-			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
+			if (data.tempData.tempGroup == null) {
+				thisController.getGroupCard(thisController.key, "group");
+			}
+			if (data.relationship.groupsMap.get(thisController.key) != null) {
+				data.tempData.tempGroup = data.relationship.groupsMap.get(thisController.key);
+				businessCard.id = data.tempData.tempGroup.gid;
+				if (!isGetData)
+					thisController.getGroupCard(data.tempData.tempGroup.gid + "", "group");
+				businessCard.icon = data.tempData.tempGroup.icon;
+				businessCard.nickname = data.tempData.tempGroup.name;
+				businessCard.mainBusiness = data.tempData.tempGroup.description;
+				User user = thisController.data.userInformation.currentUser;
+				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
+				businessCard.lable = "暂无标签";
+				businessCard.creattime = data.tempData.tempGroup.createTime;
+				businessCard.button_one = "加入群组";
+				businessCard.button_two = "";
+				businessCard.button_three = "";
+				buttonTwo.setVisibility(View.GONE);
+				buttonThree.setVisibility(View.GONE);
+				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
+			}
 		} else if (status.equals(Status.SQUARE)) {
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
@@ -259,40 +271,40 @@ public class BusinessCardView {
 			rightTopButton.setVisibility(View.GONE);
 			Group square = data.relationship.groupsMap.get(thisController.key);
 			if (square == null) {
-				return;
+				thisController.getGroupCard(thisController.key, "community");
+			} else {
+				businessCard.id = square.gid;
+				if (!isGetData)
+					thisController.getGroupCard(square.gid + "", "community");
+				businessCard.icon = square.icon;
+				businessCard.nickname = square.name;
+				businessCard.mainBusiness = square.description;
+				User user = thisController.data.userInformation.currentUser;
+				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, square.longitude, square.latitude);
+				businessCard.lable = "暂无标签";
+				businessCard.creattime = square.createTime;
+				businessCard.button_one = "进入广场";
+				businessCard.button_two = "";
+				businessCard.button_three = "";
+				buttonOne.setVisibility(View.GONE);
+				buttonTwo.setVisibility(View.GONE);
+				buttonThree.setVisibility(View.GONE);
+				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, square.gid + ""));
+				// rightTopButton.setText("修改资料");
+				// businessCard.id = Integer.valueOf(thisController.key);
+				// businessCard.icon = "";
+				// businessCard.distance = "0";
+				// businessCard.nickname = "";
+				// businessCard.mainBusiness = "暂无描述";
+				// businessCard.lable = "暂无标签";
+				// businessCard.creattime = "0";
+				// businessCard.button_one = "";
+				// businessCard.button_two = "";
+				// businessCard.button_three = "";
+				// buttonOne.setVisibility(View.GONE);
+				// buttonTwo.setVisibility(View.GONE);
+				// buttonThree.setVisibility(View.GONE);
 			}
-			businessCard.id = square.gid;
-			if (!isGetData)
-				thisController.getGroupCard(square.gid + "", "community");
-			businessCard.icon = square.icon;
-			businessCard.nickname = square.name;
-			businessCard.mainBusiness = square.description;
-			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, square.longitude, square.latitude);
-			businessCard.lable = "暂无标签";
-			businessCard.creattime = square.createTime;
-			businessCard.button_one = "进入广场";
-			businessCard.button_two = "";
-			businessCard.button_three = "";
-			buttonOne.setVisibility(View.GONE);
-			buttonTwo.setVisibility(View.GONE);
-			buttonThree.setVisibility(View.GONE);
-			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, square.gid + ""));
-			// rightTopButton.setText("修改资料");
-			// businessCard.id = Integer.valueOf(thisController.key);
-			// businessCard.icon = "";
-			// businessCard.distance = "0";
-			// businessCard.nickname = "";
-			// businessCard.mainBusiness = "暂无描述";
-			// businessCard.lable = "暂无标签";
-			// businessCard.creattime = "0";
-			// businessCard.button_one = "";
-			// businessCard.button_two = "";
-			// businessCard.button_three = "";
-			// buttonOne.setVisibility(View.GONE);
-			// buttonTwo.setVisibility(View.GONE);
-			// buttonThree.setVisibility(View.GONE);
-
 		}
 		if (businessCard.icon.equals("Head") || "".equals(businessCard.icon)) {
 			Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man), true, 5, Color.WHITE);

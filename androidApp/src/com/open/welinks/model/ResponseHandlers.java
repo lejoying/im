@@ -96,6 +96,7 @@ public class ResponseHandlers {
 					user.phone = friend.phone;
 					user.nickName = friend.nickName;
 					user.createTime = friend.createTime;
+					user.lastLoginTime = friend.lastLoginTime;
 					user.mainBusiness = friend.mainBusiness;
 					user.head = friend.head;
 					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
@@ -218,6 +219,7 @@ public class ResponseHandlers {
 						public String age;
 						public String byPhone;
 						public String createTime;
+						public String lastLoginTime;
 						public String userBackground;
 					}
 
@@ -235,6 +237,7 @@ public class ResponseHandlers {
 									user.sex = account.sex;
 									user.age = account.age;
 									user.createTime = account.createTime;
+									user.lastLoginTime = account.lastLoginTime;
 									user.userBackground = account.userBackground;
 									data.userInformation.isModified = true;
 									viewManage.loginView.thisController.loginSuccessful(data.userInformation.currentUser.phone);
@@ -266,7 +269,7 @@ public class ResponseHandlers {
 				User user = data.userInformation.currentUser;
 				user.latitude = response.account.latitude;
 				user.longitude = response.account.longitude;
-				user.lastlogintime = response.account.lastlogintime;
+				user.lastLoginTime = response.account.lastLoginTime;
 				data.userInformation.isModified = true;
 				viewManage.mainView.thisController.chackLBSAccount();
 			} else {
@@ -373,6 +376,7 @@ public class ResponseHandlers {
 			public String age;
 			public String byPhone;
 			public String createTime;
+			public String lastLoginTime;
 			public String userBackground;
 		}
 
@@ -390,6 +394,7 @@ public class ResponseHandlers {
 						user.sex = account.sex;
 						user.age = account.age;
 						user.createTime = account.createTime;
+						user.lastLoginTime = account.lastLoginTime;
 						user.userBackground = account.userBackground;
 						data.userInformation.isModified = true;
 					} else {
@@ -416,6 +421,7 @@ public class ResponseHandlers {
 							friend.sex = account.sex;
 							friend.age = Integer.valueOf(account.age);
 							friend.createTime = account.createTime;
+							friend.lastLoginTime = account.lastLoginTime;
 							friend.userBackground = account.userBackground;
 							friend.id = account.ID;
 
@@ -431,6 +437,7 @@ public class ResponseHandlers {
 								friend.sex = account.sex;
 								friend.age = Integer.valueOf(account.age);
 								friend.createTime = account.createTime;
+								friend.lastLoginTime = account.lastLoginTime;
 								friend.userBackground = account.userBackground;
 							}
 						}
@@ -1130,7 +1137,7 @@ public class ResponseHandlers {
 						friend.latitude = serverFriend.latitude;
 						friend.createTime = serverFriend.createTime;
 						friend.userBackground = serverFriend.userBackground;
-						friend.lastlogintime = serverFriend.lastlogintime;
+						friend.lastLoginTime = serverFriend.lastLoginTime;
 					}
 				}
 				data.relationship.isModified = true;
@@ -1176,7 +1183,7 @@ public class ResponseHandlers {
 							friend.latitude = serverFriend.latitude;
 							friend.createTime = serverFriend.createTime;
 							friend.userBackground = serverFriend.userBackground;
-							friend.lastlogintime = serverFriend.lastlogintime;
+							friend.lastLoginTime = serverFriend.lastLoginTime;
 						}
 					}
 					data.relationship.isModified = true;

@@ -570,7 +570,10 @@ accountManage.get = function (data, response) {
                         byPhone: accountData.byPhone,
                         createTime: accountData.createTime,
                         userBackground: accountData.userBackground,
+                        lastLoginTime: accountData.lastlogintime,
                         circlesOrderString: accountData.circlesOrderString,
+                        longitude: accountData.longitude,
+                        latitude: accountData.latitude,
                         groupsSequenceString: accountData.groupsSequenceString
                     };
                     accounts.push(account);
@@ -852,6 +855,7 @@ accountManage.getuserinfomation = function (data, response) {
                     head: accountData.head,
                     sex: accountData.sex,
                     age: accountData.age,
+                    lastLoginTime: accountData.lastlogintime,
                     userBackground: accountData.userBackground,
 //                    accessKey: accessKey,
 //                    flag: 0
@@ -942,9 +946,7 @@ accountManage.modifylocation = function (data, response) {
                         }));
                         response.end();
                     }
-
                 });
-
             }
         });
     }

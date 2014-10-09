@@ -143,7 +143,7 @@ public class MainController {
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
-		
+
 		DataHandlers.getUserInfomation();
 		DataHandlers.getUserCurrentAllGroup();
 		getIntimatefriends();
@@ -158,8 +158,8 @@ public class MainController {
 		thisView.userTopbarNameView.setText(data.userInformation.currentUser.nickName);
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
-		thisView.friendsSubView.dismissUserCardDialogView();
-		thisView.shareSubView.dismissUserCardDialogView();
+		thisView.friendsSubView.businessCardPopView.dismissUserCardDialogView();
+		thisView.shareSubView.businessCardPopView.dismissUserCardDialogView();
 		// thisView.shareSubView.onResume();
 		// thisView.messagesSubView.onResume();
 	}
@@ -492,7 +492,7 @@ public class MainController {
 		data.sex = user.sex;
 		data.head = user.head;
 		data.mainBusiness = user.mainBusiness;
-		data.lastlogintime = user.lastlogintime;
+		data.lastlogintime = user.lastLoginTime;
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("key", Constant.LBS_KSY);
@@ -515,7 +515,7 @@ public class MainController {
 		data.sex = user.sex;
 		data.head = user.head;
 		data.mainBusiness = user.mainBusiness;
-		data.lastlogintime = user.lastlogintime;
+		data.lastlogintime = user.lastLoginTime;
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();

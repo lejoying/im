@@ -107,6 +107,7 @@ public class GroupMemberManageController {
 					if (thisView.isSubtract == thisView.MANAGE_SUBTRACT) {
 						if (data.userInformation.currentUser.phone.equals(content)) {
 							// Alert.showMessage("不能把自己移出群组");
+							// Alert.showMessage(message);
 							Toast.makeText(thisActivity, "不能把自己移出群组", Toast.LENGTH_SHORT).show();
 						} else {
 							thisView.subtractMembers.add(content);
@@ -115,7 +116,9 @@ public class GroupMemberManageController {
 							thisView.showAlreayList();
 						}
 					} else if (thisView.isSubtract == thisView.MANAGE_COMMON) {
-						Toast.makeText(thisActivity, "好友资料", Toast.LENGTH_SHORT).show();
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, content);
+						thisView.businessCardPopView.showUserCardDialogView();
+						// Toast.makeText(thisActivity, "好友资料", Toast.LENGTH_SHORT).show();
 					}
 				} else if (view.getTag(R.id.tag_class) != null) {
 					String tag_class = (String) view.getTag(R.id.tag_class);
@@ -181,5 +184,9 @@ public class GroupMemberManageController {
 		params.addBodyParameter("members", membersContentString);
 
 		httpUtils.send(HttpMethod.POST, url, params, callBack);
+	}
+
+	public void onResume() {
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 }
