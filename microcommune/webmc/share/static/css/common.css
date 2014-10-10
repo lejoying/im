@@ -188,8 +188,10 @@ ol, ul {
 }
 
 .a-r p {
-    color: #7c7c7c;
     margin-top: 28px;
+}
+.a-r p {
+    color: #7c7c7c;
     margin-right: 20px;
     display: block;
     font-size: 24px;
@@ -224,11 +226,9 @@ ol, ul {
 
 .photos img {
     width: 100%;
-    margin: 9px;
 }
-
+ 
 #body {
-    width: 640px;
     position: relative;
     margin: 0 auto;
     overflow: hidden;
@@ -262,8 +262,7 @@ ol, ul {
 .foot-ul .memo {
     font-size: 24px;
     font-color: #282828;
-    line-height: 60px;
-    height: 60px;
+    line-height: 36px;
     margin-left: 20px;
     display: block;
 }
@@ -289,7 +288,6 @@ ol, ul {
 }
 
 #footer-div {
-    width: 640px;
     margin: 0 auto;
     position: relative;
 }
