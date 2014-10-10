@@ -158,6 +158,7 @@ public class MainController {
 		thisView.userTopbarNameView.setText(data.userInformation.currentUser.nickName);
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
+		thisView.squareSubView.businessCardPopView.dismissUserCardDialogView();
 		thisView.friendsSubView.businessCardPopView.dismissUserCardDialogView();
 		thisView.shareSubView.businessCardPopView.dismissUserCardDialogView();
 		// thisView.shareSubView.onResume();
@@ -477,7 +478,7 @@ public class MainController {
 		RequestParams params = new RequestParams();
 		params.addQueryStringParameter("tableid", Constant.ACCOUNTTABLEID);
 		params.addQueryStringParameter("filter", "phone:" + data.userInformation.currentUser.phone);
-		params.addQueryStringParameter("key", Constant.LBS_KSY);
+		params.addQueryStringParameter("key", Constant.LBS_SAVE_KSY);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.GET, API.LBS_DATA_SEARCH, params, responseHandlers.lbsdata_search);
 	}
@@ -495,7 +496,7 @@ public class MainController {
 		data.lastlogintime = user.lastLoginTime;
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addBodyParameter("key", Constant.LBS_SAVE_KSY);
 		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
 		params.addBodyParameter("loctype", "2");
 		params.addBodyParameter("data", gson.toJson(data));
@@ -519,7 +520,7 @@ public class MainController {
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addBodyParameter("key", Constant.LBS_SAVE_KSY);
 		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
 		params.addBodyParameter("loctype", "2");
 		params.addBodyParameter("data", gson.toJson(data));
@@ -539,7 +540,7 @@ public class MainController {
 		data.gtype = "group";
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addBodyParameter("key", Constant.LBS_SAVE_KSY);
 		params.addBodyParameter("tableid", Constant.GROUPTABLEID);
 		params.addBodyParameter("loctype", "2");
 		params.addBodyParameter("data", gson.toJson(data));
@@ -569,7 +570,6 @@ public class MainController {
 		public String description;
 		public String gtype;
 		public String background;
-
 	}
 
 	public class TouchStatus {

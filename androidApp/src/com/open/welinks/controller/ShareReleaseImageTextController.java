@@ -379,6 +379,9 @@ public class ShareReleaseImageTextController {
 						String content = gson.toJson(shareContent.shareContentItems);
 						sendMessageToServer(content, shareMessage.gsid);
 					}
+				}else{
+					String content = gson.toJson(shareContent.shareContentItems);
+					sendMessageToServer(content, shareMessage.gsid);
 				}
 
 				String content = gson.toJson(shareContent.shareContentItems);

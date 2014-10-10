@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,8 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -32,9 +31,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.UploadMultipart;
@@ -45,6 +42,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -89,11 +87,13 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		key = getIntent().getStringExtra("key");
 		type = getIntent().getStringExtra("type");
 		inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(45)).build();
 		sdFile = new File(Environment.getExternalStorageDirectory(), "welinks/heads/");
 		initView();
 		initializeListeners();
 	}
+
+	FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	@Override
 	public void onBackPressed() {
@@ -118,7 +118,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		} else if (requestCode == REQUESTCODE_CAT && resultCode == Activity.RESULT_OK) {
 			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), sdFile);
 			headFileName = (String) map.get("fileName");
-			initHeadImage(headFileName, head);
+			fileHandlers.getHeadImage(headFileName, head, options);
 			System.out.println((String) map.get("fileName"));
 			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"));
 			pic_layout.setVisibility(View.GONE);
@@ -218,10 +218,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			business.setText(user.mainBusiness);
 			lable.setText("");
 			if (user.head.equals("Head") || "".equals(user.head)) {
-				Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_man), true, 5, Color.WHITE);
-				head.setImageBitmap(bitmap);
+				fileHandlers.getHeadImage(headFileName, head, options);
 			} else {
-				initHeadImage(user.head, head);
+				fileHandlers.getHeadImage(user.head, head, options);
 			}
 		} else if ("group".equals(type)) {
 			group = data.relationship.groupsMap.get(key);
@@ -236,10 +235,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			business.setText(group.description);
 			lable.setText("");
 			if ("".equals(group.icon)) {
-				Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_man), true, 5, Color.WHITE);
-				head.setImageBitmap(bitmap);
+				fileHandlers.getHeadImage(headFileName, head, options);
 			} else {
-				initHeadImage(group.icon, head);
+				fileHandlers.getHeadImage(group.icon, head, options);
 			}
 		}
 	}
@@ -422,31 +420,6 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			finish();
 		}
 
-	}
-
-	public void initHeadImage(String fileName, ImageView view) {
-		File sdFile = Environment.getExternalStorageDirectory();
-		File file = new File(sdFile, "welinks/heads/" + fileName);
-		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
-		final String path = file.getAbsolutePath();
-		imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-			}
-
-			@Override
-			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-				downloadFile = new DownloadFile(url, path);
-				downloadFile.view = view;
-				downloadFile.setDownloadFileListener(downloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
-			}
-
-			@Override
-			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-			}
-		});
 	}
 
 	public void setFocus(boolean whether) {

@@ -1,6 +1,7 @@
 package com.open.welinks.customView;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,13 +19,20 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.R;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -68,6 +76,7 @@ public class SmallBusinessCardPopView {
 	public void dismissUserCardDialogView() {
 		if (userCardPopWindow != null && userCardPopWindow.isShowing()) {
 			userCardPopWindow.dismiss();
+			cardView.isGetData = false;
 		}
 	}
 
@@ -183,7 +192,7 @@ public class SmallBusinessCardPopView {
 				}
 			} else if (type.equals(TYPE_SQUARE)) {
 				if (data.relationship.groups != null) {
-					if (data.relationship.groups.contains(key)) {
+					if (data.relationship.squares.contains(key)) {
 						relation = "已加入该广场";
 						Group group = data.relationship.groupsMap.get(key);
 						if (group != null) {
@@ -218,6 +227,7 @@ public class SmallBusinessCardPopView {
 
 		public FileHandlers fileHandlers = FileHandlers.getInstance();
 		public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+		boolean isGetData = false;
 
 		public void setContent(boolean isChat, String sex, String age, String fileName, String nickName, String relation, String type, String key, String longitude, String latitude, String lastLoginTime) {
 			parser.check();
@@ -254,6 +264,9 @@ public class SmallBusinessCardPopView {
 				}
 				vLineView.setVisibility(View.VISIBLE);
 				userAgeView.setVisibility(View.VISIBLE);
+				if (!isGetData) {
+					scanUserCard(key);
+				}
 			} else if (type.equals(TYPE_GROUP)) {
 				if (data.relationship.groups.contains(key)) {
 					goInfomationView.setText("群组信息");
@@ -263,11 +276,17 @@ public class SmallBusinessCardPopView {
 				userAgeView.setVisibility(View.GONE);
 				lastLoginTimeView.setText("");
 				vLineView.setVisibility(View.GONE);
+				if (!isGetData) {
+					scanGroupCard(key);
+				}
 			} else if (type.equals(TYPE_SQUARE)) {
 				goInfomationView.setText("广场资料");
 				userAgeView.setVisibility(View.GONE);
 				lastLoginTimeView.setText("");
 				vLineView.setVisibility(View.GONE);
+				if (!isGetData) {
+					scanGroupCard(key);
+				}
 			}
 			if (lastLoginTimeView.getText().toString().equals("")) {
 				vLineView.setVisibility(View.GONE);
@@ -326,8 +345,12 @@ public class SmallBusinessCardPopView {
 							Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
 							intent.putExtra("gid", key);
 							thisActivity.startActivity(intent);
+						} else if (type.equals(TYPE_SQUARE)) {
+							Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+							intent.putExtra("key", key);
+							intent.putExtra("type", type);
+							thisActivity.startActivity(intent);
 						}
-
 					} else if (view.equals(goChatView)) {
 						// String phone = (String) view.getTag(R.id.tag_first);
 						Intent intent = new Intent(thisActivity, ChatActivity.class);
@@ -338,6 +361,97 @@ public class SmallBusinessCardPopView {
 				}
 			};
 		}
+	}
+
+	public HttpClient httpClient = HttpClient.getInstance();
+	public Gson gson = new Gson();
+
+	public void scanGroupCard(final String gid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("type", cardView.type);
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public Group group;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取群组信息成功".equals(response.提示信息)) {
+					Group group = response.group;
+					if (group != null) {
+						parser.check();
+						String gid = group.gid + "";
+						Group group0 = data.relationship.groupsMap.get(gid);
+						// boolean flag = data.relationship.groups.contains(gid);
+						if (group0 != null) {
+							group0.icon = group.icon;
+							group0.name = group.name;
+							group0.longitude = group.longitude;
+							group0.latitude = group.latitude;
+							group0.description = group.description;
+							group0.background = group.background;
+						} else {
+							data.relationship.groupsMap.put(gid, group);
+						}
+						data.relationship.isModified = true;
+						if (cardView.key.equals(gid)) {
+							cardView.isGetData = true;
+							cardView.setSmallBusinessCardContent(cardView.type, gid);
+						}
+					}
+				}
+			};
+		});
+	}
+
+	public void scanUserCard(String phone) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("target", "[\"" + phone + "\"]");
+
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public List<Friend> accounts;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取用户信息成功".equals(response.提示信息)) {
+					Friend friend = response.accounts.get(0);
+					if (friend != null) {
+						parser.check();
+						Friend friend0 = data.relationship.friendsMap.get(friend.phone);
+						// boolean flag = data.relationship.friends.contains(friend.phone);
+						if (friend0 != null) {
+							friend0.sex = friend.sex;
+							friend0.nickName = friend.nickName;
+							friend0.mainBusiness = friend.mainBusiness;
+							friend0.head = friend.head;
+							friend0.longitude = friend.longitude;
+							friend0.latitude = friend.latitude;
+							friend0.userBackground = friend.userBackground;
+							friend0.lastLoginTime = friend.lastLoginTime;
+						} else {
+							data.relationship.friendsMap.put(friend.phone, friend);
+						}
+						data.relationship.isModified = true;
+						if (cardView.key.equals(friend.phone)) {
+							cardView.isGetData = true;
+							cardView.setSmallBusinessCardContent(cardView.type, friend.phone);
+						}
+					}
+				}
+			};
+		});
 	}
 
 	public static int getStatusBarHeight(Context context) {

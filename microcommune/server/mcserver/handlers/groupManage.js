@@ -883,7 +883,7 @@ groupManage.modify = function (data, response) {
                 });
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息成功",
-                    group: groupNode.data
+                    group:groupData
                 }));
                 response.end();
                 var event = JSON.stringify({
@@ -1440,7 +1440,7 @@ groupManage.getgroupmembers = function (data, response) {
                         longitude: accountData.longitude || 0,
                         latitude: accountData.latitude || 0
                     };
-                    console.log(account.longitude + "---" + account.latitude + ":" + index);
+//                    console.log(account.longitude + "---" + account.latitude + ":" + index);
                     friendsMap[account.phone] = account;
                     if (!groupsMap[groupData.gid + ""]) {
 //                        groups.push(groupData.gid + "");

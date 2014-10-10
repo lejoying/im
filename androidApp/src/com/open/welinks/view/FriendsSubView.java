@@ -73,6 +73,8 @@ public class FriendsSubView {
 	public void initData() {
 	}
 
+	public SmallBusinessCardPopView businessCardPopView;
+
 	public void initViews() {
 
 		this.friendsView = mainView.friendsView;
@@ -84,14 +86,9 @@ public class FriendsSubView {
 		friendListBody.initialize(displayMetrics, friendsView);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
-		initPop();
-	}
-
-	public SmallBusinessCardPopView businessCardPopView;
-
-	private void initPop() {
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 	}
+
 
 	public void showCircles() {
 		data = parser.check();

@@ -13,6 +13,33 @@ import java.util.TimeZone;
 public class DateUtil {
 
 	@SuppressLint("SimpleDateFormat")
+	public static String formatTime(long timeMillis) {
+		long currentTime = System.currentTimeMillis();
+		long differenceTime = currentTime - timeMillis;
+		differenceTime = differenceTime / 1000;
+		String result = "";
+		if (differenceTime < 60) {
+			result = differenceTime + "秒前";
+		} else if (differenceTime > 60 && differenceTime < 60 * 60) {
+			result = differenceTime / 60 + "分钟前";
+		} else if (differenceTime > 60 * 60 && differenceTime < 24 * 60 * 60) {
+			result = differenceTime / (60 * 60) + "小时前";
+		} else if (differenceTime > 24 * 60 * 60 && differenceTime < 2 * 24 * 60 * 60) {
+			result = "昨天   " + formatHourMinute(timeMillis);
+		} else if (differenceTime > 2 * 24 * 60 * 60 && differenceTime < 3 * 24 * 60 * 60) {
+			result = "前天   " + formatHourMinute(timeMillis);
+		} else if (differenceTime > 3 * 24 * 60 * 60 && differenceTime < 365 * 24 * 60 * 60) {
+			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
+			result = sdf.format(timeMillis);
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			result = sdf.format(timeMillis);
+		}
+
+		return result;
+	}
+
+	@SuppressLint("SimpleDateFormat")
 	public static String formatYearMonthDay(long timeMillis) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
 		Date date = new Date(timeMillis);
@@ -101,7 +128,6 @@ public class DateUtil {
 	public static String getDate(String month, String day) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 24小时制
 		java.util.Date d = new java.util.Date();
-		;
 		String str = sdf.format(d);
 		// String nowmonth = str.substring(5, 7);
 		String nowday = str.substring(8, 10);

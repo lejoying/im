@@ -16,6 +16,7 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.MeSubView;
 import android.view.ViewGroup;
+
 public class MeSubController {
 
 	public Data data = Data.getInstance();
@@ -47,9 +48,9 @@ public class MeSubController {
 					String view_class = (String) view.getTag(R.id.tag_class);
 					// if (view_class.equals("share_view")) {
 					onTouchDownView = view;
-					try{
-						((ViewGroup)onTouchDownView).getChildAt(0).setVisibility(View.VISIBLE);
-					}catch(Exception e){
+					try {
+						((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.VISIBLE);
+					} catch (Exception e) {
 					}
 					isTouchDown = true;
 					// }
@@ -108,9 +109,9 @@ public class MeSubController {
 		if (onTouchDownView != null) {
 			// String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			// if (view_class.equals("share_view")) {
-			try{
-				((ViewGroup)onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
-			}catch(Exception e){
+			try {
+				((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
+			} catch (Exception e) {
 			}
 			onTouchDownView.performClick();
 			// }
@@ -120,9 +121,9 @@ public class MeSubController {
 	}
 
 	public void onScroll() {
-		try{
-			((ViewGroup)onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
-		}catch(Exception e){
+		try {
+			((ViewGroup) onTouchDownView).getChildAt(0).setVisibility(View.INVISIBLE);
+		} catch (Exception e) {
 		}
 		onTouchDownView = null;
 	}

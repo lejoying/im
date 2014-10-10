@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import android.util.Log;
 
-import com.amap.api.maps2d.AMapUtils;
-import com.amap.api.maps2d.model.LatLng;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -49,7 +47,7 @@ public class LBSHandlers {
 		RequestParams params = new RequestParams();
 		params.addQueryStringParameter("tableid", Constant.SQUARETABLEID);
 		params.addQueryStringParameter("filter", "gid:" + gid);
-		params.addQueryStringParameter("key", Constant.LBS_KSY);
+		params.addQueryStringParameter("key", Constant.LBS_SAVE_KSY);
 		httpUtils.send(HttpMethod.GET, API.LBS_DATA_SEARCH, params, LBSSquareDataSearch);
 	}
 
@@ -59,7 +57,7 @@ public class LBSHandlers {
 		RequestParams params = new RequestParams();
 		params.addQueryStringParameter("tableid", Constant.GROUPTABLEID);
 		params.addQueryStringParameter("filter", "gid:" + gid);
-		params.addQueryStringParameter("key", Constant.LBS_KSY);
+		params.addQueryStringParameter("key", Constant.LBS_SAVE_KSY);
 		httpUtils.send(HttpMethod.GET, API.LBS_DATA_SEARCH, params, LBSGroupDataSearch);
 	}
 
@@ -70,7 +68,7 @@ public class LBSHandlers {
 		RequestParams params = new RequestParams();
 		params.addQueryStringParameter("tableid", Constant.ACCOUNTTABLEID);
 		params.addQueryStringParameter("filter", "phone:" + user.phone);
-		params.addQueryStringParameter("key", Constant.LBS_KSY);
+		params.addQueryStringParameter("key", Constant.LBS_SAVE_KSY);
 		httpUtils.send(HttpMethod.GET, API.LBS_DATA_SEARCH, params, LBSAccountDataSearch);
 	}
 
@@ -111,7 +109,7 @@ public class LBSHandlers {
 			}
 		}
 
-		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addBodyParameter("key", Constant.LBS_SAVE_KSY);
 		params.addBodyParameter("loctype", "2");
 		httpUtils.send(HttpMethod.POST, API.LBS_DATA_UPDATA, params, lbsDataUpdata);
 	}
@@ -205,7 +203,6 @@ public class LBSHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Log.e(tag, responseInfo.result);
 			try {
-
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.status == 1) {
 					if (response.count == 0) {
@@ -214,6 +211,7 @@ public class LBSHandlers {
 					}
 				}
 			} catch (Exception e) {
+				log.e("Exception");
 			}
 		};
 	};

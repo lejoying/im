@@ -1012,7 +1012,6 @@ public class ResponseHandlers {
 				} else if (data.relationship.groups.contains(key)) {
 					lbsHandlers.uplodGroupLbsData(key);
 				}
-
 			} else {
 				log.e(responseInfo.result);
 			}

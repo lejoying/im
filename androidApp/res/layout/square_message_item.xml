@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maxView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:background="#00ffffff" >
+
+    <com.open.lib.TouchView
+        android:id="@+id/mainContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/background_white_radius" >
+
+        <com.open.lib.TouchTextView
+            android:id="@+id/share_nickName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="5dp"
+            android:text="微型社区小伙伴"
+            android:textColor="#8c8c8c"
+            android:textSize="16sp" />
+
+        <com.open.lib.TouchTextView
+            android:id="@+id/share_releaseTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:text="2014.01.01"
+            android:textColor="#8c8c8c"
+            android:textSize="16sp" />
+
+        <com.open.lib.TouchImageView
+            android:id="@+id/contentImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="40dp"
+            android:visibility="visible" />
+
+        <com.open.lib.TouchTextView
+            android:id="@+id/contentText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="40dp"
+            android:maxLines="4"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="微型社区小aeraer伙微型社区小aeraer伙伴微型社区小微型社区小aeraer伙伴微型社区小伴微型社区小aerar伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴"
+            android:textColor="#000"
+            android:textSize="16sp" />
+
+        <com.open.lib.TouchView
+            android:id="@+id/buttonBar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="240dp"
+            android:background="@drawable/background_20white_radius" >
+
+            <com.open.lib.TouchView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="right" >
+
+                <com.open.lib.TouchImageView
+                    android:id="@+id/share_praise_icon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="40dp"
+                    android:src="@drawable/praise_icon"
+                    android:tint="@color/icon_color" />
+
+                <com.open.lib.TouchTextView
+                    android:id="@+id/share_praise"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:text="0  "
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <com.open.lib.TouchImageView
+                    android:layout_width="1dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="75dp"
+                    android:background="#8c8c8c" />
+
+                <com.open.lib.TouchTextView
+                    android:id="@+id/share_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="85dp"
+                    android:gravity="center"
+                    android:text="0  "
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <com.open.lib.TouchImageView
+                    android:id="@+id/share_comment_icon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="120dp"
+                    android:src="@drawable/comment_icon"
+                    android:tint="@color/icon_color" />
+
+                <com.open.lib.TouchImageView
+                    android:layout_width="1dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="155dp"
+                    android:background="#8c8c8c"
+                    android:visibility="gone" />
+
+                <com.open.lib.TouchImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="165dp"
+                    android:src="@drawable/praise_icon"
+                    android:tint="@color/icon_color"
+                    android:visibility="gone" />
+            </com.open.lib.TouchView>
+        </com.open.lib.TouchView>
+    </com.open.lib.TouchView>
+
+    <com.open.lib.TouchImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="11dp"
+        android:background="@drawable/square_head_draw_background" />
+
+    <com.open.lib.TouchImageView
+        android:id="@+id/squareHead"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/square_head_draw_background"
+        android:src="@drawable/face_man" />
+
+</com.open.lib.TouchView>

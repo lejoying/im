@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
@@ -16,7 +16,6 @@ import com.open.welinks.R;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
-import com.open.welinks.model.DataHandlers;
 import com.open.welinks.view.MessagesSubView;
 
 public class MessagesSubController {

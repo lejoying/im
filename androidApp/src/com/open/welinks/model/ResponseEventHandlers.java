@@ -2,6 +2,7 @@ package com.open.welinks.model;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -73,6 +74,18 @@ public class ResponseEventHandlers {
 				DataHandlers.getMessages(data.userInformation.currentUser.flag);
 			} else {
 				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
+				if (data.event.userEventsMap == null) {
+					data.event.userEventsMap = new HashMap<String, EventMessage>();
+				}
+				if (data.event.groupEventsMap == null) {
+					data.event.groupEventsMap = new HashMap<String, EventMessage>();
+				}
+				if (data.event.userEvents == null) {
+					data.event.userEvents = new ArrayList<String>();
+				}
+				if (data.event.groupEvents == null) {
+					data.event.groupEvents = new ArrayList<String>();
+				}
 				if ("account_dataupdate".equals(contentType)) {
 					handleAccountDataupdateEvent(eventMessage);
 				} else if ("relation_newfriend".equals(contentType)) {
@@ -266,7 +279,13 @@ public class ResponseEventHandlers {
 		List<String> userEvents = data.event.userEvents;
 		EventMessage dealMessage = null;
 		for (int i = userEvents.size() - 1; i >= 0; i--) {
+			if (userEvents.size() == 0) {
+				break;
+			}
 			String key = userEvents.get(i);
+			if(key==null){
+				continue;
+			}
 			EventMessage message0 = data.event.userEventsMap.get(key);
 			if ("relation_addfriend".equals(message0.type)) {
 				if (message.phone.equals(message0.phone) && message.phoneTo.equals(message0.phoneTo)) {

@@ -253,7 +253,7 @@ public class ShareSubController {
 						long currentTime = System.currentTimeMillis();
 						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
 							long time = (Long) view.getTag(R.id.tag_first);
-							if (currentTime - time < 500) {
+							if (currentTime - time < 300) {
 								thisView.shareMessageListBody.y = 0;
 								thisView.shareMessageListBody.setChildrenPosition();
 								Toast.makeText(thisActivity, "double", Toast.LENGTH_SHORT).show();
@@ -427,7 +427,6 @@ public class ShareSubController {
 	}
 
 	public void bindEvent() {
-
 		thisView.shareTitleView.setOnTouchListener(mOnTouchListener);
 		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.groupListBody.bodyCallback = this.bodyCallback;

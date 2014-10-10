@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -134,8 +135,8 @@ public class SquareSubController {
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 						int height = thisView.showImageHeight;
-						TouchView.LayoutParams params = new TouchView.LayoutParams(thisView.showImageWidth, height);
-						imageView.setLayoutParams(params);
+//						TouchView.LayoutParams params = new TouchView.LayoutParams(thisView.showImageWidth, height);
+//						imageView.setLayoutParams(params);
 					}
 				});
 			}
@@ -148,9 +149,9 @@ public class SquareSubController {
 						Log.e(tag, "---------------failure:" + tag);
 						ImageView imageView = ((ImageView) (instance.view));
 						if (tag.equals("left")) {
-							imageView.setImageResource(R.drawable.square_temp);
+//							imageView.setImageResource(R.drawable.square_temp);
 						} else {
-							imageView.setImageResource(R.drawable.square_temp1);
+//							imageView.setImageResource(R.drawable.square_temp1);
 						}
 						// imageView.setImageResource(R.drawable.ic_error);
 						// RelativeLayout.LayoutParams params = (LayoutParams)
@@ -197,6 +198,25 @@ public class SquareSubController {
 					} else if (view_class.equals("share_release")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("group_head")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+					} else if (view_class.equals("title_share")) {
+						long currentTime = System.currentTimeMillis();
+						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
+							long time = (Long) view.getTag(R.id.tag_first);
+							if (currentTime - time < 300) {
+								thisView.squareMessageListBody.y = 0;
+								thisView.squareMessageListBody.setChildrenPosition();
+								Toast.makeText(thisActivity, "double", Toast.LENGTH_SHORT).show();
+								view.setTag(R.id.tag_first, 0);
+							} else {
+								view.setTag(R.id.tag_first, currentTime);
+							}
+						} else {
+							view.setTag(R.id.tag_first, currentTime);
+						}
+						onTouchDownView = view;
 					}
 					if (view.equals(thisView.squareDialogView)) {
 						Log.i(tag, "ACTION_DOWN---groupDialogView");
@@ -260,6 +280,11 @@ public class SquareSubController {
 				} else if (view.equals(thisView.squareDialogView)) {
 					thisView.squareDialogView.isIntercept = false;
 					thisView.dismissSquareDialog();
+				} else if (view.equals(thisView.groupHeadView) || view.equals(thisView.groupCoverView)) {
+					parser.check();
+					// Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_SQUARE, data.localStatus.localData.currentSelectedSquare);
+					thisView.businessCardPopView.showUserCardDialogView();
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
@@ -332,6 +357,7 @@ public class SquareSubController {
 	}
 
 	public void bindEvent() {
+		thisView.shareTitleView.setOnTouchListener(mOnTouchListener);
 		thisView.squareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.squaresListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
@@ -453,6 +479,8 @@ public class SquareSubController {
 			} else if (view_class.equals("group_setting")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("share_release")) {
+				onTouchDownView.performClick();
+			} else if (view_class.equals("group_head")) {
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;

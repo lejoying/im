@@ -67,10 +67,12 @@ public class FriendsSubController {
 		mOnClickListener = new MyOnClickListener() {
 
 			public void onClickEffective(View view) {
+				if (view.equals(mainController.thisView.userTopbarNameParentView)) {
+					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, data.userInformation.currentUser.phone);
+					thisView.businessCardPopView.showUserCardDialogView();
+				}
 				Friend friend = null;
 				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
-					// thisView.setSmallBusinessCardContent(friend);
-					// thisView.showUserCardDialogView();
 					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, friend.phone);
 					thisView.businessCardPopView.showUserCardDialogView();
 				}
@@ -140,6 +142,7 @@ public class FriendsSubController {
 	}
 
 	public void bindEvent() {
+		mainController.thisView.userTopbarNameParentView.setOnClickListener(mOnClickListener);
 		thisView.friendListBody.bodyCallback = this.bodyCallback;
 	}
 
