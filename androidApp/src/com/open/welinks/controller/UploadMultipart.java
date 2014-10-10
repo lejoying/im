@@ -48,6 +48,7 @@ import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
+import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -400,8 +401,7 @@ public class UploadMultipart {
 		public void onLoading(long total, long current, boolean isUploading) {
 			super.onLoading(total, current, isUploading);
 			time.received = System.currentTimeMillis();
-			// log.e(total + "--*****---" + current + "_+_+_+_+_+_+" +
-			// isUploading);
+			// log.e(total + "--*****---" + current + "_+_+_+_+_+_+" + isUploading);
 		}
 
 		@Override

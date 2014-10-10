@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.PictureBrowseView;
 
@@ -99,7 +100,7 @@ public class PictureBrowseController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 				// TODO Auto-generated method stub
 
 			}

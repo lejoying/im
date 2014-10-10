@@ -30,6 +30,7 @@ import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.TestHttp;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
+import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.ResponseHandlers;

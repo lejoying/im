@@ -45,4 +45,10 @@ public class GroupMemberManageActivity extends Activity {
 		thisController.onActivityResult(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+
+	@Override
+	protected void onResume() {
+		thisController.onResume();
+		super.onResume();
+	}
 }

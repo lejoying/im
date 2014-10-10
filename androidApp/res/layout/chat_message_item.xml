@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:singleLine="true"
-        android:text="李建国"
+        android:text=""
         android:textColor="@color/text_color_black"
         android:textSize="16sp"
         android:translationX="64dp"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
         android:singleLine="true"
-        android:text="16:08"
+        android:text=""
         android:textColor="@color/text_color_black"
         android:textSize="14sp"
         android:translationX="-28dp"
@@ -67,7 +67,8 @@
         android:textColor="#fff"
         android:textSize="14sp"
         android:translationX="-7dp"
-        android:translationY="-9dp" />
+        android:translationY="-9dp"
+        android:visibility="gone" />
 
     <com.open.lib.TouchTextView
         android:id="@+id/tv_lastchatcontent"
@@ -77,7 +78,7 @@
         android:ellipsize="end"
         android:maxEms="10"
         android:singleLine="true"
-        android:text="今天来我们这儿吃饭吧~~好久没有"
+        android:text=""
         android:textColor="@color/text_color_black"
         android:textSize="14sp"
         android:translationX="64dp"
@@ -105,7 +106,7 @@
             android:textColor="#fff"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </com.open.lib.TouchView>
 
 </com.open.lib.TouchView>

@@ -43,11 +43,12 @@ import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
+import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
-import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
@@ -95,6 +96,8 @@ public class ChatController {
 
 	public File sdFile;
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public ChatController(ChatActivity thisActivity) {
 		this.thisActivity = thisActivity;
 		context = thisActivity;
@@ -116,6 +119,14 @@ public class ChatController {
 		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 		unsendMessageInfo = new HashMap<String, Map<String, String>>();
 		thisView.showChatViews();
+
+		if (data.localStatus.localData.notSentMessagesMap != null) {
+			String content = data.localStatus.localData.notSentMessagesMap.get(type + key);
+			if (content != null) {
+				thisView.inputMessageContentView.setText(content);
+				// Log.e(tag, content);
+			}
+		}
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
@@ -124,7 +135,7 @@ public class ChatController {
 	}
 
 	public void onResume() {
-		thisView.dismissUserCardDialogView();
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 
 	public void onPause() {
@@ -140,19 +151,9 @@ public class ChatController {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.backview)) {
+				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 					// mFinish();
-				} else if (view.equals(thisView.userCardMainView)) {
-					thisView.dismissUserCardDialogView();
-				} else if (view.equals(thisView.singleButtonView)) {
-					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
-					intent.putExtra("key", (String) view.getTag(R.id.tag_first));
-					intent.putExtra("type", (String) view.getTag(R.id.tag_second));
-					if(view.getTag(R.id.tag_third)!=null){
-						intent.putExtra("isTemp", (Boolean) view.getTag(R.id.tag_third));
-					}
-					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.infomation_layout)) {
 					if ("point".equals(type)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
@@ -164,21 +165,21 @@ public class ChatController {
 						intent.putExtra("gid", key);
 						thisActivity.startActivity(intent);
 					}
-				} else if (view.equals(thisView.send)) {
-					String text = thisView.input.getText().toString();
+				} else if (view.equals(thisView.sendMessageView)) {
+					String text = thisView.inputMessageContentView.getText().toString();
 					sendMessageToLocal(text, "text", new Date().getTime());
-				} else if (view.equals(thisView.more)) {
+				} else if (view.equals(thisView.moreOptions)) {
 					showSelectTab();
-				} else if (view.equals(thisView.selectedface)) {
+				} else if (view.equals(thisView.selectedFaceview)) {
 					// TODO
-				} else if (view.equals(thisView.selectpicture)) {
+				} else if (view.equals(thisView.selectPictureView)) {
 					data.tempData.selectedImageList = null;
 					thisActivity.startActivityForResult(new Intent(thisActivity, ImagesDirectoryActivity.class), R.id.chat_content);
-				} else if (view.equals(thisView.makeaudio)) {
+				} else if (view.equals(thisView.makeAudioView)) {
 					// TODO
-				} else if (view.equals(thisView.more_selected)) {
+				} else if (view.equals(thisView.moreSelectedView)) {
 					hideSelectTab();
-				} else if (view.equals(thisView.input)) {
+				} else if (view.equals(thisView.inputMessageContentView)) {
 					if (inputMethodManager.isActive()) {
 						new Thread() {
 							public void run() {
@@ -191,7 +192,7 @@ public class ChatController {
 
 									@Override
 									public void run() {
-										thisView.chat_content.setSelection(thisView.mChatAdapter.getCount());
+										thisView.chatContentListView.setSelection(thisView.mChatAdapter.getCount());
 									}
 								});
 							};
@@ -201,14 +202,10 @@ public class ChatController {
 					String tag_class = (String) view.getTag(R.id.tag_class);
 					if ("head_click".equals(tag_class)) {
 						String phone = (String) view.getTag(R.id.tag_first);
-						User user = data.userInformation.currentUser;
-						if (user.phone.equals(phone)) {
-							thisView.setSmallBusinessCardContent(phone, user.head, user.nickName, user.age, user.longitude, user.latitude);
-						} else {
-							Friend friend = data.relationship.friendsMap.get(phone);
-							thisView.setSmallBusinessCardContent(phone, friend.head, friend.nickName, friend.age + "", friend.longitude, friend.latitude);
-						}
-						thisView.showUserCardDialogView();
+						// User user = data.userInformation.currentUser;
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
+						thisView.businessCardPopView.cardView.setMenu(false);
+						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (view.getTag(R.id.tag_first) != null) {
 					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
@@ -227,9 +224,9 @@ public class ChatController {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				if (view.equals(thisView.chat_content) && event.getAction() == MotionEvent.ACTION_DOWN) {
+				if (view.equals(thisView.chatContentListView) && event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (inputMethodManager.isActive()) {
-						inputMethodManager.hideSoftInputFromWindow(thisView.input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+						inputMethodManager.hideSoftInputFromWindow(thisView.inputMessageContentView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					}
 				}
 				return false;
@@ -239,9 +236,11 @@ public class ChatController {
 
 			@Override
 			public void onSuccess(UploadMultipart instance, int time) {
-				int total = Integer.valueOf(unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).get("total"));
-				int current = Integer.valueOf(unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).get("current"));
-				unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).put("current", String.valueOf(++current));
+				String first_param = (String) instance.view.getTag(R.id.tag_first);
+				int total = Integer.valueOf(unsendMessageInfo.get(first_param).get("total"));
+				int current = Integer.valueOf(unsendMessageInfo.get(first_param).get("current"));
+				current++;
+				unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).put("current", current + "");
 				if (current == total) {
 					String time0 = (String) instance.view.getTag(R.id.tag_first);
 					sendMessageToServer("image", unsendMessageInfo.remove(time0).get("content"), time0);
@@ -261,7 +260,7 @@ public class ChatController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 
 			}
 
@@ -278,7 +277,7 @@ public class ChatController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 
 			}
 
@@ -305,18 +304,16 @@ public class ChatController {
 	}
 
 	public void bindEvent() {
-		thisView.userCardMainView.setOnClickListener(mOnClickListener);
-		thisView.singleButtonView.setOnClickListener(mOnClickListener);
-		thisView.backview.setOnClickListener(mOnClickListener);
+		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.infomation_layout.setOnClickListener(mOnClickListener);
-		thisView.send.setOnClickListener(mOnClickListener);
-		thisView.more.setOnClickListener(mOnClickListener);
-		thisView.selectedface.setOnClickListener(mOnClickListener);
-		thisView.selectpicture.setOnClickListener(mOnClickListener);
-		thisView.makeaudio.setOnClickListener(mOnClickListener);
-		thisView.more_selected.setOnClickListener(mOnClickListener);
-		thisView.input.setOnClickListener(mOnClickListener);
-		thisView.chat_content.setOnTouchListener(onTouchListener);
+		thisView.sendMessageView.setOnClickListener(mOnClickListener);
+		thisView.moreOptions.setOnClickListener(mOnClickListener);
+		thisView.selectedFaceview.setOnClickListener(mOnClickListener);
+		thisView.selectPictureView.setOnClickListener(mOnClickListener);
+		thisView.makeAudioView.setOnClickListener(mOnClickListener);
+		thisView.moreSelectedView.setOnClickListener(mOnClickListener);
+		thisView.inputMessageContentView.setOnClickListener(mOnClickListener);
+		thisView.chatContentListView.setOnTouchListener(onTouchListener);
 
 	}
 
@@ -351,7 +348,7 @@ public class ChatController {
 
 	public void showSelectTab() {
 		if (inputMethodManager.isActive()) {
-			inputMethodManager.hideSoftInputFromWindow(thisView.input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			inputMethodManager.hideSoftInputFromWindow(thisView.inputMessageContentView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 		}
 		Animation outAnimation = new TranslateAnimation(0, thisView.chat_bottom_bar.getWidth(), 0, 0);
 		outAnimation.setDuration(150);
@@ -421,19 +418,20 @@ public class ChatController {
 				// view.setTag(R.id.tag_first, selectedImageList.size());
 				// view.setTag(R.id.tag_second, 0);
 				view.setTag(R.id.tag_first, String.valueOf(time));
-				int i = 0;
-				for (String filePath : selectedImageList) {
+
+				Map<String, String> map0 = new HashMap<String, String>();
+				map0.put("total", selectedImageList.size() + "");
+				map0.put("current", 0 + "");
+				unsendMessageInfo.put(time + "", map0);
+
+				for (int i = 0; i < selectedImageList.size(); i++) {
+					String filePath = selectedImageList.get(i);
 					Map<String, Object> map = processImagesInformation(i, filePath, targetFolder);
-					i++;
 					content.add((String) map.get("fileName"));
 					uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
 				}
 				String messageContent = gson.toJson(content);
-				Map<String, String> map = new HashMap<String, String>();
-				map.put("content", messageContent);
-				map.put("total", String.valueOf(selectedImageList.size()));
-				map.put("current", String.valueOf(0));
-				unsendMessageInfo.put(String.valueOf(time), map);
+				map0.put("content", messageContent);
 				sendMessageToLocal(gson.toJson(content), "image", time);
 			}
 		}).start();
@@ -485,7 +483,7 @@ public class ChatController {
 
 			@Override
 			public void run() {
-				thisView.input.setText("");
+				thisView.inputMessageContentView.setText("");
 			}
 		});
 		parser.check();
@@ -623,12 +621,20 @@ public class ChatController {
 
 	public void onBackPressed() {
 		// mFinish();
-		thisActivity.finish();
+		// thisActivity.finish();
 	}
 
-	public ViewManage viewManage = ViewManage.getInstance();
-
 	public void finish() {
+		String content = thisView.inputMessageContentView.getText().toString();
+		if (!"".equals(content)) {
+			Map<String, String> notSentMessagesMap = data.localStatus.localData.notSentMessagesMap;
+			if (notSentMessagesMap == null) {
+				notSentMessagesMap = new HashMap<String, String>();
+				data.localStatus.localData.notSentMessagesMap = notSentMessagesMap;
+			}
+			notSentMessagesMap.put(type + key, content);
+		}
+		// log.e(content + "------message");
 		viewManage.chatView = null;
 		viewManage.messagesSubView.showMessagesSequence();
 	}

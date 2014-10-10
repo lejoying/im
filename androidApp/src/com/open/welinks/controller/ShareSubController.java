@@ -39,6 +39,8 @@ import com.open.welinks.GroupListActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
+import com.open.welinks.customListener.MyOnClickListener;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -153,7 +155,7 @@ public class ShareSubController {
 		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 			}
 
 			@Override
@@ -244,6 +246,9 @@ public class ShareSubController {
 					} else if (view_class.equals("share_release")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("group_head")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					} else if (view_class.equals("title_share")) {
 						long currentTime = System.currentTimeMillis();
 						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
@@ -302,6 +307,11 @@ public class ShareSubController {
 				} else if (view.equals(thisView.groupDialogView)) {
 					thisView.groupDialogView.isIntercept = false;
 					thisView.dismissGroupDialog();
+				} else if (view.equals(thisView.groupHeadView) || view.equals(thisView.groupCoverView)) {
+					parser.check();
+					// Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, data.localStatus.localData.currentSelectedGroup);
+					thisView.businessCardPopView.showUserCardDialogView();
 				} else if (view.equals(thisView.releaseShareView)) {
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };
@@ -417,12 +427,13 @@ public class ShareSubController {
 	}
 
 	public void bindEvent() {
+
 		thisView.shareTitleView.setOnTouchListener(mOnTouchListener);
 		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
-		thisView.shareTopMenuGroupNameParent.setOnTouchListener(onTouchListener2);
-		// thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
+		// thisView.shareTopMenuGroupNameParent.setOnTouchListener(onTouchListener2);
+		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);
@@ -517,6 +528,8 @@ public class ShareSubController {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("share_release")) {
 				onTouchDownView.performClick();
+			} else if (view_class.equals("group_head")) {
+				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;
 		}
@@ -542,6 +555,7 @@ public class ShareSubController {
 		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SHARE) {
 			if (thisView.isShowGroupDialog) {
 				thisView.dismissGroupDialog();
+				thisView.isShowGroupDialog = false;
 				return false;
 			}
 		}

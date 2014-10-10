@@ -715,6 +715,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                         var account = {
                             ID: accountData.ID,
                             sex: accountData.sex,
+                            age: accountData.age,
                             phone: accountData.phone,
                             mainBusiness: accountData.mainBusiness,
                             head: accountData.head,
@@ -1206,11 +1207,13 @@ relationManage.getaskfriends = function (data, response) {
                         uid: accountData.uid,
                         ID: accountData.ID,
                         sex: accountData.sex,
+                        age: accountData.age,
                         phone: accountData.phone,
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
                         byPhone: accountData.byPhone,
                         nickName: accountData.nickName,
+                        lastLoginTime: accountData.lastlogintime,
                         friendStatus: rData.friendStatus,
                         rid: rData.rid,
                         message: rData.message
@@ -1441,6 +1444,7 @@ relationManage.intimatefriends = function (data, response) {
                         var account = {
                             id: accountData.ID,
                             sex: accountData.sex,
+                            age: accountData.age,
                             phone: accountData.phone,
                             mainBusiness: accountData.mainBusiness,
                             head: accountData.head,
@@ -1449,11 +1453,13 @@ relationManage.intimatefriends = function (data, response) {
                             userBackground: accountData.userBackground,
                             addMessage: rData.message,
                             friendStatus: rData.friendStatus,
+                            lastLoginTime: accountData.lastlogintime,
                             alias: "",
                             flag: "none",
-                            accessKey: "",
+//                            accessKey: "",
                             distance: 0,
-                            notReadMessagesCount: 0,
+//                            notReadMessagesCount: 0,
+                            createTime: accountData.createTime,
                             longitude: accountData.longitude || 0,
                             latitude: accountData.latitude || 0
                         };

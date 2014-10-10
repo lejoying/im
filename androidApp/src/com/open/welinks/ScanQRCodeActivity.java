@@ -37,12 +37,12 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
+import com.open.welinks.customView.ScanView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.view.ScanView;
 
 public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callback, PreviewCallback, AutoFocusCallback {
 
@@ -101,7 +101,7 @@ public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callba
 		isTake = true;
 		multiFormatReader = new MultiFormatReader();
 
-		setContentView(R.layout.fragment_scanqrcode);
+		setContentView(R.layout.activity_scanqrcode);
 
 		sfv_scanqrcode = (SurfaceView) findViewById(R.id.sfv_scanqrcode);
 

@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -20,6 +22,7 @@ import com.open.lib.TouchImageView;
 import com.open.welinks.R;
 import com.open.welinks.controller.ShareReleaseImageTextController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 
 public class ShareReleaseImageTextView {
 	public Data data = Data.getInstance();
@@ -105,6 +108,19 @@ public class ShareReleaseImageTextView {
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).considerExifParams(true).displayer(new RoundedBitmapDisplayer(0)).build();
 		myScrollImageBody = new MyScrollImageBody();
 		myScrollImageBody.initialize(mImagesContentView);
+
+		thisController.parser.check();
+		if (data.localStatus.localData.notSendShareMessagesMap != null) {
+			ShareDraft shareDraft = data.localStatus.localData.notSendShareMessagesMap.get(thisController.gtype);
+			if (shareDraft != null) {
+				this.mEditTextView.setText(shareDraft.content);
+				if (!"".equals(shareDraft.imagesContent)) {
+					data.tempData.selectedImageList = thisController.gson.fromJson(shareDraft.imagesContent, new TypeToken<ArrayList<String>>() {
+					}.getType());
+					this.showSelectedImages();
+				}
+			}
+		}
 	}
 
 	int width;

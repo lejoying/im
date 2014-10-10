@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.GroupMemberManageController;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
@@ -58,6 +59,8 @@ public class GroupMemberManageView {
 	public DisplayMetrics displayMetrics;
 
 	public LinearLayout alreadyListContainer;
+	
+	public View maxView;
 
 	public GroupMemberManageView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -65,12 +68,15 @@ public class GroupMemberManageView {
 		this.thisView = this;
 	}
 
+	public SmallBusinessCardPopView businessCardPopView;
+
 	public void initView() {
 
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 		thisActivity.setContentView(R.layout.activity_group_member_manage);
+		maxView = thisActivity.findViewById(R.id.maxView);
 		alreadyListContainer = (LinearLayout) thisActivity.findViewById(R.id.alreadyListContainer);
 		backView = (LinearLayout) thisActivity.findViewById(R.id.backView);
 		groupMemberCountView = (TextView) thisActivity.findViewById(R.id.groupMemberCount);
@@ -81,6 +87,7 @@ public class GroupMemberManageView {
 		mInflater = thisActivity.getLayoutInflater();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
 
+		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
 	}
 
 	public void showCurrentGroupMembers() {

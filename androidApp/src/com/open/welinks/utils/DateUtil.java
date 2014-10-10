@@ -20,6 +20,17 @@ public class DateUtil {
 		return mTime;
 	}
 
+	@SuppressLint("SimpleDateFormat")
+	public static String formatYearMonthDay2(String timeMillis) {
+		if (timeMillis == null || "".equals(timeMillis)) {
+			timeMillis = "0";
+		}
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+		Date date = new Date(Long.valueOf(timeMillis));
+		String mTime = simpleDateFormat.format(date);
+		return mTime;
+	}
+
 	public static String getGMTDate() {
 		return getGMTDate(new Date());
 	}

@@ -1,12 +1,15 @@
 package com.open.welinks.model;
 
+import java.util.List;
+
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.UserInformation.User;
 
-public class DataUtil {
+public class DataHandlers {
 
 	public String tag = "DataUtil";
 	public static Data data = Data.getInstance();
@@ -102,6 +105,8 @@ public class DataUtil {
 
 			data.relationship.isModified = false;
 			data.relationship.circles.clear();
+			data.relationship.friends.clear();
+			data.relationship.friendsMap.clear();
 			data.relationship.circlesMap.clear();
 			data.relationship.groups.clear();
 			data.relationship.groupsMap.clear();
@@ -126,5 +131,45 @@ public class DataUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean contains(List<Message> list, Message message) {
+		int s = list.size();
+		if (message != null) {
+			for (int i = 0; i < s; i++) {
+				if (equalsMessage(message, list.get(i))) {
+					return true;
+				}
+			}
+		} else {
+			for (int i = 0; i < s; i++) {
+				if (list.get(i) == null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean equalsMessage(Message m, Message message) {
+		boolean flag = false;
+		if (m != null) {
+			try {
+				if (!"".equals(m.gid) && m.gid != null) {
+					if (message.gid.equals(m.gid) && message.phone.equals(m.phone) && message.time.equals(m.time) && message.content.equals(m.content) && message.contentType.equals(m.contentType) && message.sendType.equals(m.sendType)) {
+						flag = true;
+						// Log.e("Data", "聊天记录已存在group");
+					}
+				} else {
+					if (message.phone.equals(m.phone) && message.phoneto.equals(m.phoneto) && message.time.equals(m.time) && message.content.equals(m.content) && message.contentType.equals(m.contentType) && message.sendType.equals(m.sendType)) {
+						flag = true;
+						// Log.e("Data", "聊天记录已存在point");
+					}
+				}
+			} catch (Exception e) {
+				flag = false;
+			}
+		}
+		return flag;
 	}
 }

@@ -3,9 +3,6 @@ package com.open.welinks;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import org.apache.http.entity.ByteArrayEntity;
@@ -13,9 +10,9 @@ import org.apache.http.entity.ByteArrayEntity;
 import android.os.Environment;
 import android.test.AndroidTestCase;
 
-import com.aliyun.android.oss.Helper;
-import com.aliyun.android.oss.OSSHttpTool;
-import com.aliyun.android.oss.ObjectMetaData;
+import com.aliyun.android.oss.http.OSSHttpTool;
+import com.aliyun.android.oss.model.ObjectMetaData;
+import com.aliyun.android.util.Helper;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;

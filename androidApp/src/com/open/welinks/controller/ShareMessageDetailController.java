@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,6 +34,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
@@ -41,6 +44,7 @@ import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
@@ -150,7 +154,95 @@ public class ShareMessageDetailController {
 		httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_get);
 	}
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public long totalLength = 0;
+
+	public Map<String, Long> fileLengMap = new HashMap<String, Long>();
+	public Map<String, Long> currentDownloadLengthMap = new HashMap<String, Long>();
+
 	public void initializeListeners() {
+		downloadListener = new OnDownloadListener() {
+
+			@Override
+			public void onLoadingStarted(DownloadFile instance, int precent, int status) {
+				super.onLoadingStarted(instance, precent, status);
+				totalLength += instance.bytesLength;
+				fileLengMap.put(instance.url, instance.bytesLength);
+			}
+
+			@Override
+			public void onSuccess(DownloadFile instance, int status) {
+				Long singleLength = fileLengMap.get(instance.url);
+				currentDownloadLengthMap.put(instance.path, singleLength);
+
+				double currentLength = 0;
+				for (Entry<String, Long> entry : currentDownloadLengthMap.entrySet()) {
+					String key = entry.getKey();
+					Long value = entry.getValue();
+					if (key != null && !"".equals(key)) {
+						currentLength += value;
+					}
+				}
+				final double currentPrecent = currentLength / totalLength;
+				fileHandlers.handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						thisView.controlProgress.moveTo((int) (currentPrecent * 100));
+					}
+				});
+
+				final ImageView imageView = (ImageView) instance.view;
+				thisView.imageLoader.displayImage("file://" + instance.path, imageView, thisView.displayImageOptions, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						int height = (int) (loadedImage.getHeight() * (thisView.screenWidth / loadedImage.getWidth()));
+						LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) thisView.screenWidth, height);
+						imageView.setLayoutParams(params);
+					}
+				});
+			}
+
+			@Override
+			public void onLoading(DownloadFile instance, int precent, int status) {
+				double currentLength = 0;
+				String path = instance.url;
+				Long singleLength = fileLengMap.get(path);
+				Long length = singleLength * precent / 100;
+				currentDownloadLengthMap.put(path, length);
+
+				for (Entry<String, Long> entry : currentDownloadLengthMap.entrySet()) {
+					String key = entry.getKey();
+					Long value = entry.getValue();
+					if (key != null && !"".equals(key)) {
+						currentLength += value;
+					}
+				}
+				final double currentPrecent = currentLength / totalLength;
+				fileHandlers.handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						thisView.controlProgress.moveTo((int) (currentPrecent * 100));
+					}
+				});
+			}
+
+			@Override
+			public void onFailure(DownloadFile instance, int status) {
+				// TODO Auto-generated method stub
+
+			}
+		};
 		textWatcher = new TextWatcher() {
 
 			String content = "";
@@ -189,41 +281,7 @@ public class ShareMessageDetailController {
 				}
 			}
 		};
-		downloadListener = new OnDownloadListener() {
 
-			@Override
-			public void onSuccess(DownloadFile instance, int status) {
-				final ImageView imageView = (ImageView) instance.view;
-				thisView.imageLoader.displayImage("file://" + instance.path, imageView, thisView.displayImageOptions, new SimpleImageLoadingListener() {
-					@Override
-					public void onLoadingStarted(String imageUri, View view) {
-					}
-
-					@Override
-					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					}
-
-					@Override
-					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						int height = (int) (loadedImage.getHeight() * (thisView.screenWidth / loadedImage.getWidth()));
-						LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) thisView.screenWidth, height);
-						imageView.setLayoutParams(params);
-					}
-				});
-			}
-
-			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onFailure(DownloadFile instance, int status) {
-				// TODO Auto-generated method stub
-
-			}
-		};
 		mOnTouchListener = new OnTouchListener() {
 
 			@Override

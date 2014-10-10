@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TestHttp;
 import com.open.welinks.R;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.ResponseHandlers;
@@ -100,7 +101,7 @@ public class DownloadOssFileController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 				// TODO
 				instance.transportingItem.controlProgress.moveTo(precent);
 				instance.transportingItem.text_transport_time_view.setText((instance.time.received - instance.time.start) + "ms");

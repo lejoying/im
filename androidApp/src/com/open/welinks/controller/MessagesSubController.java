@@ -11,10 +11,12 @@ import android.view.View.OnTouchListener;
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
 import com.open.welinks.ChatActivity;
+import com.open.welinks.DynamicListActivity;
 import com.open.welinks.R;
+import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
-import com.open.welinks.model.DataUtil;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.view.MessagesSubView;
 
 public class MessagesSubController {
@@ -54,17 +56,28 @@ public class MessagesSubController {
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("message_view")) {
 						String key = (String) view.getTag(R.id.tag_first);
-						String type = key.substring(0, 1);
-						String value = key.substring(1);
-						if ("p".equals(type)) {
-							type = "point";
-						} else if ("g".equals(type)) {
-							type = "group";
+						if ("event_user".equals(key)) {
+							Intent intent = new Intent(mainController.thisActivity, DynamicListActivity.class);
+							intent.putExtra("type", 3);
+							mainController.thisActivity.startActivity(intent);
+						} else if ("event_group".equals(key)) {
+							Intent intent = new Intent(mainController.thisActivity, DynamicListActivity.class);
+							intent.putExtra("type", 2);
+							mainController.thisActivity.startActivity(intent);
+						} else {
+
+							String type = key.substring(0, 1);
+							String value = key.substring(1);
+							if ("p".equals(type)) {
+								type = "point";
+							} else if ("g".equals(type)) {
+								type = "group";
+							}
+							Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
+							intent.putExtra("id", value);
+							intent.putExtra("type", type);
+							thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
 						}
-						Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
-						intent.putExtra("id", value);
-						intent.putExtra("type", type);
-						thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
 						log.e("key:" + key);
 					}
 				}
@@ -130,7 +143,7 @@ public class MessagesSubController {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == R.id.tag_second) {
-			thisView.showMessagesSequence();
+			// thisView.showMessagesSequence();
 		}
 	}
 

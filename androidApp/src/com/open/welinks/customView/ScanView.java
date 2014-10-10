@@ -1,4 +1,4 @@
-package com.open.welinks.view;
+package com.open.welinks.customView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

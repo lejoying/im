@@ -1,5 +1,6 @@
 package com.open.welinks;
 
+import com.open.lib.MyLog;
 import com.open.welinks.controller.BusinessCardController;
 import com.open.welinks.view.BusinessCardView;
 
@@ -8,6 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 public class BusinessCardActivity extends Activity {
+
+	public String tag = "BusinessCardActivity";
+	public MyLog log = new MyLog(tag, true);
 
 	public BusinessCardController thisController;
 	public BusinessCardView thisView;
@@ -27,9 +31,10 @@ public class BusinessCardActivity extends Activity {
 		thisView.thisController = thisController;
 		thisController.thisView = thisView;
 
-		thisView.initView();
 		thisController.onCreate();
-		thisView.fillData();
+		thisController.initializeListeners();
+		thisView.initView();
+		thisController.bindEvent();
 	}
 
 	@Override
@@ -43,5 +48,4 @@ public class BusinessCardActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		thisController.onActivityResult(requestCode, resultCode, data);
 	}
-
 }

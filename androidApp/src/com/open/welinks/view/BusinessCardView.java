@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.BusinessCardController;
@@ -27,29 +28,43 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
+import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
 public class BusinessCardView {
 
+	public String tag = "BusinessCardView";
+	public MyLog log = new MyLog(tag, true);
+
 	public Data data = Data.getInstance();
+
+	public String GROUPCARDTYPE = "groupcard";
+	public String USERCARDTYPE = "usercard";
 
 	public BusinessCardController thisController;
 	public BusinessCardView thisView;
 	public BusinessCardActivity thisActivity;
 
 	public LayoutInflater mInflater;
-	public RelativeLayout backview;
-	public LinearLayout content, infomation_layout, sex_layout;
-	public TextView spacing_one, spacing_two, spacing_three, title, business_title, lable_title, creattime_title, nickname, id, business, lable, creattime, sex, distance;
-	public ImageView head, tdcode;
-	public Button button_one, button_two, button_three;
-	public RelativeLayout rightContainer;
-	public BusinessCard businessCard;
 
-	public Status status = Status.SELF;
+	public RelativeLayout backView;
+	public LinearLayout content, infomationLayout, sexLayout, ageLayout;
+	public TextView spacingOne, spacingTwo, spacingThree, backTitleView, businessTitle, lableTitle, creatTimeTitle, nickName, id, business, lable, creatTime, sex, age, distance;
+	public ImageView head, qrCodeView;
+	public Button buttonOne, buttonTwo, buttonThree;
+	public RelativeLayout rightContainer;
+	public TextView rightTopButton;
+
+	public BusinessCard businessCard;
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public DisplayImageOptions options;
+
+	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+
+	public DisplayMetrics displayMetrics;
+
+	public Status status = Status.SELF;
 
 	public enum Status {
 		SELF, FRIEND, TEMPFRIEND, JOINEDGROUP, NOTJOINGROUP, SQUARE
@@ -60,41 +75,41 @@ public class BusinessCardView {
 		thisView = this;
 	}
 
-	public TextView rightTopButton;
-
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
-		thisActivity.setContentView(R.layout.activity_businesscard);
 
-		DisplayMetrics displayMetrics = new DisplayMetrics();
+		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(45)).build();
 
-		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		title = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		thisActivity.setContentView(R.layout.activity_businesscard);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		content = (LinearLayout) thisActivity.findViewById(R.id.content);
-		infomation_layout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
-		sex_layout = (LinearLayout) thisActivity.findViewById(R.id.sex_layout);
-		spacing_one = (TextView) thisActivity.findViewById(R.id.spacing_one);
-		spacing_two = (TextView) thisActivity.findViewById(R.id.spacing_two);
-		spacing_three = (TextView) thisActivity.findViewById(R.id.spacing_three);
-		business_title = (TextView) thisActivity.findViewById(R.id.business_title);
-		lable_title = (TextView) thisActivity.findViewById(R.id.lable_title);
-		creattime_title = (TextView) thisActivity.findViewById(R.id.creattime_title);
+		infomationLayout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
+		sexLayout = (LinearLayout) thisActivity.findViewById(R.id.sex_layout);
+		ageLayout = (LinearLayout) thisActivity.findViewById(R.id.age_layout);
+		spacingOne = (TextView) thisActivity.findViewById(R.id.spacing_one);
+		spacingTwo = (TextView) thisActivity.findViewById(R.id.spacing_two);
+		spacingThree = (TextView) thisActivity.findViewById(R.id.spacing_three);
+		businessTitle = (TextView) thisActivity.findViewById(R.id.business_title);
+		lableTitle = (TextView) thisActivity.findViewById(R.id.lable_title);
+		creatTimeTitle = (TextView) thisActivity.findViewById(R.id.creattime_title);
 		id = (TextView) thisActivity.findViewById(R.id.id);
-		nickname = (TextView) thisActivity.findViewById(R.id.nickname);
+		nickName = (TextView) thisActivity.findViewById(R.id.nickname);
 		business = (TextView) thisActivity.findViewById(R.id.business);
 		lable = (TextView) thisActivity.findViewById(R.id.lable);
-		creattime = (TextView) thisActivity.findViewById(R.id.creattime);
+		creatTime = (TextView) thisActivity.findViewById(R.id.creattime);
 		sex = (TextView) thisActivity.findViewById(R.id.sex);
+		age = (TextView) thisActivity.findViewById(R.id.age);
 		head = (ImageView) thisActivity.findViewById(R.id.head);
 		distance = (TextView) thisActivity.findViewById(R.id.distance);
 
-		tdcode = (ImageView) thisActivity.findViewById(R.id.tdcode);
-		button_one = (Button) thisActivity.findViewById(R.id.button_one);
-		button_two = (Button) thisActivity.findViewById(R.id.button_two);
-		button_three = (Button) thisActivity.findViewById(R.id.button_three);
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(45)).build();
+		qrCodeView = (ImageView) thisActivity.findViewById(R.id.tdcode);
+		buttonOne = (Button) thisActivity.findViewById(R.id.button_one);
+		buttonTwo = (Button) thisActivity.findViewById(R.id.button_two);
+		buttonThree = (Button) thisActivity.findViewById(R.id.button_three);
 
 		rightTopButton = new TextView(thisActivity);
 		int dp_5 = (int) (5 * displayMetrics.density);
@@ -108,37 +123,49 @@ public class BusinessCardView {
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		this.rightContainer.addView(rightTopButton, layoutParams);
+		isGetData = false;
+		fillData();
 	}
 
-	String GROUPCARDTYPE = "groupcard";
-	String USERCARDTYPE = "usercard";
-	LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+	public boolean isGetData = false;
 
 	public void fillData() {
 		businessCard = new BusinessCard();
 		if (status.equals(Status.SELF)) {
+			sexLayout.setVisibility(View.VISIBLE);
+			ageLayout.setVisibility(View.VISIBLE);
 			rightTopButton.setText("修改资料");
 			User user = thisController.data.userInformation.currentUser;
+			if (!isGetData)
+				thisController.getFriendCard(user.phone);
 			businessCard.id = user.id;
 			businessCard.icon = user.head;
 			businessCard.sex = user.sex;
 			businessCard.distance = "0";
 			businessCard.nickname = user.nickName;
 			businessCard.mainBusiness = user.mainBusiness;
+			businessCard.sex = user.sex;
+			businessCard.age = user.age;
 			businessCard.lable = "暂无标签";
-			businessCard.creattime = "2014年 9月 1日";
+			businessCard.creattime = user.createTime;
 			businessCard.button_one = "修改我的名片";
 			businessCard.button_two = "";
 			businessCard.button_three = "";
-			sex_layout.setVisibility(View.VISIBLE);
-			button_two.setVisibility(View.GONE);
-			button_three.setVisibility(View.GONE);
-			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, user.phone));
+			sexLayout.setVisibility(View.VISIBLE);
+			buttonTwo.setVisibility(View.GONE);
+			buttonThree.setVisibility(View.GONE);
+			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, user.phone));
 		} else if (status.equals(Status.FRIEND)) {
+			sexLayout.setVisibility(View.VISIBLE);
+			ageLayout.setVisibility(View.VISIBLE);
 			rightTopButton.setText("发起聊天");
 			Friend friend = thisController.data.relationship.friendsMap.get(thisController.key);
+			if (!isGetData)
+				thisController.getFriendCard(friend.phone);
 			businessCard.id = friend.id;
 			businessCard.icon = friend.head;
+			businessCard.sex = friend.sex;
+			businessCard.age = friend.age + "";
 			String nickName = "";
 			if (friend.alias.equals("")) {
 				nickName = friend.nickName;
@@ -150,14 +177,48 @@ public class BusinessCardView {
 			businessCard.nickname = nickName;
 			businessCard.mainBusiness = friend.mainBusiness;
 			businessCard.lable = "暂无标签";
-			businessCard.creattime = "2014年 9月 1日";
+			businessCard.creattime = friend.createTime;
 			businessCard.button_one = "发起聊天";
 			businessCard.button_two = "修改备注";
 			businessCard.button_three = "解除好友关系";
-			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
+			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
+		} else if (status.equals(Status.TEMPFRIEND)) {
+			sexLayout.setVisibility(View.VISIBLE);
+			ageLayout.setVisibility(View.VISIBLE);
+			rightTopButton.setText("加为好友");
+			Friend friend = data.tempData.tempFriend;
+			if (friend == null) {
+				thisController.getFriendCard(thisController.key);
+			}
+			if (data.relationship.friendsMap.get(thisController.key) != null) {
+				friend = data.relationship.friendsMap.get(thisController.key);
+				log.e("temp phone:" + friend.phone);
+				if (!isGetData)
+					thisController.getFriendCard(friend.phone);
+				businessCard.id = friend.id;
+				businessCard.icon = friend.head;
+				businessCard.sex = friend.sex;
+				businessCard.age = friend.age + "";
+				User user = thisController.data.userInformation.currentUser;
+				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
+				businessCard.nickname = friend.nickName;
+				businessCard.mainBusiness = friend.mainBusiness;
+				businessCard.lable = "暂无标签";
+				businessCard.creattime = friend.createTime;
+				businessCard.button_one = "加为好友";
+				businessCard.button_two = "";
+				businessCard.button_three = "";
+				buttonTwo.setVisibility(View.GONE);
+				buttonThree.setVisibility(View.GONE);
+				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
+			}
 		} else if (status.equals(Status.JOINEDGROUP)) {
+			sexLayout.setVisibility(View.GONE);
+			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText("发起群聊");
 			Group group = thisController.data.relationship.groupsMap.get(thisController.key);
+			if (!isGetData)
+				thisController.getGroupCard(group.gid + "", "group");
 			businessCard.id = group.gid;
 			businessCard.icon = group.icon;
 			businessCard.nickname = group.name;
@@ -171,61 +232,79 @@ public class BusinessCardView {
 			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, group.longitude, group.latitude);
 			businessCard.mainBusiness = description;
 			businessCard.lable = "暂无标签";
-			businessCard.creattime = "2014年 9月 1日";
+			businessCard.creattime = group.createTime;
 			businessCard.button_one = "发起聊天";
 			businessCard.button_two = "修改群名片";
 			businessCard.button_three = "";
-			button_three.setVisibility(View.GONE);
-			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
-		} else if (status.equals(Status.TEMPFRIEND)) {
-			rightTopButton.setText("加为好友");
-			Friend friend = data.tempData.tempFriend;
-			businessCard.id = friend.id;
-			businessCard.icon = friend.head;
-			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
-			businessCard.nickname = friend.nickName;
-			businessCard.mainBusiness = friend.mainBusiness;
-			businessCard.lable = "暂无标签";
-			businessCard.creattime = "2014年 9月 1日";
-			businessCard.button_one = "加为好友";
-			businessCard.button_two = "";
-			businessCard.button_three = "";
-			button_two.setVisibility(View.GONE);
-			button_three.setVisibility(View.GONE);
-			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempFriend.phone));
+			buttonThree.setVisibility(View.GONE);
+			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
 		} else if (status.equals(Status.NOTJOINGROUP)) {
+			sexLayout.setVisibility(View.GONE);
+			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText("加入群组");
-			businessCard.id = data.tempData.tempGroup.gid;
-			businessCard.icon = data.tempData.tempGroup.icon;
-			businessCard.nickname = data.tempData.tempGroup.name;
-			businessCard.mainBusiness = data.tempData.tempGroup.description;
-			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
-			businessCard.lable = "暂无标签";
-			businessCard.creattime = "2014年 9月 1日";
-			businessCard.button_one = "加入群组";
-			businessCard.button_two = "";
-			businessCard.button_three = "";
-			button_two.setVisibility(View.GONE);
-			button_three.setVisibility(View.GONE);
-			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
+			if (data.tempData.tempGroup == null) {
+				thisController.getGroupCard(thisController.key, "group");
+			}
+			if (data.relationship.groupsMap.get(thisController.key) != null) {
+				data.tempData.tempGroup = data.relationship.groupsMap.get(thisController.key);
+				businessCard.id = data.tempData.tempGroup.gid;
+				if (!isGetData)
+					thisController.getGroupCard(data.tempData.tempGroup.gid + "", "group");
+				businessCard.icon = data.tempData.tempGroup.icon;
+				businessCard.nickname = data.tempData.tempGroup.name;
+				businessCard.mainBusiness = data.tempData.tempGroup.description;
+				User user = thisController.data.userInformation.currentUser;
+				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
+				businessCard.lable = "暂无标签";
+				businessCard.creattime = data.tempData.tempGroup.createTime;
+				businessCard.button_one = "加入群组";
+				businessCard.button_two = "";
+				businessCard.button_three = "";
+				buttonTwo.setVisibility(View.GONE);
+				buttonThree.setVisibility(View.GONE);
+				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
+			}
 		} else if (status.equals(Status.SQUARE)) {
-			// rightTopButton.setText("修改资料");
-			businessCard.id = Integer.valueOf(thisController.key);
-			businessCard.icon = "";
-			businessCard.distance = "0";
-			businessCard.nickname = "";
-			businessCard.mainBusiness = "暂无描述";
-			businessCard.lable = "暂无标签";
-			businessCard.creattime = "2014年 9月 1日";
-			businessCard.button_one = "";
-			businessCard.button_two = "";
-			businessCard.button_three = "";
-			button_one.setVisibility(View.GONE);
-			button_two.setVisibility(View.GONE);
-			button_three.setVisibility(View.GONE);
-
+			sexLayout.setVisibility(View.GONE);
+			ageLayout.setVisibility(View.GONE);
+			rightTopButton.setText("进入广场");
+			rightTopButton.setVisibility(View.GONE);
+			Group square = data.relationship.groupsMap.get(thisController.key);
+			if (square == null) {
+				thisController.getGroupCard(thisController.key, "community");
+			} else {
+				businessCard.id = square.gid;
+				if (!isGetData)
+					thisController.getGroupCard(square.gid + "", "community");
+				businessCard.icon = square.icon;
+				businessCard.nickname = square.name;
+				businessCard.mainBusiness = square.description;
+				User user = thisController.data.userInformation.currentUser;
+				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, square.longitude, square.latitude);
+				businessCard.lable = "暂无标签";
+				businessCard.creattime = square.createTime;
+				businessCard.button_one = "进入广场";
+				businessCard.button_two = "";
+				businessCard.button_three = "";
+				buttonOne.setVisibility(View.GONE);
+				buttonTwo.setVisibility(View.GONE);
+				buttonThree.setVisibility(View.GONE);
+				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, square.gid + ""));
+				// rightTopButton.setText("修改资料");
+				// businessCard.id = Integer.valueOf(thisController.key);
+				// businessCard.icon = "";
+				// businessCard.distance = "0";
+				// businessCard.nickname = "";
+				// businessCard.mainBusiness = "暂无描述";
+				// businessCard.lable = "暂无标签";
+				// businessCard.creattime = "0";
+				// businessCard.button_one = "";
+				// businessCard.button_two = "";
+				// businessCard.button_three = "";
+				// buttonOne.setVisibility(View.GONE);
+				// buttonTwo.setVisibility(View.GONE);
+				// buttonThree.setVisibility(View.GONE);
+			}
 		}
 		if (businessCard.icon.equals("Head") || "".equals(businessCard.icon)) {
 			Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man), true, 5, Color.WHITE);
@@ -234,46 +313,48 @@ public class BusinessCardView {
 			fileHandlers.getHeadImage(businessCard.icon, this.head, options);
 			// thisController.setHeadImage(businessCard.icon, thisView.head);
 		}
-		tdcode.setScaleType(ScaleType.FIT_CENTER);
+		qrCodeView.setScaleType(ScaleType.FIT_CENTER);
 		setData(businessCard);
 	}
 
 	public void setData(BusinessCard businessCard) {
+		log.e("createTime--------：" + businessCard.creattime);
 		if (status.equals(Status.SELF)) {
-			title.setText("我的详情");
-			business_title.setText("个人宣言：");
-			lable_title.setText("爱好：");
-			creattime_title.setText("注册时间：");
+			backTitleView.setText("我的详情");
+			businessTitle.setText("个人宣言：");
+			lableTitle.setText("爱好：");
+			creatTimeTitle.setText("注册时间：");
 		} else if (status.equals(Status.FRIEND) || status.equals(Status.TEMPFRIEND)) {
-			title.setText("个人详情");
-			business_title.setText("个人宣言：");
-			lable_title.setText("爱好：");
-			creattime_title.setText("注册时间：");
+			backTitleView.setText("个人详情");
+			businessTitle.setText("个人宣言：");
+			lableTitle.setText("爱好：");
+			creatTimeTitle.setText("注册时间：");
 		} else if (status.equals(Status.JOINEDGROUP) || status.equals(Status.NOTJOINGROUP)) {
-			title.setText("群组详情");
-			business_title.setText("主要业务：");
-			lable_title.setText("标签：");
-			creattime_title.setText("创建时间：");
+			backTitleView.setText("群组详情");
+			businessTitle.setText("主要业务：");
+			lableTitle.setText("标签：");
+			creatTimeTitle.setText("创建时间：");
 		} else if (status.equals(Status.SQUARE)) {
-			title.setText("广场详情");
-			business_title.setText("主要业务：");
-			lable_title.setText("标签：");
-			creattime_title.setText("创建时间：");
+			backTitleView.setText("广场详情");
+			businessTitle.setText("主要业务：");
+			lableTitle.setText("标签：");
+			creatTimeTitle.setText("创建时间：");
 		}
 		if (!"".equals(businessCard.sex) && ("male".equals(businessCard.sex) || "男".equals(businessCard.sex))) {
 			sex.setText("男");
 		} else {
 			sex.setText("女");
 		}
+		age.setText(businessCard.age);
 		distance.setText(businessCard.distance + "km");
-		nickname.setText(businessCard.nickname);
+		nickName.setText(businessCard.nickname);
 		id.setText(String.valueOf(businessCard.id));
 		business.setText(businessCard.mainBusiness);
 		lable.setText(businessCard.lable);
-		creattime.setText(businessCard.creattime);
-		button_one.setText(businessCard.button_one);
-		button_two.setText(businessCard.button_two);
-		button_three.setText(businessCard.button_three);
+		creatTime.setText(DateUtil.formatYearMonthDay2(businessCard.creattime));
+		buttonOne.setText(businessCard.button_one);
+		buttonTwo.setText(businessCard.button_two);
+		buttonThree.setText(businessCard.button_three);
 	}
 
 	public class BusinessCard {
@@ -282,6 +363,7 @@ public class BusinessCardView {
 		public String nickname = "";
 		public String mainBusiness = "";
 		public String sex = "";
+		public String age = "";
 		public String distance;
 		public String lable = "";
 		public String creattime = "";

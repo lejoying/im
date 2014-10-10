@@ -18,9 +18,10 @@ import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
+import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.DistanceUtils;
 
 public class NearbyView {
 	public NearbyView thisView;
@@ -139,7 +140,7 @@ public class NearbyView {
 				}
 				holder.sex.setImageResource(sexImageResource);
 				holder.name.setText((String) infomation.get("name"));
-				holder.distance.setText(DistanceUtils.getDistance((Integer) infomation.get("distance")));
+				holder.distance.setText(LBSHandlers.getDistance((Integer) infomation.get("distance")));
 				holder.recently.setText(DateUtil.getChatMessageListTime(Long.valueOf((String) infomation.get("lastlogintime"))));
 				holder.age.setText("20");
 				convertView.setTag(R.id.tag_first, "point");
@@ -164,11 +165,15 @@ public class NearbyView {
 					holder.mainBusiness.setText(description);
 				}
 				holder.name.setText((String) infomation.get("name"));
-				holder.distance.setText(DistanceUtils.getDistance((Integer) infomation.get("distance")));
+				holder.distance.setText(LBSHandlers.getDistance((Integer) infomation.get("distance")));
 				holder.address.setText((String) infomation.get("address"));
 				holder.members.setText("10/100");
 				holder.chatNum.setText("10");
-				convertView.setTag(R.id.tag_first, "group");
+				if (thisController.status == Status.group) {
+					convertView.setTag(R.id.tag_first, "group");
+				} else if (thisController.status == Status.square) {
+					convertView.setTag(R.id.tag_first, "square");
+				}
 				convertView.setTag(R.id.tag_second, (String) infomation.get("gid"));
 				convertView.setTag(R.id.tag_third, infomation);
 			}

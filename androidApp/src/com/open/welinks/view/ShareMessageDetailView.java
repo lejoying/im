@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,11 +45,11 @@ import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.Data.ShareContent;
-import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.SubData.ShareContent;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -126,6 +127,9 @@ public class ShareMessageDetailView {
 
 	public DisplayImageOptions headOptions;
 
+	public View controlProgressView;
+	public ControlProgress controlProgress;
+
 	public ShareMessageDetailView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
@@ -195,6 +199,10 @@ public class ShareMessageDetailView {
 		confirmSendCommentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_sendComment);
 
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+
+		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
+		controlProgress = new ControlProgress();
+		controlProgress.initialize(this.controlProgressView);
 
 		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
 		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
@@ -452,6 +460,51 @@ public class ShareMessageDetailView {
 			float mappedValue = (float) spring.getCurrentValue();
 			menuOptionsView.setScaleX(mappedValue);
 			menuOptionsView.setScaleY(mappedValue);
+		}
+	}
+
+	public class ControlProgress {
+
+		public View controlProgressView;
+
+		public ImageView progress_line1;
+
+		public ImageView progress_line2;
+		public TranslateAnimation move_progress_line1;
+
+		public int percentage = 0;
+		public int width = 0;
+
+		public void initialize(View container) {
+			// DisplayMetrics displayMetrics = new DisplayMetrics();
+			// mainView.thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
+
+			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
+			controlProgressView = container;
+
+			width = displayMetrics.widthPixels;
+
+		}
+
+		public void moveTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
+			// TODO old animation becomes memory fragment
+			move_progress_line1.setStartOffset(0);
+			move_progress_line1.setDuration(200);
+
+			progress_line1.startAnimation(move_progress_line1);
+
+			progress_line1.setX(position);
+			percentage = targetPercentage;
+		}
+
+		public void setTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			progress_line1.setX(position);
+			percentage = targetPercentage;
 		}
 	}
 

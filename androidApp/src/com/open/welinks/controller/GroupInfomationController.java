@@ -18,18 +18,18 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.CirclesListActivity;
 import com.open.welinks.GroupMemberManageActivity;
+import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.Alert;
-import com.open.welinks.view.GroupInfomationView;
-import com.open.welinks.view.ViewManage;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.view.GroupInfomationView;
+import com.open.welinks.view.ViewManage;
 
 public class GroupInfomationController {
 
@@ -66,7 +66,7 @@ public class GroupInfomationController {
 			if (currentGroup == null) {
 				thisActivity.finish();
 			} else {
-				thisView.showGroupMembers();
+				// thisView.showGroupMembers();
 			}
 		} else {
 			thisActivity.finish();
@@ -113,7 +113,7 @@ public class GroupInfomationController {
 						}
 					}).show();
 				} else if (view.equals(thisView.groupMemberControlView)) {
-					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);//GroupMemberManageActivity
+					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);// GroupMemberManageActivity
 					intent.putExtra("gid", currentGroup.gid + "");
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.groupNameLayoutView)) {
@@ -149,9 +149,17 @@ public class GroupInfomationController {
 					thisView.dialogContentView.setVisibility(View.GONE);
 					// modify server data
 					modifyGroupName(groupName);
+				} else if (view.getTag(R.id.tag_class) != null) {
+					String tag_class = (String) view.getTag(R.id.tag_class);
+					if ("head_click".equals(tag_class)) {
+						String phone = (String) view.getTag(R.id.tag_first);
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
+						thisView.businessCardPopView.showUserCardDialogView();
+					}
 				}
 			}
 		};
+		thisView.showGroupMembers();
 	}
 
 	public void bindEvent() {
@@ -217,5 +225,9 @@ public class GroupInfomationController {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFY, params, responseHandlers.group_modify);
+	}
+
+	public void onResume() {
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 }

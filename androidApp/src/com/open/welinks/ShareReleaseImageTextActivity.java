@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.open.welinks.controller.ShareReleaseImageTextController;
@@ -35,8 +36,8 @@ public class ShareReleaseImageTextActivity extends Activity {
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 
-		thisView.initView();
 		thisController.initializeListeners();
+		thisView.initView();
 		thisController.bindEvent();
 	}
 
@@ -56,6 +57,15 @@ public class ShareReleaseImageTextActivity extends Activity {
 	public void onBackPressed() {
 		thisController.onBackPressed();
 		super.onBackPressed();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			return thisController.onKeyDown(keyCode, event);
+		} else {
+			return super.onKeyDown(keyCode, event);
+		}
 	}
 
 	@Override

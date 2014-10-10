@@ -44,4 +44,9 @@ public class GroupInfomationActivity extends Activity {
 		super.onBackPressed();
 		this.thisController.onBackPressed();
 	}
+	@Override
+	protected void onResume() {
+		this.thisController.onResume();
+		super.onResume();
+	}
 }

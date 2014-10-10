@@ -66,6 +66,7 @@ public class PushService extends Service {
 		random = new Random();
 		instance = this;
 		super.onCreate();
+		log.e("service onCreate");
 	}
 
 	@Override
@@ -81,6 +82,7 @@ public class PushService extends Service {
 				stopLongPull();
 			}
 		}
+		log.e("service onStartCommand");
 		return super.onStartCommand(intent, flags, startId);
 	}
 

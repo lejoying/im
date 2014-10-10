@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,28 +30,39 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.MyLog;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
+import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.ShareContent;
-import com.open.welinks.model.Data.ShareContent.ShareContentItem;
+import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.SubData;
+import com.open.welinks.model.SubData.ShareContent;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareReleaseImageTextView;
+import com.open.welinks.view.ShareSubView.ControlProgress;
+import com.open.welinks.view.ShareSubView.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
 public class ShareReleaseImageTextController {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareReleaseImageTextController";
+
+	public MyLog log = new MyLog(tag, true);
 
 	public Context context;
 	public ShareReleaseImageTextView thisView;
@@ -74,6 +87,7 @@ public class ShareReleaseImageTextController {
 	public ViewManage viewManage = ViewManage.getInstance();
 
 	public int currentUploadCount = 0;
+	public int totalUploadCount = 0;
 	public Map<String, String> uploadFileNameMap = new HashMap<String, String>();
 
 	public String currentSelectedGroup = "";
@@ -86,6 +100,8 @@ public class ShareReleaseImageTextController {
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
 	public String type, gid, gtype;
+
+	public ShareMessage shareMessage;
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
@@ -110,7 +126,98 @@ public class ShareReleaseImageTextController {
 
 	public OnTouchListener mScrollOnTouchListener;
 
+	int totalLength = 0;
+	Map<String, Integer> fileTotalLengthMap = new HashMap<String, Integer>();
+	Map<String, Integer> currentUploadLength = new HashMap<String, Integer>();
+
 	public void initializeListeners() {
+		uploadLoadingListener = new OnUploadLoadingListener() {
+
+			@Override
+			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
+				double currentLength = 0;
+				String path = instance.path;
+				int singleLength = fileTotalLengthMap.get(path);
+				int length = singleLength * precent / 100;
+				currentUploadLength.put(path, length);
+				// currentLength += length;
+
+				for (Entry<String, Integer> entry : currentUploadLength.entrySet()) {
+					String key = entry.getKey();
+					int value = entry.getValue();
+					if (key != null && !"".equals(key)) {
+						currentLength += value;
+					}
+				}
+				final double currentPrecent = currentLength / totalLength;
+				fileHandlers.handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						if (shareMessage != null) {
+							String keyName = "message#" + shareMessage.gsid;
+							SharesMessageBody listItemBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
+							if (listItemBody != null) {
+								ControlProgress controlProgress = listItemBody.controlProgress;
+								if (controlProgress != null) {
+									controlProgress.moveTo((int) (currentPrecent * 100));
+								}
+							}
+						}
+					}
+				});
+			}
+
+			@Override
+			public void onSuccess(UploadMultipart instance, int time) {
+				// progress bar down
+				int singleLength = fileTotalLengthMap.get(instance.path);
+				currentUploadLength.put(instance.path, singleLength);
+				double currentLength = 0;
+				for (Entry<String, Integer> entry : currentUploadLength.entrySet()) {
+					String key = entry.getKey();
+					int value = entry.getValue();
+					if (key != null && !"".equals(key)) {
+						currentLength += value;
+					}
+				}
+				final double currentPrecent = currentLength / totalLength;
+				log.e("currentPrecent：" + currentPrecent);
+				fileHandlers.handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						if (shareMessage != null) {
+							log.e("shareMessage：" + shareMessage);
+							String keyName = "message#" + shareMessage.gsid;
+							SharesMessageBody listItemBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
+							if (listItemBody != null) {
+								log.e("listItemBody：" + listItemBody);
+								ControlProgress controlProgress = listItemBody.controlProgress;
+								if (controlProgress != null) {
+									log.e("controlProgress：" + controlProgress);
+									controlProgress.moveTo((int) (currentPrecent * 100));
+								} else {
+									log.e("controlProgress");
+								}
+							} else {
+								log.e("listItemBody");
+							}
+						} else {
+							log.e("shareMessage：null");
+						}
+					}
+				});
+				// progress bar up
+
+				currentUploadCount++;
+				if (currentUploadCount == 1) {
+					viewManage.mainView.shareSubView.showShareMessages();
+				} else if (totalUploadCount == currentUploadCount) {
+					sendMessageToServer(shareMessage.content, shareMessage.gsid);
+				}
+			}
+		};
 		mScrollOnTouchListener = new OnTouchListener() {
 			GestureDetector backviewDetector = new GestureDetector(thisActivity, new GestureDetector.SimpleOnGestureListener() {
 
@@ -133,27 +240,12 @@ public class ShareReleaseImageTextController {
 					// TODO Auto-generated method stub
 					return super.onScroll(e1, e2, distanceX, distanceY);
 				}
-
 			});
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				return backviewDetector.onTouchEvent(event);
-			}
-		};
-		uploadLoadingListener = new OnUploadLoadingListener() {
-
-			@Override
-			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
-			}
-
-			@Override
-			public void onSuccess(UploadMultipart instance, int time) {
-				currentUploadCount++;
-				if (currentUploadCount == 1) {
-					viewManage.mainView.shareSubView.showShareMessages();
-				}
 			}
 		};
 		onTouchListener = new OnTouchListener() {
@@ -198,9 +290,12 @@ public class ShareReleaseImageTextController {
 			@Override
 			public void onClick(View view) {
 				if (view == thisView.mCancleButtonView) {
-					thisActivity.finish();
-					data.tempData.selectedImageList = null;
+					saveDraftDialog();
 				} else if (view == thisView.mConfirmButtonView) {
+					parser.check();
+					if (data.localStatus.localData.notSendShareMessagesMap != null) {
+						data.localStatus.localData.notSendShareMessagesMap.remove(gtype);
+					}
 					sendImageTextShare();
 				} else if (view == thisView.mSelectImageButtonView) {
 					Intent intent = new Intent(thisActivity, ImagesDirectoryActivity.class);
@@ -231,7 +326,17 @@ public class ShareReleaseImageTextController {
 	public void sendImageTextShare() {
 		viewManage.shareSubView.isShowFirstMessageAnimation = true;
 		final String sendContent = thisView.mEditTextView.getText().toString().trim();
-		if ("".equals(sendContent) && data.tempData.selectedImageList.size() == 0)
+		boolean flag = false;
+		if (data.tempData.selectedImageList == null) {
+			flag = true;
+		} else {
+			if (data.tempData.selectedImageList.size() == 0) {
+				flag = true;
+			} else {
+				flag = false;
+			}
+		}
+		if ("".equals(sendContent) && flag)
 			return;
 		thisActivity.finish();
 		new Thread(new Runnable() {
@@ -252,7 +357,7 @@ public class ShareReleaseImageTextController {
 				}
 				long time = new Date().getTime();
 				Share share = data.shares.shareMap.get(currentSelectedGroup);
-				ShareMessage shareMessage = share.new ShareMessage();
+				shareMessage = share.new ShareMessage();
 				shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 				shareMessage.gsid = currentUser.phone + "_" + time;
 				shareMessage.type = "imagetext";
@@ -260,14 +365,20 @@ public class ShareReleaseImageTextController {
 				shareMessage.time = time;
 				shareMessage.status = "sending";
 
-				ShareContent shareContent = data.new ShareContent();
+				ShareContent shareContent = SubData.getInstance().new ShareContent();
 				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 				shareContentItem.type = "text";
 				shareContentItem.detail = sendContent;
 				shareContent.shareContentItems.add(shareContentItem);
 
 				if (data.tempData.selectedImageList != null) {
-					copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems);
+					totalUploadCount = data.tempData.selectedImageList.size();
+					if (totalUploadCount != 0) {
+						copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems);
+					} else {
+						String content = gson.toJson(shareContent.shareContentItems);
+						sendMessageToServer(content, shareMessage.gsid);
+					}
 				}
 
 				String content = gson.toJson(shareContent.shareContentItems);
@@ -292,8 +403,6 @@ public class ShareReleaseImageTextController {
 						}
 					}
 				});
-				// server
-				sendMessageToServer(content, shareMessage.gsid);
 
 				// init tempData data
 				data.tempData.selectedImageList = null;
@@ -329,6 +438,7 @@ public class ShareReleaseImageTextController {
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
 		// The current selected pictures gallery
 		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
+		totalLength = 0;
 		for (int i = 0; i < selectedImageList.size(); i++) {
 			String key = selectedImageList.get(i);
 			String suffixName = key.substring(key.lastIndexOf("."));
@@ -344,6 +454,9 @@ public class ShareReleaseImageTextController {
 				byte[] bytes = null;
 				// long fileLength = fromFile.length();
 				bytes = fileHandlers.getImageFileBytes(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+				int fileLength = bytes.length;
+				totalLength += fileLength;
+				fileTotalLengthMap.put(key, fileLength);
 				// if (fileLength > 400 * 1024) {
 				// ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
 				// bytes = byteArrayOutputStream.toByteArray();
@@ -378,6 +491,7 @@ public class ShareReleaseImageTextController {
 				// upload file to oss server
 				uploadFileNameMap.put(key, fileName);
 				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
+				multipart.path = key;
 				uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			} catch (FileNotFoundException e) {
@@ -414,7 +528,7 @@ public class ShareReleaseImageTextController {
 	}
 
 	public void onBackPressed() {
-		data.tempData.selectedImageList = null;
+
 	}
 
 	public void finish() {
@@ -457,5 +571,68 @@ public class ShareReleaseImageTextController {
 			}
 		}
 		return true;
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			saveDraftDialog();
+		}
+		return false;
+	}
+
+	public void saveDraftDialog() {
+		String content = thisView.mEditTextView.getText().toString();
+		boolean flag = false;
+		if (data.tempData.selectedImageList == null) {
+			flag = false;
+		} else {
+			if (data.tempData.selectedImageList.size() == 0) {
+				flag = false;
+			} else {
+				flag = true;
+			}
+		}
+		if (!"".equals(content) || flag) {
+			Alert.createDialog(thisActivity).setTitle("是否保存草稿？").setOnConfirmClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					parser.check();
+					ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
+					shareDraft.content = thisView.mEditTextView.getText().toString();
+					if (data.tempData.selectedImageList != null) {
+						if (data.tempData.selectedImageList.size() != 0) {
+							shareDraft.imagesContent = gson.toJson(data.tempData.selectedImageList);
+						} else {
+							shareDraft.imagesContent = "";
+						}
+					} else {
+						shareDraft.imagesContent = "";
+					}
+					data.tempData.selectedImageList = null;
+					if (data.localStatus.localData.notSendShareMessagesMap == null) {
+						data.localStatus.localData.notSendShareMessagesMap = new HashMap<String, ShareDraft>();
+					}
+					data.localStatus.localData.notSendShareMessagesMap.put(gtype, shareDraft);
+					thisActivity.finish();
+				}
+			}).setOnCancelClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					parser.check();
+					if (data.localStatus.localData.notSendShareMessagesMap == null) {
+						data.localStatus.localData.notSendShareMessagesMap = new HashMap<String, ShareDraft>();
+					} else {
+						data.localStatus.localData.notSendShareMessagesMap.remove(gtype);
+					}
+					data.tempData.selectedImageList = null;
+					thisActivity.finish();
+				}
+			}).show();
+		} else {
+			data.tempData.selectedImageList = null;
+			thisActivity.finish();
+		}
 	}
 }

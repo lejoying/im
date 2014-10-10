@@ -251,11 +251,18 @@ public class Parser {
 					}
 					List<String> messageOrder2 = new ArrayList<String>();
 					for (int i = 0; i < messageOrder.size(); i++) {
-						String key = (messageOrder.get(i)).substring(1);
-						if (!data.relationship.friends.contains(key)) {
-							messageOrder2.add(messageOrder.get(i));
+						String id = (messageOrder.get(i));
+						String firstName = id.substring(0, 1);
+						String key = id.substring(1);
+						if ("p".equals(firstName) && !data.relationship.friends.contains(key)) {
+							messageOrder2.add(id);
+							log.e("删除数据");
+						} else if ("g".equals(firstName) && !data.relationship.groups.contains(key)) {
+							messageOrder2.add(id);
+							log.e("删除数据");
 						}
 					}
+					data.messages.isModified = true;
 					messageOrder.removeAll(messageOrder2);
 				}
 			} catch (Exception e) {
@@ -283,7 +290,7 @@ public class Parser {
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");
 			e.printStackTrace();
-			DataUtil.clearData();
+			DataHandlers.clearData();
 			// data = null;
 		}
 

@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:background="@drawable/background" >
 
-    <com.open.welinks.view.HackyViewPager
+    <com.open.welinks.customView.HackyViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="fill_parent"

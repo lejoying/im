@@ -72,15 +72,14 @@ public class Data {
 
 			public String currentSelectedGroup = "";
 			public String currentSelectedSquare = "";
-		}
-	}
 
-	public class ShareContent {
-		public List<ShareContentItem> shareContentItems = new ArrayList<ShareContentItem>();
+			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
+			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();
 
-		public class ShareContentItem {
-			public String type;// text image
-			public String detail;
+			public class ShareDraft {
+				public String content;
+				public String imagesContent;
+			}
 		}
 	}
 
@@ -106,8 +105,9 @@ public class Data {
 			public String head = "Head";
 			public String accessKey = "";
 			public String flag = "none";
+			public String createTime;
 
-			public String lastlogintime;
+			public String lastLoginTime;
 			public String longitude;
 			public String latitude;
 
@@ -129,7 +129,6 @@ public class Data {
 		public class ServerConfig {
 
 		}
-
 	}
 
 	public class Relationship {
@@ -163,7 +162,8 @@ public class Data {
 			public String latitude;
 			public String userBackground = "Back";
 			public String alias = "";
-			public String lastlogintime;
+			public String lastLoginTime;
+			public String createTime;
 
 			public String groupsSequenceString;
 			public String circlesOrderString;
@@ -185,6 +185,7 @@ public class Data {
 			public String latitude;
 			public String description;
 			public String background;
+			public String createTime;
 
 			public List<String> members = new ArrayList<String>();
 		}
@@ -211,31 +212,6 @@ public class Data {
 			public String contentType;
 			public String content;
 			public String phoneto;
-
-			@Override
-			public boolean equals(Object o) {
-				boolean flag = false;
-				if (o != null) {
-					try {
-						Message m = (Message) o;
-						if (!"".equals(m.gid) && m.gid != null) {
-							if (gid.equals(m.gid) && phone.equals(m.phone) && time.equals(m.time) && content.equals(m.content) && contentType.equals(m.contentType) && sendType.equals(m.sendType)) {
-								flag = true;
-								// Log.e("Data", "聊天记录已存在group");
-							}
-						} else {
-							if (phone.equals(m.phone) && phoneto.equals(m.phoneto) && time.equals(m.time) && content.equals(m.content) && contentType.equals(m.contentType) && sendType.equals(m.sendType)) {
-								flag = true;
-								// Log.e("Data", "聊天记录已存在point");
-							}
-						}
-
-					} catch (Exception e) {
-						flag = false;
-					}
-				}
-				return flag;
-			}
 		}
 	}
 
@@ -287,10 +263,12 @@ public class Data {
 
 		public boolean isModified = false;
 
+		public boolean groupNotReadMessage = false;
 		public List<String> groupEvents = new ArrayList<String>();
 
 		public Map<String, EventMessage> groupEventsMap = new HashMap<String, EventMessage>();
 
+		public boolean userNotReadMessage = false;
 		public List<String> userEvents = new ArrayList<String>();
 
 		public Map<String, EventMessage> userEventsMap = new HashMap<String, EventMessage>();

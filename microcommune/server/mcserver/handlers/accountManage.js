@@ -525,7 +525,7 @@ accountManage.exit = function (data, response, next) {
 accountManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    console.log(phone);
+    console.log(data);
     var target = data.target;
     var arr = [phone, target];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
@@ -566,9 +566,14 @@ accountManage.get = function (data, response) {
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
                         sex: accountData.sex,
+                        age: accountData.age,
                         byPhone: accountData.byPhone,
+                        createTime: accountData.createTime,
                         userBackground: accountData.userBackground,
+                        lastLoginTime: accountData.lastlogintime,
                         circlesOrderString: accountData.circlesOrderString,
+                        longitude: accountData.longitude,
+                        latitude: accountData.latitude,
                         groupsSequenceString: accountData.groupsSequenceString
                     };
                     accounts.push(account);
@@ -765,9 +770,10 @@ accountManage.modify = function (data, response) {
 //sha1Pwd();
 function sha1Pwd() {
     var query = [
-        'MATCH (account:Account)',
+        'MATCH (account:Group)',
         'RETURN account'
     ].join('\n');
+    var arr = [1412751055571, 1412664655571, 1412578255571, 1412491855571, 1412405455571]
     db.query(query, {}, function (error, results) {
         if (error) {
             console.error(error);
@@ -776,22 +782,22 @@ function sha1Pwd() {
             for (var i = 0; i < results.length; i++) {
                 var accountNode = results[i].account;
                 var accountData = accountNode.data;
-                var phone = accountData.phone;
+                var phone = accountData.gid;
                 console.error(phone);
-                if (accountData.password) {
-                    if ((accountData.password).length < 30 && accountData.password != null && accountData.status == "active") {
-                        accountData.password = sha1.hex_sha1(accountData.password);
-                    }
-                    accountNode.save(function (err, node) {
+//                if (accountdata.password) {
+//                    if ((accountdata.password).length < 30 && accountdata.password != null && accountdata.status == "active") {
+//                        accountdata.password = sha1.hex_sha1(accountdata.password);
+//                    }
+//                    accountnode.save(function (err, node) {
+//                    });
+//                }
 
-                    });
-                }
+                accountData.createTime = arr[i % 5];
+                accountNode.save(function (err, node) {
+                });
             }
-
-
         }
     });
-
 }
 accountManage.oauth6 = function (data, response) {
     response.asynchronous = 1;
@@ -848,9 +854,11 @@ accountManage.getuserinfomation = function (data, response) {
                     mainBusiness: accountData.mainBusiness,
                     head: accountData.head,
                     sex: accountData.sex,
+                    age: accountData.age,
+                    lastLoginTime: accountData.lastlogintime,
                     userBackground: accountData.userBackground,
-                    accessKey: accessKey,
-                    flag: 0
+//                    accessKey: accessKey,
+//                    flag: 0
                 };
                 response.write(JSON.stringify({
                     "提示信息": "获取用户信息成功",
@@ -938,9 +946,7 @@ accountManage.modifylocation = function (data, response) {
                         }));
                         response.end();
                     }
-
                 });
-
             }
         });
     }

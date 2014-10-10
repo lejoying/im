@@ -44,7 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="75dp"
         android:background="#38000000"
         android:scrollbars="none" >
 
@@ -60,7 +59,8 @@
         android:layout_width="70dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" >
+        android:layout_alignParentRight="true"
+        android:visibility="gone" >
 
         <TextView
             android:id="@+id/tv_confirm"

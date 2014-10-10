@@ -9,11 +9,11 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="336dp"
-        android:src="@drawable/background_group_share_item"
         android:shadowColor="@color/TransparentGrey"
         android:shadowDx="3"
         android:shadowDy="3"
-        android:shadowRadius="0.01" />
+        android:shadowRadius="0.01"
+        android:src="@drawable/background_group_share_item" />
 
     <com.open.lib.TouchView
         android:id="@+id/gshare_title"
@@ -98,6 +98,16 @@
     </com.open.lib.TouchView>
 
     <RelativeLayout
+        android:id="@+id/list_item_progress_container"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:visibility="gone"
+        android:translationY="58dp" >
+
+        <include layout="@layout/view_element_debug1_control_progress" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:translationY="60dp" >
@@ -105,8 +115,8 @@
         <ImageView
             android:id="@+id/share_imageContent"
             android:layout_width="match_parent"
-            android:scaleType="centerCrop"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/share_textContent"

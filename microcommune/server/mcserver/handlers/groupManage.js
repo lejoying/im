@@ -675,6 +675,7 @@ groupManage.getallmembers = function (data, response) {
                     name: groupData.name,
                     longitude: location.longitude,
                     latitude: location.latitude,
+                    createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || ""
                 };
@@ -719,10 +720,12 @@ groupManage.getallmembers = function (data, response) {
                         mainBusiness: member.mainBusiness || "",
                         head: member.head || "Head",
                         sex: member.sex,
+                        age: member.age,
                         byPhone: member.byPhone,
-                        longitude: member.longitude || "",
-                        latitude: member.latitude || "",
-                        lastlogintime: member.lastlogintime || "",
+                        longitude: member.longitude || "0",
+                        latitude: member.latitude || "0",
+                        createTime: member.createTime,
+                        lastLoginTime: member.lastlogintime || "",
                         userBackground: member.userBackground || "Back"
                     };
                     members.push(account.phone);
@@ -1144,6 +1147,7 @@ groupManage.get = function (data, response) {
                     name: groupData.name,
                     longitude: location.longitude || 0,
                     latitude: location.latitude || 0,
+                    createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || ""
                 };
@@ -1183,10 +1187,10 @@ groupManage.getgroupsandmembers = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
-                response.write({
+                response.write(JSON.stringify({
                     "提示信息": "获取群组成员失败",
                     "失败原因": "数据异常"
-                });
+                }));
                 response.end();
                 console.error(error);
                 return;
@@ -1243,9 +1247,11 @@ groupManage.getgroupsandmembers = function (data, response) {
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
                         sex: accountData.sex,
+                        age: accountData.age,
                         byPhone: accountData.byPhone,
                         nickName: accountData.nickName,
-                        userBackground: accountData.userBackground
+                        userBackground: accountData.userBackground,
+                        lastLoginTime: accountData.lastlogintime
                     };
                     if (groupZ[groupData.gid] == null) {
                         var accounts = [];
@@ -1290,11 +1296,10 @@ groupManage.getgroupmembers = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
-                response.write({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取群组成员失败",
                     "失败原因": "数据异常"
-                });
-                response.end();
+                }), response);
                 console.error(error);
                 return;
             } else if (results.length > 0) {
@@ -1398,6 +1403,7 @@ groupManage.getgroupmembers = function (data, response) {
                     var groupData = it.group.data;
                     var accountData = it.account.data;
                     var location;
+
                     if (groupData.location) {
                         try {
                             location = JSON.parse(groupData.location);
@@ -1416,6 +1422,7 @@ groupManage.getgroupmembers = function (data, response) {
                     var account = {
                         id: accountData.ID,
                         sex: accountData.sex,
+                        age: accountData.age,
                         phone: accountData.phone,
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
@@ -1424,13 +1431,16 @@ groupManage.getgroupmembers = function (data, response) {
                         addMessage: "",
                         friendStatus: "",
                         alias: "",
-                        flag: "none",
-                        accessKey: "",
+//                        flag: "none",
+//                        accessKey: "",
                         distance: 0,
-                        notReadMessagesCount: 0,
-                        longitude: location.longitude || 0,
-                        latitude: location.latitude || 0
+                        createTime: accountData.createTime,
+                        lastLoginTime: accountData.lastlogintime,
+//                        notReadMessagesCount: 0,
+                        longitude: accountData.longitude || 0,
+                        latitude: accountData.latitude || 0
                     };
+                    console.log(account.longitude + "---" + account.latitude + ":" + index);
                     friendsMap[account.phone] = account;
                     if (!groupsMap[groupData.gid + ""]) {
 //                        groups.push(groupData.gid + "");
@@ -1440,6 +1450,7 @@ groupManage.getgroupmembers = function (data, response) {
                             name: groupData.name,
                             notReadMessagesCount: 0,
                             distance: 0,
+                            createTime: groupData.createTime,
                             longitude: location.longitude || 0,
                             latitude: location.latitude || 0,
                             description: groupData.description,
@@ -1453,6 +1464,7 @@ groupManage.getgroupmembers = function (data, response) {
                         groupsMap[groupData.gid + ""].members.push(account.phone);
                     }
                 }
+                console.log(members.length);
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群组成员成功",
                     relationship: {

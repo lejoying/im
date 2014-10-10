@@ -35,7 +35,7 @@
             android:translationX="8dp"
             android:translationY="158dp" />
 
-        <ImageView
+        <com.open.lib.TouchImageView
             android:id="@+id/group_head"
             android:layout_width="56dp"
             android:layout_height="56dp"
@@ -43,7 +43,7 @@
             android:translationX="12dp"
             android:translationY="162dp" />
 
-        <TextView
+        <com.open.lib.TouchTextView
             android:id="@+id/share_praise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

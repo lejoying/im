@@ -16,16 +16,15 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.FriendsSortListActivity;
-import com.open.welinks.InviteFriendActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.Alert;
-import com.open.welinks.view.GroupMemberManageView;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.view.GroupMemberManageView;
 
 public class GroupMemberManageController {
 
@@ -108,6 +107,7 @@ public class GroupMemberManageController {
 					if (thisView.isSubtract == thisView.MANAGE_SUBTRACT) {
 						if (data.userInformation.currentUser.phone.equals(content)) {
 							// Alert.showMessage("不能把自己移出群组");
+							// Alert.showMessage(message);
 							Toast.makeText(thisActivity, "不能把自己移出群组", Toast.LENGTH_SHORT).show();
 						} else {
 							thisView.subtractMembers.add(content);
@@ -116,7 +116,9 @@ public class GroupMemberManageController {
 							thisView.showAlreayList();
 						}
 					} else if (thisView.isSubtract == thisView.MANAGE_COMMON) {
-						Toast.makeText(thisActivity, "好友资料", Toast.LENGTH_SHORT).show();
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, content);
+						thisView.businessCardPopView.showUserCardDialogView();
+						// Toast.makeText(thisActivity, "好友资料", Toast.LENGTH_SHORT).show();
 					}
 				} else if (view.getTag(R.id.tag_class) != null) {
 					String tag_class = (String) view.getTag(R.id.tag_class);
@@ -136,7 +138,7 @@ public class GroupMemberManageController {
 					// String content = tagContent.substring(index + 1);
 					if ("invitafriendgroup".equals(type)) {
 						Intent intent = new Intent(thisActivity, FriendsSortListActivity.class);
-						intent.putExtra("type", InviteFriendActivity.INVITA_FRIEND_GROUP);
+						intent.putExtra("type", FriendsSortListActivity.INVITA_FRIEND_GROUP);
 						intent.putExtra("gid", currentGroup.gid + "");
 						thisActivity.startActivityForResult(intent, REQUESTCODE_INVITEFRIEND);
 					} else if ("managesubtract".equals(type)) {
@@ -182,5 +184,9 @@ public class GroupMemberManageController {
 		params.addBodyParameter("members", membersContentString);
 
 		httpUtils.send(HttpMethod.POST, url, params, callBack);
+	}
+
+	public void onResume() {
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 }

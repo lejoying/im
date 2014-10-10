@@ -1,8 +1,6 @@
 package com.open.welinks.view;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +11,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -40,17 +39,18 @@ import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.ShareContent;
-import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.SubData.ShareContent;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
 
 public class ShareSubView {
@@ -123,12 +123,15 @@ public class ShareSubView {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
+	// first share View Animation true or false
 	public boolean isShowFirstMessageAnimation = false;
 
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
 		viewManage.shareSubView = this;
 	}
+
+	public SmallBusinessCardPopView businessCardPopView;
 
 	public void initViews() {
 		this.shareView = mainView.shareView;
@@ -155,8 +158,9 @@ public class ShareSubView {
 		releaseShareView.setTag(R.id.tag_class, "share_release");
 
 		groupCoverView = (TouchImageView) this.groupMembersView.findViewById(R.id.groupCover);
-
+		groupCoverView.setTag(R.id.tag_class, "group_head");
 		groupHeadView = (ImageView) this.groupMembersView.findViewById(R.id.group_head);
+		groupHeadView.setTag(R.id.tag_class, "group_head");
 
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
@@ -176,6 +180,7 @@ public class ShareSubView {
 
 		initializationGroupsDialog();
 
+		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 	}
 
 	public void getCurrentGroupShareMessages() {
@@ -276,6 +281,9 @@ public class ShareSubView {
 			// .........................
 			log.e("message#---" + shareMessage.gsid);
 			String keyName = "message#" + shareMessage.gsid;
+			if (this.shareMessageListBody.listItemsSequence.contains(keyName)) {
+				continue;
+			}
 			// Data duplication problem
 			if (this.shareMessageListBody.listItemsSequence.contains(keyName)) {
 				// continue;
@@ -310,7 +318,6 @@ public class ShareSubView {
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 			if (i == 0 && isShowFirstMessageAnimation) {
-				isShowFirstMessageAnimation = false;
 				shareMessageRootView = sharesMessageBody.cardView;
 				dialogSpring.addListener(dialogSpringListener);
 				dialogSpring.setCurrentValue(0);
@@ -323,8 +330,10 @@ public class ShareSubView {
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 		}
 
+		this.isShowFirstMessageAnimation = false;
+
 		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
-		shareMessageListBody.setChildrenPosition();
+		this.shareMessageListBody.setChildrenPosition();
 	}
 
 	public class SharesMessageBody extends MyListItemBody {
@@ -355,6 +364,9 @@ public class ShareSubView {
 
 		public int i;
 
+		public ControlProgress controlProgress;
+		public View controlProgressView;
+
 		public View initialize(int i) {
 			this.i = i;
 			if (i == -1) {
@@ -377,6 +389,10 @@ public class ShareSubView {
 				this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
 				this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
 				this.shareCommentIconView = (ImageView) this.cardView.findViewById(R.id.share_comment_icon);
+
+				// TODO
+				// progress bar
+				this.controlProgressView = this.cardView.findViewById(R.id.list_item_progress_container);
 			}
 			super.initialize(cardView);
 			return cardView;
@@ -390,9 +406,25 @@ public class ShareSubView {
 				groupMembersListContentView.setOnTouchListener(thisController.mOnTouchListener);
 				releaseShareView.setOnClickListener(thisController.mOnClickListener);
 				releaseShareView.setOnTouchListener(thisController.mOnTouchListener);
+
+				groupHeadView.setOnClickListener(thisController.mOnClickListener);
+				groupHeadView.setOnTouchListener(thisController.mOnTouchListener);
+				groupCoverView.setOnClickListener(thisController.mOnClickListener);
+				groupCoverView.setOnTouchListener(thisController.mOnTouchListener);
 			} else if (i == -2) {
 				this.messageTimeView.setText(DateUtil.formatYearMonthDay(shareMessage.time));
 			} else {
+				this.controlProgressView.setVisibility(View.GONE);
+				if (shareMessage != null) {
+					if (shareMessage.status != null) {
+						if ("sending".equals(shareMessage.status)) {
+							this.controlProgressView.setVisibility(View.VISIBLE);
+							this.controlProgress = new ControlProgress();
+							this.controlProgress.initialize(this.controlProgressView);
+							// this.controlProgress.moveTo(70);
+						}
+					}
+				}
 				this.message = shareMessage;
 				this.fileName = fileName;
 				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
@@ -840,6 +872,51 @@ public class ShareSubView {
 	// }
 	// }
 
+	public class ControlProgress {
+
+		public View controlProgressView;
+
+		public ImageView progress_line1;
+
+		public ImageView progress_line2;
+		public TranslateAnimation move_progress_line1;
+
+		public int percentage = 0;
+		public int width = 0;
+
+		public void initialize(View container) {
+			// DisplayMetrics displayMetrics = new DisplayMetrics();
+			// mainView.thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
+
+			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
+			controlProgressView = container;
+
+			width = displayMetrics.widthPixels;
+
+		}
+
+		public void moveTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
+			// TODO old animation becomes memory fragment
+			move_progress_line1.setStartOffset(0);
+			move_progress_line1.setDuration(200);
+
+			progress_line1.startAnimation(move_progress_line1);
+
+			progress_line1.setX(position);
+			percentage = targetPercentage;
+		}
+
+		public void setTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			progress_line1.setX(position);
+			percentage = targetPercentage;
+		}
+	}
+
 	public void onResume() {
 	}
 
@@ -853,4 +930,91 @@ public class ShareSubView {
 			shareMessageRootView.setScaleY(mappedValue);
 		}
 	}
+
+	// small businesscard
+	// public DisplayImageOptions smallBusinessCardOptions;
+	// public View userCardMainView;
+	// public PopupWindow userCardPopWindow;
+	// public RelativeLayout userBusinessContainer;
+	// public TextView goInfomationView;
+	// public TextView goChatView;
+	// public ImageView userHeadView;
+	// public TextView userNickNameView;
+	// public TextView userAgeView;
+	// public TextView distanceView;
+	// public TextView lastLoginTimeView;
+	// public LinearLayout optionTwoView;
+	// public TextView singleButtonView;
+	// public TextView cardStatusView;
+	//
+	// @SuppressWarnings("deprecation")
+	// public void initSmallBusinessCardDialog() {
+	// userCardMainView = mainView.mInflater.inflate(R.layout.view_dialog_small_businesscard, null);
+	// optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
+	// userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
+	// userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);
+	// distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);
+	// lastLoginTimeView = (TextView) userCardMainView.findViewById(R.id.lastLoginTime);
+	// userBusinessContainer = (RelativeLayout) userCardMainView.findViewById(R.id.userBusinessView);
+	// int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + getStatusBarHeight(mainView.thisActivity);
+	// userBusinessContainer.getLayoutParams().height = height;
+	// goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
+	// goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);
+	// singleButtonView = (TextView) userCardMainView.findViewById(R.id.singleButton);
+	// cardStatusView = (TextView) userCardMainView.findViewById(R.id.cardStatus);
+	// // singleButtonView.setVisibility(View.GONE);
+	// userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
+	// userHeadView.getLayoutParams().height = height;
+	// userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+	// userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
+	// smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
+	// }
+	//
+	// LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+	//
+	// public void setSmallBusinessCardContent(String phone, String head, String nickName, String age, String longitude, String latitude) {
+	// User user = data.userInformation.currentUser;
+	// goInfomationView.setTag(R.id.tag_first, phone);
+	// goChatView.setTag(R.id.tag_first, phone);
+	// singleButtonView.setTag(R.id.tag_first, phone);
+	// fileHandlers.getHeadImage(head, userHeadView, smallBusinessCardOptions);
+	// userNickNameView.setText(nickName);
+	// userAgeView.setText("");
+	// distanceView.setText(lbsHandlers.pointDistance(user.longitude, user.latitude, longitude, latitude) + "km");
+	// lastLoginTimeView.setText("");
+	// userAgeView.setVisibility(View.GONE);
+	// cardStatusView.setText("已加入群组");
+	// goInfomationView.setText("群组信息");
+	// singleButtonView.setVisibility(View.GONE);
+	// optionTwoView.setVisibility(View.VISIBLE);
+	// }
+	//
+	// public void showUserCardDialogView() {
+	// if (userCardPopWindow != null && !userCardPopWindow.isShowing()) {
+	// userCardPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
+	// }
+	// }
+	//
+	// public void dismissUserCardDialogView() {
+	// if (userCardPopWindow != null && userCardPopWindow.isShowing()) {
+	// userCardPopWindow.dismiss();
+	// }
+	// }
+	//
+	// public static int getStatusBarHeight(Context context) {
+	// Class<?> c = null;
+	// Object obj = null;
+	// Field field = null;
+	// int x = 0, statusBarHeight = 0;
+	// try {
+	// c = Class.forName("com.android.internal.R$dimen");
+	// obj = c.newInstance();
+	// field = c.getField("status_bar_height");
+	// x = Integer.parseInt(field.get(obj).toString());
+	// statusBarHeight = context.getResources().getDimensionPixelSize(x);
+	// } catch (Exception e1) {
+	// e1.printStackTrace();
+	// }
+	// return statusBarHeight;
+	// }
 }

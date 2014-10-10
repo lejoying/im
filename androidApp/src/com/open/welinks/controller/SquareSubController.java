@@ -33,6 +33,8 @@ import com.open.welinks.FindMoreActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
+import com.open.welinks.customListener.MyOnClickListener;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -109,7 +111,7 @@ public class SquareSubController {
 		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 			}
 
 			@Override
@@ -192,6 +194,9 @@ public class SquareSubController {
 					} else if (view_class.equals("group_setting")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("share_release")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					}
 					if (view.equals(thisView.squareDialogView)) {
 						Log.i(tag, "ACTION_DOWN---groupDialogView");
@@ -208,7 +213,7 @@ public class SquareSubController {
 		mOnClickListener = new MyOnClickListener() {
 
 			public void onClickEffective(View view) {
-				if (view.equals(thisView.leftImageButton)) {
+				if (view.equals(thisView.releaseShareView)) {// leftImageButton
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };
 					vibrator.vibrate(pattern, -1);
@@ -447,6 +452,8 @@ public class SquareSubController {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_setting")) {
 				onTouchDownView.performClick();
+			} else if (view_class.equals("share_release")) {
+				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;
 		}
@@ -473,9 +480,10 @@ public class SquareSubController {
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SHARE) {
+		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SQUARE) {
 			if (thisView.isShowSquareDialog) {
 				thisView.dismissSquareDialog();
+				thisView.isShowSquareDialog = false;
 				return false;
 			}
 		}

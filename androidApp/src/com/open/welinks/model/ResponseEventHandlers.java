@@ -70,7 +70,7 @@ public class ResponseEventHandlers {
 						NotificationUtils.commonVibrate(viewManage.mainView.context);
 					}
 				}
-				DataUtil.getMessages(data.userInformation.currentUser.flag);
+				DataHandlers.getMessages(data.userInformation.currentUser.flag);
 			} else {
 				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
 				if ("account_dataupdate".equals(contentType)) {
@@ -103,13 +103,25 @@ public class ResponseEventHandlers {
 		}
 	}
 
+	public void checkEventIsMessageOrder(String key) {
+		if (data.messages.messagesOrder.contains(key)) {
+			data.messages.messagesOrder.remove(key);
+		}
+		data.messages.messagesOrder.add(0, key);
+		data.messages.isModified = true;
+	}
+
 	// OK
 	private void handleGroupRemoveMeEvent(EventMessage message) {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
+		data.event.groupNotReadMessage = true;
+		String eventKey = "event_group";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentAllGroup();
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getUserCurrentAllGroup();
 	}
 
 	// OK
@@ -117,8 +129,12 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
+		data.event.groupNotReadMessage = true;
+		String eventKey = "event_group";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "create");
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "create");
 	}
 
 	// OK
@@ -126,8 +142,12 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
+		data.event.groupNotReadMessage = true;
+		String eventKey = "event_group";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "create");
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "create");
 	}
 
 	// OK
@@ -135,8 +155,12 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
+		data.event.groupNotReadMessage = true;
+		String eventKey = "event_group";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupInfomation(message.gid);
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getUserCurrentGroupInfomation(message.gid);
 	}
 
 	// OK
@@ -144,8 +168,12 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
+		data.event.groupNotReadMessage = true;
+		String eventKey = "event_group";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "removemembers");
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "removemembers");
 	}
 
 	// OK
@@ -153,22 +181,34 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
+		data.event.groupNotReadMessage = true;
+		String eventKey = "event_group";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "addmembers");
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getUserCurrentGroupMembers(message.gid, "addmembers");
 	}
 
 	public void handleRelationBlacklistEvent(EventMessage message) {
 		String key = message.eid;
 		data.event.userEvents.add(key);
 		data.event.userEventsMap.put(key, message);
-		DataUtil.getIntimateFriends();
+		data.event.userNotReadMessage = true;
+		String eventKey = "event_user";
+		checkEventIsMessageOrder(eventKey);
+		// viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getIntimateFriends();
 	}
 
 	public void handleRelationDeletefriendEvent(EventMessage message) {
 		String key = message.eid;
 		data.event.userEvents.add(key);
 		data.event.userEventsMap.put(key, message);
-		DataUtil.getIntimateFriends();
+		data.event.userNotReadMessage = true;
+		String eventKey = "event_user";
+		checkEventIsMessageOrder(eventKey);
+		// viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getIntimateFriends();
 	}
 
 	// OK
@@ -180,8 +220,12 @@ public class ResponseEventHandlers {
 			event.status = "success";
 			data.event.isModified = true;
 		}
+		data.event.userNotReadMessage = true;
+		String eventKey = "event_user";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getIntimateFriends();
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getIntimateFriends();
 		// data.event.userEventsMap.put(message.gid, message);
 	}
 
@@ -193,9 +237,13 @@ public class ResponseEventHandlers {
 			String key = userEvents.get(i);
 			EventMessage message0 = data.event.userEventsMap.get(key);
 			if ("relation_newfriend".equals(message0.type)) {
-				if (message.phone.equals(message0.phone) && message.phoneTo.equals(message0.phoneTo)) {
-					dealMessage = message0;
-					break;
+				try {
+					if (message.phone.equals(message0.phone) && message.phoneTo.equals(message0.phoneTo)) {
+						dealMessage = message0;
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -206,7 +254,11 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		data.event.userEvents.add(key);
 		data.event.userEventsMap.put(key, message);
+		data.event.userNotReadMessage = true;
+		String eventKey = "event_user";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
+		viewManage.postNotifyView("MessagesSubView");
 	}
 
 	// OK
@@ -230,7 +282,11 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		data.event.userEvents.add(key);
 		data.event.userEventsMap.put(key, message);
+		data.event.userNotReadMessage = true;
+		String eventKey = "event_user";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
+		viewManage.postNotifyView("MessagesSubView");
 	}
 
 	// OK
@@ -239,8 +295,12 @@ public class ResponseEventHandlers {
 		parser.check();
 		data.event.userEvents.add(key);
 		data.event.userEventsMap.put(key, message);
+		data.event.userNotReadMessage = true;
+		String eventKey = "event_user";
+		checkEventIsMessageOrder(eventKey);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserInfomation();
+		viewManage.postNotifyView("MessagesSubView");
+		DataHandlers.getUserInfomation();
 	}
 
 	public static abstract class Response<T> {

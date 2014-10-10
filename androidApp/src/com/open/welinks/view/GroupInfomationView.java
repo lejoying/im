@@ -21,6 +21,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.GroupInfomationController;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
@@ -59,11 +60,15 @@ public class GroupInfomationView {
 	public TextView dialogConfirmView;
 	public TextView dialogCancleView;
 
+	public View maxView;
+
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public DisplayImageOptions options;
 
 	public InputMethodManager inputMethodManager;
+
+	public DisplayMetrics displayMetrics;
 
 	public GroupInfomationView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -71,14 +76,19 @@ public class GroupInfomationView {
 		this.thisView = this;
 	}
 
+	public SmallBusinessCardPopView businessCardPopView;
+
 	public void initView() {
+
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-		thisActivity.setContentView(R.layout.activity_group_infomation);
-
 		mInflater = thisActivity.getLayoutInflater();
 
+		thisActivity.setContentView(R.layout.activity_group_infomation);
+		maxView = thisActivity.findViewById(R.id.maxView);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		groupCountView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		groupNameView = (TextView) thisActivity.findViewById(R.id.groupName);
@@ -111,6 +121,8 @@ public class GroupInfomationView {
 		dialogCancleView = (TextView) thisActivity.findViewById(R.id.cancel);
 
 		dialogContentView.setVisibility(View.GONE);
+
+		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
 	}
 
 	public void showGroupMembers() {
@@ -152,6 +164,9 @@ public class GroupInfomationView {
 				params.leftMargin = friendBody.position.x;
 				friendBody.friendView.setLayoutParams(params);
 				// friendBody.friendView.setBackgroundColor(Color.RED);
+				friendBody.headImageView.setTag(R.id.tag_class, "head_click");
+				friendBody.headImageView.setTag(R.id.tag_first, friend.phone);
+				friendBody.headImageView.setOnClickListener(thisController.mOnClickListener);
 				if (i > 8)
 					break A;
 			}

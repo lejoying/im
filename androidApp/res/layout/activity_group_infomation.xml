@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/main_background"
     android:gravity="center_horizontal"
+    android:id="@+id/maxView"
     tools:context=".activity.GroupInformationActivity" >
 
     <include layout="@layout/view_back_view" />

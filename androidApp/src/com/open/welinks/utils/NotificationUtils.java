@@ -182,7 +182,7 @@ public final class NotificationUtils {
 			contentText = "有" + friendCount + "个好友给您发来了" + messageCount + "条消息。";
 		}
 		NotificationUtils.message = message;
-		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.notifyicon, sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS, Notification.FLAG_NO_CLEAR, intent);
+		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.notifyicon, sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS, Notification.FLAG_AUTO_CANCEL, intent);
 		commonVibrate(context);
 	}
 

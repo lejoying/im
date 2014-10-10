@@ -1,8 +1,5 @@
 package com.open.welinks.controller;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +27,6 @@ import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
@@ -65,7 +61,6 @@ public class LoginController {
 	public TextWatcher mTextWatcher2;
 	public OnTouchListener onTouchListener;
 
-	public NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
 	public Handler handler = new Handler();
 	public String url_userauth = "http://www.we-links.com/api2/account/auth";
 

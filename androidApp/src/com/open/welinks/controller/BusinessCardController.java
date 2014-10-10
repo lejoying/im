@@ -1,12 +1,12 @@
 package com.open.welinks.controller;
 
 import java.io.File;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -15,22 +15,29 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.HttpClient;
+import com.open.lib.MyLog;
 import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
@@ -41,11 +48,16 @@ import com.open.welinks.view.ViewManage;
 
 public class BusinessCardController {
 
+	public String tag = "BusinessCardController";
+	public MyLog log = new MyLog(tag, true);
+
 	public BusinessCardController thisController;
 	public BusinessCardView thisView;
 	public BusinessCardActivity thisActivity;
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
+
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
@@ -53,7 +65,7 @@ public class BusinessCardController {
 	public DisplayImageOptions options;
 
 	public String key, type;
-	public boolean isTemp;
+	// public boolean isTemp;
 	public File file;
 
 	public OnClickListener mOnClickListener;
@@ -63,7 +75,7 @@ public class BusinessCardController {
 
 	public GestureDetector backDetector;
 
-	public Handler handler;
+	// public Handler handler;
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -77,35 +89,72 @@ public class BusinessCardController {
 	public void onCreate() {
 		key = thisActivity.getIntent().getStringExtra("key");
 		type = thisActivity.getIntent().getStringExtra("type");
-		isTemp = thisActivity.getIntent().getBooleanExtra("isTemp", false);
-		if ("point".equals(type)) {
-			if (key.equals(data.userInformation.currentUser.phone)) {
-				thisView.status = Status.SELF;
-			} else {
-				if (isTemp) {
-					thisView.status = Status.TEMPFRIEND;
-				} else {
-					thisView.status = Status.FRIEND;
-				}
-			}
-		} else if ("group".equals(type)) {
-			if (isTemp) {
-				thisView.status = Status.NOTJOINGROUP;
-			} else {
-				thisView.status = Status.JOINEDGROUP;
-			}
-		} else if ("square".equals(type)) {
-			thisView.status = Status.SQUARE;
-		}
-		handler = new Handler();
+		checkCardTypeAndRelation(type, key);
+		// isTemp = thisActivity.getIntent().getBooleanExtra("isTemp", false);
+		// if ("point".equals(type)) {
+		// if (key.equals(data.userInformation.currentUser.phone)) {
+		// thisView.status = Status.SELF;
+		// } else {
+		// if (isTemp) {
+		// thisView.status = Status.TEMPFRIEND;
+		// } else {
+		// thisView.status = Status.FRIEND;
+		// }
+		// }
+		// } else if ("group".equals(type)) {
+		// if (isTemp) {
+		// thisView.status = Status.NOTJOINGROUP;
+		// } else {
+		// thisView.status = Status.JOINEDGROUP;
+		// }
+		// } else if ("square".equals(type)) {
+		// thisView.status = Status.SQUARE;
+		// }
+		// handler = new Handler();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
-		initializeListeners();
+	}
+
+	public void checkCardTypeAndRelation(String type, String key) {
+		parser.check();
+		if ("point".equals(type)) {
+			if (key.equals(data.userInformation.currentUser.phone)) {
+				thisView.status = Status.SELF;
+			} else if (data.relationship.friends != null) {
+				if (data.relationship.friends.contains(key)) {
+					thisView.status = Status.FRIEND;
+				} else {
+					thisView.status = Status.TEMPFRIEND;
+				}
+			} else {
+				thisView.status = Status.TEMPFRIEND;
+			}
+		} else if ("group".equals(type)) {
+			if (data.relationship.groups != null) {
+				if (data.relationship.groups.contains(key)) {
+					thisView.status = Status.JOINEDGROUP;
+				} else {
+					thisView.status = Status.NOTJOINGROUP;
+				}
+			} else {
+				thisView.status = Status.NOTJOINGROUP;
+			}
+		} else if ("square".equals(type)) {
+			if (data.relationship.squares != null) {
+				if (data.relationship.squares.contains(key)) {
+					thisView.status = Status.SQUARE;
+				} else {
+					thisView.status = Status.SQUARE;
+				}
+			} else {
+				thisView.status = Status.SQUARE;
+			}
+		}
 	}
 
 	public void onWindowFocusChanged(boolean hasFocus) {
-		thisView.spacing_one.setHeight(displayMetrics.heightPixels - thisView.spacing_two.getHeight() - thisView.infomation_layout.getHeight() - thisView.backview.getHeight() - data.tempData.statusBarHeight);
+		thisView.spacingOne.setHeight(displayMetrics.heightPixels - thisView.spacingTwo.getHeight() - thisView.infomationLayout.getHeight() - thisView.backView.getHeight() - data.tempData.statusBarHeight);
 	}
 
 	public void initializeListeners() {
@@ -113,7 +162,7 @@ public class BusinessCardController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.button_one)) {
+				if (view.equals(thisView.buttonOne)) {
 					if (thisView.status.equals(Status.SELF)) {
 						modifyInformation();
 					} else if (thisView.status.equals(Status.FRIEND)) {
@@ -127,7 +176,7 @@ public class BusinessCardController {
 					} else if (thisView.status.equals(Status.SQUARE)) {
 						// unused
 					}
-				} else if (view.equals(thisView.button_two)) {
+				} else if (view.equals(thisView.buttonTwo)) {
 					if (thisView.status.equals(Status.SELF)) {
 						// unused
 					} else if (thisView.status.equals(Status.FRIEND)) {
@@ -141,7 +190,7 @@ public class BusinessCardController {
 					} else if (thisView.status.equals(Status.SQUARE)) {
 						// unused
 					}
-				} else if (view.equals(thisView.button_three)) {
+				} else if (view.equals(thisView.buttonThree)) {
 					if (thisView.status.equals(Status.SELF)) {
 						// unused
 					} else if (thisView.status.equals(Status.FRIEND)) {
@@ -155,7 +204,7 @@ public class BusinessCardController {
 					} else if (thisView.status.equals(Status.SQUARE)) {
 						// unused
 					}
-				} else if (view.equals(thisView.backview)) {
+				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.rightTopButton)) {
 					if (thisView.status.equals(Status.SELF)) {
@@ -187,7 +236,7 @@ public class BusinessCardController {
 			}
 
 			@Override
-			public void loading(DownloadFile instance, int precent, int status) {
+			public void onLoading(DownloadFile instance, int precent, int status) {
 
 			}
 
@@ -196,15 +245,14 @@ public class BusinessCardController {
 
 			}
 		};
-		bindEvent();
 	}
 
 	public void bindEvent() {
 		thisView.rightTopButton.setOnClickListener(mOnClickListener);
-		thisView.backview.setOnClickListener(mOnClickListener);
-		thisView.button_one.setOnClickListener(mOnClickListener);
-		thisView.button_two.setOnClickListener(mOnClickListener);
-		thisView.button_three.setOnClickListener(mOnClickListener);
+		thisView.backView.setOnClickListener(mOnClickListener);
+		thisView.buttonOne.setOnClickListener(mOnClickListener);
+		thisView.buttonTwo.setOnClickListener(mOnClickListener);
+		thisView.buttonThree.setOnClickListener(mOnClickListener);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -244,6 +292,108 @@ public class BusinessCardController {
 
 		}).show();
 
+	}
+
+	HttpClient httpClient = HttpClient.getInstance();
+	Gson gson = new Gson();
+
+	public void getFriendCard(String phone) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("target", "[\"" + phone + "\"]");
+
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public List<Friend> accounts;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取用户信息成功".equals(response.提示信息)) {
+					Friend account = response.accounts.get(0);
+					Friend friend = null;
+					if (data.relationship.friends.contains(account.phone)) {
+						friend = data.relationship.friendsMap.get(account.phone);
+					} else {
+						friend = data.relationship.new Friend();
+						data.relationship.friendsMap.put(account.phone, friend);
+					}
+					if (friend != null) {
+						friend.phone = account.phone;
+						friend.head = account.head;
+						friend.nickName = account.nickName;
+						friend.mainBusiness = account.mainBusiness;
+						friend.sex = account.sex;
+						friend.age = Integer.valueOf(account.age);
+						friend.createTime = account.createTime;
+						friend.userBackground = account.userBackground;
+						friend.id = account.id;
+						data.relationship.isModified = true;
+					}
+					User user = data.userInformation.currentUser;
+					if (user.phone.equals(account.phone)) {
+						user.id = account.id;
+						user.head = account.head;
+						user.mainBusiness = account.mainBusiness;
+						user.nickName = account.nickName;
+						user.sex = account.sex;
+						user.createTime = account.createTime;
+						user.userBackground = account.userBackground;
+						data.userInformation.isModified = true;
+					}
+					thisView.isGetData = true;
+					data.tempData.tempFriend = friend;
+					thisView.fillData();
+				}
+			};
+		});
+	}
+
+	public void getGroupCard(final String gid, String type) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("type", type);
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public Group group;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取群组信息成功".equals(response.提示信息)) {
+					Group group = response.group;
+					if (group != null) {
+						Group currentGroup = null;
+						if (data.relationship.groups.contains(group.gid)) {
+							currentGroup = data.relationship.groupsMap.get(group.gid + "");
+						} else {
+							currentGroup = data.relationship.new Group();
+							data.relationship.groupsMap.put(group.gid + "", currentGroup);
+						}
+						currentGroup.gid = response.group.gid;
+						currentGroup.icon = group.icon;
+						currentGroup.name = group.name;
+						currentGroup.longitude = group.longitude;
+						currentGroup.latitude = group.latitude;
+						currentGroup.description = group.description;
+						currentGroup.createTime = group.createTime;
+						currentGroup.background = group.background;
+						data.relationship.isModified = true;
+						data.tempData.tempGroup = group;
+						thisView.isGetData = true;
+						thisView.fillData();
+					}
+				}
+			};
+		});
 	}
 
 	public void terminateRelationship() {
@@ -327,6 +477,5 @@ public class BusinessCardController {
 		params.addBodyParameter("alias", alias);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.RELATION_MODIFYALIAS, params, responseHandlers.relation_modifyAlias);
-
 	}
 }
