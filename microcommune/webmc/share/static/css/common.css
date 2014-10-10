@@ -120,7 +120,6 @@ ol, ul {
 }
 
 #room-info {
-    margin-top: 50px;
     overflow: hidden;
 }
 
@@ -128,11 +127,11 @@ ol, ul {
     float: left;
     width: 134px;
     position: relative;
+	padding:30px;
 }
 
 #room-info .a-r {
-    float: right;
-    width: 491px;
+	padding:20px;
 }
 
 .a-r p {
@@ -148,7 +147,7 @@ ol, ul {
 }
 
 .user-mainBusiness {
-    color: #212619;
+    color: #99212619;
     display: block;
     margin-bottom: 7px;
 }
@@ -188,8 +187,10 @@ ol, ul {
 }
 
 .a-r p {
-    color: #7c7c7c;
     margin-top: 28px;
+}
+.a-r p {
+    color: #7c7c7c;
     margin-right: 20px;
     display: block;
     font-size: 24px;
@@ -200,13 +201,9 @@ ol, ul {
     width: 110px;
     height: 110px;
     position: absolute;
-    top: 10px;
-    left: 15px;
 }
 
 .a-l img {
-    margin-top: 10px;
-    margin-left: 15px;
 }
 
 #hr, #hrdiv {
@@ -224,11 +221,9 @@ ol, ul {
 
 .photos img {
     width: 100%;
-    margin: 9px;
 }
-
+ 
 #body {
-    width: 640px;
     position: relative;
     margin: 0 auto;
     overflow: hidden;
@@ -262,8 +257,7 @@ ol, ul {
 .foot-ul .memo {
     font-size: 24px;
     font-color: #282828;
-    line-height: 60px;
-    height: 60px;
+    line-height: 36px;
     margin-left: 20px;
     display: block;
 }
@@ -289,7 +283,6 @@ ol, ul {
 }
 
 #footer-div {
-    width: 640px;
     margin: 0 auto;
     position: relative;
 }
