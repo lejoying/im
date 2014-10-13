@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,9 +29,11 @@ import android.widget.ScrollView;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.HttpClient;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
@@ -61,6 +64,7 @@ import com.open.welinks.view.ViewManage;
 
 public class ShareMessageDetailController {
 
+	public String tag = "ShareMessageDetailController";
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 
@@ -69,7 +73,6 @@ public class ShareMessageDetailController {
 	public SubData subData = SubData.getInstance();
 
 	public Gson gson = new Gson();
-	public String tag = "ShareMessageDetailController";
 
 	public Context context;
 	public ShareMessageDetailView thisView;
@@ -255,14 +258,7 @@ public class ShareMessageDetailController {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				LayoutParams commentLayoutParams = thisView.commentInputView.getLayoutParams();
-				// Log.e(content, (45 * thisView.screenDensity + 0.5f) +
-				// "--------------height--" +
-				// thisView.commentEditTextView.getHeight() + "--------" +
-				// initialHeight);
 				commentLayoutParams.height = (int) ((45 * thisView.screenDensity + 0.5f) + thisView.commentEditTextView.getHeight() - 40);
-				// Log.e(content, commentLayoutParams.height +
-				// "--------------height");
-				// thisView.commentInputView.setLayoutParams(commentLayoutParams);
 			}
 
 			@Override
@@ -292,10 +288,6 @@ public class ShareMessageDetailController {
 						thisView.sharePopupWindow.dismiss();
 					}
 				}
-				// if (thisView.commentInputView.getVisibility() ==
-				// View.VISIBLE) {
-				// thisView.commentInputView.setVisibility(View.GONE);
-				// }
 				return false;
 			}
 		};
@@ -318,10 +310,25 @@ public class ShareMessageDetailController {
 					boolean option = false;
 					if (!shareMessage.praiseusers.contains(currentUser.phone)) {
 						option = true;
-						shareMessage.praiseusers.add(currentUser.phone);
+						boolean flag = false;
+						for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
+							if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
+								flag = true;
+								break;
+							}
+						}
+						if (!flag) {
+							shareMessage.praiseusers.add(currentUser.phone);
+						}
 						thisView.praiseIconView.setImageResource(R.drawable.praised_icon);
 					} else {
-						shareMessage.praiseusers.remove(currentUser.phone);
+						ArrayList<String> list = new ArrayList<String>();
+						for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
+							if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
+								list.add(shareMessage.praiseusers.get(i));
+							}
+						}
+						shareMessage.praiseusers.removeAll(list);
 						thisView.praiseIconView.setImageResource(R.drawable.praise_icon);
 					}
 					thisView.showPraiseUsersContent();
@@ -454,8 +461,9 @@ public class ShareMessageDetailController {
 					data = parser.check();
 					Share share = data.shares.shareMap.get(gid);
 					share.shareMessagesOrder.remove(gsid);
-					share.shareMessagesMap.remove(gsid);
+					// share.shareMessagesMap.remove(gsid);
 					data.shares.isModified = true;
+					viewManage.postNotifyView("ShareSubViewMessage");
 					httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
 					thisActivity.finish();
 				}
@@ -692,5 +700,47 @@ public class ShareMessageDetailController {
 	public void showTempShare() {
 		shareMessage = data.tempData.tempShareMessageMap.get(gsid);
 		thisView.showShareMessageDetail();
+	}
+
+	public void getShareMessageDetail() {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("gsid", shareMessage.gsid);
+
+		HttpClient httpClient = HttpClient.getInstance();
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARE, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+				public List<ShareMessage> shares;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取群分享成功")) {
+					ShareMessage shareMessage = response.shares.get(0);
+					try {
+						data.shares.shareMap.get(gid).shareMessagesMap.put(shareMessage.gsid, shareMessage);
+						data.shares.isModified = true;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					thisController.shareMessage = shareMessage;
+					thisView.fileHandlers.handler.post(new Runnable() {
+						public void run() {
+							// thisView.showShareMessageDetail();
+							thisView.showPraiseUsersContent();
+							thisView.notifyShareMessageComments();
+						}
+					});
+				} else {
+					Log.e(tag, response.失败原因);
+				}
+			};
+		});
 	}
 }

@@ -135,7 +135,7 @@ public class MainController {
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 		mListGesture = new GestureDetector(thisActivity, new GestureListener());
-
+		parser.check();
 		thisView.friendsSubView.showCircles();
 		thisView.messagesSubView.showMessagesSequence();
 
@@ -765,9 +765,9 @@ public class MainController {
 				connectionChangeReceiver = null;
 			}
 			parser.save();
-			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
-			thisActivity.finish();
 			DataHandlers.clearData();
+			thisActivity.finish();
+			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 		} else if (requestCode == R.id.tag_second) {
 			messagesSubController.onActivityResult(requestCode, resultCode, data2);
 		} else {

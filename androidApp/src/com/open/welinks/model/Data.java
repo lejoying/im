@@ -67,6 +67,7 @@ public class Data {
 		public LocalData localData;
 
 		public class LocalData {
+			public boolean isModified = true;
 			public ArrayList<ImageBean> prepareUploadImagesList = new ArrayList<ImageBean>();
 			public ArrayList<ImageBean> prepareDownloadImagesList = new ArrayList<ImageBean>();
 

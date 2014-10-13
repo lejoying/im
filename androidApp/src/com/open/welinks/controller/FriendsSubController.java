@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Service;
+import android.content.Intent;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -21,6 +22,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.R;
+import com.open.welinks.SearchFriendActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -76,6 +78,14 @@ public class FriendsSubController {
 					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, friend.phone);
 					thisView.businessCardPopView.showUserCardDialogView();
 				}
+				String view_class = (String) view.getTag(R.id.tag_class);
+				if (view_class != null) {
+					if (view_class.equals("addfriend_view")) {
+						Intent intent = new Intent(mainController.thisActivity, SearchFriendActivity.class);
+						mainController.thisActivity.startActivity(intent);
+						// Toast.makeText(mainController.thisActivity, "addMembers", Toast.LENGTH_SHORT).show();
+					}
+				}
 			}
 		};
 
@@ -94,6 +104,9 @@ public class FriendsSubController {
 				if (action == MotionEvent.ACTION_DOWN) {
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("friend_view")) {
+						onTouchDownView = view;
+						onClickView = view;
+					} else if (view_class.equals("addfriend_view")) {
 						onTouchDownView = view;
 						onClickView = view;
 					}
@@ -186,6 +199,9 @@ public class FriendsSubController {
 			if (onClickView != null) {
 				String view_class = (String) onClickView.getTag(R.id.tag_class);
 				if (view_class.equals("friend_view")) {
+					onClickView.performClick();
+					onClickView = null;
+				} else if (view_class.equals("addfriend_view")) {
 					onClickView.performClick();
 					onClickView = null;
 				}

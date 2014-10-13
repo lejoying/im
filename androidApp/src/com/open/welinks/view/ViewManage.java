@@ -76,6 +76,10 @@ public class ViewManage {
 			if (mainView.shareSubView != null) {
 				mainView.shareSubView.setGroupsDialogContent();
 			}
+		} else if (viewName.equals("ShareSubViewMessage")) {
+			if (mainView.shareSubView != null) {
+				mainView.shareSubView.showShareMessages();
+			}
 		} else if (viewName.equals("ChangePasswordActivitySuccess")) {
 			if (changePasswordActivity != null) {
 				changePasswordActivity.modifySuccess();

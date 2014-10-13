@@ -224,6 +224,7 @@ public class ShareMessageDetailView {
 
 		if (thisController.shareMessage != null) {
 			showShareMessageDetail();
+			thisController.getShareMessageDetail();
 		}
 	}
 
@@ -242,6 +243,7 @@ public class ShareMessageDetailView {
 	public Friend friend;
 
 	public void showShareMessageDetail() {
+		shareMessageDetailContentView.removeAllViews();
 		friend = data.relationship.friendsMap.get(thisController.shareMessage.phone);
 		if (friend != null) {
 			// shareMessageUserHeadView.setImageBitmap(bitmap);

@@ -534,6 +534,7 @@ shareManage.deletecomment = function (data, response) {
  ***************************************/
 shareManage.getshare = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var gid = data.gid;
     var gsid = data.gsid;
     var arr = [gid, gsid];
@@ -567,9 +568,19 @@ shareManage.getshare = function (data, response) {
                 response.end();
             } else {
                 var shareData = results.pop().share.data;
+                var share = {
+                    comments: JSON.parse(shareData.comments),
+                    content: shareData.content,
+                    praiseusers: JSON.parse(shareData.praises),
+                    gsid: shareData.gsid,
+                    type: shareData.type,
+                    time: shareData.time,
+                    phone: shareData.phone,
+                    status: "sent"
+                };
                 response.write(JSON.stringify({
                     "提示信息": "获取群分享成功",
-                    shares: [shareData]
+                    shares: [share]
                 }));
                 response.end();
             }
@@ -731,7 +742,8 @@ shareManage.getgroupshares = function (data, response) {
                         gsid: shareData.gsid,
                         type: shareData.type,
                         time: shareData.time,
-                        phone: shareData.phone
+                        phone: shareData.phone,
+                        status: "sent"
                     };
                     sharesOrder.push(share.gsid + "");
                     sharesMap[share.gsid] = share;

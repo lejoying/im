@@ -109,17 +109,26 @@ public class MessagesSubView {
 
 		if (messagesOrder.size() > 0) {
 			noMessagesStatusView.setVisibility(View.GONE);
+		} else {
+			messagesView.addView(noMessagesStatusView);
+			noMessagesStatusView.setVisibility(View.VISIBLE);
 		}
 		for (int i = 0; i < messagesOrder.size(); i++) {
 			String key = messagesOrder.get(i);
-			log.e("message list key:" + key);
+			// log.e("message list key:" + key);
 			Message message = null;
 			String fileName = "";
 			String type = "";
 			String key2 = "";
 			if (key.indexOf("p") == 0) {
 				type = "p";
-				int size = friendMessageMap.get(key).size();
+				int size = 0;
+				try {
+					size = friendMessageMap.get(key).size();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					continue;
+				}
 				if (size != 0) {
 					size--;
 				} else {
@@ -263,6 +272,10 @@ public class MessagesSubView {
 				try {
 					Friend friend;
 					String nickName = "";
+					if (data.event.userEvents.size() == 0) {
+						lastChatMessageView.setText("暂无个人动态");
+						return;
+					}
 					String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
 					EventMessage event = data.event.userEventsMap.get(key);
 					if ("relation_newfriend".equals(event.type)) {
@@ -311,6 +324,10 @@ public class MessagesSubView {
 				}
 				String content = "";
 				try {
+					if (data.event.groupEvents.size() == 0) {
+						lastChatMessageView.setText("暂无群组动态");
+						return;
+					}
 					String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
 					EventMessage event = data.event.groupEventsMap.get(key);
 					if (event == null) {

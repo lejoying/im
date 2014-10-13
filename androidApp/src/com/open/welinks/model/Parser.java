@@ -226,6 +226,7 @@ public class Parser {
 					String relationshipStr = getFromUserForder(phone, "relationship.js");
 					log.e(phone + "------------------");
 					data.relationship = gson.fromJson(relationshipStr, Relationship.class);
+					data.relationship.friends = checkKeyValue(data.relationship.friends, data.relationship.friendsMap);
 					data.relationship.circles = checkKeyValue(data.relationship.circles, data.relationship.circlesMap);
 					data.relationship.groups = checkKeyValue(data.relationship.groups, data.relationship.groupsMap);
 					data.relationship.squares = checkKeyValue(data.relationship.squares, data.relationship.groupsMap);
@@ -248,25 +249,12 @@ public class Parser {
 					if (set.size() != messageOrder.size()) {
 						data.messages.messagesOrder.clear();
 						data.messages.messagesOrder.addAll(set);
+						data.messages.isModified = true;
 					}
-					List<String> messageOrder2 = new ArrayList<String>();
-					for (int i = 0; i < messageOrder.size(); i++) {
-						String id = (messageOrder.get(i));
-						String firstName = id.substring(0, 1);
-						String key = id.substring(1);
-						if ("p".equals(firstName) && !data.relationship.friends.contains(key)) {
-							messageOrder2.add(id);
-							log.e("删除数据");
-						} else if ("g".equals(firstName) && !data.relationship.groups.contains(key)) {
-							messageOrder2.add(id);
-							log.e("删除数据");
-						}
-					}
-					data.messages.isModified = true;
-					messageOrder.removeAll(messageOrder2);
 				}
 			} catch (Exception e) {
 				deleteFile(phone, "message.js");
+				Log.e(tag, e.toString());
 			}
 			try {
 				if (data.shares == null) {
@@ -337,6 +325,9 @@ public class Parser {
 
 	public void saveDataToSD() {
 		Data data = Data.getInstance();
+		if (data.userInformation == null) {
+			return;
+		}
 		String phone = data.userInformation.currentUser.phone;
 
 		String localDataStr = gson.toJson(data.localStatus.localData);
@@ -360,11 +351,13 @@ public class Parser {
 			saveToUserForder(phone, "share.js", sharesStr);
 		}
 
-		if (data.messages.isModified) {
-			data.messages.isModified = false;
+		if (data.messages != null) {
+			if (data.messages.isModified) {
+				data.messages.isModified = false;
 
-			String messagesStr = gson.toJson(data.messages);
-			saveToUserForder(phone, "message.js", messagesStr);
+				String messagesStr = gson.toJson(data.messages);
+				saveToUserForder(phone, "message.js", messagesStr);
+			}
 		}
 
 		if (data.event.isModified) {

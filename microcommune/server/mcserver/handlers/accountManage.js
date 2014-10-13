@@ -26,19 +26,19 @@ var sms_power = true;
 var accountID = -1;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
-var IDclient = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
+var IDclient = redis.createClient(serverSetting.redisPort, "112.126.71.180");
 IDclient.get("ID", function (err, reply) {
     if (err != null) {
         console.error(err + "as");
-        throw "用户ID初始化失败...请查看112.126.71.175服务器";
+        throw "用户ID初始化失败...请查看112.126.71.180服务器";
         return;
     } else {
         if (reply == null) {
             console.warn(reply + "a");
-            throw "用户ID初始化失败...请查看112.126.71.175服务器";
+            throw "用户ID初始化失败...请查看112.126.71.180服务器";
             return;
         } else {
-            console.log("ID:" + reply + "...init data,from server...112.126.71.1757");
+            console.log("ID:" + reply + "...init data,from server...112.126.71.180");
             accountID = reply;
         }
     }

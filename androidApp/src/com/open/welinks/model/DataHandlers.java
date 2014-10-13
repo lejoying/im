@@ -1,6 +1,9 @@
 package com.open.welinks.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -8,6 +11,7 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.view.ViewManage;
 
 public class DataHandlers {
 
@@ -96,9 +100,69 @@ public class DataHandlers {
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}
 
+	public static void clearInvalidGroupMessages() {
+		try {
+			parser.check();
+			List<String> messageOrder = data.messages.messagesOrder;
+			Set<String> set = new HashSet<String>();
+			set.addAll(messageOrder);
+			if (set.size() != messageOrder.size()) {
+				data.messages.messagesOrder.clear();
+				data.messages.messagesOrder.addAll(set);
+			}
+			List<String> messageOrder2 = new ArrayList<String>();
+			for (int i = 0; i < messageOrder.size(); i++) {
+				String id = (messageOrder.get(i));
+				String firstName = id.substring(0, 1);
+				String key = id.substring(1);
+				if ("g".equals(firstName) && !data.relationship.groups.contains(key)) {
+					messageOrder2.add(id);
+				}
+			}
+			data.messages.isModified = true;
+			messageOrder.removeAll(messageOrder2);
+			// if (messageOrder2.size() != 0) {
+			viewManage.postNotifyView("MessagesSubView");
+			// }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static ViewManage viewManage = ViewManage.getInstance();
+
+	public static void clearInvalidFriendMessages() {
+		try {
+			parser.check();
+			List<String> messageOrder = data.messages.messagesOrder;
+			Set<String> set = new HashSet<String>();
+			set.addAll(messageOrder);
+			if (set.size() != messageOrder.size()) {
+				data.messages.messagesOrder.clear();
+				data.messages.messagesOrder.addAll(set);
+			}
+			List<String> messageOrder2 = new ArrayList<String>();
+			for (int i = 0; i < messageOrder.size(); i++) {
+				String id = (messageOrder.get(i));
+				String firstName = id.substring(0, 1);
+				String key = id.substring(1);
+				if ("p".equals(firstName) && !data.relationship.friends.contains(key)) {
+					messageOrder2.add(id);
+				}
+			}
+			data.messages.isModified = true;
+			messageOrder.removeAll(messageOrder2);
+			// if (messageOrder2.size() != 0) {
+			viewManage.postNotifyView("MessagesSubView");
+			// }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void clearData() {
 		try {
-			// data = null;
+
 			data.userInformation.isModified = false;
 			data.userInformation.currentUser.phone = "";
 			data.userInformation.currentUser.accessKey = "";
@@ -112,10 +176,11 @@ public class DataHandlers {
 			data.relationship.groupsMap.clear();
 			data.relationship.squares.clear();
 
-			data.messages.isModified = false;
-			data.messages.friendMessageMap.clear();
-			data.messages.groupMessageMap.clear();
-			data.messages.messagesOrder.clear();
+			data.messages = null;
+//			data.messages.isModified = false;
+//			data.messages.friendMessageMap.clear();
+//			data.messages.groupMessageMap.clear();
+//			data.messages.messagesOrder.clear();
 
 			data.shares.isModified = false;
 			data.shares.shareMap.clear();

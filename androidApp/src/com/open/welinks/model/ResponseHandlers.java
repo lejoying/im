@@ -501,6 +501,13 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("获取密友圈成功")) {
 				log.e(tag, "获取密友圈成功");
 				List<String> circles = response.relationship.circles;
+				String defaultCircleName = null;
+				if (data.relationship.circlesMap != null) {
+					Circle circle = data.relationship.circlesMap.get("8888888");
+					if (circle != null) {
+						defaultCircleName = circle.name;
+					}
+				}
 				data.relationship.circles = circles;
 				Map<String, Circle> circlesMap = response.relationship.circlesMap;
 				data.relationship.circlesMap = circlesMap;
@@ -512,6 +519,11 @@ public class ResponseHandlers {
 				}
 				for (int i = 0; i < circles.size(); i++) {
 					Circle circle = circlesMap.get(circles.get(i));
+					if (circle.rid == 8888888) {
+						if (defaultCircleName != null) {
+							circle.name = defaultCircleName;
+						}
+					}
 					data.relationship.friends.addAll(circle.friends);
 				}
 				Set<String> set = new LinkedHashSet<String>();
@@ -526,6 +538,7 @@ public class ResponseHandlers {
 					viewManage.mainView.friendsSubView.showCircles();
 				}
 				DataHandlers.getMessages(data.userInformation.currentUser.flag);
+				DataHandlers.clearInvalidFriendMessages();
 			} else {
 				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
 			}
@@ -963,6 +976,7 @@ public class ResponseHandlers {
 				}
 				viewManage.mainView.shareSubView.setGroupsDialogContent();
 				viewManage.postNotifyView("GroupListActivity");
+				DataHandlers.clearInvalidGroupMessages();
 			}
 		};
 	};

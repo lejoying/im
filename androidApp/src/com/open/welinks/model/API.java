@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://192.168.1.3/";// http://www.we-links.com/
 
 	/**
 	 * http://images2.we-links.com/
@@ -84,6 +84,10 @@ public class API {
 	 * http://www.we-links.com/api2/share/getgroupshares
 	 */
 	public static String SHARE_GETSHARES = API_DOMAIN + "api2/share/getgroupshares";
+	/**
+	 * http://www.we-links.com/api2/share/getshare
+	 */
+	public static String SHARE_GETSHARE = API_DOMAIN + "api2/share/getshare";
 	/**
 	 * http://www.we-links.com/api2/share/addpraise
 	 */

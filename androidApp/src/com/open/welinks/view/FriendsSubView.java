@@ -89,7 +89,6 @@ public class FriendsSubView {
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 	}
 
-
 	public void showCircles() {
 		data = parser.check();
 		circles = data.relationship.circles;
@@ -184,11 +183,16 @@ public class FriendsSubView {
 			this.gripView.setTag(R.id.tag_first, circle);
 			this.gripView.setTag(R.id.tag_class, "card_grip");
 
-			int lineCount = circle.friends.size() / 4;
+			int size = circle.friends.size();
+			if (circle.rid == 8888888) {
+				size += 1;
+			}
+
+			int lineCount = size / 4;
 			if (lineCount == 0) {
 				lineCount = 1;
 			}
-			int membrane = circle.friends.size() % 4;
+			int membrane = size % 4;
 			if (membrane != 0) {
 				lineCount++;
 			}
@@ -203,34 +207,28 @@ public class FriendsSubView {
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(singleWidth, (int) (78 * displayMetrics.density));
 			this.friendsSequence.clear();
 			// Log.e(tag, circle.friends.size() + "---size");
-			for (int i = 0; i < circle.friends.size(); i++) {
-				String phone = circle.friends.get(i);
-				Friend friend = friendsMap.get(phone);
-
+			for (int i = 0; i < size; i++) {
 				FriendBody friendBody = new FriendBody();
-				friendBody.Initialize();
-				friendBody.setData(friend);
+				if (circle.rid == 8888888 && i == size - 1) {
+					friendBody.Initialize(true);
+					friendBody.setData(null);
+				} else {
+					String phone = circle.friends.get(i);
+					Friend friend = friendsMap.get(phone);
+					friendBody.Initialize(false);
+					friendBody.setData(friend);
+				}
 
 				this.cardView.addView(friendBody.friendView, layoutParams);
 				int x = (i % 4 + 1) * spacing + (i % 4) * singleWidth;
 				int y = (int) ((i / 4) * (95 * displayMetrics.density) + 64 * displayMetrics.density);
-				// int x = 120 * (int) displayMetrics.density * (i % 4) + (int) itemWidth / 16;
-				// int y = 140 * (int) displayMetrics.density * (i / 4) + 96 * (int) displayMetrics.density;
-
-				// int rows = i / 4;
-				// int membrane = i % 4;
-				// if (membrane != 0) {
-				// rows = rows + 1;
-				// }
-				// int x = 120 * (int) displayMetrics.density * membrane + (int) itemWidth / 16;
-				// int y = 140 * (int) displayMetrics.density * rows + 96 * (int) displayMetrics.density;
 
 				friendBody.friendView.setX(x);
 				friendBody.friendView.setY(y);
 
-				if (this.friendBodiesMap.get(phone) == null) {
-					// optimize friendBodiesMap pool
-				}
+				// if (this.friendBodiesMap.get(phone) == null) {
+				// optimize friendBodiesMap pool
+				// }
 			}
 		}
 	}
@@ -241,7 +239,10 @@ public class FriendsSubView {
 		public ImageView headImageView;
 		public TextView nickNameView;
 
-		public View Initialize() {
+		public boolean flag = false;
+
+		public View Initialize(boolean flag) {
+			this.flag = flag;
 			this.friendView = mainView.mInflater.inflate(R.layout.circles_gridpage_item, null);
 			this.headImageView = (ImageView) this.friendView.findViewById(R.id.head_image);
 			this.nickNameView = (TextView) this.friendView.findViewById(R.id.nickname);
@@ -249,15 +250,20 @@ public class FriendsSubView {
 		}
 
 		public void setData(Friend friend) {
-
-			fileHandlers.getHeadImage(friend.head, this.headImageView, options);
-			// this.headImageView.setImageBitmap(bitmap);
-
-			this.nickNameView.setText(friend.nickName);
-			this.friendView.setTag(R.id.friendsContainer, friend);
-			this.friendView.setTag(R.id.tag_class, "friend_view");
+			if (this.flag) {
+				// fileHandlers.getHeadImage(friend.head, this.headImageView, options);
+				this.headImageView.setImageResource(R.drawable.button_addmembers);
+				this.headImageView.setColorFilter(Color.parseColor("#0099cd"));
+				this.nickNameView.setText("添加好友");
+				// this.friendView.setTag(R.id.friendsContainer, "");
+				this.friendView.setTag(R.id.tag_class, "addfriend_view");
+			} else {
+				fileHandlers.getHeadImage(friend.head, this.headImageView, options);
+				this.nickNameView.setText(friend.nickName);
+				this.friendView.setTag(R.id.friendsContainer, friend);
+				this.friendView.setTag(R.id.tag_class, "friend_view");
+			}
 			this.friendView.setOnClickListener(thisController.mOnClickListener);
-
 			this.friendView.setOnTouchListener(thisController.onTouchListener);
 
 		}
