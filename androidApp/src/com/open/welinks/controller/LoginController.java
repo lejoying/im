@@ -203,6 +203,7 @@ public class LoginController {
 							} else {
 								hideSoftInput();
 								requestUserVerifyCode(phone);
+								requestUserVerifyCodeCallBack();
 							}
 							loginPhone = phone;
 						}
@@ -250,6 +251,7 @@ public class LoginController {
 							} else {
 								showSoftInput(thisView.input2);
 								requestUserVerifyCode(phone);
+								requestUserVerifyCodeCallBack();
 							}
 							registerPhone = phone;
 						}
@@ -297,6 +299,7 @@ public class LoginController {
 							} else {
 								showSoftInput(thisView.input2);
 								requestUserVerifyCode(phone);
+								requestUserAuthWithVerifyCodeCallBack();
 							}
 							resetPasswordPhone = phone;
 						} else if (view.equals(thisView.leftBottomTextButton)) {
@@ -634,6 +637,7 @@ public class LoginController {
 					} else {
 						if (thisView.status == Status.verifyPhoneForLogin) {
 							thisView.rightBottomTextButton.setText("重新发送(" + remainLogin + ")");
+							thisView.controlProgress.moveTo((int) ((Double.valueOf(remainLogin) / Double.valueOf(60)) * 100));
 						}
 						handler.postDelayed(this, 1000);
 					}
@@ -721,7 +725,6 @@ public class LoginController {
 			nextAnimation(Status.resetPassword, thisView.card, thisView.card);
 			showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
 		}
-
 	}
 
 	public void requestUserVerifyCode(final String phone) {
@@ -736,7 +739,22 @@ public class LoginController {
 		}
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_VERIFYPHONE, params, responseHandlers.account_verifyphone);
-
+		// FileHandlers fileHandlers = FileHandlers.getInstance();
+		// fileHandlers.handler.post(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// if (remainLogin-- <= 0) {
+		// // thisView.rightBottomTextButton.setText("");
+		// thisView.rightBottomTextButton.setText("重新发送");
+		// } else {
+		// if (thisView.status == Status.verifyPhoneForLogin) {
+		// thisView.rightBottomTextButton.setText("重新发送(" + remainLogin + ")");
+		// }
+		// handler.postDelayed(this, 1000);
+		// }
+		// }
+		// });
 	}
 
 	public void requestUserVerifyCodeCallBack() {

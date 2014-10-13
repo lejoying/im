@@ -330,9 +330,6 @@ public class Parser {
 		}
 		String phone = data.userInformation.currentUser.phone;
 
-		String localDataStr = gson.toJson(data.localStatus.localData);
-		saveToUserForder(phone, "localData.js", localDataStr);
-
 		if (data.userInformation.isModified) {
 			data.userInformation.isModified = false;
 			String userInformationStr = gson.toJson(data.userInformation);
@@ -367,6 +364,11 @@ public class Parser {
 
 			String eventStr = gson.toJson(data.event);
 			saveToUserForder(phone, "event.js", eventStr);
+		}
+
+		if (phone != null && !"".equals(phone)) {
+			String localDataStr = gson.toJson(data.localStatus.localData);
+			saveToUserForder(phone, "localData.js", localDataStr);
 		}
 	}
 

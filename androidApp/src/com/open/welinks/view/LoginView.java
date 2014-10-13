@@ -2,8 +2,10 @@ package com.open.welinks.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -80,9 +83,18 @@ public class LoginView {
 	public LoginView(Activity activity) {
 		this.context = activity;
 		this.thisActivity = activity;
+		this.thisView = this;
 	}
 
+	public View controlProgressView;
+	public DisplayMetrics displayMetrics;
+	public ControlProgress controlProgress;
+
 	public void initView() {
+
+		displayMetrics = new DisplayMetrics();
+
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 		thisActivity.setContentView(R.layout.activity_login);
 
@@ -110,6 +122,11 @@ public class LoginView {
 		error_message = (TextView) thisActivity.findViewById(R.id.err_message);
 		progressBar = (ProgressBar) thisActivity.findViewById(R.id.progressBar);
 		cardTopLine = (ImageView) thisActivity.findViewById(R.id.cardTopLine);
+		cardTopLine.setVisibility(View.GONE);
+		cardTopLine.setBackgroundColor(Color.RED);
+		controlProgressView = thisActivity.findViewById(R.id.list_item_progress_container);
+		controlProgress = new ControlProgress();
+		controlProgress.initialize(controlProgressView);
 
 		cardTopLine.setVisibility(View.GONE);
 		progressBar.setVisibility(View.VISIBLE);
@@ -121,6 +138,9 @@ public class LoginView {
 	int remainResetPassword = 0;
 
 	public void setCardContent(Status status) {
+		cardTopLine.setVisibility(View.GONE);
+		controlProgressView.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
 		if (status == Status.loginUsePassword) {
 			leftTopText.setVisibility(View.VISIBLE);
 			leftTopText.setText("登陆");
@@ -143,7 +163,8 @@ public class LoginView {
 			input1.setInputType(InputType.TYPE_CLASS_NUMBER);
 			input2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		} else if (status == Status.verifyPhoneForLogin) {
-
+			thisView.controlProgressView.setVisibility(View.VISIBLE);
+			thisView.progressBar.setVisibility(View.GONE);
 			leftTopText.setVisibility(View.VISIBLE);
 			leftTopText.setText("验证码登陆");
 			rightTopTextButton.setVisibility(View.VISIBLE);
@@ -332,6 +353,48 @@ public class LoginView {
 				float y = inputDialigView.getTranslationY();
 				inputDialigView.setTranslationY(y - 1280 * mappedValue);
 			}
+		}
+	}
+
+	public class ControlProgress {
+
+		public View controlProgressView;
+
+		public ImageView progress_line1;
+
+		public ImageView progress_line2;
+		public TranslateAnimation move_progress_line1;
+
+		public int percentage = 0;
+		public int width = 0;
+
+		public void initialize(View container) {
+			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
+
+			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
+			controlProgressView = container;
+
+			width = displayMetrics.widthPixels;
+		}
+
+		public void moveTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
+			// TODO old animation becomes memory fragment
+			move_progress_line1.setStartOffset(0);
+			move_progress_line1.setDuration(200);
+
+			progress_line1.startAnimation(move_progress_line1);
+
+			progress_line1.setX(position);
+			percentage = targetPercentage;
+		}
+
+		public void setTo(int targetPercentage) {
+			float position = targetPercentage / 100.0f * this.width;
+			progress_line1.setX(position);
+			percentage = targetPercentage;
 		}
 	}
 }

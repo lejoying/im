@@ -163,7 +163,7 @@ public class DataHandlers {
 	public static void clearData() {
 		try {
 
-			data.userInformation.isModified = false;
+			data.userInformation.isModified = true;
 			data.userInformation.currentUser.phone = "";
 			data.userInformation.currentUser.accessKey = "";
 

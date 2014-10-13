@@ -759,12 +759,12 @@ public class MainController {
 			data.userInformation.currentUser.phone = "";
 			data.userInformation.currentUser.accessKey = "";
 			data.userInformation.isModified = true;
+			parser.save();
 			thisActivity.stopService(new Intent(thisActivity, PushService.class));
 			if (this.connectionChangeReceiver != null) {
 				thisActivity.unregisterReceiver(this.connectionChangeReceiver);
 				connectionChangeReceiver = null;
 			}
-			parser.save();
 			DataHandlers.clearData();
 			thisActivity.finish();
 			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));

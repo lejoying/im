@@ -64,6 +64,16 @@
         android:contentDescription="white_line"
         android:translationY="44dp" />
 
+    <RelativeLayout
+        android:id="@+id/list_item_progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:translationY="44dp"
+        android:visibility="gone" >
+
+        <include layout="@layout/view_element_debug1_control_progress" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/leftBottomTextButton"
         android:layout_width="wrap_content"
