@@ -188,14 +188,14 @@ public class ShareReleaseImageTextController {
 					@Override
 					public void run() {
 						if (shareMessage != null) {
-							log.e("shareMessage：" + shareMessage);
+							// log.e("shareMessage：" + shareMessage);
 							String keyName = "message#" + shareMessage.gsid;
 							SharesMessageBody listItemBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
 							if (listItemBody != null) {
-								log.e("listItemBody：" + listItemBody);
+								// log.e("listItemBody：" + listItemBody);
 								ControlProgress controlProgress = listItemBody.controlProgress;
 								if (controlProgress != null) {
-									log.e("controlProgress：" + controlProgress);
+									// log.e("controlProgress：" + controlProgress);
 									controlProgress.moveTo((int) (currentPrecent * 100));
 								} else {
 									log.e("controlProgress");
@@ -213,6 +213,9 @@ public class ShareReleaseImageTextController {
 				currentUploadCount++;
 				if (currentUploadCount == 1) {
 					viewManage.mainView.shareSubView.showShareMessages();
+					if (totalUploadCount == currentUploadCount) {
+						sendMessageToServer(shareMessage.content, shareMessage.gsid);
+					}
 				} else if (totalUploadCount == currentUploadCount) {
 					sendMessageToServer(shareMessage.content, shareMessage.gsid);
 				}
@@ -379,7 +382,7 @@ public class ShareReleaseImageTextController {
 						String content = gson.toJson(shareContent.shareContentItems);
 						sendMessageToServer(content, shareMessage.gsid);
 					}
-				}else{
+				} else {
 					String content = gson.toJson(shareContent.shareContentItems);
 					sendMessageToServer(content, shareMessage.gsid);
 				}

@@ -167,20 +167,21 @@ public class DataHandlers {
 			data.userInformation.currentUser.phone = "";
 			data.userInformation.currentUser.accessKey = "";
 
-			data.relationship.isModified = false;
-			data.relationship.circles.clear();
-			data.relationship.friends.clear();
-			data.relationship.friendsMap.clear();
-			data.relationship.circlesMap.clear();
-			data.relationship.groups.clear();
-			data.relationship.groupsMap.clear();
-			data.relationship.squares.clear();
+			data.relationship = null;
+			// data.relationship.isModified = false;
+			// data.relationship.circles.clear();
+			// data.relationship.friends.clear();
+			// data.relationship.friendsMap.clear();
+			// data.relationship.circlesMap.clear();
+			// data.relationship.groups.clear();
+			// data.relationship.groupsMap.clear();
+			// data.relationship.squares.clear();
 
 			data.messages = null;
-//			data.messages.isModified = false;
-//			data.messages.friendMessageMap.clear();
-//			data.messages.groupMessageMap.clear();
-//			data.messages.messagesOrder.clear();
+			// data.messages.isModified = false;
+			// data.messages.friendMessageMap.clear();
+			// data.messages.groupMessageMap.clear();
+			// data.messages.messagesOrder.clear();
 
 			data.shares.isModified = false;
 			data.shares.shareMap.clear();

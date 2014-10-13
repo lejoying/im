@@ -285,7 +285,7 @@ public class Parser {
 		return data;
 	}
 
-	public List<String> checkKeyValue(List<String> list, Map map) {
+	public List<String> checkKeyValue(List<String> list, Map<?, ?> map) {
 		List<String> errorList = new ArrayList<String>();
 		for (int i = 0; i < list.size(); i++) {
 			String key = list.get(i);
@@ -339,10 +339,12 @@ public class Parser {
 			saveToRootForder("userInformation.js", userInformationStr);
 		}
 
-		if (data.relationship.isModified) {
-			data.relationship.isModified = false;
-			String relationshipStr = gson.toJson(data.relationship);
-			saveToUserForder(phone, "relationship.js", relationshipStr);
+		if (data.relationship != null) {
+			if (data.relationship.isModified) {
+				data.relationship.isModified = false;
+				String relationshipStr = gson.toJson(data.relationship);
+				saveToUserForder(phone, "relationship.js", relationshipStr);
+			}
 		}
 
 		if (data.shares.isModified) {

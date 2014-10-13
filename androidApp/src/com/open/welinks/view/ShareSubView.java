@@ -333,6 +333,9 @@ public class ShareSubView {
 		this.isShowFirstMessageAnimation = false;
 
 		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
+		if (this.shareMessageListBody.height < this.shareMessageListBody.containerHeight) {
+			this.shareMessageListBody.y = 0;
+		}
 		this.shareMessageListBody.setChildrenPosition();
 	}
 

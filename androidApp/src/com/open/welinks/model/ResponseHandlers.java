@@ -1,9 +1,11 @@
 package com.open.welinks.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.http.Header;
@@ -159,6 +161,8 @@ public class ResponseHandlers {
 					data.userInformation.isModified = true;
 					viewManage.postNotifyView("MeSubView");
 				}
+			} else {
+				log.e(response.失败原因);
 			}
 		};
 	};
@@ -217,7 +221,7 @@ public class ResponseHandlers {
 						public String head;
 						public String sex;
 						public String age;
-						public String byPhone;
+						// public String byPhone;
 						public String createTime;
 						public String lastLoginTime;
 						public String userBackground;
@@ -374,7 +378,7 @@ public class ResponseHandlers {
 			public String head;
 			public String sex;
 			public String age;
-			public String byPhone;
+			// public String byPhone;
 			public String createTime;
 			public String lastLoginTime;
 			public String userBackground;
@@ -418,6 +422,7 @@ public class ResponseHandlers {
 							friend.head = account.head;
 							friend.nickName = account.nickName;
 							friend.mainBusiness = account.mainBusiness;
+							friend.sex = account.sex;
 							friend.sex = account.sex;
 							friend.age = Integer.valueOf(account.age);
 							friend.createTime = account.createTime;
@@ -511,7 +516,33 @@ public class ResponseHandlers {
 				data.relationship.circles = circles;
 				Map<String, Circle> circlesMap = response.relationship.circlesMap;
 				data.relationship.circlesMap = circlesMap;
-				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+				Map<String, Friend> friendsMap = response.relationship.friendsMap;
+				Iterator<Entry<String, Friend>> iterator = friendsMap.entrySet().iterator();
+				if (data.relationship.friendsMap != null && data.relationship.friendsMap.size() != 0) {
+					while (iterator.hasNext()) {
+						Map.Entry<String, Friend> entry = iterator.next();
+						String key = entry.getKey();
+						Friend friend = entry.getValue();
+						if (data.relationship.friendsMap.get(key) != null) {
+							Friend oldFriend = data.relationship.friendsMap.get(key);
+							oldFriend.phone = friend.phone;
+							oldFriend.head = friend.head;
+							oldFriend.nickName = friend.nickName;
+							oldFriend.mainBusiness = friend.mainBusiness;
+							oldFriend.sex = friend.sex;
+							oldFriend.age = Integer.valueOf(friend.age);
+							oldFriend.createTime = friend.createTime;
+							oldFriend.lastLoginTime = friend.lastLoginTime;
+							oldFriend.userBackground = friend.userBackground;
+							oldFriend.id = friend.id;
+						} else {
+							data.relationship.friendsMap.put(key, friend);
+						}
+					}
+				} else {
+					data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+				}
+
 				if (data.relationship.friends == null) {
 					data.relationship.friends = new ArrayList<String>();
 				} else {
@@ -619,6 +650,8 @@ public class ResponseHandlers {
 					log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
 					Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
 				}
+			} else {
+				log.e(response.失败原因);
 			}
 		}
 	};
@@ -946,37 +979,70 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取群组成员成功")) {
-				data.relationship.groups = response.relationship.groups;
-				data.relationship.groupsMap.putAll(response.relationship.groupsMap);
-				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
-				data.relationship.isModified = true;
-				// init current share
-				String gid = "";
-				if (response.relationship.groups.size() != 0) {
-					gid = response.relationship.groups.get(0);
-				} else {
-					gid = "";
-					data.localStatus.localData.currentSelectedGroup = gid;
-				}
-				if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
-					if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取群组成员成功")) {
+					data.relationship.groups = response.relationship.groups;
+					data.relationship.groupsMap.putAll(response.relationship.groupsMap);
+
+					Map<String, Friend> friendsMap = response.relationship.friendsMap;
+					Iterator<Entry<String, Friend>> iterator = friendsMap.entrySet().iterator();
+					if (data.relationship.friendsMap != null && data.relationship.friendsMap.size() != 0) {
+						while (iterator.hasNext()) {
+							Map.Entry<String, Friend> entry = iterator.next();
+							String key = entry.getKey();
+							Friend friend = entry.getValue();
+							if (data.relationship.friendsMap.get(key) != null) {
+								Friend oldFriend = data.relationship.friendsMap.get(key);
+								oldFriend.phone = friend.phone;
+								oldFriend.head = friend.head;
+								oldFriend.nickName = friend.nickName;
+								oldFriend.mainBusiness = friend.mainBusiness;
+								oldFriend.sex = friend.sex;
+								oldFriend.age = Integer.valueOf(friend.age);
+								oldFriend.createTime = friend.createTime;
+								oldFriend.lastLoginTime = friend.lastLoginTime;
+								oldFriend.userBackground = friend.userBackground;
+								oldFriend.id = friend.id;
+							} else {
+								data.relationship.friendsMap.put(key, friend);
+							}
+						}
+					} else {
+						data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+					}
+
+					data.relationship.isModified = true;
+					// init current share
+					String gid = "";
+					if (response.relationship.groups.size() != 0) {
+						gid = response.relationship.groups.get(0);
+					} else {
+						gid = "";
 						data.localStatus.localData.currentSelectedGroup = gid;
 					}
+					if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
+						if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+							data.localStatus.localData.currentSelectedGroup = gid;
+						}
+					} else {
+						data.localStatus.localData.currentSelectedGroup = gid;
+					}
+					// Set the option group dialog content
+					log.e(tag, data.relationship.groups.toString());
+					if (!gid.equals("")) {
+						viewManage.mainView.shareSubView.showShareMessages();
+						viewManage.mainView.shareSubView.showGroupMembers();
+						viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
+					}
+					viewManage.mainView.shareSubView.setGroupsDialogContent();
+					viewManage.postNotifyView("GroupListActivity");
+					DataHandlers.clearInvalidGroupMessages();
 				} else {
-					data.localStatus.localData.currentSelectedGroup = gid;
+					log.e(response.失败原因);
 				}
-				// Set the option group dialog content
-				log.e(tag, data.relationship.groups.toString());
-				if (!gid.equals("")) {
-					viewManage.mainView.shareSubView.showShareMessages();
-					viewManage.mainView.shareSubView.showGroupMembers();
-					viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
-				}
-				viewManage.mainView.shareSubView.setGroupsDialogContent();
-				viewManage.postNotifyView("GroupListActivity");
-				DataHandlers.clearInvalidGroupMessages();
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
 			}
 		};
 	};
@@ -1028,6 +1094,7 @@ public class ResponseHandlers {
 				}
 			} else {
 				log.e(responseInfo.result);
+				log.e(response.失败原因);
 			}
 		};
 	};
@@ -1247,6 +1314,8 @@ public class ResponseHandlers {
 					viewManage.mainView.shareSubView.showShareMessages();
 				}
 				log.e(tag, "---------------------发送成功");
+			} else {
+				log.e(response.失败原因);
 			}
 		};
 	};
@@ -1329,6 +1398,8 @@ public class ResponseHandlers {
 						}
 						viewManage.mainView.squareSubView.showSquareMessages();
 					}
+				} else {
+					log.e(response.失败原因);
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
@@ -1339,8 +1410,8 @@ public class ResponseHandlers {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
-			public String gid;
-			public String gsid;
+			// public String gid;
+			// public String gsid;
 		}
 
 		@Override
@@ -1381,7 +1452,7 @@ public class ResponseHandlers {
 			public String 提示信息;
 			public String 失败原因;
 			public String gid;
-			public String gsid;
+			// public String gsid;
 		}
 
 		@Override
@@ -1449,7 +1520,7 @@ public class ResponseHandlers {
 	public RequestCallBack<String> lbsdata_search = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public int status;
-			public String info;
+			// public String info;
 			public int count;
 			public ArrayList<data> datas;
 
