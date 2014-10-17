@@ -2,7 +2,6 @@ package com.open.welinks.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;

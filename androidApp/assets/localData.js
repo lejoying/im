@@ -1,6 +1,8 @@
 {
-prepareUploadImagesList:[],
-prepareDownloadImagesList:[],
-currentSelectedGroup:"",
-currentSelectedSquare:""
+	prepareUploadImagesList : [],
+	prepareDownloadImagesList : [],
+	currentSelectedGroup : "",
+	currentSelectedSquare : "",
+	shareReleaseSequece : [],
+	shareReleaseSequeceMap : {}
 }

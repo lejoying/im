@@ -128,6 +128,8 @@ public class MainController {
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
 	private MainController thisController;
 
+	private DataHandlers dataHandlers = DataHandlers.getInstance();
+
 	public void oncreate() {
 		String phone = thisActivity.getIntent().getStringExtra("phone");
 		if (phone != null && !"".equals(phone)) {
@@ -147,6 +149,8 @@ public class MainController {
 		DataHandlers.getUserInfomation();
 		DataHandlers.getUserCurrentAllGroup();
 		getIntimatefriends();
+
+		dataHandlers.sendShareMessage();
 
 		requestLocation();
 	}

@@ -1,16 +1,37 @@
 package com.open.welinks.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welinks.controller.UploadMultipart;
+import com.open.welinks.controller.UploadMultipartList;
+import com.open.welinks.customListener.OnUploadLoadingListListener;
+import com.open.welinks.customListener.OnUploadLoadingListener;
+import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Shares.Share;
+import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.SubData.ShareContent;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.utils.SHA1;
+import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ViewManage;
 
 public class DataHandlers {
@@ -19,6 +40,15 @@ public class DataHandlers {
 	public static Data data = Data.getInstance();
 	public static Parser parser = Parser.getInstance();
 	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+	public static DataHandlers instance;
+
+	public static DataHandlers getInstance() {
+		if (instance == null) {
+			instance = new DataHandlers();
+		}
+		return instance;
+	}
 
 	public static void getIntimateFriends() {
 		data = parser.check();
@@ -237,5 +267,192 @@ public class DataHandlers {
 			}
 		}
 		return flag;
+	}
+
+	public Gson gson = new Gson();
+
+	public ArrayList<String> sequece = null;
+	public Map<String, ShareDraft> sequeceMap = null;
+
+	public void sendShareMessage() {
+		parser.check();
+		try {
+			sequece = data.localStatus.localData.shareReleaseSequece;
+			sequeceMap = data.localStatus.localData.shareReleaseSequeceMap;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		final User currentUser = data.userInformation.currentUser;
+		if (sequece != null && sequeceMap != null) {
+			for (final String ogsid : sequece) {
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						final ShareDraft entity = sequeceMap.get(ogsid);
+						OnUploadLoadingListListener onUploadLoadingListListener;
+						onUploadLoadingListListener = new OnUploadLoadingListListener() {
+							@Override
+							public void onSuccess(OnUploadLoadingListListener instance) {
+								super.onSuccess(instance);
+								try {
+									sendMessageToServer(instance.shareMessage.content, entity.gid, entity.gsid);
+								} catch (Exception e) {
+									sendMessageToServer("出现bug", entity.gid, entity.gsid);
+									e.printStackTrace();
+								}
+							}
+						};
+						long time = new Date().getTime();
+
+						parser.check();
+						if (data.shares == null) {
+							data.shares = data.new Shares();
+						}
+						if (data.shares.shareMap.get(entity.gid) == null) {
+							Share share = data.shares.new Share();
+							data.shares.shareMap.put(entity.gid, share);
+						}
+						Share share = data.shares.shareMap.get(entity.gid);
+						ShareMessage shareMessage = share.new ShareMessage();
+						shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
+						shareMessage.gsid = entity.gsid;
+						shareMessage.type = "imagetext";
+						shareMessage.phone = currentUser.phone;
+						shareMessage.time = time;
+						shareMessage.status = "sending";
+
+						onUploadLoadingListListener.shareMessage = shareMessage;
+
+						ShareContent shareContent = SubData.getInstance().new ShareContent();
+						ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+						shareContentItem.type = "text";
+						shareContentItem.detail = entity.content;
+						shareContent.shareContentItems.add(shareContentItem);
+
+						if (!"".equals(entity.imagesContent)) {
+							List<String> imageList = gson.fromJson(entity.imagesContent, new TypeToken<List<String>>() {
+							}.getType());
+							if (imageList.size() != 0) {
+								onUploadLoadingListListener.totalUploadCount = imageList.size();
+								copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems, imageList, onUploadLoadingListListener);
+							} else {
+								String content = gson.toJson(shareContent.shareContentItems);
+								sendMessageToServer(content, entity.gid, shareMessage.gsid);
+							}
+						} else {
+							String content = gson.toJson(shareContent.shareContentItems);
+							sendMessageToServer(content, entity.gid, shareMessage.gsid);
+						}
+
+						String content = gson.toJson(shareContent.shareContentItems);
+						Log.e(tag, content);
+						shareMessage.content = content;
+
+						// To add data to the data
+						if (share.shareMessagesOrder.contains(entity.gsid)) {
+							share.shareMessagesOrder.add(0, shareMessage.gsid);
+							share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+							data.shares.isModified = true;
+
+							// Local data diaplay in MainHandler
+							if ("square".equals(entity.gtype)) {
+								viewManage.postNotifyView("SquareSubViewMessage");
+							}
+							if ("share".equals(entity.gtype)) {
+								viewManage.postNotifyView("ShareSubViewMessage");
+							}
+
+						}
+					}
+				}).start();
+			}
+		}
+	}
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public SHA1 sha1 = new SHA1();
+	public float imageHeightScale = 0.5686505598114319f;
+	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
+	public OnUploadLoadingListener uploadLoadingListener;
+
+	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems, List<String> list, OnUploadLoadingListListener onUploadLoadingListListener) {
+		// ArrayList<String> selectedImageList = data.tempData.selectedImageList;
+		// int totalLength = 0;
+		for (int i = 0; i < list.size(); i++) {
+			String key = list.get(i);
+			String suffixName = key.substring(key.lastIndexOf("."));
+			suffixName = suffixName.toLowerCase(Locale.getDefault());
+			if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
+				suffixName = ".osj";
+			} else if (suffixName.equals(".png")) {
+				suffixName = ".osp";
+			}
+			try {
+				String fileName = "";
+				File fromFile = new File(key);
+				if (!fromFile.exists()) {
+					return;
+				}
+				byte[] bytes = null;
+
+				bytes = fileHandlers.getImageFileBytes(fromFile, viewManage.mainView.displayMetrics.heightPixels, viewManage.mainView.displayMetrics.heightPixels);
+				// int fileLength = bytes.length;
+				// totalLength += fileLength;
+				// fileTotalLengthMap.put(key, fileLength);
+
+				String sha1FileName = sha1.getDigestOfString(bytes);
+				fileName = sha1FileName + suffixName;
+				File toFile = new File(fileHandlers.sdcardImageFolder, fileName);
+				FileOutputStream fileOutputStream = new FileOutputStream(toFile);
+				StreamParser.parseToFile(bytes, fileOutputStream);
+
+				if (i == 0) {
+					int showImageWidth = viewManage.mainView.displayMetrics.widthPixels;
+					File toSnapFile = new File(fileHandlers.sdcardThumbnailFolder, fileName);
+					int showImageHeight = (int) (viewManage.mainView.displayMetrics.widthPixels * imageHeightScale);
+					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, showImageHeight, toSnapFile, fileName);
+				}
+
+				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+				shareContentItem.type = "image";
+				shareContentItem.detail = fileName;
+				shareContentItems.add(shareContentItem);
+
+				// uploadFileNameMap.put(key, fileName);
+				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
+				multipart.path = key;
+				uploadMultipartList.addMultipart(multipart);
+				multipart.setUploadLoadingListener(onUploadLoadingListListener.uploadLoadingListener);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public class SendShareMessage {
+		public String type;// imagetext voicetext vote
+		public String content;
+	}
+
+	public void sendMessageToServer(String content, String gid, String gsid) {
+
+		SendShareMessage sendShareMessage = new SendShareMessage();
+		sendShareMessage.type = "imagetext";
+		sendShareMessage.content = content;
+
+		parser.check();
+		User currentUser = data.userInformation.currentUser;
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("ogsid", gsid);
+		params.addBodyParameter("message", gson.toJson(sendShareMessage));
+
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
 	}
 }

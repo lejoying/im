@@ -212,7 +212,11 @@ public class ShareReleaseImageTextController {
 
 				currentUploadCount++;
 				if (currentUploadCount == 1) {
-					viewManage.mainView.shareSubView.showShareMessages();
+					if (gtype.equals("group") || gtype.equals("share")) {
+						viewManage.postNotifyView("ShareSubViewMessage");
+					} else {
+						viewManage.postNotifyView("SquareSubViewMessage");
+					}
 					if (totalUploadCount == currentUploadCount) {
 						sendMessageToServer(shareMessage.content, shareMessage.gsid);
 					}
@@ -327,7 +331,7 @@ public class ShareReleaseImageTextController {
 	}
 
 	public void sendImageTextShare() {
-		viewManage.shareSubView.isShowFirstMessageAnimation = true;
+
 		final String sendContent = thisView.mEditTextView.getText().toString().trim();
 		boolean flag = false;
 		if (data.tempData.selectedImageList == null) {
@@ -339,18 +343,41 @@ public class ShareReleaseImageTextController {
 				flag = false;
 			}
 		}
-		if ("".equals(sendContent) && flag)
+		if ("".equals(sendContent) && flag) {
 			return;
+		}
+		viewManage.shareSubView.isShowFirstMessageAnimation = true;
 		thisActivity.finish();
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				// if (data.shares.shareMap.get("") == null) {
-				//
-				// }
 				// Package structure to share news
+				long time = new Date().getTime();
 				parser.check();
+				ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
+				shareDraft.gid = gid;
+				shareDraft.gsid = currentUser.phone + "_" + time;
+				shareDraft.gtype = gtype;
+				shareDraft.content = thisView.mEditTextView.getText().toString();
+				if (data.tempData.selectedImageList != null) {
+					if (data.tempData.selectedImageList.size() != 0) {
+						shareDraft.imagesContent = gson.toJson(data.tempData.selectedImageList);
+					} else {
+						shareDraft.imagesContent = "";
+					}
+				} else {
+					shareDraft.imagesContent = "";
+				}
+				if (data.localStatus.localData.shareReleaseSequece == null) {
+					data.localStatus.localData.shareReleaseSequece = new ArrayList<String>();
+				}
+				if (data.localStatus.localData.shareReleaseSequeceMap == null) {
+					data.localStatus.localData.shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
+				}
+				data.localStatus.localData.shareReleaseSequece.add(shareDraft.gsid);
+				data.localStatus.localData.shareReleaseSequeceMap.put(shareDraft.gsid, shareDraft);
+
 				if (data.shares == null) {
 					data.shares = data.new Shares();
 				}
@@ -358,7 +385,6 @@ public class ShareReleaseImageTextController {
 					Share share = data.shares.new Share();
 					data.shares.shareMap.put(currentSelectedGroup, share);
 				}
-				long time = new Date().getTime();
 				Share share = data.shares.shareMap.get(currentSelectedGroup);
 				shareMessage = share.new ShareMessage();
 				shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
@@ -397,18 +423,12 @@ public class ShareReleaseImageTextController {
 				data.shares.isModified = true;
 
 				// Local data diaplay in MainHandler
-				handler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						if ("square".equals(gtype)) {
-							viewManage.mainView.squareSubView.showSquareMessages();
-						}
-						if ("share".equals(gtype)) {
-							viewManage.mainView.shareSubView.showShareMessages();
-						}
-					}
-				});
+				if ("square".equals(gtype)) {
+					viewManage.postNotifyView("SquareSubViewMessage");
+				}
+				if ("share".equals(gtype)) {
+					viewManage.postNotifyView("ShareSubViewMessage");
+				}
 
 				// init tempData data
 				data.tempData.selectedImageList = null;

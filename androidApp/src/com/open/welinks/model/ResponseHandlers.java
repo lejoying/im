@@ -1308,10 +1308,18 @@ public class ResponseHandlers {
 				share.shareMessagesMap.remove(ogsid);
 				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				data.shares.isModified = true;
+
+				data.localStatus.localData.shareReleaseSequece.remove(ogsid);
+				data.localStatus.localData.shareReleaseSequeceMap.remove(ogsid);
+
 				if (data.relationship.squares.contains(gid)) {
-					viewManage.mainView.squareSubView.showSquareMessages();
+					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
+						viewManage.mainView.squareSubView.showSquareMessages();
+					}
 				} else {
-					viewManage.mainView.shareSubView.showShareMessages();
+					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+						viewManage.mainView.shareSubView.showShareMessages();
+					}
 				}
 				log.e(tag, "---------------------发送成功");
 			} else {

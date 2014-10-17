@@ -250,6 +250,9 @@ public class ShareSubView {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
 			shareMessage = sharesMap.get(key);
+			if (shareMessage == null) {
+				continue;
+			}
 			if (!shareMessage.type.equals("imagetext")) {
 				continue;
 			}

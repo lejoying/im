@@ -1,5 +1,7 @@
 package com.open.welinks.service;
 
+import com.open.welinks.model.DataHandlers;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +18,8 @@ public class ConnectionChangeReceiver extends BroadcastReceiver {
 				if (!PushService.isRunning) {
 					PushService.instance.startLongPull();
 					Log.e("ConnectionChangeReceiver", "onReceive-------------------------ok");
+					DataHandlers dataHandlers = DataHandlers.getInstance();
+					dataHandlers.sendShareMessage();
 				}
 			} else {
 				PushService.isRunning = false;

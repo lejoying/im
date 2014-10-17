@@ -71,6 +71,9 @@ public class Data {
 			public ArrayList<ImageBean> prepareUploadImagesList = new ArrayList<ImageBean>();
 			public ArrayList<ImageBean> prepareDownloadImagesList = new ArrayList<ImageBean>();
 
+			public ArrayList<String> shareReleaseSequece = new ArrayList<String>();
+			public Map<String, ShareDraft> shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
+
 			public String currentSelectedGroup = "";
 			public String currentSelectedSquare = "";
 
@@ -78,6 +81,9 @@ public class Data {
 			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();
 
 			public class ShareDraft {
+				public String gid;// not must
+				public String gsid;// not must
+				public String gtype;
 				public String content;
 				public String imagesContent;
 			}

@@ -80,6 +80,10 @@ public class ViewManage {
 			if (mainView.shareSubView != null) {
 				mainView.shareSubView.showShareMessages();
 			}
+		} else if (viewName.equals("SquareSubViewMessage")) {
+			if (mainView.shareSubView != null) {
+				mainView.squareSubView.showSquareMessages();
+			}
 		} else if (viewName.equals("ChangePasswordActivitySuccess")) {
 			if (changePasswordActivity != null) {
 				changePasswordActivity.modifySuccess();
