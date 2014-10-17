@@ -1,23 +1,30 @@
 package com.open.welinks.view;
 
-import com.open.welinks.GroupListActivity;
-import com.open.welinks.R;
-import com.open.welinks.ShareMessageDetailActivity;
-import com.open.welinks.model.Data.Messages.Message;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
-import com.open.welinks.utils.WeChatShareUtils;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import com.open.welinks.GroupListActivity;
+import com.open.welinks.R;
+import com.open.welinks.utils.WeChatShareUtils;
+import com.tencent.connect.share.QQShare;
+import com.tencent.connect.share.QzoneShare;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 public class ShareView extends FrameLayout {
 	private Context context;
@@ -29,8 +36,10 @@ public class ShareView extends FrameLayout {
 
 	private onWeChatClickListener mWeChatClickListener;
 	private Bitmap bitmap;
-	private String content, phone, gid, gsid;
+	public String content, phone, gid, gsid;
 	public int RESULT_SHAREVIEW = 0x99;
+
+	public List<String> firstPath = new ArrayList<String>();
 
 	private enum Status {
 		square_group, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone
@@ -109,9 +118,8 @@ public class ShareView extends FrameLayout {
 				} else if (view.equals(sina_weibo)) {
 
 				} else if (view.equals(qq_qzone)) {
-
+					shareToQQzone();
 				}
-
 			}
 		};
 
@@ -123,6 +131,48 @@ public class ShareView extends FrameLayout {
 		wechat_circle.setOnClickListener(mOnClickListener);
 		sina_weibo.setOnClickListener(mOnClickListener);
 		qq_qzone.setOnClickListener(mOnClickListener);
+	}
+
+	private void shareToQQzone() {
+		String url = "http://www.we-links.com/share/share.html?phone=" + phone + "&gid=" + gid + "&gsid=" + gsid;// 收到分享的好友点击信息会跳转到这个地址去
+		final Bundle params = new Bundle();
+		params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE, QzoneShare.SHARE_TO_QZONE_TYPE_IMAGE_TEXT);
+		params.putString(QzoneShare.SHARE_TO_QQ_TITLE, "微型社区群分享");
+		params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, content);
+		params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, url);
+		ArrayList<String> imageUrls = new ArrayList<String>();
+		// if (firstPath.size()=0) {
+		// firstPath = "http://images.liqucn.com/h015/h01/img201405280717020842_info72X72.png";
+		// }
+		imageUrls.addAll(firstPath);
+		params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL, imageUrls);
+		params.putInt(QzoneShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);
+		Tencent mTencent = Tencent.createInstance("101133279", ((Activity) context).getApplicationContext());
+		mTencent.shareToQzone((Activity) context, params, new BaseUiListener());
+	}
+
+	private class BaseUiListener implements IUiListener {
+		@Override
+		public void onComplete(Object response) {
+			// V2.0版本，参数类型由JSONObject 改成了Object,具体类型参考api文档
+			doComplete((JSONObject) response);
+		}
+
+		protected void doComplete(JSONObject values) {
+			// 分享成功
+			Log.e("share", "分享成功");
+		}
+
+		@Override
+		public void onError(UiError e) {
+			Log.e("share", "分享出现错误");
+		}
+
+		@Override
+		public void onCancel() {
+			// 分享被取消
+			Log.e("share", "分享被取消");
+		}
 	}
 
 	private void shareToLocal(Status status) {

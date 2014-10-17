@@ -1299,18 +1299,25 @@ public class ResponseHandlers {
 				String ogsid = response.ogsid;
 				Share share = data.shares.shareMap.get(gid);
 				ShareMessage shareMessage = share.shareMessagesMap.get(ogsid);
-				shareMessage.gsid = response.gsid;
-				shareMessage.time = response.time;
-				shareMessage.status = "sent";
+				if (shareMessage != null) {
+					shareMessage.gsid = response.gsid;
+					shareMessage.time = response.time;
+					shareMessage.status = "sent";
+				}
 				int index = share.shareMessagesOrder.indexOf(ogsid);
-				share.shareMessagesOrder.remove(index);
-				share.shareMessagesOrder.add(index, gsid);
-				share.shareMessagesMap.remove(ogsid);
-				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+				if (index != -1) {
+					share.shareMessagesOrder.remove(index);
+					share.shareMessagesOrder.add(index, gsid);
+					share.shareMessagesMap.remove(ogsid);
+					share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+				}
 				data.shares.isModified = true;
-
-				data.localStatus.localData.shareReleaseSequece.remove(ogsid);
-				data.localStatus.localData.shareReleaseSequeceMap.remove(ogsid);
+				if (data.localStatus.localData.shareReleaseSequece != null) {
+					data.localStatus.localData.shareReleaseSequece.remove(ogsid);
+				}
+				if (data.localStatus.localData.shareReleaseSequeceMap != null) {
+					data.localStatus.localData.shareReleaseSequeceMap.remove(ogsid);
+				}
 
 				if (data.relationship.squares.contains(gid)) {
 					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {

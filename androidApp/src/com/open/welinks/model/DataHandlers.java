@@ -290,6 +290,14 @@ public class DataHandlers {
 					@Override
 					public void run() {
 						final ShareDraft entity = sequeceMap.get(ogsid);
+						try {
+							if (!data.shares.shareMap.get(entity.gid).shareMessagesOrder.contains(ogsid)) {
+								return;
+							}
+						} catch (Exception e1) {
+							e1.printStackTrace();
+							return;
+						}
 						OnUploadLoadingListListener onUploadLoadingListListener;
 						onUploadLoadingListListener = new OnUploadLoadingListListener() {
 							@Override

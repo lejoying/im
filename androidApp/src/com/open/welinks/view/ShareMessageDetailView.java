@@ -217,6 +217,11 @@ public class ShareMessageDetailView {
 		deleteTextOptionView = (TextView) thisActivity.findViewById(R.id.deleteTextOption);
 
 		shareView = new ShareView(thisActivity);
+		// shareView.firstPath = API.DOMAIN_COMMONIMAGE + "images/" + imagePath;
+		// shareView.phone = data.userInformation.currentUser.phone;
+		// shareView.gid = thisController.gid;
+		// shareView.gsid = thisController.gsid;
+		// shareView.content = thisController.textContent;
 		sharePopupWindow = new PopupWindow(shareView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		thisController.initShareListener();
 		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
@@ -241,6 +246,8 @@ public class ShareMessageDetailView {
 
 	public ArrayList<String> showImages;
 	public Friend friend;
+
+	public String imagePath = "";
 
 	public void showShareMessageDetail() {
 		shareMessageDetailContentView.removeAllViews();
@@ -276,6 +283,9 @@ public class ShareMessageDetailView {
 
 			File currentImageFile = new File(mImageFile, imageFileName);
 			String filepath = currentImageFile.getAbsolutePath();
+			if (imagePath.equals("")) {
+				imagePath = imageFileName;
+			}
 			showImages.add(filepath);
 			boolean isFlag = false;
 			String path = "";
@@ -292,7 +302,7 @@ public class ShareMessageDetailView {
 			} else {
 				path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
 			}
-
+			shareView.firstPath.add(API.DOMAIN_COMMONIMAGE + "images/" + imageFileName);
 			if (!isFlag) {
 				DownloadFile downloadFile = new DownloadFile(path, filepath);
 				downloadFile.view = imageView;
@@ -337,6 +347,10 @@ public class ShareMessageDetailView {
 		} else {
 			praiseIconView.setImageResource(R.drawable.praise_icon);
 		}
+		shareView.phone = data.userInformation.currentUser.phone;
+		shareView.gid = thisController.gid;
+		shareView.gsid = thisController.gsid;
+		shareView.content = thisController.textContent;
 		showPraiseUsersContent();
 		notifyShareMessageComments();
 	}
