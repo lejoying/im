@@ -281,12 +281,15 @@ public class ChatView {
 
 				MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
 				chatHolder.share_text.setText(messageContent.text);
-				thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
-
+				// "--gid:" + messageContent.gid + "---gsid:" + messageContent.gsid
+				if (messageContent.image != null && !"".equals(messageContent.image)) {
+					thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
+				} else {
+					thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, chatHolder.share_image, thisController.options);
+				}
 				chatHolder.share.setTag(R.id.tag_second, messageContent.gid);
 				chatHolder.share.setTag(R.id.tag_third, messageContent.gsid);
 				chatHolder.share.setOnClickListener(thisController.mOnClickListener);
-
 			}
 			chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			String fileName = "";

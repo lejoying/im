@@ -10,16 +10,20 @@ import java.util.Set;
 
 import org.apache.http.Header;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
+import com.open.lib.HttpClient.TimeLine;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Messages.Message;
@@ -1277,9 +1281,20 @@ public class ResponseHandlers {
 			}
 		};
 	};
+
 	// TODO Share
 
-	public ResponseHandler<String> share_sendShareCallBack = httpClient.new ResponseHandler<String>() {
+	public class ResponseHandler2<T> extends ResponseHandler<T> {
+
+		public String gid;
+		public String ogsid;
+
+		ResponseHandler2(HttpClient httpClient) {
+			httpClient.super();
+		}
+	};
+
+	public ResponseHandler2<String> share_sendShareCallBack = new ResponseHandler2<String>(httpClient) {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
@@ -1305,7 +1320,7 @@ public class ResponseHandlers {
 					shareMessage.status = "sent";
 				}
 				int index = share.shareMessagesOrder.indexOf(ogsid);
-				if (index != -1) {
+				if (index != -1 && shareMessage != null) {
 					share.shareMessagesOrder.remove(index);
 					share.shareMessagesOrder.add(index, gsid);
 					share.shareMessagesMap.remove(ogsid);
@@ -1329,9 +1344,54 @@ public class ResponseHandlers {
 					}
 				}
 				log.e(tag, "---------------------发送成功");
+			} else if (response.失败原因.equals("发布群分享失败")) {
+				parser.check();
+				String gid = response.gid;
+				String ogsid = response.ogsid;
+				Share share = data.shares.shareMap.get(gid);
+				ShareMessage shareMessage = null;
+				if (share != null) {
+					shareMessage = share.shareMessagesMap.get(ogsid);
+				}
+				if (shareMessage != null) {
+					shareMessage.status = "failed";
+				}
+				if (data.relationship.squares.contains(gid)) {
+					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
+						viewManage.mainView.squareSubView.showSquareMessages();
+					}
+				} else {
+					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+						viewManage.mainView.shareSubView.showShareMessages();
+					}
+				}
+				log.e(response.失败原因);
 			} else {
 				log.e(response.失败原因);
 			}
+		};
+
+		@Override
+		public void onFailure(HttpException error, String msg) {
+			parser.check();
+			Share share = data.shares.shareMap.get(gid);
+			ShareMessage shareMessage = null;
+			if (share != null) {
+				shareMessage = share.shareMessagesMap.get(ogsid);
+			}
+			if (shareMessage != null) {
+				shareMessage.status = "failed";
+			}
+			if (data.relationship.squares.contains(gid)) {
+				if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
+					viewManage.mainView.squareSubView.showSquareMessages();
+				}
+			} else {
+				if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+					viewManage.mainView.shareSubView.showShareMessages();
+				}
+			}
+			log.e(msg);
 		};
 	};
 	public ResponseHandler<String> share_get = httpClient.new ResponseHandler<String>() {
@@ -1343,7 +1403,7 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("response")) {
+			if (response.提示信息.equals("获取群分享成功")) {
 				try {
 					ShareMessage shareMessages = response.shareMessages.get(0);
 					parser.check();

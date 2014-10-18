@@ -31,6 +31,7 @@ import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.protocol.HttpContext;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -44,6 +45,8 @@ import com.lidroid.xutils.task.PriorityAsyncTask;
 import com.lidroid.xutils.util.OtherUtils;
 
 public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> implements RequestCallBackHandler {
+
+	public String tag = "HttpHandler";
 
 	private final AbstractHttpClient client;
 	private final HttpContext context;
@@ -238,7 +241,12 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
 			if (values.length != 2)
 				return;
 			this.state = State.SUCCESS;
-			callback.onSuccess((ResponseInfo<T>) values[1]);
+			try {
+				callback.onSuccess((ResponseInfo<T>) values[1]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e(tag, e.toString());
+			}
 			break;
 		default:
 			break;

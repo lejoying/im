@@ -42,6 +42,8 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.ShareMessageDetailController;
+import com.open.welinks.customView.InnerScrollView;
+import com.open.welinks.customView.ShareView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -141,6 +143,8 @@ public class ShareMessageDetailView {
 	public Bitmap bitmap;
 	public DisplayMetrics displayMetrics;
 
+	public ImageView menuImage;
+
 	public void initView() {
 		initData();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
@@ -169,13 +173,13 @@ public class ShareMessageDetailView {
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		RelativeLayout.LayoutParams layoutParams1 = (android.widget.RelativeLayout.LayoutParams) rightContainer.getLayoutParams();
-		layoutParams1.rightMargin = 0;
+		layoutParams1.rightMargin = (int) (displayMetrics.density * 25 + 0.5f);
 		shareMessageTimeView = new TextView(context);
 		shareMessageTimeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
 		shareMessageTimeView.setTextColor(Color.WHITE);
 		shareMessageTimeView.setPadding(10, 10, 10 + (int) (10 * displayMetrics.density), 10);// 30
 		shareMessageTimeView.setSingleLine();
-		shareMessageTimeView.setBackgroundResource(R.drawable.backview_background);
+		// shareMessageTimeView.setBackgroundResource(R.drawable.backview_background);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 		// layoutParams.rightMargin = (int) (20 * displayMetrics.density);
 		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -185,7 +189,18 @@ public class ShareMessageDetailView {
 		// thisActivity.findViewById(R.id.shareMessageTime);
 		// shareMessageUserHeadView = (ImageView)
 		// thisActivity.findViewById(R.id.shareMessageUserHead);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 
+		menuImage = new ImageView(thisActivity);
+		menuImage.setImageResource(R.drawable.chat_more);
+		RelativeLayout view = (RelativeLayout) backView.getParent();
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		params.rightMargin = (int) (5 * displayMetrics.density + 0.5f);
+		int padding = (int) (5 * displayMetrics.density + 0.5f);
+		menuImage.setPadding(2 * padding, padding, 2 * padding, padding);
+		menuImage.setBackgroundResource(R.drawable.backview_background);
+		view.addView(menuImage, params);
 		sendCommentView = (TextView) thisActivity.findViewById(R.id.sendComment);
 		commentNumberView = (TextView) thisActivity.findViewById(R.id.checkCommentNumber);
 		commentContentView = (LinearLayout) thisActivity.findViewById(R.id.messageDetailComments);
@@ -197,8 +212,6 @@ public class ShareMessageDetailView {
 		commentInputView = (RelativeLayout) thisActivity.findViewById(R.id.commentInputView);
 		commentEditTextView = (EditText) thisActivity.findViewById(R.id.commentEditTextView);
 		confirmSendCommentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_sendComment);
-
-		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 
 		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
 		controlProgress = new ControlProgress();
@@ -256,7 +269,19 @@ public class ShareMessageDetailView {
 			// shareMessageUserHeadView.setImageBitmap(bitmap);
 		}
 		shareMessageTimeView.setText(DateUtil.getTime(thisController.shareMessage.time));
-
+		if (thisController.shareMessage.phone.equals(data.userInformation.currentUser.phone)) {
+			deleteOptionView.setVisibility(View.VISIBLE);
+		} else {
+			deleteOptionView.setVisibility(View.GONE);
+		}
+		if (!"sent".equals(thisController.shareMessage.status)) {
+			if (deleteOptionView.getVisibility() == View.GONE) {
+				menuOptionsView.setVisibility(View.GONE);
+			} else {
+				RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) deleteOptionView.getLayoutParams();
+				layoutParams.topMargin = 0;
+			}
+		}
 		String content = thisController.shareMessage.content;
 		ShareContent shareContent = gson.fromJson("{shareContentItems:" + content + "}", ShareContent.class);
 		List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
@@ -342,6 +367,7 @@ public class ShareMessageDetailView {
 			textview.setText(thisController.textContent);
 			shareMessageDetailContentView.addView(textview);
 		}
+
 		if (thisController.shareMessage.praiseusers.contains(thisController.currentUser.phone)) {
 			praiseIconView.setImageResource(R.drawable.praised_icon);
 		} else {

@@ -10,10 +10,10 @@ import android.widget.EditText;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welinks.customView.Alert;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.view.Alert;
 
 public class AddFriendActivity extends Activity implements OnClickListener {
 

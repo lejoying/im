@@ -25,6 +25,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -213,10 +214,16 @@ public class ChatController {
 					intent.putExtra("position", String.valueOf(0));
 					thisActivity.startActivity(intent);
 				} else if (view.getTag(R.id.tag_second) != null) {
-					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
-					intent.putExtra("gid", (String) view.getTag(R.id.tag_second));
-					intent.putExtra("gsid", (String) view.getTag(R.id.tag_third));
-					thisActivity.startActivity(intent);
+					String gid = (String) view.getTag(R.id.tag_second);
+					String gsid = (String) view.getTag(R.id.tag_third);
+					if (gid.matches("[\\d]+") && gsid.matches("[\\d]+")) {
+						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+						intent.putExtra("gid", gid);
+						intent.putExtra("gsid", gsid);
+						thisActivity.startActivity(intent);
+					} else {
+						Toast.makeText(thisActivity, "群分享不存在", Toast.LENGTH_SHORT).show();
+					}
 				}
 			}
 		};

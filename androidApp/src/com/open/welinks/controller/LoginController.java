@@ -24,13 +24,13 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.MainActivity;
 import com.open.welinks.R;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.SHA1;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
-import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.LoginView;
 import com.open.welinks.view.LoginView.Status;
 

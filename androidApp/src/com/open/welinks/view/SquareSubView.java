@@ -139,6 +139,7 @@ public class SquareSubView {
 		viewManage.squareSubView = this;
 	}
 
+	TextView titleName;
 	public SmallBusinessCardPopView businessCardPopView;
 
 	public void initViews() {
@@ -182,7 +183,7 @@ public class SquareSubView {
 		}
 		// square cover layout
 		this.groupMembersView = mainView.mInflater.inflate(R.layout.share_group_members_show, null);
-		TextView titleName = (TextView) this.groupMembersView.findViewById(R.id.share_praise);
+		titleName = (TextView) this.groupMembersView.findViewById(R.id.share_praise);
 		titleName.setText("广场广播");
 		groupMembersListContentView = (ViewGroup) this.groupMembersView.findViewById(R.id.groupMembersListContent);
 		groupMembersListContentView.setTag(R.id.tag_class, "group_members");
@@ -261,6 +262,7 @@ public class SquareSubView {
 		imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
+		titleName.setText(group.name + "广场");
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
@@ -503,6 +505,7 @@ public class SquareSubView {
 
 		imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+		titleName.setText(group.name + "广场");
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
 
 		List<String> sharesOrder = share.shareMessagesOrder;
@@ -635,6 +638,14 @@ public class SquareSubView {
 				} else {
 					this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
 				}
+
+				this.headView.setTag("ShareMessage#" + shareMessage.phone);
+				this.headView.setTag(R.id.tag_class, "share_head");
+				this.headView.setTag(R.id.tag_first, shareMessage.phone);
+				this.headView.setOnClickListener(thisController.mOnClickListener);
+				this.headView.setOnTouchListener(thisController.mOnTouchListener);
+				// businessCardPopView.showUserCardDialogView();
+
 				this.releaseTimeView.setText(DateUtil.formatTime(shareMessage.time));
 				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
 				String textContent = "";
@@ -662,7 +673,7 @@ public class SquareSubView {
 					cHeight = 0;// (int) (displayMetrics.density * 30 + 0.5f);
 					shareTextContentView.setBackgroundColor(Color.parseColor("#00000000"));
 					shareTextContentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-					shareTextContentView.setTextColor(Color.BLACK);
+					shareTextContentView.setTextColor(Color.parseColor("#aa000000"));
 				}
 				final int sHeight = cHeight;
 				ViewTreeObserver vto = shareTextContentView.getViewTreeObserver();
@@ -748,19 +759,46 @@ public class SquareSubView {
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;
 				if (shareMessage.praiseusers.contains(userPhone)) {
-					this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+					// this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
 				} else {
-					this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+					// this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
 				}
 				List<Comment> comments = shareMessage.comments;
-				this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
+				// this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
 				for (int i = 0; i < comments.size(); i++) {
 					Comment comment = comments.get(i);
 					if (comment.phone.equals(userPhone)) {
-						this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
+						// this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
 						break;
 					}
 				}
+				// position
+
+				// FrameLayout.LayoutParams sharePraiseIconViewParams = (LayoutParams) sharePraiseIconView.getLayoutParams();
+				// sharePraiseIconViewParams.gravity = Gravity.LEFT;
+				// sharePraiseIconViewParams.gravity = Gravity.CENTER_VERTICAL;
+				// // sharePraiseIconViewParams.rightMargin = 5;
+				// sharePraiseNumberView.setTranslationX(0);
+				// FrameLayout.LayoutParams sharePraiseNumberViewParams = (LayoutParams) sharePraiseNumberView.getLayoutParams();
+				// sharePraiseNumberViewParams.gravity = Gravity.LEFT;
+				// sharePraiseNumberViewParams.gravity = Gravity.CENTER_VERTICAL;
+				// sharePraiseNumberViewParams.rightMargin = (int) (sharePraiseIconViewParams.width + displayMetrics.density * 10 + 0.5f);
+				// // sharePraiseNumberView.setTranslationX(sharePraiseIconViewParams.width + displayMetrics.density * 10 + 0.5f);
+				//
+				// // FrameLayout.LayoutParams sharePraiseNumberViewParams = (LayoutParams) sharePraiseNumberView.getLayoutParams();
+				// // sharePraiseNumberViewParams.gravity = Gravity.LEFT;
+				// // sharePraiseNumberViewParams.leftMargin = (int) (sharePraiseIconViewParams.width + displayMetrics.density * 5 + 0.5f);
+				// FrameLayout.LayoutParams shareCommentIconViewParams = (LayoutParams) shareCommentIconView.getLayoutParams();
+				// shareCommentIconViewParams.gravity = Gravity.RIGHT;
+				// shareCommentIconViewParams.gravity = Gravity.CENTER_VERTICAL;
+				// shareCommentIconView.setVisibility(View.GONE);
+				// shareCommentIconViewParams.rightMargin = (int) (sharePraiseNumberViewParams.rightMargin + sharePraiseNumberViewParams.width + displayMetrics.density * 10 + 0.5f);
+				// FrameLayout.LayoutParams shareCommentNumberViewParams = (LayoutParams) shareCommentNumberView.getLayoutParams();
+				// shareCommentNumberViewParams.gravity = Gravity.RIGHT;
+				// shareCommentNumberViewParams.gravity = Gravity.CENTER_VERTICAL;
+				// shareCommentNumberView.setVisibility(View.GONE);
+				// shareCommentNumberViewParams.rightMargin = (int) (shareCommentIconViewParams.rightMargin + shareCommentIconViewParams.width + displayMetrics.density * 10 + 0.5f);
+				// shareCommentNumberViewParams.rightMargin = (int) (displayMetrics.density * 10 + 0.5f);
 			}
 			return 0;
 		}

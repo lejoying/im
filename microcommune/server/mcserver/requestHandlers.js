@@ -287,6 +287,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         return;
     }
     var operation = pathObject["operation"];
+    console.error(operation);
     if (operation == "sendshare") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.sendshare(data, response);

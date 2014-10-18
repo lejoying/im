@@ -359,6 +359,7 @@ public class ShareSubView {
 		public ImageView sharePraiseIconView;
 		public TextView shareCommentNumberView;
 		public ImageView shareCommentIconView;
+		public TextView shareStatusView;
 
 		public TextView messageTimeView;
 
@@ -395,6 +396,8 @@ public class ShareSubView {
 				this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
 				this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
 				this.shareCommentIconView = (ImageView) this.cardView.findViewById(R.id.share_comment_icon);
+
+				this.shareStatusView = (TextView) this.cardView.findViewById(R.id.share_status);
 
 				// TODO
 				// progress bar
@@ -433,12 +436,25 @@ public class ShareSubView {
 				}
 				this.message = shareMessage;
 				this.fileName = fileName;
+				if (shareMessage.status != null) {
+					if ("sending".equals(shareMessage.status)) {
+						shareStatusView.setText("发送中...");
+						shareStatusView.setVisibility(View.VISIBLE);
+					} else if ("failed".equals(shareMessage.status)) {
+						shareStatusView.setText("发布失败");
+						shareStatusView.setVisibility(View.VISIBLE);
+					}
+				}
 				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
 					this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
 				}
+				this.headView.setTag("ShareMessage#" + shareMessage.phone);
+				this.headView.setTag(R.id.tag_class, "share_head");
+				this.headView.setOnClickListener(thisController.mOnClickListener);
+				this.headView.setOnTouchListener(thisController.mOnTouchListener);
 				this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
 				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
 				String textContent = "";
@@ -505,7 +521,6 @@ public class ShareSubView {
 						downloadFileList.addDownloadFile(downloadFile);
 					}
 				}
-
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;
@@ -514,6 +529,10 @@ public class ShareSubView {
 				} else {
 					this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
 				}
+				this.sharePraiseIconView.setTag("SharePraise#" + shareMessage.gsid);
+				this.sharePraiseIconView.setTag(R.id.tag_class, "share_praise");
+				this.sharePraiseIconView.setOnClickListener(thisController.mOnClickListener);
+				this.sharePraiseIconView.setOnTouchListener(thisController.mOnTouchListener);
 				List<Comment> comments = shareMessage.comments;
 				this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
 				for (int i = 0; i < comments.size(); i++) {

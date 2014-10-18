@@ -54,7 +54,6 @@ public class LaunchActivity extends Activity {
 //		} else {
 //			startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
 //		}
-
 	}
 
 	public void getLocalInformation() {

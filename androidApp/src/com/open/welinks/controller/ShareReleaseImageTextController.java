@@ -34,6 +34,9 @@ import com.open.lib.MyLog;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.customListener.OnUploadLoadingListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
@@ -48,9 +51,6 @@ import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
-import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareReleaseImageTextView;
 import com.open.welinks.view.ShareSubView.ControlProgress;
@@ -455,6 +455,8 @@ public class ShareReleaseImageTextController {
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		responseHandlers.share_sendShareCallBack.gid = currentSelectedGroup;
+		responseHandlers.share_sendShareCallBack.ogsid = gsid;
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
 	}

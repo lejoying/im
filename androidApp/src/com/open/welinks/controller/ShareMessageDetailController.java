@@ -25,6 +25,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -38,6 +39,11 @@ import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
 import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.customView.InnerScrollView.OnScrollChangedListener;
+import com.open.welinks.customView.ShareView.onWeChatClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
@@ -53,13 +59,8 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
-import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
-import com.open.welinks.view.InnerScrollView.OnScrollChangedListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareMessageDetailView;
-import com.open.welinks.view.ShareView.onWeChatClickListener;
 import com.open.welinks.view.ViewManage;
 
 public class ShareMessageDetailController {
@@ -131,9 +132,11 @@ public class ShareMessageDetailController {
 			} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
 				share = data.shares.new Share();
 				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
+				getShareMessageDetail();
 			} else {
 				share = data.shares.new Share();
-				getShareFromServer(gid, gsid);
+				// getShareFromServer(gid, gsid);
+				getShareMessageDetail();
 			}
 		}
 	}
@@ -154,7 +157,7 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("gsid", gsid);
-		httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_get);
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARE, params, responseHandlers.share_get);
 	}
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
@@ -347,7 +350,7 @@ public class ShareMessageDetailController {
 					Intent intent = new Intent(thisActivity, SharePraiseusersActivity.class);
 					data.tempData.praiseusersList = shareMessage.praiseusers;
 					thisActivity.startActivity(intent);
-				} else if (view.equals(thisView.shareMessageTimeView)) {
+				} else if (view.equals(thisView.menuImage)) {
 					if (thisView.menuOptionsView.getVisibility() == View.GONE) {
 						thisView.menuOptionsView.setVisibility(View.VISIBLE);
 						thisView.dialogSpring.addListener(thisView.dialogSpringListener);
@@ -425,7 +428,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void bindEvent() {
-		thisView.shareMessageTimeView.setOnClickListener(mOnClickListener);
+		thisView.menuImage.setOnClickListener(mOnClickListener);
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.praiseUserContentView.setOnClickListener(mOnClickListener);
 		thisView.praiseIconView.setOnClickListener(mOnClickListener);
@@ -708,7 +711,7 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
-		params.addBodyParameter("gsid", shareMessage.gsid);
+		params.addBodyParameter("gsid", gsid);
 
 		HttpClient httpClient = HttpClient.getInstance();
 
@@ -720,24 +723,35 @@ public class ShareMessageDetailController {
 			}
 
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				Response response = gson.fromJson(responseInfo.result, Response.class);
+				final Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群分享成功")) {
 					ShareMessage shareMessage = response.shares.get(0);
+					boolean flag = false;
 					try {
+						flag = data.shares.shareMap.get(gid).shareMessagesMap.containsKey(shareMessage.gsid);
 						data.shares.shareMap.get(gid).shareMessagesMap.put(shareMessage.gsid, shareMessage);
 						data.shares.isModified = true;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					thisController.shareMessage = shareMessage;
+					final boolean flag0 = flag;
 					thisView.fileHandlers.handler.post(new Runnable() {
 						public void run() {
-							// thisView.showShareMessageDetail();
-							thisView.showPraiseUsersContent();
-							thisView.notifyShareMessageComments();
+							if (flag0) {
+								thisView.showPraiseUsersContent();
+								thisView.notifyShareMessageComments();
+							} else {
+								thisView.showShareMessageDetail();
+							}
 						}
 					});
 				} else {
+					thisView.fileHandlers.handler.post(new Runnable() {
+						public void run() {
+							Toast.makeText(thisActivity, response.失败原因, Toast.LENGTH_SHORT).show();
+						}
+					});
 					Log.e(tag, response.失败原因);
 				}
 			};

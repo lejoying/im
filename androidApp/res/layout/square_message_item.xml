@@ -52,7 +52,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="微型社区小aeraer伙微型社区小aeraer伙伴微型社区小微型社区小aeraer伙伴微型社区小伴微型社区小aerar伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴微型社区小伙伴"
-            android:textColor="#000"
+            android:textColor="#66000000"
             android:textSize="16sp" />
 
         <com.open.lib.TouchView
@@ -84,7 +84,7 @@
                     android:layout_marginRight="10dp"
                     android:gravity="center"
                     android:text="0  "
-                    android:textColor="#000"
+                    android:textColor="#99000000"
                     android:textSize="16sp" />
 
                 <com.open.lib.TouchImageView
@@ -92,7 +92,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="right|center_vertical"
                     android:layout_marginRight="75dp"
-                    android:background="#8c8c8c" />
+                    android:background="#669c9c9c" />
 
                 <com.open.lib.TouchTextView
                     android:id="@+id/share_comment"
@@ -102,7 +102,7 @@
                     android:layout_marginRight="85dp"
                     android:gravity="center"
                     android:text="0  "
-                    android:textColor="#000"
+                    android:textColor="#99000000"
                     android:textSize="16sp" />
 
                 <com.open.lib.TouchImageView
@@ -111,7 +111,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="right|center_vertical"
                     android:layout_marginRight="120dp"
-                    android:src="@drawable/comment_icon"
+                    android:src="@drawable/comment"
                     android:tint="@color/icon_color" />
 
                 <com.open.lib.TouchImageView
@@ -127,7 +127,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="right|center_vertical"
                     android:layout_marginRight="165dp"
-                    android:src="@drawable/praise_icon"
+                    android:src="@drawable/favorite"
                     android:tint="@color/icon_color"
                     android:visibility="gone" />
             </com.open.lib.TouchView>

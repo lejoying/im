@@ -225,7 +225,9 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		thisController.onActivityResult(requestCode, resultCode, data);
+		if (thisController != null) {
+			thisController.onActivityResult(requestCode, resultCode, data);
+		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 

@@ -32,9 +32,16 @@ public class SharePraiseusersActivity extends Activity {
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 
+		thisController.initializeListeners();
 		thisController.onCreate();
 		thisView.initView();
-		thisController.initializeListeners();
 		thisController.bindEvent();
+	}
+	@Override
+	protected void onResume() {
+		if(thisController!=null){
+			thisController.onResume();
+		}
+		super.onResume();
 	}
 }

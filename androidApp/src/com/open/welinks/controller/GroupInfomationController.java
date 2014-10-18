@@ -20,14 +20,14 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.R;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
-import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.GroupInfomationView;
 import com.open.welinks.view.ViewManage;
 

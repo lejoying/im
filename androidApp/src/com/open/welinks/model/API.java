@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://192.168.1.5/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://192.168.0.104/";// http://www.we-links.com/
 
 	/**
 	 * http://images2.we-links.com/

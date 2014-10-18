@@ -44,6 +44,8 @@ import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -249,6 +251,12 @@ public class ShareSubController {
 					} else if (view_class.equals("group_head")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("share_head")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+					} else if (view_class.equals("share_praise")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					} else if (view_class.equals("title_share")) {
 						long currentTime = System.currentTimeMillis();
 						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
@@ -394,6 +402,42 @@ public class ShareSubController {
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
 						// thisActivity.overridePendingTransition(R.anim.zoomin,
 						// R.anim.zoomout);
+					} else if ("ShareMessage".equals(type)) {
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent("point", content);
+						thisView.businessCardPopView.showUserCardDialogView();
+					} else if ("SharePraise".equals(type)) {
+						parser.check();
+						User currentUser = data.userInformation.currentUser;
+						ShareMessage shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup).shareMessagesMap.get(content);
+						boolean option = false;
+						if (!shareMessage.praiseusers.contains(currentUser.phone)) {
+							option = true;
+							boolean flag = false;
+							for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
+								if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
+									flag = true;
+									break;
+								}
+							}
+							if (!flag) {
+								shareMessage.praiseusers.add(currentUser.phone);
+							}
+							SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+							sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+							sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+						} else {
+							ArrayList<String> list = new ArrayList<String>();
+							for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
+								if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
+									list.add(shareMessage.praiseusers.get(i));
+								}
+							}
+							shareMessage.praiseusers.removeAll(list);
+							SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+							sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+							sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+						}
+						modifyPraiseusersToMessage(option, data.localStatus.localData.currentSelectedGroup, shareMessage.gsid);
 					}
 				}
 			}
@@ -444,6 +488,18 @@ public class ShareSubController {
 
 		thisView.pop_out_background1.setOnClickListener(mOnClickListener);
 		thisView.pop_out_background2.setOnClickListener(mOnClickListener);
+	}
+
+	public void modifyPraiseusersToMessage(boolean option, String gid, String gsid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("gsid", gsid);
+		params.addBodyParameter("option", option + "");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {
@@ -528,6 +584,10 @@ public class ShareSubController {
 			} else if (view_class.equals("share_release")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_head")) {
+				onTouchDownView.performClick();
+			} else if (view_class.equals("share_head")) {
+				onTouchDownView.performClick();
+			} else if (view_class.equals("share_praise")) {
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;

@@ -42,6 +42,15 @@ public class SharePraiseusersController {
 			public void onClick(View view) {
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
+				} else if (view.getTag() != null) {
+					String tagContent = (String) view.getTag();
+					int index = tagContent.lastIndexOf("#");
+					String type = tagContent.substring(0, index);
+					String content = tagContent.substring(index + 1);
+					if ("user".equals(type)) {
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent("point", content);
+						thisView.businessCardPopView.showUserCardDialogView();
+					}
 				}
 			}
 		};
@@ -49,5 +58,9 @@ public class SharePraiseusersController {
 
 	public void bindEvent() {
 		thisView.backView.setOnClickListener(mOnClickListener);
+	}
+
+	public void onResume() {
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 }

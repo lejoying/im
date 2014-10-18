@@ -28,15 +28,15 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
+import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.ThreeChoicesView;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
-import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.ViewManage;
 
 public class GroupListActivity extends Activity {

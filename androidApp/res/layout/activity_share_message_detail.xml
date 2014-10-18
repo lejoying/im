@@ -33,7 +33,7 @@
                     android:focusableInTouchMode="true"
                     android:orientation="vertical" >
 
-                    <com.open.welinks.view.InnerScrollView
+                    <com.open.welinks.customView.InnerScrollView
                         android:id="@+id/detailScrollView"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content" >
@@ -44,7 +44,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical" >
                         </LinearLayout>
-                    </com.open.welinks.view.InnerScrollView>
+                    </com.open.welinks.customView.InnerScrollView>
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -154,7 +154,7 @@
             <RelativeLayout
                 android:id="@+id/menuOptions"
                 android:layout_width="146dp"
-                android:layout_height="95dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="50dp"
                 android:background="#999999"
@@ -195,6 +195,7 @@
                     android:layout_width="146dp"
                     android:layout_height="47dp"
                     android:layout_marginTop="48dp"
+                    android:visibility="visible"
                     android:background="#b2000000" >
 
                     <ImageView

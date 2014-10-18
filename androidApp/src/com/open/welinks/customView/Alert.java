@@ -1,4 +1,4 @@
-package com.open.welinks.view;
+package com.open.welinks.customView;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -334,9 +334,6 @@ public class Alert {
 					}
 				});
 			}
-
 		}
-
 	}
-
 }

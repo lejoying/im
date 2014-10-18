@@ -24,7 +24,9 @@ shareManage.sendshare = function (data, response) {
                 console.log("4");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
-                    "失败原因": "数据格式不正确"
+                    "失败原因": "数据格式不正确",
+                    ogsid: ogsid,
+                    gid: gid
                 }));
                 response.end();
             }
@@ -32,7 +34,9 @@ shareManage.sendshare = function (data, response) {
             console.error(e);
             response.write(JSON.stringify({
                 "提示信息": "发布群分享失败",
-                "失败原因": "数据格式不正确"
+                "失败原因": "数据格式不正确",
+                ogsid: ogsid,
+                gid: gid
             }));
             response.end();
         }
@@ -50,7 +54,9 @@ shareManage.sendshare = function (data, response) {
             if (error) {
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    ogsid: ogsid,
+                    gid: gid
                 }));
                 response.end();
                 console.error(error);
@@ -79,7 +85,9 @@ shareManage.sendshare = function (data, response) {
             if (error) {
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    ogsid: ogsid,
+                    gid: gid
                 }));
                 response.end();
                 console.error(error);
@@ -88,7 +96,9 @@ shareManage.sendshare = function (data, response) {
                 console.log("3");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    ogsid: ogsid,
+                    gid: gid
                 }));
                 response.end();
             } else {
@@ -120,21 +130,25 @@ shareManage.sendshare = function (data, response) {
             if (error) {
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    ogsid: ogsid,
+                    gid: gid
                 }));
                 response.end();
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                console.log("2");
+                console.log("发布群分享失败");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    ogsid: ogsid,
+                    gid: gid
                 }));
                 response.end();
             } else {
                 var shareData = results.pop().share.data;
-                console.log("1");
+                console.log("发布群分享成功");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享成功",
                     time: shareData.time,
@@ -542,15 +556,23 @@ shareManage.getshare = function (data, response) {
         getShareNode();
     }
     function getShareNode() {
-        var query = [
-            "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
-            "RETURN share"
-        ].join("\n");
-        var params = {
-            gid: parseInt(gid),
-            gsid: parseInt(gsid)
-        };
+        try {
+            var query = [
+                "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
+                "WHERE group.gid={gid} AND share.gsid={gsid}",
+                "RETURN share"
+            ].join("\n");
+            var params = {
+                gid: parseInt(gid),
+                gsid: parseInt(gsid)
+            };
+        } catch (e) {
+            response.write(JSON.stringify({
+                "提示信息": "获取群分享失败",
+                "失败原因": "群分享不存在"
+            }));
+            response.end();
+        }
         db.query(query, params, function (error, results) {
             if (error) {
                 response.write(JSON.stringify({

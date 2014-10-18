@@ -36,15 +36,15 @@ import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
-import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.SquareSubView;
 import com.open.welinks.view.SquareSubView.GroupDialogItem;
 import com.open.welinks.view.SquareSubView.SharesMessageBody;
@@ -135,8 +135,8 @@ public class SquareSubController {
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 						int height = thisView.showImageHeight;
-//						TouchView.LayoutParams params = new TouchView.LayoutParams(thisView.showImageWidth, height);
-//						imageView.setLayoutParams(params);
+						// TouchView.LayoutParams params = new TouchView.LayoutParams(thisView.showImageWidth, height);
+						// imageView.setLayoutParams(params);
 					}
 				});
 			}
@@ -149,9 +149,9 @@ public class SquareSubController {
 						Log.e(tag, "---------------failure:" + tag);
 						ImageView imageView = ((ImageView) (instance.view));
 						if (tag.equals("left")) {
-//							imageView.setImageResource(R.drawable.square_temp);
+							// imageView.setImageResource(R.drawable.square_temp);
 						} else {
-//							imageView.setImageResource(R.drawable.square_temp1);
+							// imageView.setImageResource(R.drawable.square_temp1);
 						}
 						// imageView.setImageResource(R.drawable.ic_error);
 						// RelativeLayout.LayoutParams params = (LayoutParams)
@@ -199,6 +199,9 @@ public class SquareSubController {
 						onTouchDownView = view;
 						isTouchDown = true;
 					} else if (view_class.equals("group_head")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+					} else if (view_class.equals("share_head")) {
 						onTouchDownView = view;
 						isTouchDown = true;
 					} else if (view_class.equals("title_share")) {
@@ -325,6 +328,9 @@ public class SquareSubController {
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
 						// thisActivity.overridePendingTransition(R.anim.zoomin,
 						// R.anim.zoomout);
+					} else if ("ShareMessage".equals(type)) {
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent("point", content);
+						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				}
 			}
@@ -481,6 +487,8 @@ public class SquareSubController {
 			} else if (view_class.equals("share_release")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_head")) {
+				onTouchDownView.performClick();
+			}else if (view_class.equals("share_head")) {
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;

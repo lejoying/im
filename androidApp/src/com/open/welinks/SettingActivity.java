@@ -11,10 +11,10 @@ import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
 
 public class SettingActivity extends Activity implements OnClickListener {
 

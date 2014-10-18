@@ -23,6 +23,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseEventHandlers.ResponseInfoHandler;
+import com.open.welinks.utils.MyGson;
 
 public class PushService extends Service {
 
@@ -136,7 +137,13 @@ public class PushService extends Service {
 			if (httpHandler != null) {
 				httpHandler.cancel(true);
 			}
-			Response response = gson.fromJson(responseInfo.result, Response.class);
+			MyGson myGson = new MyGson();
+			Response response = myGson.fromJson(responseInfo.result, Response.class);
+			// Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response == null) {
+				connect();
+				return;
+			}
 			if (response.失败原因 != null) {
 				if ("请求失败".equals(response.提示信息)) {
 					stopLongPull();

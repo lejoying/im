@@ -40,6 +40,46 @@ public class DateUtil {
 	}
 
 	@SuppressLint("SimpleDateFormat")
+	public static String getMessageSequeceTime(long timeMillis) {
+		long currentTime = System.currentTimeMillis();
+		long differenceTime = currentTime - timeMillis;
+		differenceTime = differenceTime / 1000;
+		String result = "";
+		if (differenceTime > 60 * 60 && differenceTime < 24 * 60 * 60) {
+			result = formatHourMinute(timeMillis);
+		} else if (differenceTime > 24 * 60 * 60 && differenceTime < 2 * 24 * 60 * 60) {
+			result = "昨天   " + formatHourMinute(timeMillis);
+		} else if (differenceTime > 2 * 24 * 60 * 60 && differenceTime < 3 * 24 * 60 * 60) {
+			result = getWeek(timeMillis);
+		} else if (differenceTime > 3 * 24 * 60 * 60 && differenceTime < 4 * 24 * 60 * 60) {
+			result = getWeek(timeMillis);
+		} else if (differenceTime > 4 * 24 * 60 * 60 && differenceTime < 5 * 24 * 60 * 60) {
+			result = getWeek(timeMillis);
+		} else if (differenceTime > 5 * 24 * 60 * 60 && differenceTime < 6 * 24 * 60 * 60) {
+			result = getWeek(timeMillis);
+		} else if (differenceTime > 6 * 24 * 60 * 60 && differenceTime < 365 * 24 * 60 * 60) {
+			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
+			result = sdf.format(timeMillis);
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			result = sdf.format(timeMillis);
+		}
+
+		return result;
+	}
+
+	public static String getWeek(long timeMillis) {
+		String[] weekDays = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timeMillis);
+		// cal.setTime(dt);
+		int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+		if (w < 0)
+			w = 0;
+		return weekDays[w];
+	}
+
+	@SuppressLint("SimpleDateFormat")
 	public static String formatYearMonthDay(long timeMillis) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
 		Date date = new Date(timeMillis);

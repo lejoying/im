@@ -18,8 +18,10 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.SharePraiseusersController;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 
 public class SharePraiseusersView {
@@ -44,14 +46,20 @@ public class SharePraiseusersView {
 
 	public DisplayImageOptions options;
 
+	public View maxView;
+
 	public SharePraiseusersView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 		thisView = this;
 	}
 
+	public SmallBusinessCardPopView businessCardPopView;
+
 	public void initView() {
 		thisActivity.setContentView(R.layout.share_message_praiseusers);
+
+		maxView = thisActivity.findViewById(R.id.maxView);
 
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		TextView backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
@@ -72,6 +80,8 @@ public class SharePraiseusersView {
 
 		praiseUsersAdapter = new PraiseUsersAdapter();
 		listView.setAdapter(praiseUsersAdapter);
+
+		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
 	}
 
 	public class PraiseUsersAdapter extends BaseAdapter {
@@ -95,6 +105,12 @@ public class SharePraiseusersView {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final SharePraisesHolder holder;
 			final Friend friend = data.relationship.friendsMap.get(thisController.praiseusersList.get(position));
+			User currentUser = data.userInformation.currentUser;
+			if (thisController.praiseusersList.get(position).equals(currentUser.phone)) {
+				currentUser = data.userInformation.currentUser;
+			} else {
+				currentUser = null;
+			}
 			if (convertView == null) {
 				holder = new SharePraisesHolder();
 				convertView = mInflater.inflate(R.layout.groupshare_commentchild, null);
@@ -130,13 +146,21 @@ public class SharePraiseusersView {
 			if (friend != null) {
 				nickName = friend.nickName;
 			}
+			if (currentUser != null) {
+				nickName = currentUser.nickName;
+			}
 			holder.name.setText(nickName);
 			String mainBusiness = "";
 			if (friend != null) {
 				mainBusiness = friend.mainBusiness;
 			}
+			if (currentUser != null) {
+				mainBusiness = currentUser.mainBusiness;
+			}
 			holder.sign.setText(mainBusiness);
 
+			convertView.setTag("user#" + thisController.praiseusersList.get(position));
+			convertView.setOnClickListener(thisController.mOnClickListener);
 			return convertView;
 		}
 

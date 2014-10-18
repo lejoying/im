@@ -95,14 +95,25 @@
             android:textColor="@color/text_color_black"
             android:translationX="-80dp"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/share_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="发布成功"
+            android:textColor="@color/text_color_black_2"
+            android:textSize="12sp"
+            android:translationY="30dp"
+            android:visibility="gone" />
     </com.open.lib.TouchView>
 
     <RelativeLayout
         android:id="@+id/list_item_progress_container"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:visibility="gone"
-        android:translationY="58dp" >
+        android:translationY="58dp"
+        android:visibility="gone" >
 
         <include layout="@layout/view_element_debug1_control_progress" />
     </RelativeLayout>
