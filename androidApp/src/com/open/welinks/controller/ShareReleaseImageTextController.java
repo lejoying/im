@@ -51,7 +51,6 @@ import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
-import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareReleaseImageTextView;
 import com.open.welinks.view.ShareSubView.ControlProgress;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
@@ -237,7 +236,7 @@ public class ShareReleaseImageTextController {
 				public boolean onSingleTapUp(MotionEvent e) {
 					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 					intent.putExtra("position", "0");
-					intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_OPTION);
+					intent.putExtra("type", ImageScanActivity.IMAGEBROWSE_OPTION);
 					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
 					return true;
 				}
@@ -267,7 +266,7 @@ public class ShareReleaseImageTextController {
 				public boolean onSingleTapUp(MotionEvent e) {
 					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 					intent.putExtra("position", "0");
-					intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_OPTION);
+					intent.putExtra("type", ImageScanActivity.IMAGEBROWSE_OPTION);
 					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
 					return true;
 				}

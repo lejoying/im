@@ -59,7 +59,6 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
-import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareMessageDetailView;
 import com.open.welinks.view.ViewManage;
 
@@ -402,7 +401,7 @@ public class ShareMessageDetailController {
 						data.tempData.selectedImageList = thisView.showImages;
 						Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 						intent.putExtra("position", content);
-						intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_COMMON);
+						intent.putExtra("type", ImageScanActivity.IMAGEBROWSE_COMMON);
 						thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE);
 					} else if ("ShareComment".equals(type)) {
 						Comment comment = (Comment) view.getTag(R.id.commentEditTextView);
