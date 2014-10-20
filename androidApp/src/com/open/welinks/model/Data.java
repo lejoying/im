@@ -87,6 +87,8 @@ public class Data {
 				public String content;
 				public String imagesContent;
 			}
+
+			public Map<String, Boolean> newMessagePowerMap = new HashMap<String, Boolean>();
 		}
 	}
 
@@ -193,6 +195,7 @@ public class Data {
 			public String description;
 			public String background;
 			public String createTime;
+			public String conver;
 
 			public List<String> members = new ArrayList<String>();
 		}

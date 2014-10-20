@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.apache.http.Header;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -23,7 +21,6 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
-import com.open.lib.HttpClient.TimeLine;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Messages.Message;
@@ -947,6 +944,7 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
+					currentGroup.conver = group.conver;
 				} else {
 					data.relationship.groups.add(key);
 					currentGroup = null;
@@ -963,6 +961,7 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
+					currentGroup.conver = group.conver;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
 				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
@@ -1087,6 +1086,7 @@ public class ResponseHandlers {
 				currentGroup.createTime = group.createTime;
 				currentGroup.description = group.description;
 				currentGroup.background = group.background;
+				currentGroup.conver = group.conver;
 				data.relationship.isModified = true;
 				viewManage.postNotifyView("ShareSubView");
 				viewManage.postNotifyView("GroupListActivity");
@@ -1156,6 +1156,7 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
+					currentGroup.conver = group.conver;
 					data.relationship.isModified = true;
 					viewManage.postNotifyView("ShareSubView");
 					viewManage.postNotifyView("GroupListActivity");
@@ -1193,6 +1194,7 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
+					currentGroup.conver = group.conver;
 					currentGroup.members = members;
 				} else {
 					data.relationship.groups.add(key0);

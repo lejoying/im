@@ -137,12 +137,15 @@ public class ImagesDirectoryController {
 		thisView.backView.setOnClickListener(onClickListener);
 	}
 
+	public int maxCount = 0;
+
 	public void setDate() {
 		if (data.tempData.selectedImageList != null) {
 			selectedImage = data.tempData.selectedImageList;
 		} else {
 			selectedImage = new ArrayList<String>();
 		}
+		maxCount = thisActivity.getIntent().getIntExtra("max", 0);
 		getImages();
 		getCloudFileAccess();
 	}

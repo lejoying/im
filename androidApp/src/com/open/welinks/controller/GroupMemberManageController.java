@@ -54,6 +54,12 @@ public class GroupMemberManageController {
 
 	public void onCreate() {
 		String gid = thisActivity.getIntent().getStringExtra("gid");
+		int type = thisActivity.getIntent().getIntExtra("type", 2);
+		if (type == 2) {
+			thisView.isSubtract = thisView.MANAGE_INIT;
+		}
+		thisView.confirmButtonView.setVisibility(View.VISIBLE);
+		thisView.confirmButtonView.setText("管理成员");
 		if (gid != null && !"".equals(gid)) {
 			currentGroup = data.relationship.groupsMap.get(gid);
 			if (currentGroup == null) {
@@ -74,30 +80,38 @@ public class GroupMemberManageController {
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.confirmButtonView)) {
-					Alert.createDialog(thisActivity).setTitle("您确定要移除已选择的群成员？").setOnConfirmClickListener(new OnDialogClickListener() {
+					if (thisView.isSubtract == thisView.MANAGE_SUBTRACT) {
+						Alert.createDialog(thisActivity).setTitle("您确定要移除已选择的群成员？").setOnConfirmClickListener(new OnDialogClickListener() {
 
-						@Override
-						public void onClick(AlertInputDialog dialog) {
-							thisView.isSubtract = thisView.MANAGE_COMMON;
-							thisView.groupMembersAdapter.notifyDataSetChanged();
-							thisView.confirmButtonView.setVisibility(View.GONE);
-							thisController.currentGroup.members.removeAll(thisView.subtractMembers);
-							modifyGroupMembers(API.GROUP_REMOVEMEMBERS, gson.toJson(thisView.subtractMembers), responseHandlers.removeMembersCallBack);
-							thisView.subtractMembers.clear();
-							thisView.showAlreayList();
-						}
-					}).setOnCancelClickListener(new OnDialogClickListener() {
+							@Override
+							public void onClick(AlertInputDialog dialog) {
+								thisView.isSubtract = thisView.MANAGE_COMMON;
+								thisView.groupMembersAdapter.notifyDataSetChanged();
+								thisView.confirmButtonView.setVisibility(View.GONE);
+								thisController.currentGroup.members.removeAll(thisView.subtractMembers);
+								modifyGroupMembers(API.GROUP_REMOVEMEMBERS, gson.toJson(thisView.subtractMembers), responseHandlers.removeMembersCallBack);
+								thisView.subtractMembers.clear();
+								thisView.showAlreayList();
+							}
+						}).setOnCancelClickListener(new OnDialogClickListener() {
 
-						@Override
-						public void onClick(AlertInputDialog dialog) {
-							thisView.isSubtract = thisView.MANAGE_COMMON;
-							thisView.confirmButtonView.setVisibility(View.GONE);
-							thisView.groupMembersAdapter.members.addAll(thisView.subtractMembers);
-							thisView.groupMembersAdapter.notifyDataSetChanged();
-							thisView.subtractMembers.clear();
-							thisView.showAlreayList();
-						}
-					}).show();
+							@Override
+							public void onClick(AlertInputDialog dialog) {
+								thisView.isSubtract = thisView.MANAGE_COMMON;
+								thisView.confirmButtonView.setVisibility(View.GONE);
+								thisView.groupMembersAdapter.members.addAll(thisView.subtractMembers);
+								thisView.groupMembersAdapter.notifyDataSetChanged();
+								thisView.subtractMembers.clear();
+								thisView.showAlreayList();
+							}
+						}).show();
+						thisView.confirmButtonView.setVisibility(View.VISIBLE);
+						thisView.confirmButtonView.setText("确定");
+					} else {
+						thisView.isSubtract = thisView.MANAGE_COMMON;
+						thisView.groupMembersAdapter.notifyDataSetChanged();
+						thisView.confirmButtonView.setVisibility(View.GONE);
+					}
 
 				} else if (view.getTag(R.id.iv_image) != null) {
 					String tagContent = (String) view.getTag(R.id.iv_image);
@@ -144,6 +158,7 @@ public class GroupMemberManageController {
 					} else if ("managesubtract".equals(type)) {
 						thisView.isSubtract = thisView.MANAGE_SUBTRACT;
 						thisView.groupMembersAdapter.notifyDataSetChanged();
+						thisView.confirmButtonView.setText("确定");
 						thisView.confirmButtonView.setVisibility(View.VISIBLE);
 					} else if ("subtractonclick".equals(type)) {
 						Toast.makeText(thisActivity, "不能把自己移出群组", Toast.LENGTH_SHORT).show();

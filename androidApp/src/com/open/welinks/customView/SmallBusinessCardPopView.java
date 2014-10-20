@@ -30,7 +30,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
-import com.open.welinks.GroupInfomationActivity;
+import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -342,7 +342,7 @@ public class SmallBusinessCardPopView {
 							intent.putExtra("type", type);
 							thisActivity.startActivity(intent);
 						} else if (type.equals(TYPE_GROUP)) {
-							Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+							Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
 							intent.putExtra("gid", key);
 							thisActivity.startActivity(intent);
 						} else if (type.equals(TYPE_SQUARE)) {

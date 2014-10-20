@@ -107,6 +107,8 @@ public class ShareSubView {
 
 	public float panelScale = 1.010845986984816f;
 
+	public float converScale = 0.5277777777777778f;
+
 	public int panelHeight;
 	public int panelWidth;
 
@@ -187,6 +189,21 @@ public class ShareSubView {
 		thisController.getCurrentGroupShareMessages();
 	}
 
+	public void setConver() {
+		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		if (file.exists()) {
+			imageLoader.displayImage("file://" + file.getAbsolutePath(), groupCoverView);
+		} else {
+			groupCoverView.setTag("conver");
+			DownloadFile downloadFile = new DownloadFile("", file.getAbsolutePath());
+			// TODO
+			downloadFile.view = groupCoverView;
+			downloadFile.setDownloadFileListener(thisController.downloadListener);
+			downloadFileList.addDownloadFile(downloadFile);
+		}
+	}
+
 	public void showShareMessages() {
 		data = parser.check();
 
@@ -238,9 +255,14 @@ public class ShareSubView {
 			return;
 		}
 		// set conver
-		imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+		// TODO conver setting
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
+		if (group.conver != null && !group.conver.equals("")) {
+			setConver();
+		} else {
+			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+		}
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;

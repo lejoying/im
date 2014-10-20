@@ -111,11 +111,19 @@ public class CreateGroupLocationActivity extends Activity {
 
 	public DisplayMetrics displayMetrics;
 
+	public boolean isScanAddress;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_creategrouplocation);
 		mInflater = getLayoutInflater();
+		String type = getIntent().getStringExtra("type");
+		if (type != null) {
+			isScanAddress = true;
+		} else {
+			isScanAddress = false;
+		}
 		latitude = getIntent().getStringExtra("latitude");
 		longitude = getIntent().getStringExtra("longitude");
 		address = getIntent().getStringExtra("address");
@@ -172,9 +180,13 @@ public class CreateGroupLocationActivity extends Activity {
 		commit.setText("完成");
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.CENTER_VERTICAL);
-		rightContainer.addView(commit, params);
 
-		titleContent.setText("创建群组");
+		if (isScanAddress) {
+			titleContent.setText("群组位置");
+		} else {
+			titleContent.setText("创建群组");
+			rightContainer.addView(commit, params);
+		}
 
 		search.setAdapter(mTipsAdapter);
 		groupList.setAdapter(mGroupListAdapter);

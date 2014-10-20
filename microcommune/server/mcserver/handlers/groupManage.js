@@ -677,7 +677,8 @@ groupManage.getallmembers = function (data, response) {
                     latitude: location.latitude,
                     createTime: groupData.createTime,
                     description: groupData.description || "",
-                    background: groupData.background || ""
+                    background: groupData.background || "",
+                    conver: groupData.conver || ""
                 };
                 getGroupMembers(gid, group);
             } else {
@@ -766,6 +767,7 @@ groupManage.modify = function (data, response) {
     var description = data.description;
     var address = data.address;
     var location = data.location;
+    var conver = data.conver;
     var time = new Date().getTime();
     var eid = phone + "" + time;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
@@ -872,6 +874,9 @@ groupManage.modify = function (data, response) {
                     background0 = background;
                     groupData.background = background0;
                 }
+                if (conver) {
+                    groupData.conver = conver;
+                }
                 var currentLocation = {};
                 if (location) {
                     currentLocation.longitude = location.longitude || groupLocation.longitude;
@@ -883,7 +888,7 @@ groupManage.modify = function (data, response) {
                 });
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息成功",
-                    group:groupData
+                    group: groupData
                 }));
                 response.end();
                 var event = JSON.stringify({
@@ -1149,7 +1154,8 @@ groupManage.get = function (data, response) {
                     latitude: location.latitude || 0,
                     createTime: groupData.createTime,
                     description: groupData.description || "",
-                    background: groupData.background || ""
+                    background: groupData.background || "",
+                    conver: groupData.conver || ""
                 };
                 response.write(JSON.stringify({
                     "提示信息": "获取群组信息成功",
@@ -1454,7 +1460,8 @@ groupManage.getgroupmembers = function (data, response) {
                             longitude: location.longitude || 0,
                             latitude: location.latitude || 0,
                             description: groupData.description,
-                            background: groupData.background
+                            background: groupData.background,
+                            conver: groupData.conver || ""
                         };
                         var members = [];
                         members.push(account.phone);

@@ -4,5 +4,6 @@
 	currentSelectedGroup : "",
 	currentSelectedSquare : "",
 	shareReleaseSequece : [],
-	shareReleaseSequeceMap : {}
+	shareReleaseSequeceMap : {},
+	newMessagePowerMap : {}
 }

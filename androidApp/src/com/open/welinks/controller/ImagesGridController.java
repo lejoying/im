@@ -99,6 +99,10 @@ public class ImagesGridController {
 					ImagesDirectoryController.instance.selectedImage.remove(imagesSource.get(postion));
 					thisView.showAlreayList();
 				}
+				if (ImagesDirectoryController.instance.maxCount == 1) {
+					thisActivity.setResult(Activity.RESULT_OK);
+					thisActivity.finish();
+				}
 				handler.post(new Runnable() {
 
 					@Override

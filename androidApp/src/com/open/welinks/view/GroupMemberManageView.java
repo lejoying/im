@@ -47,8 +47,9 @@ public class GroupMemberManageView {
 
 	public int MANAGE_COMMON = 0x00;
 	public int MANAGE_SUBTRACT = 0x01;
+	public int MANAGE_INIT = 0x02;
 
-	public int isSubtract = MANAGE_COMMON;
+	public int isSubtract = MANAGE_INIT;
 
 	public GroupMembersAdapter groupMembersAdapter;
 
@@ -59,7 +60,7 @@ public class GroupMemberManageView {
 	public DisplayMetrics displayMetrics;
 
 	public LinearLayout alreadyListContainer;
-	
+
 	public View maxView;
 
 	public GroupMemberManageView(Activity thisActivity) {
@@ -137,9 +138,12 @@ public class GroupMemberManageView {
 		public int getCount() {
 			if (isSubtract == MANAGE_COMMON) {
 				return members.size() + 2;
-			} else {
+			} else if (isSubtract == MANAGE_SUBTRACT) {
+				return members.size();
+			} else if (isSubtract == MANAGE_INIT) {
 				return members.size();
 			}
+			return 0;
 		}
 
 		@Override

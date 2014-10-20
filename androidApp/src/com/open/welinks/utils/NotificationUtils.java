@@ -3,11 +3,6 @@ package com.open.welinks.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.open.welinks.MainActivity;
-import com.open.welinks.R;
-import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Messages.Message;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Notification;
@@ -19,6 +14,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Vibrator;
+
+import com.open.welinks.MainActivity;
+import com.open.welinks.R;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Parser;
 
 public final class NotificationUtils {
 	public static final int DEFAULT_ALL = Notification.DEFAULT_ALL;
@@ -38,6 +40,8 @@ public final class NotificationUtils {
 
 	public static String showFragment = "";
 	public static Message message;
+
+	public static boolean isNotice = true;
 
 	private static Vibrator getVibrator(Context context) {
 		if (mVibrator == null) {
@@ -83,7 +87,9 @@ public final class NotificationUtils {
 	public static void showNotification(Context context, int notificationId, int icon, Uri sound, String tickerText, String contentTitle, String contentText, int notificationDefaults, int flags, Intent intent) {
 		Notification notification = new Notification();
 		notification.icon = icon;
-		notification.sound = sound;
+		if (isNotice) {
+			notification.sound = sound;
+		}
 		notification.tickerText = tickerText;
 		notification.defaults = notificationDefaults;
 		notification.flags = flags;
@@ -161,9 +167,25 @@ public final class NotificationUtils {
 			tickerText = nickName + ":" + contentText;
 			contentTitle = nickName;
 		} else if (message.sendType.equals("group") || message.sendType.equals("tempGroup")) {
-			String groupName = getData().relationship.groupsMap.get(message.gid).name;
+			Group group = getData().relationship.groupsMap.get(message.gid);
+			String groupName = group.name;
 			tickerText = groupName + ":" + contentText;
 			contentTitle = groupName;
+			Parser parser = Parser.getInstance();
+			parser.check();
+			if (data.localStatus.localData != null) {
+				if (data.localStatus.localData.newMessagePowerMap != null) {
+					if (data.localStatus.localData.newMessagePowerMap.get(group.gid) != null) {
+						isNotice = data.localStatus.localData.newMessagePowerMap.get(group.gid);
+					} else {
+						isNotice = true;
+					}
+				} else {
+					isNotice = true;
+				}
+			} else {
+				isNotice = true;
+			}
 		}
 		Intent intent = new Intent(context, MainActivity.class);
 
@@ -183,7 +205,9 @@ public final class NotificationUtils {
 		}
 		NotificationUtils.message = message;
 		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.notifyicon, sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS, Notification.FLAG_AUTO_CANCEL, intent);
-		commonVibrate(context);
+		if (isNotice) {
+			commonVibrate(context);
+		}
 	}
 
 }

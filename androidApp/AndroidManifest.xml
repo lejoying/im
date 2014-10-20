@@ -87,6 +87,13 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
+            android:name="com.open.welinks.CropActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
             android:name="com.open.welinks.CirclesListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -157,7 +164,7 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name="com.open.welinks.GroupInfomationActivity"
+            android:name="com.open.welinks.GroupInfoActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"

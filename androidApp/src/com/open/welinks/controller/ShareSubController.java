@@ -34,7 +34,7 @@ import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.CreateGroupStartActivity;
 import com.open.welinks.FindMoreActivity;
-import com.open.welinks.GroupInfomationActivity;
+import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.GroupListActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
@@ -163,34 +163,41 @@ public class ShareSubController {
 			@Override
 			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
+				boolean flag = true;
 				if (instance.view.getTag() != null) {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
 							options = thisView.headOptions;
+						} else if ("conver".equals(tag)) {
+							flag = false;
 						}
 					} catch (Exception e) {
 					}
 				}
-				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
-					@Override
-					public void onLoadingStarted(String imageUri, View view) {
-					}
-
-					@Override
-					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						Log.e(tag, "---------------failed");
-						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
-						instance.view.setLayoutParams(params);
-					}
-
-					@Override
-					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						if (instance.view.getTag() != null) {
-							fileHandlers.bitmaps.put(imageUri, loadedImage);
+				if (flag) {
+					thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
 						}
-					}
-				});
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+							Log.e(tag, "---------------failed");
+							RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+							instance.view.setLayoutParams(params);
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+							if (instance.view.getTag() != null) {
+								fileHandlers.bitmaps.put(imageUri, loadedImage);
+							}
+						}
+					});
+				} else {
+					thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view);
+				}
 			}
 
 			@Override
@@ -292,7 +299,7 @@ public class ShareSubController {
 
 			public void onClickEffective(View view) {
 				if (view.equals(thisView.leftImageButton)) {
-					Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+					Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.groupListButtonView)) {
