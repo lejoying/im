@@ -225,6 +225,8 @@ public class UploadMultipart {
 						uploadLoadingListener.onSuccess(instance, 0);
 					}
 					log.e("上传成功**********************服务器已经存在");
+					bytes = null;
+					System.gc();
 				} else {
 					initiateMultipartupload();
 				}
@@ -464,6 +466,8 @@ public class UploadMultipart {
 			completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
 			isUploadStatus = UPLOAD_SUCCESS;
 			uploadLoadingListener.onSuccess(instance, (int) (time.received - time.start));
+			bytes = null;
+			System.gc();
 			log.e("上传成功**********************");
 			uploadFileName();
 			// log.e(completeMultipartUploadResult.location + "---" +

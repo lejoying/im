@@ -212,15 +212,31 @@ public class FileHandlers {
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(fileInputStream, null, options);
+		try {
+			fileInputStream.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
 		options.inJustDecodeBounds = false;
 		FileInputStream fileInputStream1 = new FileInputStream(file);
-		Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
-		bitmap.recycle();
+		Bitmap bitmap = null;
+		ByteArrayOutputStream byteArrayOutputStream = null;
+		try {
+			bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
+			byteArrayOutputStream = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+			bitmap.recycle();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		try {
+			fileInputStream1.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return byteArrayOutputStream;
 	}
 
@@ -258,22 +274,24 @@ public class FileHandlers {
 		return byteArrayOutputStream;
 	}
 
+//	public byte[] bytes;
+
 	public byte[] getImageFileBytes(File fromFile, int width, int height) {
-		byte[] bytes;
+
 		long fileLength = fromFile.length();
 		try {
+			byte[] bytes;
 			if (fileLength > 400 * 1024) {
 				ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, width, height);
 				bytes = byteArrayOutputStream.toByteArray();
+				byteArrayOutputStream.close();
 			} else {
 				FileInputStream fileInputStream = new FileInputStream(fromFile);
 				bytes = StreamParser.parseToByteArray(fileInputStream);
 				fileInputStream.close();
 			}
 			return bytes;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

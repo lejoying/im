@@ -518,10 +518,12 @@ public class ShareReleaseImageTextController {
 				// upload file to oss server
 				uploadFileNameMap.put(key, fileName);
 				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
+				bytes = null;
+				System.gc();
 				multipart.path = key;
 				uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);
-			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

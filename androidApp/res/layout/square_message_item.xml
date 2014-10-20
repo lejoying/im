@@ -62,75 +62,71 @@
             android:layout_marginTop="240dp"
             android:background="@drawable/background_20white_radius" >
 
-            <com.open.lib.TouchView
+            <com.open.lib.TouchImageView
+                android:id="@+id/share_praise_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="40dp"
+                android:src="@drawable/favorite"
+                android:tint="@color/icon_color" />
+
+            <com.open.lib.TouchTextView
+                android:id="@+id/share_praise"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="right" >
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:gravity="center"
+                android:text="0  "
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationX="-20dp"
+                android:translationY="-1dp" />
 
-                <com.open.lib.TouchImageView
-                    android:id="@+id/share_praise_icon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="40dp"
-                    android:src="@drawable/praise_icon"
-                    android:tint="@color/icon_color" />
+            <com.open.lib.TouchImageView
+                android:layout_width="1dp"
+                android:layout_height="25dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="75dp"
+                android:background="#339c9c9c" />
 
-                <com.open.lib.TouchTextView
-                    android:id="@+id/share_praise"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center"
-                    android:text="0  "
-                    android:textColor="#99000000"
-                    android:textSize="16sp" />
+            <com.open.lib.TouchTextView
+                android:id="@+id/share_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:gravity="center"
+                android:text="0  "
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationX="-98dp"
+                android:translationY="-1dp" />
 
-                <com.open.lib.TouchImageView
-                    android:layout_width="1dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="75dp"
-                    android:background="#669c9c9c" />
+            <com.open.lib.TouchImageView
+                android:id="@+id/share_comment_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="120dp"
+                android:src="@drawable/comment"
+                android:tint="@color/icon_color" />
 
-                <com.open.lib.TouchTextView
-                    android:id="@+id/share_comment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="85dp"
-                    android:gravity="center"
-                    android:text="0  "
-                    android:textColor="#99000000"
-                    android:textSize="16sp" />
+            <com.open.lib.TouchImageView
+                android:layout_width="1dp"
+                android:layout_height="25dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="155dp"
+                android:background="#8c8c8c"
+                android:visibility="gone" />
 
-                <com.open.lib.TouchImageView
-                    android:id="@+id/share_comment_icon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="120dp"
-                    android:src="@drawable/comment"
-                    android:tint="@color/icon_color" />
-
-                <com.open.lib.TouchImageView
-                    android:layout_width="1dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="155dp"
-                    android:background="#8c8c8c"
-                    android:visibility="gone" />
-
-                <com.open.lib.TouchImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="165dp"
-                    android:src="@drawable/favorite"
-                    android:tint="@color/icon_color"
-                    android:visibility="gone" />
-            </com.open.lib.TouchView>
+            <com.open.lib.TouchImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="165dp"
+                android:src="@drawable/favorite"
+                android:tint="@color/icon_color"
+                android:visibility="gone" />
         </com.open.lib.TouchView>
     </com.open.lib.TouchView>
 
@@ -144,8 +140,8 @@
         android:id="@+id/squareHead"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="4dp"
         android:layout_marginLeft="15dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/square_head_draw_background"
         android:src="@drawable/face_man" />
 

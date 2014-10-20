@@ -1,8 +1,7 @@
 package com.open.welinks.utils;
 
 public class SHA1 {
-	private final int[] abcde = { 0x67452301, 0xefcdab89, 0x98badcfe,
-			0x10325476, 0xc3d2e1f0 };
+	private final int[] abcde = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 };
 	private int[] digestInt = new int[5];
 	private int[] tmpData = new int[80];
 
@@ -16,8 +15,12 @@ public class SHA1 {
 			}
 			encrypt();
 		}
+		newbyte = null;
+		System.gc();
 		return 20;
 	}
+
+	byte[] newbyte = null;
 
 	private byte[] byteArrayFormatData(byte[] bytedata) {
 		int zeros = 0;
@@ -34,7 +37,7 @@ public class SHA1 {
 			zeros = 63 - m + 56;
 			size = (n + 64) - m + 64;
 		}
-		byte[] newbyte = new byte[size];
+		newbyte = new byte[size];
 		System.arraycopy(bytedata, 0, newbyte, 0, n);
 		int l = n;
 		newbyte[l++] = (byte) 0x80;
@@ -79,17 +82,14 @@ public class SHA1 {
 
 	private void encrypt() {
 		for (int i = 16; i <= 79; i++) {
-			tmpData[i] = f4(tmpData[i - 3] ^ tmpData[i - 8] ^ tmpData[i - 14]
-					^ tmpData[i - 16], 1);
+			tmpData[i] = f4(tmpData[i - 3] ^ tmpData[i - 8] ^ tmpData[i - 14] ^ tmpData[i - 16], 1);
 		}
 		int[] tmpabcde = new int[5];
 		for (int i1 = 0; i1 < tmpabcde.length; i1++) {
 			tmpabcde[i1] = digestInt[i1];
 		}
 		for (int j = 0; j <= 19; j++) {
-			int tmp = f4(tmpabcde[0], 5)
-					+ f1(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4]
-					+ tmpData[j] + 0x5a827999;
+			int tmp = f4(tmpabcde[0], 5) + f1(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4] + tmpData[j] + 0x5a827999;
 			tmpabcde[4] = tmpabcde[3];
 			tmpabcde[3] = tmpabcde[2];
 			tmpabcde[2] = f4(tmpabcde[1], 30);
@@ -97,9 +97,7 @@ public class SHA1 {
 			tmpabcde[0] = tmp;
 		}
 		for (int k = 20; k <= 39; k++) {
-			int tmp = f4(tmpabcde[0], 5)
-					+ f2(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4]
-					+ tmpData[k] + 0x6ed9eba1;
+			int tmp = f4(tmpabcde[0], 5) + f2(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4] + tmpData[k] + 0x6ed9eba1;
 			tmpabcde[4] = tmpabcde[3];
 			tmpabcde[3] = tmpabcde[2];
 			tmpabcde[2] = f4(tmpabcde[1], 30);
@@ -107,9 +105,7 @@ public class SHA1 {
 			tmpabcde[0] = tmp;
 		}
 		for (int l = 40; l <= 59; l++) {
-			int tmp = f4(tmpabcde[0], 5)
-					+ f3(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4]
-					+ tmpData[l] + 0x8f1bbcdc;
+			int tmp = f4(tmpabcde[0], 5) + f3(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4] + tmpData[l] + 0x8f1bbcdc;
 			tmpabcde[4] = tmpabcde[3];
 			tmpabcde[3] = tmpabcde[2];
 			tmpabcde[2] = f4(tmpabcde[1], 30);
@@ -117,9 +113,7 @@ public class SHA1 {
 			tmpabcde[0] = tmp;
 		}
 		for (int m = 60; m <= 79; m++) {
-			int tmp = f4(tmpabcde[0], 5)
-					+ f2(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4]
-					+ tmpData[m] + 0xca62c1d6;
+			int tmp = f4(tmpabcde[0], 5) + f2(tmpabcde[1], tmpabcde[2], tmpabcde[3]) + tmpabcde[4] + tmpData[m] + 0xca62c1d6;
 			tmpabcde[4] = tmpabcde[3];
 			tmpabcde[3] = tmpabcde[2];
 			tmpabcde[2] = f4(tmpabcde[1], 30);
@@ -135,8 +129,7 @@ public class SHA1 {
 	}
 
 	private int byteArrayToInt(byte[] bytedata, int i) {
-		return ((bytedata[i] & 0xff) << 24) | ((bytedata[i + 1] & 0xff) << 16)
-				| ((bytedata[i + 2] & 0xff) << 8) | (bytedata[i + 3] & 0xff);
+		return ((bytedata[i] & 0xff) << 24) | ((bytedata[i + 1] & 0xff) << 16) | ((bytedata[i + 2] & 0xff) << 8) | (bytedata[i + 3] & 0xff);
 	}
 
 	private void intToByteArray(int intValue, byte[] byteData, int i) {
@@ -147,8 +140,7 @@ public class SHA1 {
 	}
 
 	private static String byteToHexString(byte ib) {
-		char[] Digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
-				'B', 'C', 'D', 'E', 'F' };
+		char[] Digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		char[] ob = new char[2];
 		ob[0] = Digit[(ib >>> 4) & 0X0F];
 		ob[1] = Digit[ib & 0X0F];
