@@ -279,6 +279,47 @@
                 android:layout_height="1dp"
                 android:background="#aac0c0c0" />
 
+            <RelativeLayout
+                android:id="@+id/cardOption"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/backview_background1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="群名片"
+                    android:textColor="#aa000000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text=""
+                    android:textColor="#aa000000"
+                    android:textSize="14sp"
+                    android:translationX="-25dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:src="@drawable/into"
+                    android:tint="#c0c0c0" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#aac0c0c0" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

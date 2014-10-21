@@ -334,6 +334,7 @@ public class BusinessCardView {
 			businessTitle.setText("主要业务：");
 			lableTitle.setText("标签：");
 			creatTimeTitle.setText("创建时间：");
+			buttonTwo.setVisibility(View.GONE);
 		} else if (status.equals(Status.SQUARE)) {
 			backTitleView.setText("广场详情");
 			businessTitle.setText("主要业务：");

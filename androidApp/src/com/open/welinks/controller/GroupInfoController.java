@@ -25,6 +25,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
+import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.CreateGroupLocationActivity;
 import com.open.welinks.CropActivity;
 import com.open.welinks.GroupMemberManageActivity;
@@ -182,6 +183,11 @@ public class GroupInfoController {
 					intent.putExtra("gid", currentGroup.gid + "");
 					intent.putExtra("type", 2);
 					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.cardOptionView)) {
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("type", "group");
+					intent.putExtra("key", currentGroup.gid + "");
+					thisActivity.startActivity(intent);
 				}
 			}
 		};
@@ -295,6 +301,7 @@ public class GroupInfoController {
 		thisView.inCardBar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		thisView.memberListTopView.setOnClickListener(mOnClickListener);
 		thisView.memberListView.setOnClickListener(mOnClickListener);
+		thisView.cardOptionView.setOnClickListener(mOnClickListener);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {

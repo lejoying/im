@@ -51,6 +51,7 @@ public class GroupInfoView {
 	public View exit2DeleteGroup;
 	public View memberListTopView;
 	public LinearLayout memberListView;
+	public View cardOptionView;
 
 	public TextView groupMemberCountView;
 
@@ -95,6 +96,7 @@ public class GroupInfoView {
 		this.groupMemberCountView = (TextView) thisActivity.findViewById(R.id.groupMemberCount);
 		this.memberListTopView = thisActivity.findViewById(R.id.memberListTop);
 		this.memberListView = (LinearLayout) thisActivity.findViewById(R.id.memberList);
+		this.cardOptionView = thisActivity.findViewById(R.id.cardOption);
 	}
 
 	public DisplayImageOptions options0 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.face_man).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(70)).build();

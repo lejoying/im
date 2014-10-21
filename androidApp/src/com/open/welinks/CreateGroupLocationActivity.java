@@ -133,6 +133,29 @@ public class CreateGroupLocationActivity extends Activity {
 		mapView.onCreate(savedInstanceState);
 		if ("".equals(latitude) || "".equals(longitude) || "".equals(address)) {
 			positioned = false;
+		} else {
+			GeocodeSearch geocoderSearch = new GeocodeSearch(this);
+			geocoderSearch.setOnGeocodeSearchListener(new OnGeocodeSearchListener() {
+
+				@Override
+				public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
+					if (rCode == 0) {
+						if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
+							address = result.getRegeocodeAddress().getFormatAddress() + "附近";
+							location.setText("当前地址：" + address);
+						} else {
+						}
+					} else {
+					}
+				}
+
+				@Override
+				public void onGeocodeSearched(GeocodeResult arg0, int arg1) {
+				}
+			});
+			LatLonPoint latLonPoint = new LatLonPoint(Double.valueOf(latitude), Double.valueOf(longitude));
+			RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200, GeocodeSearch.AMAP);
+			geocoderSearch.getFromLocationAsyn(query);
 		}
 		requestMyLocation();
 	}
