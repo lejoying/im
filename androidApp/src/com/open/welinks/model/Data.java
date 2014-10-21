@@ -243,6 +243,7 @@ public class Data {
 				public int MESSAGE_TYPE_VOTE = 0x03;
 
 				public int mType;// MESSAGE_TYPE
+				public String gid;// only sharelist In the use of
 				public String gsid;
 				public String type;// imagetext voicetext vote
 				public String phone;

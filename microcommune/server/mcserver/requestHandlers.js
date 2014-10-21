@@ -334,6 +334,11 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
     /***************************************************
      * * * * * * * *New Api* * * * * * * * * * * * * * *
      ***************************************************/
+    else if (operation == "getusershares") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.getusershares(data, response);
+        });
+    }
 
 }
 function setOauthAccessKey(phone, accessKey, next) {

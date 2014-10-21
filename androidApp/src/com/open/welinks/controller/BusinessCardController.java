@@ -31,6 +31,7 @@ import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
+import com.open.welinks.ShareListActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
@@ -218,6 +219,10 @@ public class BusinessCardController {
 					} else if (thisView.status.equals(Status.NOTJOINGROUP)) {
 						joinGroup();
 					}
+				} else if (view.equals(thisView.myShareView)) {
+					Intent intent = new Intent(thisActivity, ShareListActivity.class);
+					intent.putExtra("key", key);
+					thisActivity.startActivity(intent);
 				}
 			}
 		};
@@ -253,6 +258,7 @@ public class BusinessCardController {
 		thisView.buttonOne.setOnClickListener(mOnClickListener);
 		thisView.buttonTwo.setOnClickListener(mOnClickListener);
 		thisView.buttonThree.setOnClickListener(mOnClickListener);
+		thisView.myShareView.setOnClickListener(mOnClickListener);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

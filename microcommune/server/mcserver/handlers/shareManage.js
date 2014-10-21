@@ -783,6 +783,79 @@ shareManage.getgroupshares = function (data, response) {
         });
     }
 }
+shareManage.getusershares = function (data, response) {
+    response.asynchronous = 1;
+    console.log(data);
+    var phone = data.phone;
+    var nowpage = data.nowpage;
+    var pagesize = data.pagesize;
+    var arr = [phone, nowpage, pagesize];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        getUserShares();
+    }
+    function getUserShares() {
+        var query = [
+            "MATCH (group:Group)-->(shares:Shares)-->(share:Share)",
+            "WHERE  share.phone={phone}",
+            "RETURN group,share",
+            "ORDER BY share.time DESC",
+            "SKIP {start}",
+            "LIMIT {pagesize}"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            start: parseInt(nowpage) * parseInt(pagesize),
+            pagesize: parseInt(pagesize)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群分享失败",
+                    gid: gid,
+                    nowpage: nowpage,
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else {
+                if (results.length > 0) {
+                    var shares = [];
+                    var sharesMap = {};
+                    for (var index in results) {
+                        var groupData = results[index].group.data;
+                        var shareData = results[index].share.data;
+                        var share = {
+                            comments: JSON.parse(shareData.comments),
+                            content: shareData.content,
+                            praiseusers: JSON.parse(shareData.praises),
+                            gsid: shareData.gsid,
+                            type: shareData.type,
+                            time: shareData.time,
+                            phone: shareData.phone,
+                            gid: groupData.gid,
+                            status: "sent"
+                        };
+                        shares.push(shareData.gsid);
+                        sharesMap[shareData.gsid] = share;
+                    }
+                    ResponseData(JSON.stringify({
+                        "提示信息": "获取群分享成功",
+                        nowpage: nowpage,
+                        shares: shares,
+                        sharesMap: sharesMap
+                    }), response);
+                } else {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "获取群分享成功",
+                        nowpage: nowpage,
+                        shares: [],
+                        sharesMap: {}
+                    }), response);
+                }
+            }
+        });
+    }
+}
 function ResponseData(responseContent, response) {
     response.writeHead(200, {
         "Content-Type": "application/json; charset=UTF-8",

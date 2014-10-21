@@ -87,6 +87,13 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
+            android:name="com.open.welinks.ShareListActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
             android:name="com.open.welinks.CropActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

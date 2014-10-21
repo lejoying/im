@@ -55,6 +55,9 @@ public class BusinessCardView {
 	public RelativeLayout rightContainer;
 	public TextView rightTopButton;
 
+	public View myShareView;
+	public TextView shareTxView;
+
 	public BusinessCard businessCard;
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
@@ -105,6 +108,9 @@ public class BusinessCardView {
 		age = (TextView) thisActivity.findViewById(R.id.age);
 		head = (ImageView) thisActivity.findViewById(R.id.head);
 		distance = (TextView) thisActivity.findViewById(R.id.distance);
+
+		myShareView = thisActivity.findViewById(R.id.myShare);
+		shareTxView = (TextView) thisActivity.findViewById(R.id.shareTx);
 
 		qrCodeView = (ImageView) thisActivity.findViewById(R.id.tdcode);
 		buttonOne = (Button) thisActivity.findViewById(R.id.button_one);
@@ -213,6 +219,7 @@ public class BusinessCardView {
 				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
 			}
 		} else if (status.equals(Status.JOINEDGROUP)) {
+			myShareView.setVisibility(View.GONE);
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText("发起群聊");
@@ -239,6 +246,7 @@ public class BusinessCardView {
 			buttonThree.setVisibility(View.GONE);
 			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
 		} else if (status.equals(Status.NOTJOINGROUP)) {
+			myShareView.setVisibility(View.GONE);
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText("加入群组");
@@ -265,6 +273,7 @@ public class BusinessCardView {
 				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
 			}
 		} else if (status.equals(Status.SQUARE)) {
+			myShareView.setVisibility(View.GONE);
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText("进入广场");
@@ -318,7 +327,7 @@ public class BusinessCardView {
 	}
 
 	public void setData(BusinessCard businessCard) {
-		log.e("createTime--------：" + businessCard.creattime);
+		// log.e("createTime--------：" + businessCard.creattime);
 		if (status.equals(Status.SELF)) {
 			backTitleView.setText("我的详情");
 			businessTitle.setText("个人宣言：");
@@ -341,10 +350,16 @@ public class BusinessCardView {
 			lableTitle.setText("标签：");
 			creatTimeTitle.setText("创建时间：");
 		}
+
 		if (!"".equals(businessCard.sex) && ("male".equals(businessCard.sex) || "男".equals(businessCard.sex))) {
 			sex.setText("男");
+			shareTxView.setText("他的分享");
 		} else {
 			sex.setText("女");
+			shareTxView.setText("她的分享");
+		}
+		if (businessCard.id == data.userInformation.currentUser.id) {
+			shareTxView.setText("我的分享");
 		}
 		age.setText(businessCard.age);
 		distance.setText(businessCard.distance + "km");

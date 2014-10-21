@@ -43,6 +43,7 @@ public class FileHandlers {
 	public File sdcardThumbnailFolder;
 	public File sdcardSquareThumbnailFolder;
 	public File sdcardSaveImageFolder;
+	public File sdcardCacheImageFolder;
 
 	public Handler handler = new Handler();
 
@@ -137,6 +138,10 @@ public class FileHandlers {
 		sdcardSquareThumbnailFolder = new File(sdcardFolder, "squarethumbnails");
 		if (!sdcardSquareThumbnailFolder.exists()) {
 			sdcardSquareThumbnailFolder.mkdirs();
+		}
+		sdcardCacheImageFolder = new File(sdcardFolder, "cache");
+		if (!sdcardCacheImageFolder.exists()) {
+			sdcardCacheImageFolder.mkdirs();
 		}
 	}
 
@@ -274,7 +279,7 @@ public class FileHandlers {
 		return byteArrayOutputStream;
 	}
 
-//	public byte[] bytes;
+	// public byte[] bytes;
 
 	public byte[] getImageFileBytes(File fromFile, int width, int height) {
 

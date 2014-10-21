@@ -10,7 +10,31 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+@SuppressLint("SimpleDateFormat")
 public class DateUtil {
+
+	public static String[] getDayMoth(long timeMillis) {
+		long currentTime = System.currentTimeMillis();
+		long differenceTime = currentTime - timeMillis;
+		differenceTime = differenceTime / 1000;
+		String[] result = new String[2];
+		if (differenceTime > 0 && differenceTime < 24 * 60 * 60) {
+			result[0] = "今";
+			result[1] = "天";
+		} else if (differenceTime > 24 * 60 * 60 && differenceTime < 2 * 24 * 60 * 60) {
+			result[0] = "昨";
+			result[1] = "天";
+		} else if (differenceTime > 2 * 24 * 60 * 60 && differenceTime < 3 * 24 * 60 * 60) {
+			result[0] = "前";
+			result[1] = "天";
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd#MM月");
+			String dataStr = sdf.format(timeMillis);
+			result[0] = dataStr.substring(0, dataStr.indexOf("#"));
+			result[1] = dataStr.substring(dataStr.indexOf("#") + 1);
+		}
+		return result;
+	}
 
 	@SuppressLint("SimpleDateFormat")
 	public static String formatTime(long timeMillis) {

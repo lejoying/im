@@ -119,6 +119,8 @@ public class ShareMessageDetailController {
 		currentUser = data.userInformation.currentUser;
 	}
 
+	public boolean isRelation = false;
+	
 	public void initData() {
 		parser.check();
 		gid = thisActivity.getIntent().getStringExtra("gid");
