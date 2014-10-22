@@ -89,6 +89,8 @@ public class ShareListController {
 	public OnScrollListener mOnScrollListener;
 	public OnItemClickListener mOnItemClickListener;
 
+	public int resultCodeDetail = 0x21;
+
 	public void initializeListeners() {
 		mOnItemClickListener = new OnItemClickListener() {
 
@@ -99,7 +101,7 @@ public class ShareListController {
 					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 					intent.putExtra("gid", message.gid);
 					intent.putExtra("gsid", message.gsid);
-					thisActivity.startActivity(intent);
+					thisActivity.startActivityForResult(intent, resultCodeDetail);
 				}
 			}
 		};
@@ -116,13 +118,13 @@ public class ShareListController {
 					if (totalItemCount > 1) {
 						if (loadfinish) {
 							loadfinish = false;
-//							thisView.fileHandlers.handler.post(new Runnable() {
-//
-//								@Override
-//								public void run() {
-//									thisView.listView.addFooterView(thisView.footerView);
-//								}
-//							});
+							// thisView.fileHandlers.handler.post(new Runnable() {
+							//
+							// @Override
+							// public void run() {
+							// thisView.listView.addFooterView(thisView.footerView);
+							// }
+							// });
 
 							getUserShares();
 						}
@@ -234,13 +236,13 @@ public class ShareListController {
 								}
 							});
 						}
-//						thisView.fileHandlers.handler.post(new Runnable() {
-//
-//							@Override
-//							public void run() {
-//								thisView.listView.removeFooterView(thisView.footerView);
-//							}
-//						});
+						// thisView.fileHandlers.handler.post(new Runnable() {
+						//
+						// @Override
+						// public void run() {
+						// thisView.listView.removeFooterView(thisView.footerView);
+						// }
+						// });
 						loadfinish = true;
 					} else {
 						log.e(response.失败原因);
@@ -250,5 +252,15 @@ public class ShareListController {
 				}
 			}
 		});
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+		if (requestCode == resultCodeDetail && resultCode == Activity.RESULT_OK) {
+			String gsid = data2.getStringExtra("key");
+			if (gsid != null) {
+				shares.remove(gsid);
+				thisView.shareListAdapter.notifyDataSetChanged();
+			}
+		}
 	}
 }

@@ -120,7 +120,7 @@ public class ShareMessageDetailController {
 	}
 
 	public boolean isRelation = false;
-	
+
 	public void initData() {
 		parser.check();
 		gid = thisActivity.getIntent().getStringExtra("gid");
@@ -464,11 +464,16 @@ public class ShareMessageDetailController {
 
 					data = parser.check();
 					Share share = data.shares.shareMap.get(gid);
-					share.shareMessagesOrder.remove(gsid);
+					if (share != null && share.shareMessagesOrder != null) {
+						share.shareMessagesOrder.remove(gsid);
+					}
 					// share.shareMessagesMap.remove(gsid);
 					data.shares.isModified = true;
 					viewManage.postNotifyView("ShareSubViewMessage");
 					httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
+					Intent intent = new Intent();
+					intent.putExtra("key", gsid);
+					thisActivity.setResult(Activity.RESULT_OK, intent);
 					thisActivity.finish();
 				}
 			}).show();

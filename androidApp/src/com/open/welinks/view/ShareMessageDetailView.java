@@ -3,15 +3,25 @@ package com.open.welinks.view;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,6 +50,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
+import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.customView.InnerScrollView;
@@ -356,16 +367,53 @@ public class ShareMessageDetailView {
 			}
 		}
 		if (!"".equals(thisController.textContent)) {
-			TextView textview = new TextView(thisActivity);
-			textview.setTextColor(Color.WHITE);
-			textview.setBackgroundColor(Color.parseColor("#26ffffff"));
-			textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+			TextView textView = new TextView(thisActivity);
+			textView.setTextColor(Color.WHITE);
+			textView.setBackgroundColor(Color.parseColor("#26ffffff"));
+			textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
 			int padding = (int) (10 * screenDensity + 0.5f);
-			textview.setPadding(padding, padding, padding, padding);
+			textView.setPadding(padding, padding, padding, padding);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			textview.setLayoutParams(params);
-			textview.setText(thisController.textContent);
-			shareMessageDetailContentView.addView(textview);
+			textView.setLayoutParams(params);
+
+			// SpannableString spannableString = new SpannableString(thisController.textContent);
+
+			textView.setText(thisController.textContent);
+			textView.setAutoLinkMask(Linkify.ALL);
+			textView.setMovementMethod(LinkMovementMethod.getInstance());
+			shareMessageDetailContentView.addView(textView);
+			URLSpan[] urls = textView.getUrls();
+			SpannableStringBuilder style = new SpannableStringBuilder(thisController.textContent);
+
+			String contentString = thisController.textContent;
+			Map<String, Integer> positionMap = new HashMap<String, Integer>();
+			if (urls.length > 0) {
+				Log.e(tag, "Url length:" + urls.length);
+				for (int i = 0; i < urls.length; i++) {
+					String str = urls[i].getURL();
+					Log.e(tag, "Url content:" + str);
+					int start = 0;
+					int end = 0;
+					if (positionMap.get(str) == null) {
+						start = contentString.indexOf(str);
+						end = start + str.length();
+						positionMap.put(str, end);
+					} else {
+						start = positionMap.get(str);
+						start = contentString.indexOf(str, start);
+						end = start + str.length();
+						positionMap.put(str, end);
+					}
+					MyURLSpan myURLSpan = new MyURLSpan(str);
+					style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					// spannableString.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+				}
+			} else {
+				Log.e(tag, "Url length:" + urls.length);
+			}
+			// Log.e(tag, contentString);
+			// textView.setText(spannableString);
+			textView.setText(style);
 		}
 
 		if (thisController.shareMessage.praiseusers.contains(thisController.currentUser.phone)) {
@@ -379,6 +427,22 @@ public class ShareMessageDetailView {
 		shareView.content = thisController.textContent;
 		showPraiseUsersContent();
 		notifyShareMessageComments();
+	}
+
+	private class MyURLSpan extends ClickableSpan {
+
+		private String mUrl;
+
+		MyURLSpan(String url) {
+			mUrl = url;
+		}
+
+		@Override
+		public void onClick(View widget) {
+			Intent intent = new Intent(thisActivity, WebViewActivity.class);
+			intent.putExtra("url", mUrl);
+			thisActivity.startActivity(intent);
+		}
 	}
 
 	public void showPraiseUsersContent() {

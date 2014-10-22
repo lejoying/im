@@ -2,6 +2,7 @@ package com.open.welinks;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.open.lib.MyLog;
@@ -38,5 +39,11 @@ public class ShareListActivity extends Activity {
 		thisController.onCrate();
 		thisController.initializeListeners();
 		thisController.bindEvent();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		thisController.onActivityResult(requestCode, resultCode, data);
 	}
 }

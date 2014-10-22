@@ -31,17 +31,18 @@
                 android:layout_marginLeft="39dp"
                 android:clickable="false"
                 android:singleLine="true"
+                android:text=""
                 android:textColor="#fff"
                 android:textSize="18sp" />
         </RelativeLayout>
 
         <TextView
             android:id="@+id/titleContent"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:gravity="center"
+            android:gravity="left"
+            android:layout_marginLeft="100dp"
             android:singleLine="true"
             android:text=""
             android:textColor="#fff"
