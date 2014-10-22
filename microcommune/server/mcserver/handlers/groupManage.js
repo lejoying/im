@@ -768,6 +768,7 @@ groupManage.modify = function (data, response) {
     var address = data.address;
     var location = data.location;
     var conver = data.conver;
+    var permission = data.permission;
     var time = new Date().getTime();
     var eid = phone + "" + time;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
@@ -876,6 +877,9 @@ groupManage.modify = function (data, response) {
                 }
                 if (conver) {
                     groupData.conver = conver;
+                }
+                if (permission) {
+                    groupData.permission = permission;
                 }
                 var currentLocation = {};
                 if (location) {
