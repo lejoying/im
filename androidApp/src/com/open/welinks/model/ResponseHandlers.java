@@ -945,6 +945,7 @@ public class ResponseHandlers {
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					currentGroup.conver = group.conver;
+					currentGroup.permission = group.permission;
 				} else {
 					data.relationship.groups.add(key);
 					currentGroup = null;
@@ -962,6 +963,7 @@ public class ResponseHandlers {
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					currentGroup.conver = group.conver;
+					currentGroup.permission = group.permission;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
 				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
@@ -1087,6 +1089,7 @@ public class ResponseHandlers {
 				currentGroup.description = group.description;
 				currentGroup.background = group.background;
 				currentGroup.conver = group.conver;
+				currentGroup.permission = group.permission;
 				data.relationship.isModified = true;
 				viewManage.postNotifyView("ShareSubView");
 				viewManage.postNotifyView("GroupListActivity");
@@ -1157,6 +1160,7 @@ public class ResponseHandlers {
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					currentGroup.conver = group.conver;
+					currentGroup.permission = group.permission;
 					data.relationship.isModified = true;
 					viewManage.postNotifyView("ShareSubView");
 					viewManage.postNotifyView("GroupListActivity");
@@ -1195,6 +1199,7 @@ public class ResponseHandlers {
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					currentGroup.conver = group.conver;
+					currentGroup.permission = group.permission;
 					currentGroup.members = members;
 				} else {
 					data.relationship.groups.add(key0);

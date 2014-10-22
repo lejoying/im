@@ -196,6 +196,7 @@ public class Data {
 			public String background;
 			public String createTime;
 			public String conver;
+			public String permission;
 
 			public List<String> members = new ArrayList<String>();
 		}

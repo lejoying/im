@@ -33,7 +33,9 @@ import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertSelectDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.customView.Alert.AlertSelectDialog.OnDialogClickListener2;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -168,7 +170,30 @@ public class GroupInfoController {
 					intent.putExtra("address", " ");
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.permissionOptionView)) {
+					String permission = currentGroup.permission;
+					log.e(permission + "----");
+					Alert.createSelectDialog(thisActivity).setCurrentItem(permission).setOnConfirmClickListener(new OnDialogClickListener2() {
 
+						@Override
+						public void onClick(AlertSelectDialog dialog) {
+							String type = dialog.currentItem;
+							if (currentGroup.permission != null) {
+								if (!currentGroup.permission.equals(type)) {
+									data.relationship.groupsMap.get(currentGroup.gid + "").permission = type;
+									data.relationship.isModified = true;
+									RequestParams params = new RequestParams();
+									params.addBodyParameter("permission", type);
+									modifyGroupData(params);
+								}
+							} else {
+								data.relationship.groupsMap.get(currentGroup.gid + "").permission = type;
+								data.relationship.isModified = true;
+								RequestParams params = new RequestParams();
+								params.addBodyParameter("permission", type);
+								modifyGroupData(params);
+							}
+						}
+					}).show();
 				} else if (view.equals(thisView.exit2DeleteGroup)) {
 					Alert.createDialog(thisActivity).setTitle("您确定要删除并退出该群组？").setOnConfirmClickListener(new OnDialogClickListener() {
 

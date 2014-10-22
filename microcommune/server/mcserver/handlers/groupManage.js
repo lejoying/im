@@ -678,7 +678,8 @@ groupManage.getallmembers = function (data, response) {
                     createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || "",
-                    conver: groupData.conver || ""
+                    conver: groupData.conver || "",
+                    permission: groupData.permission || ""
                 };
                 getGroupMembers(gid, group);
             } else {
@@ -1159,7 +1160,8 @@ groupManage.get = function (data, response) {
                     createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || "",
-                    conver: groupData.conver || ""
+                    conver: groupData.conver || "",
+                    permission: groupData.permission || ""
                 };
                 response.write(JSON.stringify({
                     "提示信息": "获取群组信息成功",
@@ -1465,7 +1467,8 @@ groupManage.getgroupmembers = function (data, response) {
                             latitude: location.latitude || 0,
                             description: groupData.description,
                             background: groupData.background,
-                            conver: groupData.conver || ""
+                            conver: groupData.conver || "",
+                            permission: groupData.permission || ""
                         };
                         var members = [];
                         members.push(account.phone);

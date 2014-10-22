@@ -47,9 +47,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle0" >
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="wxgs.com"
+                    android:scheme="m" />
             </intent-filter>
         </activity>
         <activity
@@ -330,4 +337,5 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
     </application>
-</manifest>
+
+</manifest>
