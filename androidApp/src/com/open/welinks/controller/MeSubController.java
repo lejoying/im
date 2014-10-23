@@ -84,6 +84,11 @@ public class MeSubController {
 					mainController.thisActivity.startActivityForResult((new Intent(mainController.thisActivity, SettingActivity.class)), R.id.tag_first);
 				} else if (view.equals(thisView.dynamicListView)) {
 					Intent intent = new Intent(mainController.thisActivity, DynamicListActivity.class);
+					if (data.event.userNotReadMessage) {
+						intent.putExtra("type", 2);
+					} else if (data.event.groupNotReadMessage) {
+						intent.putExtra("type", 3);
+					}
 					mainController.thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.moreFriendView)) {
 					Intent intent = new Intent(mainController.thisActivity, FindMoreActivity.class);

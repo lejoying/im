@@ -32,7 +32,7 @@ public class NearbyView {
 	public RelativeLayout backView;
 	public RelativeLayout rightContainer;
 	public TextView titleContent;
-	public ListView nearby;
+	public ListView nearbyListView;
 	public ThreeChoicesView threeChoicesView;
 
 	public NearbyAdapter nearbyAdapter;
@@ -57,7 +57,7 @@ public class NearbyView {
 		thisActivity.setContentView(R.layout.activity_nearby);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		titleContent = (TextView) thisActivity.findViewById(R.id.backTitleView);
-		nearby = (ListView) thisActivity.findViewById(R.id.nearby);
+		nearbyListView = (ListView) thisActivity.findViewById(R.id.nearby);
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		threeChoicesView = new ThreeChoicesView(thisActivity, 0);
 		rightContainer.addView(threeChoicesView);
@@ -70,7 +70,7 @@ public class NearbyView {
 
 	public void fillData() {
 		nearbyAdapter = new NearbyAdapter(thisController.mInfomations);
-		nearby.setAdapter(nearbyAdapter);
+		nearbyListView.setAdapter(nearbyAdapter);
 	}
 
 	public class NearbyAdapter extends BaseAdapter {
@@ -141,8 +141,23 @@ public class NearbyView {
 				holder.sex.setImageResource(sexImageResource);
 				holder.name.setText((String) infomation.get("name"));
 				holder.distance.setText(LBSHandlers.getDistance((Integer) infomation.get("distance")));
-				holder.recently.setText(DateUtil.getChatMessageListTime(Long.valueOf((String) infomation.get("lastlogintime"))));
-				holder.age.setText("20");
+				String time = (String) infomation.get("lastlogintime");
+				if (!"".equals(time)) {
+					try {
+						holder.recently.setText(DateUtil.getMessageSequeceTime(Long.valueOf(time)));
+					} catch (NumberFormatException e) {
+						holder.recently.setText("");
+						e.printStackTrace();
+					}
+				} else {
+					holder.recently.setText("");
+				}
+				String age = (String) infomation.get("age");
+				if (age != null && !"".equals(age)) {
+					holder.age.setText(age);
+				} else {
+					holder.age.setText("20");
+				}
 				convertView.setTag(R.id.tag_first, "point");
 				convertView.setTag(R.id.tag_second, (String) infomation.get("phone"));
 				convertView.setTag(R.id.tag_third, infomation);

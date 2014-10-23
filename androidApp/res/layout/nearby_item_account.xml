@@ -49,6 +49,7 @@
                     android:id="@+id/age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="25dp"
                     android:gravity="center"
                     android:textColor="#fff" />
@@ -59,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="2dp"
+                android:tint="#0099cd"
                 android:src="@drawable/mark_location" />
 
             <TextView

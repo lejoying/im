@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.content.Context;
@@ -303,22 +305,18 @@ public class MainController {
 
 			@Override
 			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-
 			}
 
 			@Override
 			public void onProviderEnabled(String arg0) {
-
 			}
 
 			@Override
 			public void onProviderDisabled(String arg0) {
-
 			}
 
 			@Override
 			public void onLocationChanged(Location arg0) {
-
 			}
 
 			@Override
@@ -368,8 +366,6 @@ public class MainController {
 
 			@Override
 			public void onCloudItemDetailSearched(CloudItemDetail detail, int rCode) {
-				// TODO Auto-generated method stub
-
 			}
 		};
 
@@ -518,6 +514,17 @@ public class MainController {
 		data._address = userAddress;
 		data.phone = user.phone;
 		data.sex = user.sex;
+		if (user.age != null && !"".equals(user.age)) {
+			Pattern pattern = Pattern.compile("[0-9]*");
+			Matcher isNum = pattern.matcher(user.age);
+			if (isNum.matches()) {
+				data.age = user.age;
+			} else {
+				data.age = "20";
+			}
+		} else {
+			data.age = "20";
+		}
 		data.head = user.head;
 		data.mainBusiness = user.mainBusiness;
 		data.lastlogintime = user.lastLoginTime;
@@ -559,6 +566,7 @@ public class MainController {
 		public String _address;
 		public String phone;
 		public String sex;
+		public String age;
 		public String head;
 		public String mainBusiness;
 		public String lastlogintime;

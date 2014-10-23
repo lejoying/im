@@ -76,7 +76,8 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/number_chat" />
+                    android:src="@drawable/number_chat"
+                    android:tint="#0099cd" />
 
                 <TextView
                     android:id="@+id/chatNum"

@@ -89,6 +89,7 @@ public class DynamicListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		selectType = getIntent().getIntExtra("type", 3);
+		
 
 		viewManage.dynamicListActivity = this;
 		friendsMap = data.relationship.friendsMap;

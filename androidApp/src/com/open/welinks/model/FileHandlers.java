@@ -147,7 +147,7 @@ public class FileHandlers {
 
 	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
 		imageLoader.displayImage("drawable://" + R.drawable.face_man, imageView, options);
-		if (!fileName.equals("")) {
+		if (fileName != null && !"".equals(fileName)) {
 			File imageFile = new File(sdcardHeadImageFolder, fileName);
 			final String path = imageFile.getAbsolutePath();
 			final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
