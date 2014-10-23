@@ -195,12 +195,16 @@ public class ShareSubView {
 		if (file.exists()) {
 			imageLoader.displayImage("file://" + file.getAbsolutePath(), groupCoverView);
 		} else {
-			groupCoverView.setTag("conver");
-			DownloadFile downloadFile = new DownloadFile("", file.getAbsolutePath());
-			// TODO
-			downloadFile.view = groupCoverView;
-			downloadFile.setDownloadFileListener(thisController.downloadListener);
-			downloadFileList.addDownloadFile(downloadFile);
+			if (group.conver != null) {
+				groupCoverView.setTag("conver");
+				String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + group.conver;
+				DownloadFile downloadFile = new DownloadFile(url, file.getAbsolutePath());
+				downloadFile.view = groupCoverView;
+				downloadFile.setDownloadFileListener(thisController.downloadListener);
+				downloadFileList.addDownloadFile(downloadFile);
+			} else {
+				imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+			}
 		}
 	}
 

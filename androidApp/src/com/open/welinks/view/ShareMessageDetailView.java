@@ -228,7 +228,7 @@ public class ShareMessageDetailView {
 		controlProgress.initialize(this.controlProgressView);
 
 		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
-		// praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
+		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
 
 		// menu option
 		menuOptionsView = (RelativeLayout) thisActivity.findViewById(R.id.menuOptions);

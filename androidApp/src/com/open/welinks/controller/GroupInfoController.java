@@ -344,7 +344,7 @@ public class GroupInfoController {
 			currentGroup.icon = headFileName;
 			thisView.fileHandlers.getHeadImage(headFileName, thisView.headIvView, thisView.options);
 			System.out.println((String) map.get("fileName"));
-			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"));
+			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"), UploadMultipart.UPLOAD_TYPE_HEAD);
 		} else if (requestCode == CONVER_SET && resultCode == Activity.RESULT_OK) {
 			Intent intent = new Intent(thisActivity, CropActivity.class);
 			intent.putExtra("path", data.tempData.selectedImageList.get(0));
@@ -361,7 +361,7 @@ public class GroupInfoController {
 			}
 			currentGroup.conver = fileName;
 			viewManage.postNotifyView("ShareSubViewConver");
-			uploadFile(file.getAbsolutePath(), fileName, bytes);
+			uploadFile(file.getAbsolutePath(), fileName, bytes, UploadMultipart.UPLOAD_TYPE_BACKGROUND);
 		}
 	}
 
@@ -375,8 +375,8 @@ public class GroupInfoController {
 		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFY, params, responseHandlers.group_modify);
 	}
 
-	public void uploadFile(final String filePath, final String fileName, final byte[] bytes) {
-		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, UploadMultipart.UPLOAD_TYPE_HEAD);
+	public void uploadFile(final String filePath, final String fileName, final byte[] bytes, int uploadType) {
+		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, uploadType);
 		uploadMultipartList.addMultipart(multipart);
 		multipart.setUploadLoadingListener(uploadLoadingListener);
 	}

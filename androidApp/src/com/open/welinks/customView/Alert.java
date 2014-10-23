@@ -393,7 +393,6 @@ public class Alert {
 		}
 
 		/**
-		 * i= 1 open ; i=2 semiopen ; i=3 private
 		 * 
 		 * @param i
 		 * @return
@@ -402,24 +401,28 @@ public class Alert {
 			if ("open".equals(permission)) {
 				currentView = dialog.v1;
 				currentItem = "open";
+				dialog.description.setText("所有人可见,可以查看群分享并可以点赞和评论.");
 				dialog.v1Status.setVisibility(View.VISIBLE);
 				dialog.v2Status.setVisibility(View.GONE);
 				dialog.v3Status.setVisibility(View.GONE);
 			} else if ("semiopen".equals(permission)) {
 				currentView = dialog.v2;
 				currentItem = "semiopen";
+				dialog.description.setText("所有人可见,非群组成员只能查看群分享,不能点赞和评论.");
 				dialog.v1Status.setVisibility(View.GONE);
 				dialog.v2Status.setVisibility(View.VISIBLE);
 				dialog.v3Status.setVisibility(View.GONE);
 			} else if ("private".equals(permission)) {
 				currentView = dialog.v3;
 				currentItem = "private";
+				dialog.description.setText("仅群成员可以查看群分享,并可以点赞和评论.");
 				dialog.v1Status.setVisibility(View.GONE);
 				dialog.v2Status.setVisibility(View.GONE);
 				dialog.v3Status.setVisibility(View.VISIBLE);
 			} else {
 				currentView = dialog.v1;
 				currentItem = "open";
+				dialog.description.setText("所有人可见,可以查看群分享并可以点赞和评论.");
 				dialog.v1Status.setVisibility(View.VISIBLE);
 				dialog.v2Status.setVisibility(View.GONE);
 				dialog.v3Status.setVisibility(View.GONE);
@@ -439,6 +442,7 @@ public class Alert {
 			View v2Status;
 			View v3;
 			View v3Status;
+			TextView description;
 
 			public CommonDialog(final Context context) {
 				super(context, R.style.AlertInputDialog);
@@ -453,8 +457,10 @@ public class Alert {
 				v1Status = content.findViewById(R.id.openStatus);
 				v2Status = content.findViewById(R.id.semiOpenStatus);
 				v3Status = content.findViewById(R.id.privateOptionStatus);
+				description = (TextView) content.findViewById(R.id.description);
 				currentView = v1;
 				currentItem = "open";
+				description.setText("所有人可见,可以查看群分享并可以点赞和评论.");
 				setContentView(content, new ViewGroup.LayoutParams(context.getResources().getDisplayMetrics().widthPixels, ViewGroup.LayoutParams.WRAP_CONTENT));
 				setCanceledOnTouchOutside(false);
 
@@ -464,6 +470,7 @@ public class Alert {
 					public void onClick(View v) {
 						currentView = v1;
 						currentItem = "open";
+						description.setText("所有人可见,可以查看群分享并可以点赞和评论.");
 						v1Status.setVisibility(View.VISIBLE);
 						v2Status.setVisibility(View.GONE);
 						v3Status.setVisibility(View.GONE);
@@ -475,6 +482,7 @@ public class Alert {
 					public void onClick(View v) {
 						currentView = v2;
 						currentItem = "semiopen";
+						description.setText("所有人可见,非群组成员只能查看群分享,不能点赞和评论.");
 						v1Status.setVisibility(View.GONE);
 						v2Status.setVisibility(View.VISIBLE);
 						v3Status.setVisibility(View.GONE);
@@ -486,6 +494,7 @@ public class Alert {
 					public void onClick(View v) {
 						currentView = v3;
 						currentItem = "private";
+						description.setText("仅群成员可以查看群分享,并可以点赞和评论.");
 						v1Status.setVisibility(View.GONE);
 						v2Status.setVisibility(View.GONE);
 						v3Status.setVisibility(View.VISIBLE);
