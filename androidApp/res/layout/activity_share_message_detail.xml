@@ -19,7 +19,7 @@
             <ScrollView
                 android:id="@+id/mainScrollView"
                 android:layout_width="fill_parent"
-                android:background="#855e42"
+                android:background="@drawable/main_background"
                 android:layout_height="match_parent"
                 android:layout_marginTop="50dp"
                 android:scrollbars="none" >

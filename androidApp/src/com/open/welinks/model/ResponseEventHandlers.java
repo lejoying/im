@@ -216,7 +216,7 @@ public class ResponseEventHandlers {
 
 	public void handleRelationBlacklistEvent(EventMessage message) {
 		String key = message.eid;
-		if (!data.event.groupEvents.contains(key)) {
+		if (!data.event.userEvents.contains(key)) {
 			data.event.userEvents.add(key);
 			data.event.userEventsMap.put(key, message);
 			data.event.userNotReadMessage = true;
@@ -229,7 +229,7 @@ public class ResponseEventHandlers {
 
 	public void handleRelationDeletefriendEvent(EventMessage message) {
 		String key = message.eid;
-		if (!data.event.groupEvents.contains(key)) {
+		if (!data.event.userEvents.contains(key)) {
 			data.event.userEvents.add(key);
 			data.event.userEventsMap.put(key, message);
 			data.event.userNotReadMessage = true;
@@ -281,13 +281,15 @@ public class ResponseEventHandlers {
 			data.event.userEventsMap.remove(dealMessage.eid);
 		}
 		String key = message.eid;
-		data.event.userEvents.add(key);
-		data.event.userEventsMap.put(key, message);
-		data.event.userNotReadMessage = true;
-		String eventKey = "event_user";
-		checkEventIsMessageOrder(eventKey);
-		viewManage.postNotifyView("DynamicListActivity");
-		viewManage.postNotifyView("MessagesSubView");
+		if (!data.event.userEvents.contains(key)) {
+			data.event.userEvents.add(key);
+			data.event.userEventsMap.put(key, message);
+			data.event.userNotReadMessage = true;
+			String eventKey = "event_user";
+			checkEventIsMessageOrder(eventKey);
+			viewManage.postNotifyView("DynamicListActivity");
+			viewManage.postNotifyView("MessagesSubView");
+		}
 	}
 
 	// OK
@@ -315,27 +317,31 @@ public class ResponseEventHandlers {
 			data.event.userEventsMap.remove(dealMessage.eid);
 		}
 		String key = message.eid;
-		data.event.userEvents.add(key);
-		data.event.userEventsMap.put(key, message);
-		data.event.userNotReadMessage = true;
-		String eventKey = "event_user";
-		checkEventIsMessageOrder(eventKey);
-		viewManage.postNotifyView("DynamicListActivity");
-		viewManage.postNotifyView("MessagesSubView");
+		if (!data.event.userEvents.contains(key)) {
+			data.event.userEvents.add(key);
+			data.event.userEventsMap.put(key, message);
+			data.event.userNotReadMessage = true;
+			String eventKey = "event_user";
+			checkEventIsMessageOrder(eventKey);
+			viewManage.postNotifyView("DynamicListActivity");
+			viewManage.postNotifyView("MessagesSubView");
+		}
 	}
 
 	// OK
 	public void handleAccountDataupdateEvent(EventMessage message) {
 		String key = message.eid;
-		parser.check();
-		data.event.userEvents.add(key);
-		data.event.userEventsMap.put(key, message);
-		data.event.userNotReadMessage = true;
-		String eventKey = "event_user";
-		checkEventIsMessageOrder(eventKey);
-		viewManage.postNotifyView("DynamicListActivity");
-		viewManage.postNotifyView("MessagesSubView");
-		DataHandlers.getUserInfomation();
+		if (!data.event.userEvents.contains(key)) {
+			parser.check();
+			data.event.userEvents.add(key);
+			data.event.userEventsMap.put(key, message);
+			data.event.userNotReadMessage = true;
+			String eventKey = "event_user";
+			checkEventIsMessageOrder(eventKey);
+			viewManage.postNotifyView("DynamicListActivity");
+			viewManage.postNotifyView("MessagesSubView");
+			DataHandlers.getUserInfomation();
+		}
 	}
 
 	public static abstract class Response<T> {
