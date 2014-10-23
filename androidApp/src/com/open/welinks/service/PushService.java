@@ -19,6 +19,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.LoginActivity;
+import com.open.welinks.MainActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
@@ -146,11 +147,14 @@ public class PushService extends Service {
 			}
 			if (response.失败原因 != null) {
 				if ("请求失败".equals(response.提示信息)) {
-					stopLongPull();
-					parser.check();
-					data.userInformation.currentUser.accessKey = "";
-					data.userInformation.isModified = true;
+					// stopLongPull();
+					// parser.check();
+					// data.userInformation.currentUser.accessKey = "";
+					// data.userInformation.isModified = true;
 					log.e("accessKey 无效,自动退出...");
+					if (MainActivity.instance != null) {
+						MainActivity.instance.thisController.exit();
+					}
 				} else {
 				}
 			} else {

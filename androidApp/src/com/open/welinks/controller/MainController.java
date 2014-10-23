@@ -767,25 +767,29 @@ public class MainController {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK) {
-			data = parser.check();
-			data.userInformation.currentUser.phone = "";
-			data.userInformation.currentUser.accessKey = "";
-			data.userInformation.isModified = true;
-			parser.save();
-			thisActivity.stopService(new Intent(thisActivity, PushService.class));
-			if (this.connectionChangeReceiver != null) {
-				thisActivity.unregisterReceiver(this.connectionChangeReceiver);
-				connectionChangeReceiver = null;
-			}
-			DataHandlers.clearData();
-			thisActivity.finish();
-			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
+			exit();
 		} else if (requestCode == R.id.tag_second) {
 			messagesSubController.onActivityResult(requestCode, resultCode, data2);
 		} else {
 			shareSubController.onActivityResult(requestCode, resultCode, data2);
 		}
 
+	}
+
+	public void exit() {
+		data = parser.check();
+		data.userInformation.currentUser.phone = "";
+		data.userInformation.currentUser.accessKey = "";
+		data.userInformation.isModified = true;
+		parser.save();
+		thisActivity.stopService(new Intent(thisActivity, PushService.class));
+		if (this.connectionChangeReceiver != null) {
+			thisActivity.unregisterReceiver(this.connectionChangeReceiver);
+			connectionChangeReceiver = null;
+		}
+		DataHandlers.clearData();
+		thisActivity.finish();
+		thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 	}
 
 	public int getStatusBarHeight(Context context) {

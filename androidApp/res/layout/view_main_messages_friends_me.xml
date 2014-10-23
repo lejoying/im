@@ -139,7 +139,7 @@
             android:layout_width="125dp"
             android:layout_height="155dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/icon_star_text"
+            android:background="@drawable/icon_star"
             android:visibility="gone" />
 
         <ImageView
