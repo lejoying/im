@@ -1,16 +1,22 @@
 package com.open.welinks;
 
+import java.lang.reflect.Field;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.open.lib.MyLog;
@@ -29,6 +35,8 @@ public class WebViewActivity extends Activity {
 	public TextView backTitle;
 	public TextView centerTv;
 
+	public LinearLayout container;
+
 	public String url = "http://www.we-links.com";
 
 	public DisplayMetrics displayMetrics;
@@ -36,6 +44,7 @@ public class WebViewActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setConfigCallback((WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE));
 		String url = this.getIntent().getStringExtra("url");
 		if (url != null && !url.equals("")) {
 			this.url = url;
@@ -47,9 +56,14 @@ public class WebViewActivity extends Activity {
 	private void initView() {
 		displayMetrics = new DisplayMetrics();
 		this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
 		setContentView(R.layout.activity_webview);
-		webView = (WebView) findViewById(R.id.webView);
+		container = (LinearLayout) findViewById(R.id.container);
+		webView = new WebView(getApplicationContext());
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		container.addView(webView, params);
 		webView.getSettings().setJavaScriptEnabled(true);
+		webView.getSettings().setBuiltInZoomControls(true);
 		webView.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
 			}
@@ -99,5 +113,34 @@ public class WebViewActivity extends Activity {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	protected void onDestroy() {
+		setConfigCallback(null);
+		super.onDestroy();
+		webView.setVisibility(View.GONE);
+		webView.removeAllViews();
+		webView.destroy();
+
+	}
+
+	public void setConfigCallback(WindowManager windowManager) {
+		try {
+			Field field = WebView.class.getDeclaredField("mWebViewCore");
+			field = field.getType().getDeclaredField("mBrowserFrame");
+			field = field.getType().getDeclaredField("sConfigCallback");
+			field.setAccessible(true);
+			Object configCallback = field.get(null);
+
+			if (null == configCallback) {
+				return;
+			}
+
+			field = field.getType().getDeclaredField("mWindowManager");
+			field.setAccessible(true);
+			field.set(configCallback, windowManager);
+		} catch (Exception e) {
+		}
 	}
 }

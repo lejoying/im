@@ -6,10 +6,11 @@
 
     <include layout="@layout/view_back_view" />
 
-    <WebView
-        android:id="@+id/webView"
+    <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </WebView>
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+    </LinearLayout>
 
 </LinearLayout>
