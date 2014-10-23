@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -762,5 +764,49 @@ public class ShareMessageDetailController {
 				}
 			};
 		});
+	}
+
+	public float xDown;
+	public float xMove;
+	public VelocityTracker mVelocityTracker;
+	private static final int XSPEED_MIN = 200;
+
+	private static final int XDISTANCE_MIN = 100;
+
+	public boolean onTouchEvent(MotionEvent event) {
+		createVelocityTracker(event);
+
+		int id = event.getAction();
+
+		if (id == MotionEvent.ACTION_DOWN) {
+			xDown = event.getRawX();
+
+		} else if (id == MotionEvent.ACTION_MOVE) {
+			xMove = event.getRawX();
+			int distanceX = (int) (xMove - xDown);
+			int xSpeed = getScrollVelocity();
+
+			if (distanceX > XDISTANCE_MIN && xSpeed > XSPEED_MIN) {
+				finish();
+			}
+
+		} else if (id == MotionEvent.ACTION_UP) {
+
+		}
+		return true;
+	}
+
+	@SuppressLint("Recycle")
+	private void createVelocityTracker(MotionEvent event) {
+		if (mVelocityTracker == null) {
+			mVelocityTracker = VelocityTracker.obtain();
+		}
+		mVelocityTracker.addMovement(event);
+	}
+
+	private int getScrollVelocity() {
+		mVelocityTracker.computeCurrentVelocity(1000);
+		int velocity = (int) mVelocityTracker.getXVelocity();
+		return Math.abs(velocity);
 	}
 }

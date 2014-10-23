@@ -1,140 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maxView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
     android:orientation="vertical" >
 
-    <include layout="@layout/view_back_view" />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="#38ffffff"
-        android:gravity="center_vertical" >
+        android:layout_height="match_parent"
+        android:background="@drawable/main_background"
+        android:orientation="vertical" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:text="通知和提醒"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+        <include layout="@layout/view_back_view" />
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:padding="5dp"
-            android:src="@drawable/into" />
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/opinion"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="1dp"
-        android:background="#38ffffff"
-        android:gravity="center_vertical" >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="#38ffffff"
+                android:gravity="center_vertical" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:text="意见反馈"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="通知和提醒"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:padding="5dp"
-            android:src="@drawable/into" />
-    </RelativeLayout>
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:padding="5dp"
+                    android:src="@drawable/into" />
+            </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/disclaimer"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="7dp"
-        android:background="#38ffffff"
-        android:gravity="center_vertical" >
+            <RelativeLayout
+                android:id="@+id/opinion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="1dp"
+                android:background="#38ffffff"
+                android:gravity="center_vertical" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:text="隐私条款"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="意见反馈"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:padding="5dp"
-            android:src="@drawable/into" />
-    </RelativeLayout>
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:padding="5dp"
+                    android:src="@drawable/into" />
+            </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/about"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="1dp"
-        android:background="#38ffffff"
-        android:gravity="center_vertical" >
+            <RelativeLayout
+                android:id="@+id/disclaimer"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="7dp"
+                android:background="#38ffffff"
+                android:gravity="center_vertical" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:text="关于微型公社"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="隐私条款"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:padding="5dp"
-            android:src="@drawable/into" />
-    </RelativeLayout>
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:padding="5dp"
+                    android:src="@drawable/into" />
+            </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_exitCurrentUser"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="40dp"
-        android:background="#38ffffff"
-        android:gravity="center" >
+            <RelativeLayout
+                android:id="@+id/about"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="1dp"
+                android:background="#38ffffff"
+                android:gravity="center_vertical" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="退出当前帐号"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-    </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="关于微型公社"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:padding="5dp"
+                    android:src="@drawable/into" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_exitCurrentUser"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="40dp"
+                android:background="#38ffffff"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="退出当前帐号"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

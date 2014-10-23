@@ -5,12 +5,13 @@
     <color name="background_white">#ffffff</color>
     <color name="card_color">#380099cd</color>
     <color name="card_color2">#380099cd</color>
+    <color name="card_color3">#510099cd</color>
     <color name="card_color_on_background">#38ffffff</color>
     <color name="text_color">#eeffffff</color>
     <color name="text_color_on_background">#eeffffff</color>
     <color name="text_color_black">#99000000</color>
     <color name="text_color_black_2">#66000000</color>
-     <color name="text_color_blue">#0099cd</color>
+    <color name="text_color_blue">#0099cd</color>
     <color name="background_gray">#dd000000</color>
     <color name="icon_color">#0099cd</color>
     <color name="TransparentGrey">#7F000000</color>

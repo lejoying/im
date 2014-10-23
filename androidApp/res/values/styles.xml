@@ -77,6 +77,12 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="CommonStyle2" parent="android:Theme.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/CommonAnimation2</item>
+        <item name="android:windowBackground">@color/Transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
     <style name="CommonStyle0" parent="android:Theme.NoTitleBar">
         <item name="android:windowAnimationStyle">@style/CommonAnimation0</item>
     </style>
