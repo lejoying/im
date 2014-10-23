@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,9 +30,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-import android.widget.RelativeLayout.LayoutParams;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -44,6 +45,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.CharacterParser;
 
+@SuppressLint("DefaultLocale")
 public class FriendsSortListActivity extends Activity {
 
 	public Data data = Data.getInstance();
@@ -386,10 +388,10 @@ public class FriendsSortListActivity extends Activity {
 
 							@Override
 							public void run() {
-//								if (invitaFriends.size() == 1) {
-//									FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
-//									layoutParams.bottomMargin = (int) (50 * displayMetrics.density);
-//								}
+								// if (invitaFriends.size() == 1) {
+								// FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
+								// layoutParams.bottomMargin = (int) (50 * displayMetrics.density);
+								// }
 								showAlreayList();
 							}
 						});
@@ -401,10 +403,10 @@ public class FriendsSortListActivity extends Activity {
 
 							@Override
 							public void run() {
-//								if (invitaFriends.size() == 0) {
-//									FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
-//									layoutParams.bottomMargin = 0;
-//								}
+								// if (invitaFriends.size() == 0) {
+								// FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
+								// layoutParams.bottomMargin = 0;
+								// }
 								showAlreayList();
 							}
 						});
@@ -427,6 +429,7 @@ public class FriendsSortListActivity extends Activity {
 			return list.get(position).getSortLetters().charAt(0);
 		}
 
+		@SuppressLint("DefaultLocale")
 		public int getPositionForSection(int section) {
 			for (int i = 0; i < getCount(); i++) {
 				String sortStr = list.get(i).getSortLetters();
@@ -438,14 +441,14 @@ public class FriendsSortListActivity extends Activity {
 			return -1;
 		}
 
-		private String getAlpha(String str) {
-			String sortStr = str.trim().substring(0, 1).toUpperCase();
-			if (sortStr.matches("[A-Z]")) {
-				return sortStr;
-			} else {
-				return "#";
-			}
-		}
+		// private String getAlpha(String str) {
+		// String sortStr = str.trim().substring(0, 1).toUpperCase();
+		// if (sortStr.matches("[A-Z]")) {
+		// return sortStr;
+		// } else {
+		// return "#";
+		// }
+		// }
 
 		@Override
 		public Object[] getSections() {

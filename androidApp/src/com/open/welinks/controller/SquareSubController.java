@@ -134,7 +134,7 @@ public class SquareSubController {
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						int height = thisView.showImageHeight;
+						// int height = thisView.showImageHeight;
 						// TouchView.LayoutParams params = new TouchView.LayoutParams(thisView.showImageWidth, height);
 						// imageView.setLayoutParams(params);
 					}
@@ -147,7 +147,7 @@ public class SquareSubController {
 					if ("image".equals(instance.view.getTag().toString())) {
 						String tag = instance.view.getTag().toString();
 						Log.e(tag, "---------------failure:" + tag);
-						ImageView imageView = ((ImageView) (instance.view));
+						// ImageView imageView = ((ImageView) (instance.view));
 						if (tag.equals("left")) {
 							// imageView.setImageResource(R.drawable.square_temp);
 						} else {
@@ -488,7 +488,7 @@ public class SquareSubController {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_head")) {
 				onTouchDownView.performClick();
-			}else if (view_class.equals("share_head")) {
+			} else if (view_class.equals("share_head")) {
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;

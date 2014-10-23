@@ -53,7 +53,6 @@ import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.ShareMessageDetailController;
-import com.open.welinks.customView.InnerScrollView;
 import com.open.welinks.customView.ShareView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -96,7 +95,7 @@ public class ShareMessageDetailView {
 
 	public LinearLayout shareMessageDetailContentView;
 	public ScrollView mainScrollView;
-	public InnerScrollView detailScrollView;
+	// public InnerScrollView detailScrollView;
 
 	public LinearLayout mainScrollInnerView;
 
@@ -173,11 +172,11 @@ public class ShareMessageDetailView {
 		thisActivity.setContentView(R.layout.activity_share_message_detail);
 		shareMessageDetailContentView = (LinearLayout) thisActivity.findViewById(R.id.shareMessageDetailContentView);
 		mainScrollView = (ScrollView) thisActivity.findViewById(R.id.mainScrollView);
-		detailScrollView = (InnerScrollView) thisActivity.findViewById(R.id.detailScrollView);
+		// detailScrollView = (InnerScrollView) thisActivity.findViewById(R.id.detailScrollView);
 		mainScrollInnerView = (LinearLayout) thisActivity.findViewById(R.id.mainScrollInnerView);
-		detailScrollView.parentScrollView = mainScrollView;
+		// detailScrollView.parentScrollView = mainScrollView;
 		mainScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		detailScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		// detailScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
 		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitleView.setText("分享详情");
@@ -229,7 +228,7 @@ public class ShareMessageDetailView {
 		controlProgress.initialize(this.controlProgressView);
 
 		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
-		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
+		// praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
 
 		// menu option
 		menuOptionsView = (RelativeLayout) thisActivity.findViewById(R.id.menuOptions);
@@ -248,8 +247,8 @@ public class ShareMessageDetailView {
 		// shareView.content = thisController.textContent;
 		sharePopupWindow = new PopupWindow(shareView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		thisController.initShareListener();
-		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
-		detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
+		// android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
+		// detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
 
 		if (thisController.shareMessage != null) {
 			showShareMessageDetail();

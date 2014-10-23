@@ -267,6 +267,7 @@ public class LoginView {
 	public PopupWindow inputPopWindow;
 	public View inputDialogView;
 
+	@SuppressWarnings("deprecation")
 	public void showInputDialog() {
 		mInflater = thisActivity.getLayoutInflater();
 		inputDialogView = mInflater.inflate(R.layout.widget_alert_input_dialog, null);
@@ -297,6 +298,7 @@ public class LoginView {
 	public int DIALOG_SWITCH = 0x02;
 	public int currentStatus = SHOW_DIALOG;
 
+	@SuppressWarnings("deprecation")
 	public void showCircleSettingDialog() {
 		currentStatus = SHOW_DIALOG;
 		mInflater = thisActivity.getLayoutInflater();

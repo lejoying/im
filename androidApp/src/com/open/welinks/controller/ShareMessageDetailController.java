@@ -439,7 +439,7 @@ public class ShareMessageDetailController {
 		thisView.shareOptionView.setOnClickListener(mOnClickListener);
 
 		thisView.mainScrollView.setOnTouchListener(mOnTouchListener);
-		thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
+		// thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
 
 		thisView.sharePopupWindow.setTouchInterceptor(mOnTouchListener);
 		thisView.shareView.setOnClickListener(mOnClickListener);

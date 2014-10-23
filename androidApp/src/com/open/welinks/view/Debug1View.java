@@ -108,12 +108,12 @@ public class Debug1View {
 
 				View transportingItemView = transportingItem.initialize(imageBean);
 				String path = imageBean.path;
-//				if (imageBean.multipart == null) {
-//					imageBean.multipart = thisController.uploadFile(path);
-//				}
-//
-//				imageBean.multipart.transportingItem = transportingItem;
-//				transportingItem.uploadMultipart = imageBean.multipart;
+				// if (imageBean.multipart == null) {
+				// imageBean.multipart = thisController.uploadFile(path);
+				// }
+				//
+				// imageBean.multipart.transportingItem = transportingItem;
+				// transportingItem.uploadMultipart = imageBean.multipart;
 				transportingItemView.setTag(path);
 				// controlProgress.setTag(uploadMultipart);
 				transportingList.addFooterView(transportingItemView);
@@ -166,17 +166,17 @@ public class Debug1View {
 				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
 				this.controlProgress.initialize(this.controlProgressView);
-//				if (imageSource.multipart != null) {
-//					long time = imageSource.multipart.time.received - imageSource.multipart.time.start;
-//					if (time < 0) {
-//						time = 0;
-//					}
-//					text_transport_time_view.setText(time + "ms");
-//					long size = Long.valueOf(imageSource.size);
-//					int currentUploadSize = (int) Math.floor(size * imageSource.multipart.uploadPrecent / 100f);
-//					text_file_size_view.setText(currentUploadSize + "/" + size + "k");
-//					this.controlProgress.moveTo(imageSource.multipart.uploadPrecent);
-//				}
+				// if (imageSource.multipart != null) {
+				// long time = imageSource.multipart.time.received - imageSource.multipart.time.start;
+				// if (time < 0) {
+				// time = 0;
+				// }
+				// text_transport_time_view.setText(time + "ms");
+				// long size = Long.valueOf(imageSource.size);
+				// int currentUploadSize = (int) Math.floor(size * imageSource.multipart.uploadPrecent / 100f);
+				// text_file_size_view.setText(currentUploadSize + "/" + size + "k");
+				// this.controlProgress.moveTo(imageSource.multipart.uploadPrecent);
+				// }
 
 				LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);
@@ -191,7 +191,7 @@ public class Debug1View {
 	}
 
 	public void setUploadLoading(UploadLoading uploadLoading) {
-		UploadLoading uploadLoadings = uploadLoading;
+		// UploadLoading uploadLoadings = uploadLoading;
 	}
 
 	public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {

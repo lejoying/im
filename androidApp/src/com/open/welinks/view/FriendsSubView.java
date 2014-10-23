@@ -272,6 +272,7 @@ public class FriendsSubView {
 	public PopupWindow inputPopWindow;
 	public View inputDialogView;
 
+	@SuppressWarnings("deprecation")
 	public void showInputDialog() {
 		mInflater = mainView.thisActivity.getLayoutInflater();
 		inputDialogView = mInflater.inflate(R.layout.widget_alert_input_dialog, null);
@@ -308,6 +309,7 @@ public class FriendsSubView {
 	public EditText inputEditView;
 	public TextView circleName;
 
+	@SuppressWarnings("deprecation")
 	public void showCircleSettingDialog(Circle circle) {
 		currentStatus = SHOW_DIALOG;
 		dialogSpring.addListener(dialogSpringListener);

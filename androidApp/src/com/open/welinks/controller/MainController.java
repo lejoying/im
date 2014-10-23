@@ -352,7 +352,7 @@ public class MainController {
 								map.put("name", item.getTitle());
 								map.put("address", item.getSnippet());
 								map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
-								Iterator iter = item.getCustomfield().entrySet().iterator();
+								Iterator<?> iter = item.getCustomfield().entrySet().iterator();
 								while (iter.hasNext()) {
 									Map.Entry entry = (Map.Entry) iter.next();
 									map.put(entry.getKey().toString(), entry.getValue());
