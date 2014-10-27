@@ -217,6 +217,44 @@ public class SquareSubView {
 		imageHeight = (int) (width * imageHeightScale);
 	}
 
+	public void setConver() {
+		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		final String path = file.getAbsolutePath();
+		log.e(file.exists() + "---exists" + group.conver);
+		if (file.exists()) {
+			imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
+				@Override
+				public void onLoadingStarted(String imageUri, View view) {
+				}
+
+				@Override
+				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					downloadConver(group.conver, path);
+				}
+
+				@Override
+				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				}
+			});
+		} else {
+			if (group.conver != null) {
+				downloadConver(group.conver, path);
+			} else {
+				imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
+			}
+		}
+	}
+
+	public void downloadConver(String converName, String path) {
+		groupCoverView.setTag("conver");
+		String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + converName;
+		DownloadFile downloadFile = new DownloadFile(url, path);
+		downloadFile.view = groupCoverView;
+		downloadFile.setDownloadFileListener(thisController.downloadListener);
+		downloadFileList.addDownloadFile(downloadFile);
+	}
+
 	public DisplayImageOptions bigHeadOptions;
 
 	public void showSquareMessages(boolean flag) {
@@ -259,8 +297,13 @@ public class SquareSubView {
 		this.squareMessageListBody.height = this.squareMessageListBody.height + (215) * displayMetrics.density;// 215 - 48
 		this.squareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 
-		imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+		if (group.conver != null && !group.conver.equals("")) {
+			setConver();
+		} else {
+			imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
+		}
+
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
 		titleName.setText(group.name + "广场");
 

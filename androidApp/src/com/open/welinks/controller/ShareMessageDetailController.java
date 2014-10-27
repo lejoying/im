@@ -813,4 +813,8 @@ public class ShareMessageDetailController {
 		int velocity = (int) mVelocityTracker.getXVelocity();
 		return Math.abs(velocity);
 	}
+
+	public void onResume() {
+		thisView.sharePopupWindow.dismiss();
+	}
 }

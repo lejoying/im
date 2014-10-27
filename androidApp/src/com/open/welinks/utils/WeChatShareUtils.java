@@ -79,6 +79,9 @@ public class WeChatShareUtils {
 		Canvas localCanvas = new Canvas(localBitmap);
 		int i;
 		int j;
+		if (bitmap == null) {
+			return new byte[0];
+		}
 		if (bitmap.getHeight() > bitmap.getWidth()) {
 			i = bitmap.getWidth();
 			j = bitmap.getWidth();

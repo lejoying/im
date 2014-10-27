@@ -136,7 +136,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="40dp"
-                android:background="#38ffffff"
+                android:background="@drawable/button_75c2b8_background"
                 android:gravity="center" >
 
                 <TextView

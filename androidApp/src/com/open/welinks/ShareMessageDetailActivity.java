@@ -69,6 +69,12 @@ public class ShareMessageDetailActivity extends SwipeBackActivity {
 	}
 
 	@Override
+	protected void onResume() {
+		thisController.onResume();
+		super.onResume();
+	}
+
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		thisController.onWindwoFocusChanged();
 		super.onWindowFocusChanged(hasFocus);

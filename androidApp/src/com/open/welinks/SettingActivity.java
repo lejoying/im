@@ -3,14 +3,12 @@ package com.open.welinks;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -67,7 +65,7 @@ public class SettingActivity extends Activity implements OnClickListener {
 		disclaimer.setOnClickListener(this);
 		// disclaimer.setOnTouchListener(this);
 		opinion.setOnClickListener(this);
-		setOnTouch(exitCurrentUserView);
+		// setOnTouch(exitCurrentUserView);
 		backView.setOnClickListener(this);
 	}
 
@@ -90,24 +88,6 @@ public class SettingActivity extends Activity implements OnClickListener {
 		} else if (id == R.id.opinion) {
 			startActivity(new Intent(SettingActivity.this, FeedBackActivity.class));
 		}
-	}
-
-	void setOnTouch(final View view) {
-		view.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					view.setBackgroundColor(Color.argb(143, 0, 0, 0));
-					break;
-				case MotionEvent.ACTION_UP:
-					view.setBackgroundColor(Color.parseColor("#38ffffff"));
-					break;
-				}
-				return false;
-			}
-		});
 	}
 
 	public void logOut() {

@@ -119,26 +119,39 @@ public class SquareSubController {
 			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
 				final ImageView imageView = (ImageView) instance.view;
-				thisView.imageLoader.displayImage("file://" + instance.path, imageView, options, new SimpleImageLoadingListener() {
-					@Override
-					public void onLoadingStarted(String imageUri, View view) {
+				boolean flag = true;
+				if (instance.view.getTag() != null) {
+					try {
+						String tag = (String) instance.view.getTag();
+						if ("head".equals(tag)) {
+							options = thisView.headOptions;
+						} else if ("conver".equals(tag)) {
+							flag = false;
+						}
+					} catch (Exception e) {
 					}
+				}
+				if (flag) {
+					thisView.imageLoader.displayImage("file://" + instance.path, imageView, options, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
 
-					@Override
-					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						Log.e(tag, "---------------failed");
-						TouchView.LayoutParams params = new TouchView.LayoutParams(LayoutParams.MATCH_PARENT, 0);
-						imageView.setImageBitmap(null);
-						instance.view.setLayoutParams(params);
-					}
+						@Override
+						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+							Log.e(tag, "---------------failed");
+							TouchView.LayoutParams params = new TouchView.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+							imageView.setImageBitmap(null);
+							instance.view.setLayoutParams(params);
+						}
 
-					@Override
-					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						// int height = thisView.showImageHeight;
-						// TouchView.LayoutParams params = new TouchView.LayoutParams(thisView.showImageWidth, height);
-						// imageView.setLayoutParams(params);
-					}
-				});
+						@Override
+						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						}
+					});
+				} else {
+					thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view);
+				}
 			}
 
 			@Override

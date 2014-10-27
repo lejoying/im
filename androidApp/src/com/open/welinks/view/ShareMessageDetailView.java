@@ -402,7 +402,7 @@ public class ShareMessageDetailView {
 						end = start + str.length();
 					}
 					MyURLSpan myURLSpan = new MyURLSpan(str);
-					if (start == -1 || str.length() < end || str.indexOf("tel") != -1) {
+					if (start == -1 || end > contentString.length()) {
 						continue;
 					} else {
 						positionMap.put(str, end);

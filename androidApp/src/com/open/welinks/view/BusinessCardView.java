@@ -340,13 +340,13 @@ public class BusinessCardView {
 			creatTimeTitle.setText("注册时间：");
 		} else if (status.equals(Status.JOINEDGROUP) || status.equals(Status.NOTJOINGROUP)) {
 			backTitleView.setText("群组详情");
-			businessTitle.setText("主要业务：");
+			businessTitle.setText("名称：");
 			lableTitle.setText("标签：");
 			creatTimeTitle.setText("创建时间：");
 			buttonTwo.setVisibility(View.GONE);
 		} else if (status.equals(Status.SQUARE)) {
 			backTitleView.setText("广场详情");
-			businessTitle.setText("主要业务：");
+			businessTitle.setText("名称：");
 			lableTitle.setText("标签：");
 			creatTimeTitle.setText("创建时间：");
 		}
