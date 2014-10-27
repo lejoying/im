@@ -471,7 +471,11 @@ public class ShareMessageDetailController {
 					}
 					// share.shareMessagesMap.remove(gsid);
 					data.shares.isModified = true;
-					viewManage.postNotifyView("ShareSubViewMessage");
+					if (data.relationship.squares.contains(gid)) {
+						viewManage.postNotifyView("SquareSubViewMessage");
+					} else {
+						viewManage.postNotifyView("ShareSubViewMessage");
+					}
 					httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
 					Intent intent = new Intent();
 					intent.putExtra("key", gsid);
@@ -578,7 +582,7 @@ public class ShareMessageDetailController {
 		data.shares.isModified = true;
 
 		if (data.relationship.squares.contains(key)) {
-			viewManage.mainView.squareSubView.showSquareMessages();
+			viewManage.mainView.squareSubView.showSquareMessages(true);
 		} else {
 			viewManage.mainView.shareSubView.showShareMessages();
 		}

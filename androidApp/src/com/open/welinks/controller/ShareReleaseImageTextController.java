@@ -464,6 +464,7 @@ public class ShareReleaseImageTextController {
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
 		// The current selected pictures gallery
 		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
+		log.e("copy file to the position,file count:" + selectedImageList.size());
 		totalLength = 0;
 		for (int i = 0; i < selectedImageList.size(); i++) {
 			String key = selectedImageList.get(i);
@@ -478,19 +479,10 @@ public class ShareReleaseImageTextController {
 				String fileName = "";
 				File fromFile = new File(key);
 				byte[] bytes = null;
-				// long fileLength = fromFile.length();
 				bytes = fileHandlers.getImageFileBytes(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
 				int fileLength = bytes.length;
 				totalLength += fileLength;
 				fileTotalLengthMap.put(key, fileLength);
-				// if (fileLength > 400 * 1024) {
-				// ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
-				// bytes = byteArrayOutputStream.toByteArray();
-				// } else {
-				// FileInputStream fileInputStream = new FileInputStream(fromFile);
-				// bytes = StreamParser.parseToByteArray(fileInputStream);
-				// fileInputStream.close();
-				// }
 
 				String sha1FileName = sha1.getDigestOfString(bytes);
 				fileName = sha1FileName + suffixName;
@@ -499,14 +491,9 @@ public class ShareReleaseImageTextController {
 				StreamParser.parseToFile(bytes, fileOutputStream);
 
 				if (i == 0) {
-					int showImageWidth = thisView.displayMetrics.widthPixels;
+					int showImageWidth = (int) (thisView.displayMetrics.widthPixels - 20 * thisView.displayMetrics.density - 0.5f);
 					File toSnapFile = new File(sdcardThumbnailFolder, fileName);
 					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, thisView.showImageHeight, toSnapFile, fileName);
-					// ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, thisView.showImageHeight);
-					// byte[] snapBytes = snapByteStream.toByteArray();
-					// FileOutputStream toSnapFileOutputStream = new FileOutputStream(toSnapFile);
-					// Log.d(tag, "file saved to " + fileName);
-					// StreamParser.parseToFile(snapBytes, toSnapFileOutputStream);
 				}
 
 				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
@@ -524,6 +511,7 @@ public class ShareReleaseImageTextController {
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			} catch (Exception e) {
 				e.printStackTrace();
+				log.e(e.toString());
 			}
 		}
 	}

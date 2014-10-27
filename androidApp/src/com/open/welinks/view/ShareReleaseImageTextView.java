@@ -48,6 +48,8 @@ public class ShareReleaseImageTextView {
 
 	public MyScrollImageBody myScrollImageBody;
 
+	public float imageHeightScale1 = 0.7586206896551724f;
+
 	public int showImageHeight;
 
 	public ShareReleaseImageTextView(Activity thisActivity) {
@@ -60,7 +62,7 @@ public class ShareReleaseImageTextView {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		if (thisController.gtype.equals("square")) {
-			showImageHeight = (int) (displayMetrics.density * 115 + 0.5f);
+			showImageHeight = (int) ((displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f) * thisController.imageHeightScale);
 		} else {
 			showImageHeight = (int) (displayMetrics.widthPixels * thisController.imageHeightScale);
 		}
@@ -74,7 +76,6 @@ public class ShareReleaseImageTextView {
 		mSelectImageButtonView = (ImageView) thisActivity.findViewById(R.id.selectImageButton);
 		mFaceView = (ImageView) thisActivity.findViewById(R.id.releaseFace);
 		mVoiceView = (ImageView) thisActivity.findViewById(R.id.releaseVoice);
-
 		if (thisController.type.equals("text")) {
 			mEditTextView.setHint("请输入文本内容");
 		} else if (thisController.type.equals("album")) {

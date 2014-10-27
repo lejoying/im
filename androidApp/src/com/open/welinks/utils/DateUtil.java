@@ -51,7 +51,9 @@ public class DateUtil {
 		long differenceTime = currentTime - timeMillis;
 		differenceTime = differenceTime / 1000;
 		String result = "";
-		if (differenceTime < 60) {
+		if (differenceTime <= 0) {
+			result = "刚刚";
+		} else if (differenceTime >= 0 && differenceTime < 60) {
 			result = differenceTime + "秒前";
 		} else if (differenceTime > 60 && differenceTime < 60 * 60) {
 			result = differenceTime / 60 + "分钟前";

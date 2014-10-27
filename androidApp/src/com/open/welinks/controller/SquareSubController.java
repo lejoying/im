@@ -312,7 +312,7 @@ public class SquareSubController {
 								thisView.modifyCurrentShowGroup();
 								// display local data
 								nowpage = 0;
-								thisView.showSquareMessages();
+								thisView.showSquareMessages(true);
 								getCurrentSquareShareMessages();
 								thisView.squareMessageListBody.y = 0;
 								thisView.squareMessageListBody.setChildrenPosition();

@@ -86,7 +86,7 @@ public class ViewManage {
 			}
 		} else if (viewName.equals("SquareSubViewMessage")) {
 			if (mainView.shareSubView != null) {
-				mainView.squareSubView.showSquareMessages();
+				mainView.squareSubView.showSquareMessages(true);
 			}
 		} else if (viewName.equals("ChangePasswordActivitySuccess")) {
 			if (changePasswordActivity != null) {

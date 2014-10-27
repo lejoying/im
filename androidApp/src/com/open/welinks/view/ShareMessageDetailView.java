@@ -396,15 +396,18 @@ public class ShareMessageDetailView {
 					if (positionMap.get(str) == null) {
 						start = contentString.indexOf(str);
 						end = start + str.length();
-						positionMap.put(str, end);
 					} else {
 						start = positionMap.get(str);
 						start = contentString.indexOf(str, start);
 						end = start + str.length();
-						positionMap.put(str, end);
 					}
 					MyURLSpan myURLSpan = new MyURLSpan(str);
-					style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					if (start == -1 || str.length() < end || str.indexOf("tel") != -1) {
+						continue;
+					} else {
+						positionMap.put(str, end);
+						style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					}
 					// spannableString.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 				}
 			} else {

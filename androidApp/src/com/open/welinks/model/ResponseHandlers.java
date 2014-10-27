@@ -1088,6 +1088,9 @@ public class ResponseHandlers {
 				currentGroup.createTime = group.createTime;
 				currentGroup.description = group.description;
 				currentGroup.background = group.background;
+				if (!currentGroup.background.equals(group.conver)) {
+					viewManage.shareSubView.setConver();
+				}
 				currentGroup.conver = group.conver;
 				currentGroup.permission = group.permission;
 				data.relationship.isModified = true;
@@ -1159,6 +1162,15 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
+					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
+					log.e(flag + "---flag");
+					if (flag) {
+						boolean flag2 = !group.conver.equals(currentGroup.conver);
+						log.e(flag2 + "---flag2");
+						if (flag2) {
+							viewManage.shareSubView.setConver();
+						}
+					}
 					currentGroup.conver = group.conver;
 					currentGroup.permission = group.permission;
 					data.relationship.isModified = true;
@@ -1343,7 +1355,8 @@ public class ResponseHandlers {
 
 				if (data.relationship.squares.contains(gid)) {
 					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
-						viewManage.mainView.squareSubView.showSquareMessages();
+						
+						viewManage.mainView.squareSubView.showSquareMessages(true);
 					}
 				} else {
 					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
@@ -1365,7 +1378,7 @@ public class ResponseHandlers {
 				}
 				if (data.relationship.squares.contains(gid)) {
 					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
-						viewManage.mainView.squareSubView.showSquareMessages();
+						viewManage.mainView.squareSubView.showSquareMessages(true);
 					}
 				} else {
 					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
@@ -1391,7 +1404,7 @@ public class ResponseHandlers {
 			}
 			if (data.relationship.squares.contains(gid)) {
 				if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
-					viewManage.mainView.squareSubView.showSquareMessages();
+					viewManage.mainView.squareSubView.showSquareMessages(true);
 				}
 			} else {
 				if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
@@ -1478,7 +1491,11 @@ public class ResponseHandlers {
 						if (responsesShare.shareMessagesOrder.size() == 0) {
 							viewManage.squareSubView.thisController.nowpage--;
 						}
-						viewManage.mainView.squareSubView.showSquareMessages();
+						if (response.nowpage == 0) {
+							viewManage.mainView.squareSubView.showSquareMessages(true);
+						} else {
+							viewManage.mainView.squareSubView.showSquareMessages(false);
+						}
 					}
 				} else {
 					log.e(response.失败原因);

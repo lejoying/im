@@ -16,8 +16,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
@@ -63,7 +61,7 @@ public class SquareSubView {
 
 	public SquareSubController thisController;
 
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
@@ -134,6 +132,8 @@ public class SquareSubView {
 	public ImageView groupCoverView;
 	public ImageView groupHeadView;
 
+	public Group currentSquare;
+
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
 		viewManage.squareSubView = this;
@@ -174,9 +174,9 @@ public class SquareSubView {
 		data = parser.check();
 
 		try {
-			Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
-			if (group0 != null) {
-				this.squareTopMenuSquareName.setText(group0.name);
+			currentSquare = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+			if (currentSquare != null) {
+				this.squareTopMenuSquareName.setText(currentSquare.name);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -198,7 +198,7 @@ public class SquareSubView {
 
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 		initData();
-		showSquareMessages();
+		showSquareMessages(true);
 		initReleaseShareDialogView();
 		initializationSquaresDialog();
 	}
@@ -219,8 +219,8 @@ public class SquareSubView {
 
 	public DisplayImageOptions bigHeadOptions;
 
-	public void showSquareMessages() {
-		showSquareMessages2();
+	public void showSquareMessages(boolean flag) {
+		showSquareMessages2(flag);
 	}
 
 	public void showSquareMessages1() {
@@ -300,6 +300,7 @@ public class SquareSubView {
 			sharesMessageBody.cardView.setX(displayMetrics.density * 10);
 			sharesMessageBody.itemHeight = 210 * displayMetrics.density;
 			this.squareMessageListBody.height = this.squareMessageListBody.height + 210 * displayMetrics.density;
+
 			this.squareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 
 			sharesMessageBody.cardView.setTag(R.id.tag_class, "share_view");
@@ -467,19 +468,22 @@ public class SquareSubView {
 		}
 	}
 
-	public void showSquareMessages2() {
-
-		this.squareMessageListBody.listItemsSequence.clear();
-		this.squareMessageListBody.containerView.removeAllViews();
-		this.squareMessageListBody.height = 10 * displayMetrics.density;
+	public void showSquareMessages2(boolean flag) {
+		// flag = true;
+		// this.squareMessageListBody.listItemsSequence.clear();
+		// this.squareMessageListBody.containerView.removeAllViews();
+		// this.squareMessageListBody.height = 10 * displayMetrics.density;
 
 		data = parser.check();
 		if (data.shares.shareMap == null || data.localStatus.localData == null) {
+			log.e("return shareMap or localData");
 			return;
 		}
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare);
-		if (share == null)
+		if (share == null) {
+			log.e("return square share");
 			return;
+		}
 
 		SharesMessageBody1 sharesMessageBody0 = null;
 		sharesMessageBody0 = (SharesMessageBody1) squareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
@@ -487,13 +491,17 @@ public class SquareSubView {
 		this.squareMessageListBody.containerView.removeAllViews();
 		// shareMessageView.removeAllViews();
 		log.e("clear square list body.");
+
 		this.squareMessageListBody.height = 0;
+		if (flag) {
+			this.squareMessageListBody.y = 0;
+		}
 		if (sharesMessageBody0 == null) {
 			sharesMessageBody0 = new SharesMessageBody1(this.squareMessageListBody);
 			sharesMessageBody0.initialize(-1);
 			sharesMessageBody0.itemHeight = (280 - 48) * displayMetrics.density;
 		}
-		sharesMessageBody0.setContent(null, "");
+		sharesMessageBody0.setContent(null, "", null);
 		this.squareMessageListBody.listItemsSequence.add("message#" + "topBar");
 		this.squareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
 		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (250 * displayMetrics.density));
@@ -510,16 +518,19 @@ public class SquareSubView {
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
-		for (int i = 0; i < sharesOrder.size(); i++) {
+		A: for (int i = 0; i < sharesOrder.size(); i++) {// sharesOrder.size()
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
 			shareMessage = sharesMap.get(key);
-			if (!shareMessage.type.equals("imagetext")) {
-				continue;
+			if (shareMessage == null || !"imagetext".equals(shareMessage.type)) {
+				continue A;
 			}
 			SharesMessageBody1 sharesMessageBody = null;
 
 			String keyName = "message#" + shareMessage.gsid;
+			if (this.squareMessageListBody.listItemsSequence.contains(keyName)) {
+				continue A;
+			}
 			if (this.squareMessageListBody.listItemBodiesMap.get(keyName) != null) {
 				sharesMessageBody = (SharesMessageBody1) this.squareMessageListBody.listItemBodiesMap.get(keyName);
 			} else {
@@ -527,18 +538,46 @@ public class SquareSubView {
 				sharesMessageBody.initialize(i);
 				this.squareMessageListBody.listItemBodiesMap.put(keyName, sharesMessageBody);
 			}
-			// Friend friend =
-			// data.relationship.friendsMap.get(shareMessage.phone);
-			this.squareMessageListBody.listItemsSequence.add(keyName);
 
 			Friend friend = data.relationship.friendsMap.get(shareMessage.phone);
 			String fileName = "";
 			if (friend != null) {
 				fileName = friend.head;
 			}
-			sharesMessageBody.setContent(shareMessage, fileName);
 
-			this.squareMessageListBody.containerView.addView(sharesMessageBody.cardView);
+			boolean isExistsImage = false;
+			int cHeight = imageHeight;
+			ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+			sharesMessageBody.setContent(shareMessage, fileName, shareContent);
+			List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+			B: for (int j = 0; j < shareContentItems.size(); j++) {
+				ShareContentItem shareContentItem = shareContentItems.get(j);
+				if (shareContentItem.type.equals("image")) {
+					isExistsImage = true;
+					break B;
+				}
+			}
+			if (!isExistsImage) {
+				cHeight = 0;
+			}
+
+			int textHeigth1 = (int) (displayMetrics.density * 90 + 0.5);
+			int totalHeight = (int) (displayMetrics.density * 100 + 0.5f + cHeight);
+			if (cHeight == 0) {
+				totalHeight = (int) (displayMetrics.density * 110 + 0.5f + textHeigth1);
+			}
+			width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width1, totalHeight);
+			sharesMessageBody.itemHeight = totalHeight;
+
+			this.squareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
+			sharesMessageBody.y = squareMessageListBody.height;
+			sharesMessageBody.cardView.setY(sharesMessageBody.y);
+			sharesMessageBody.cardView.setX(displayMetrics.density * 10 + 0.5f);
+
+			squareMessageListBody.height = squareMessageListBody.height + totalHeight;
+
+			this.squareMessageListBody.listItemsSequence.add(keyName);
 
 			sharesMessageBody.cardView.setTag(R.id.tag_class, "share_view");
 			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
@@ -547,7 +586,7 @@ public class SquareSubView {
 		}
 
 		this.squareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
-		squareMessageListBody.setChildrenPosition();
+		this.squareMessageListBody.setChildrenPosition();
 	}
 
 	public class SharesMessageBody1 extends MyListItemBody {
@@ -619,7 +658,7 @@ public class SquareSubView {
 			return cardView;
 		}
 
-		public int setContent(ShareMessage shareMessage, String fileName) {
+		public int setContent(ShareMessage shareMessage, String fileName, ShareContent shareContent) {
 			if (i == -1) {
 				releaseShareView.setOnClickListener(thisController.mOnClickListener);
 				releaseShareView.setOnTouchListener(thisController.mOnTouchListener);
@@ -647,7 +686,9 @@ public class SquareSubView {
 				// businessCardPopView.showUserCardDialogView();
 
 				this.releaseTimeView.setText(DateUtil.formatTime(shareMessage.time));
-				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+				if (shareContent == null) {
+					shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+				}
 				String textContent = "";
 				String imageContent = "";
 				int cHeight = imageHeight;
@@ -676,37 +717,32 @@ public class SquareSubView {
 					shareTextContentView.setTextColor(Color.parseColor("#aa000000"));
 				}
 				final int sHeight = cHeight;
-				ViewTreeObserver vto = shareTextContentView.getViewTreeObserver();
-				vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-					public void onGlobalLayout() {
-						// Log.e(tag, shareTextContentView.getHeight() + "::::::::::::::::;;");
+				// ViewTreeObserver vto = shareTextContentView.getViewTreeObserver();
+				FrameLayout.LayoutParams textParams = (LayoutParams) shareTextContentView.getLayoutParams();
+				FrameLayout.LayoutParams buttonbarpParams = (LayoutParams) buttonBar.getLayoutParams();
+				int textHeigth1 = (int) (displayMetrics.density * 90 + 0.5);
+				int textHeigth2 = (int) (displayMetrics.density * 20 + 0.5);
+				if (sHeight == 0) {
+					textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f);
+					buttonbarpParams.topMargin = (int) (displayMetrics.density * 50 + 0.5f) + textHeigth1;
+				} else {
+					textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f + sHeight - textHeigth2);
+					buttonbarpParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f) + sHeight;
+					shareTextContentView.setSingleLine();
+				}
+				// buttonBar.setBackgroundColor(Color.RED);
+				buttonbarpParams.height = (int) (displayMetrics.density * 40 + 0.5f);
 
-						FrameLayout.LayoutParams textParams = (LayoutParams) shareTextContentView.getLayoutParams();
-						FrameLayout.LayoutParams buttonbarpParams = (LayoutParams) buttonBar.getLayoutParams();
-						if (sHeight == 0) {
-							textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f);
-							buttonbarpParams.topMargin = (int) (displayMetrics.density * 50 + 0.5f) + shareTextContentView.getHeight();
-						} else {
-							textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f + sHeight - shareTextContentView.getHeight());
-							buttonbarpParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f) + sHeight;
-						}
-						// buttonBar.setBackgroundColor(Color.RED);
-						buttonbarpParams.height = (int) (displayMetrics.density * 40 + 0.5f);
-						shareTextContentView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				// log.e(shareTextContentView.getLineCount() + "-----" + shareTextContentView.getLineHeight());
 
-						int totalHeight = (int) (displayMetrics.density * 100 + 0.5f + sHeight);
-						if (sHeight == 0) {
-							totalHeight = (int) (displayMetrics.density * 110 + 0.5f + shareTextContentView.getHeight());
-						}
-						RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width1, totalHeight);
-						instance.y = squareMessageListBody.height;
-						instance.cardView.setY(instance.y);
-						instance.cardView.setLayoutParams(layoutParams);
-						instance.cardView.setX(displayMetrics.density * 10);
-						instance.itemHeight = totalHeight;
-						squareMessageListBody.height = squareMessageListBody.height + totalHeight;
-					}
-				});
+				// vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+				// @SuppressWarnings("deprecation")
+				// public void onGlobalLayout() {
+				// // Log.e(tag, shareTextContentView.getHeight() + "::::::::::::::::;;");
+				// shareTextContentView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				//
+				// }
+				// });
 				File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
 				// final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
 				// final int showImageHeight = (int) (displayMetrics.density * 136);
@@ -715,7 +751,7 @@ public class SquareSubView {
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				// shareImageContentView.setLayoutParams(shareImageParams);
 				if (!imageContent.equals("")) {
-					width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density);
+					width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
 					// Log.e(tag, width1 + "----" + imageHeight);
 					final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + width1 / 2 + "w_" + imageHeight / 2 + "h_1c_1e_100q";
 					final String path = file.getAbsolutePath();
