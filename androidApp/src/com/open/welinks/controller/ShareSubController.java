@@ -98,6 +98,7 @@ public class ShareSubController {
 		thisActivity = mainController.thisActivity;
 
 		this.mainController = mainController;
+
 	}
 
 	public OnTouchListener onTouchListener2;

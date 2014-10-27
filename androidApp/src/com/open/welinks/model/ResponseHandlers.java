@@ -1163,15 +1163,13 @@ public class ResponseHandlers {
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
-					log.e(flag + "---flag");
 					if (flag) {
-						boolean flag2 = !group.conver.equals(currentGroup.conver);
-						log.e(flag2 + "---flag2");
-						if (flag2) {
+						boolean flag2 = group.conver.equals(currentGroup.conver);
+						if (!flag2) {
+							currentGroup.conver = group.conver;
 							viewManage.shareSubView.setConver();
 						}
 					}
-					currentGroup.conver = group.conver;
 					currentGroup.permission = group.permission;
 					data.relationship.isModified = true;
 					viewManage.postNotifyView("ShareSubView");
@@ -1355,7 +1353,7 @@ public class ResponseHandlers {
 
 				if (data.relationship.squares.contains(gid)) {
 					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
-						
+
 						viewManage.mainView.squareSubView.showSquareMessages(true);
 					}
 				} else {

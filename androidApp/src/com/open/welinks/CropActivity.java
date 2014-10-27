@@ -68,7 +68,7 @@ public class CropActivity extends Activity {
 
 				Intent intent = new Intent();
 				intent.putExtra("bitmap", datas);
-				setResult(Activity.RESULT_OK,intent);
+				setResult(Activity.RESULT_OK, intent);
 				finish();
 			}
 		});

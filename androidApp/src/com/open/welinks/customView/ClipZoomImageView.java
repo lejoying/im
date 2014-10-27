@@ -310,16 +310,18 @@ public class ClipZoomImageView extends ImageView implements OnScaleGestureListen
 
 	public float converScale = 0.5277777777777778f;
 
+	int imageHeight;
+
 	@Override
 	public void onGlobalLayout() {
 		if (once) {
 			Drawable d = getDrawable();
 			if (d == null)
 				return;
-			int height0 = (int) (getWidth() * converScale);
+			imageHeight = (int) (getWidth() * converScale);
 			// 垂直方向的边距
-			mVerticalPadding = (getHeight() - height0) / 2;
-//			mVerticalPadding = (getHeight() - (getWidth() - 2 * mHorizontalPadding)) / 2;
+			mVerticalPadding = (getHeight() - imageHeight) / 2;
+			// mVerticalPadding = (getHeight() - (getWidth() - 2 * mHorizontalPadding)) / 2;
 
 			int width = getWidth();
 			int height = getHeight();
@@ -362,7 +364,7 @@ public class ClipZoomImageView extends ImageView implements OnScaleGestureListen
 		Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(bitmap);
 		draw(canvas);
-		return Bitmap.createBitmap(bitmap, mHorizontalPadding, mVerticalPadding, getWidth() - 2 * mHorizontalPadding, getWidth() - 2 * mHorizontalPadding);
+		return Bitmap.createBitmap(bitmap, mHorizontalPadding, mVerticalPadding, getWidth() - 2 * mHorizontalPadding, imageHeight);
 	}
 
 	/**

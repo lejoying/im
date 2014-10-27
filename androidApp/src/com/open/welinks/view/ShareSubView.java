@@ -59,7 +59,7 @@ public class ShareSubView {
 
 	public String tag = "ShareSubView";
 
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
@@ -190,22 +190,41 @@ public class ShareSubView {
 	}
 
 	public void setConver() {
-		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		final String path = file.getAbsolutePath();
+		log.e(file.exists() + "---exists" + group.conver);
 		if (file.exists()) {
-			imageLoader.displayImage("file://" + file.getAbsolutePath(), groupCoverView);
+			imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
+				@Override
+				public void onLoadingStarted(String imageUri, View view) {
+				}
+
+				@Override
+				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					downloadConver(group.conver, path);
+				}
+
+				@Override
+				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				}
+			});
 		} else {
 			if (group.conver != null) {
-				groupCoverView.setTag("conver");
-				String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + group.conver;
-				DownloadFile downloadFile = new DownloadFile(url, file.getAbsolutePath());
-				downloadFile.view = groupCoverView;
-				downloadFile.setDownloadFileListener(thisController.downloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
+				downloadConver(group.conver, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			}
 		}
+	}
+
+	public void downloadConver(String converName, String path) {
+		groupCoverView.setTag("conver");
+		String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + converName;
+		DownloadFile downloadFile = new DownloadFile(url, path);
+		downloadFile.view = groupCoverView;
+		downloadFile.setDownloadFileListener(thisController.downloadListener);
+		downloadFileList.addDownloadFile(downloadFile);
 	}
 
 	public void showShareMessages() {
@@ -841,87 +860,9 @@ public class ShareSubView {
 			shareTopMenuGroupName.setText("暂无群组");
 			return;
 		}
-		// List<String> groupMembers = group.members;
-		// Map<String, Friend> friendsMap = data.relationship.friendsMap;
 
 		width = (int) (displayMetrics.density * 40);
-		// int size = groupMembers.size();
-		// if (size > 6) {
-		// size = 6;
-		// }
-		// for (int i = 0; i < size; i++) {
-		// String key = groupMembers.get(i);
-		// Friend friend = friendsMap.get(key);
-		//
-		// ImageBody imageBody = new ImageBody();
-		// imageBody.initialize();
-		//
-		// RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
-		// myScrollImageBody.contentView.addView(imageBody.imageView, layoutParams);
-		// float x = i * (width + 5 * displayMetrics.density) + 5 * displayMetrics.density;
-		// if (i == 0) {
-		// x = 5 * displayMetrics.density;
-		// }
-		// imageBody.imageView.setX(x);// Translation
-		// fileHandlers.getHeadImage(friend.head, imageBody.imageView, headOptions);
-		// myScrollImageBody.selectedImagesSequence.add(key);
-		// myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
-		// imageBody.imageView.setTag("head");
-		// // imageBody.imageView.setOnClickListener(thisController.monClickListener);
-		// }
 	}
-
-	// public class MyScrollImageBody {
-	// public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
-	// public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
-	//
-	// public ViewGroup contentView;
-	//
-	// public ViewGroup initialize(ViewGroup view) {
-	// this.contentView = view;
-	// return view;
-	// }
-	//
-	// public void recordChildrenPosition() {
-	// for (int i = 0; i < selectedImagesSequence.size(); i++) {
-	// String key = selectedImagesSequence.get(i);
-	// ImageBody imageBody = selectedImagesSequenceMap.get(key);
-	// imageBody.x = imageBody.imageView.getX();
-	// imageBody.y = imageBody.imageView.getY();
-	// }
-	// }
-	//
-	// public void setChildrenPosition(float deltaX, float deltaY) {
-	// float screenWidth = displayMetrics.widthPixels;
-	// float totalLength = selectedImagesSequence.size() * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;
-	// if (totalLength < screenWidth) {
-	// return;
-	// }
-	// for (int i = 0; i < selectedImagesSequence.size(); i++) {
-	// String key = selectedImagesSequence.get(i);
-	// ImageBody imageBody = selectedImagesSequenceMap.get(key);
-	// if ((imageBody.x + deltaX) < (screenWidth - totalLength))
-	// break;
-	// if (i == 0 && (imageBody.x + deltaX) > (5 * displayMetrics.density))
-	// break;
-	// imageBody.imageView.setX(imageBody.x + deltaX);
-	// imageBody.imageView.setY(imageBody.y + deltaY);
-	// }
-	// }
-	// }
-	//
-	// public class ImageBody {
-	// public int i;
-	//
-	// public float x;
-	// public float y;
-	// public TouchImageView imageView;
-	//
-	// public TouchImageView initialize() {
-	// this.imageView = new TouchImageView(mainView.context);
-	// return this.imageView;
-	// }
-	// }
 
 	public class ControlProgress {
 
@@ -936,8 +877,6 @@ public class ShareSubView {
 		public int width = 0;
 
 		public void initialize(View container) {
-			// DisplayMetrics displayMetrics = new DisplayMetrics();
-			// mainView.thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
 
 			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
