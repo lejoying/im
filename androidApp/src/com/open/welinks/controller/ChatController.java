@@ -39,7 +39,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
-import com.open.welinks.GroupInfomationActivity;
+import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
@@ -162,7 +162,7 @@ public class ChatController {
 						intent.putExtra("type", type);
 						thisActivity.startActivity(intent);
 					} else if ("group".equals(type)) {
-						Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+						Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
 						intent.putExtra("gid", key);
 						thisActivity.startActivity(intent);
 					}
@@ -321,7 +321,6 @@ public class ChatController {
 		thisView.moreSelectedView.setOnClickListener(mOnClickListener);
 		thisView.inputMessageContentView.setOnClickListener(mOnClickListener);
 		thisView.chatContentListView.setOnTouchListener(onTouchListener);
-
 	}
 
 	@SuppressWarnings("unchecked")

@@ -24,7 +24,6 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
-import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -69,8 +68,6 @@ public class ChatView {
 	public int imageHeight;
 
 	public View maxView;
-
-	// public Bitmap bitmap;
 
 	public DisplayImageOptions headOptions;
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
@@ -167,8 +164,12 @@ public class ChatView {
 
 	public class ChatAdapter extends BaseAdapter {
 
-		ArrayList<Message> messages;
-		User user = data.userInformation.currentUser;
+		public ArrayList<Message> messages;
+		public User currentUser = data.userInformation.currentUser;
+
+		public int TYPECOUNT = 3;
+		public int TYPE_SELF = 0x01;
+		public int TYPE_OTHER = 0x02;
 
 		@Override
 		public void notifyDataSetChanged() {
@@ -196,43 +197,53 @@ public class ChatView {
 		}
 
 		@Override
+		public int getItemViewType(int position) {
+			Message message = messages.get(position);
+			if (message.phone.equals(currentUser.phone)) {
+				return TYPE_SELF;
+			} else {
+				return TYPE_OTHER;
+			}
+		}
+
+		@Override
+		public int getViewTypeCount() {
+			return TYPECOUNT;
+		}
+
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Message message = messages.get(position);
 			ChatHolder chatHolder = null;
-			int type = message.type;
-			// if (convertView == null) {
-			chatHolder = new ChatHolder();
-			if (message.sendType.equals("point")) {
-				if (message.phone.equals(user.phone)) {
+			int type = getItemViewType(position);
+			if (convertView == null) {
+				chatHolder = new ChatHolder();
+				if (type == TYPE_SELF) {
 					convertView = mInflater.inflate(R.layout.chat_item_send, null);
-				} else if (type == Constant.MESSAGE_TYPE_RECEIVE) {
+				} else if (type == TYPE_OTHER) {
 					convertView = mInflater.inflate(R.layout.chat_item_receive, null);
 				}
-			} else if (message.sendType.equals("group")) {
-				if (message.phone.equals(user.phone)) {
-					convertView = mInflater.inflate(R.layout.chat_item_send, null);
-				} else if (type == Constant.MESSAGE_TYPE_RECEIVE) {
-					convertView = mInflater.inflate(R.layout.chat_item_receive, null);
-				}
+				chatHolder.time = (TextView) convertView.findViewById(R.id.time);
+				chatHolder.character = (TextView) convertView.findViewById(R.id.character);
+				chatHolder.image = (ImageView) convertView.findViewById(R.id.image);
+				chatHolder.images_layout = convertView.findViewById(R.id.images_layout);
+				chatHolder.images = (ImageView) convertView.findViewById(R.id.images);
+				chatHolder.images_count = (TextView) convertView.findViewById(R.id.images_count);
+				chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
+				chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
+				chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
+				chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
+				chatHolder.share = convertView.findViewById(R.id.share);
+				chatHolder.share_text = (TextView) convertView.findViewById(R.id.share_text);
+				chatHolder.share_image = (ImageView) convertView.findViewById(R.id.share_image);
+
+				convertView.setTag(chatHolder);
+			} else {
+				chatHolder = (ChatHolder) convertView.getTag();
 			}
-			chatHolder.time = (TextView) convertView.findViewById(R.id.time);
-			chatHolder.character = (TextView) convertView.findViewById(R.id.character);
-			chatHolder.image = (ImageView) convertView.findViewById(R.id.image);
-			chatHolder.images_layout = convertView.findViewById(R.id.images_layout);
-			chatHolder.images = (ImageView) convertView.findViewById(R.id.images);
-			chatHolder.images_count = (TextView) convertView.findViewById(R.id.images_count);
-			chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
-			chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
-			chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
-			chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
-			chatHolder.share = convertView.findViewById(R.id.share);
-			chatHolder.share_text = (TextView) convertView.findViewById(R.id.share_text);
-			chatHolder.share_image = (ImageView) convertView.findViewById(R.id.share_image);
-			convertView.setTag(chatHolder);
-			// } else {
-			// chatHolder = (ChatHolder) convertView.getTag();
-			// }
+
 			String contentType = message.contentType;
+
 			if ("text".equals(contentType)) {
 				chatHolder.character.setVisibility(View.VISIBLE);
 				chatHolder.image.setVisibility(View.GONE);
@@ -266,7 +277,7 @@ public class ChatView {
 				chatHolder.share.setVisibility(View.GONE);
 				chatHolder.voice.setVisibility(View.VISIBLE);
 				Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_item_voice);
-				if (type == Constant.MESSAGE_TYPE_SEND) {
+				if (type == TYPE_SELF) {
 					Matrix mMatrix = new Matrix();
 					mMatrix.setRotate(180);
 					bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, true);
@@ -281,7 +292,6 @@ public class ChatView {
 
 				MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
 				chatHolder.share_text.setText(messageContent.text);
-				// "--gid:" + messageContent.gid + "---gsid:" + messageContent.gsid
 				if (messageContent.image != null && !"".equals(messageContent.image)) {
 					thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
 				} else {
@@ -294,10 +304,9 @@ public class ChatView {
 			chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			String fileName = "";
 			String phone = "";
-			User user = data.userInformation.currentUser;
-			if (message.phone.equals(user.phone)) {
-				fileName = user.head;
-				phone = user.phone;
+			if (message.phone.equals(currentUser.phone)) {
+				fileName = currentUser.head;
+				phone = currentUser.phone;
 			} else {
 				Friend friend = data.relationship.friendsMap.get(message.phone);
 				if (friend != null) {
@@ -321,5 +330,4 @@ public class ChatView {
 			public ImageView voice_icon, head, image, images, share_image;
 		}
 	}
-
 }
