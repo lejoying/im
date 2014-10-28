@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -39,6 +41,7 @@ import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.customView.ControlProgress;
+import com.open.welinks.customView.MyTextView;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -257,7 +260,7 @@ public class ShareSubView {
 				sharesMessageBody0.initialize(-1);
 				sharesMessageBody0.itemHeight = (280 - 48) * displayMetrics.density;
 			}
-			sharesMessageBody0.setContent(null, "");
+			sharesMessageBody0.setContent(null, "", "", "");
 			this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
 			this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
 			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (250 * displayMetrics.density));
@@ -313,7 +316,7 @@ public class ShareSubView {
 			if (!nowTime.equals(lastTime)) {
 				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
 				sharesMessageBody0.initialize(-2);
-				sharesMessageBody0.setContent(shareMessage, "");
+				sharesMessageBody0.setContent(shareMessage, "", "", "");
 				this.shareMessageListBody.listItemsSequence.add("message#" + "timeBar" + shareMessage.time);
 				this.shareMessageListBody.listItemBodiesMap.put("message#" + "timeBar" + shareMessage.time, sharesMessageBody0);
 				RelativeLayout.LayoutParams layoutParams_2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (40 * displayMetrics.density));
@@ -351,19 +354,44 @@ public class ShareSubView {
 			if (friend != null) {
 				fileName = friend.head;
 			}
-			sharesMessageBody.setContent(shareMessage, fileName);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (340 * displayMetrics.density));
+			ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+			String textContent = "";
+			String imageContent = "";
+			List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+			B: for (int j = 0; j < shareContentItems.size(); j++) {
+				ShareContentItem shareContentItem = shareContentItems.get(j);
+				if (shareContentItem.type.equals("image")) {
+					imageContent = shareContentItem.detail;
+					if (!"".equals(textContent))
+						break B;
+				} else if (shareContentItem.type.equals("text")) {
+					textContent = shareContentItem.detail;
+					if (!"".equals(imageContent))
+						break B;
+				}
+			}
+
+			int totalHeight = (int) (355 * displayMetrics.density + 0.5f);
+			int height10dp = (int) (10 * displayMetrics.density + 0.5f);
+			if ("".equals(imageContent)) {
+				totalHeight = (int) (165 * displayMetrics.density + 0.5f);
+			} else if ("".equals(textContent)) {
+				totalHeight = (int) (65 * displayMetrics.density + 0.5f + shareImageHeight);
+			}
+			sharesMessageBody.setContent(shareMessage, fileName, imageContent, textContent);
+
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) (displayMetrics.widthPixels - height10dp * 2), totalHeight);
 			sharesMessageBody.y = this.shareMessageListBody.height;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
-			sharesMessageBody.cardView.setX(displayMetrics.density * 10);
+			sharesMessageBody.cardView.setX(height10dp);
 			// sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
 			if (isExists) {
 				// sharesMessageBody.cardView.setX(10 * displayMetrics.density);
 			}
-			sharesMessageBody.itemHeight = 350 * displayMetrics.density;
-			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
+			sharesMessageBody.itemHeight = totalHeight + height10dp;
+			this.shareMessageListBody.height = this.shareMessageListBody.height + totalHeight + height10dp;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 			if (i == 0 && isShowFirstMessageAnimation) {
 				shareMessageRootView = sharesMessageBody.cardView;
@@ -398,7 +426,7 @@ public class ShareSubView {
 		public ImageView headView;
 		public TextView nickNameView;
 		public TextView releaseTimeView;
-		public TextView shareTextContentView;
+		public MyTextView shareTextContentView;
 		public ImageView shareImageContentView;
 		public TextView sharePraiseNumberView;
 		public ImageView sharePraiseIconView;
@@ -407,6 +435,8 @@ public class ShareSubView {
 		public TextView shareStatusView;
 
 		public TextView messageTimeView;
+
+		public View background_share_item;
 
 		public DownloadFile downloadFile = null;
 
@@ -435,7 +465,7 @@ public class ShareSubView {
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
 				this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
 				this.releaseTimeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
-				this.shareTextContentView = (TextView) this.cardView.findViewById(R.id.share_textContent);
+				this.shareTextContentView = (MyTextView) this.cardView.findViewById(R.id.share_textContent);
 				this.shareImageContentView = (ImageView) this.cardView.findViewById(R.id.share_imageContent);
 				this.sharePraiseNumberView = (TextView) this.cardView.findViewById(R.id.share_praise);
 				this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
@@ -444,15 +474,19 @@ public class ShareSubView {
 
 				this.shareStatusView = (TextView) this.cardView.findViewById(R.id.share_status);
 
+				this.background_share_item = this.cardView.findViewById(R.id.background_share_item);
+
 				// TODO
 				// progress bar
 				this.controlProgressView = this.cardView.findViewById(R.id.list_item_progress_container);
+
+				this.shareTextContentView.setTextColor(Color.parseColor("#99000000"));
 			}
 			super.initialize(cardView);
 			return cardView;
 		}
 
-		public void setContent(ShareMessage shareMessage, String fileName) {
+		public void setContent(ShareMessage shareMessage, String fileName, String imageContent, String textContent) {
 			data = parser.check();
 			if (i == -1) {
 				// showGroupMembers(groupMembersListContentView);
@@ -474,7 +508,7 @@ public class ShareSubView {
 						if ("sending".equals(shareMessage.status)) {
 							this.controlProgressView.setVisibility(View.VISIBLE);
 							this.controlProgress = new ControlProgress();
-							this.controlProgress.initialize(this.controlProgressView,displayMetrics);
+							this.controlProgress.initialize(this.controlProgressView, displayMetrics);
 							// this.controlProgress.moveTo(70);
 						}
 					}
@@ -501,24 +535,38 @@ public class ShareSubView {
 				this.headView.setOnClickListener(thisController.mOnClickListener);
 				this.headView.setOnTouchListener(thisController.mOnTouchListener);
 				this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
-				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
-				String textContent = "";
-				String imageContent = "";
-				List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
-				for (int i = 0; i < shareContentItems.size(); i++) {
-					ShareContentItem shareContentItem = shareContentItems.get(i);
-					if (shareContentItem.type.equals("image")) {
-						imageContent = shareContentItem.detail;
-						if (!"".equals(textContent))
-							break;
-					} else if (shareContentItem.type.equals("text")) {
-						textContent = shareContentItem.detail;
-						if (!"".equals(imageContent))
-							break;
+				if (imageContent == null || textContent == null) {
+					ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+					textContent = "";
+					imageContent = "";
+					List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+					for (int i = 0; i < shareContentItems.size(); i++) {
+						ShareContentItem shareContentItem = shareContentItems.get(i);
+						if (shareContentItem.type.equals("image")) {
+							imageContent = shareContentItem.detail;
+							if (!"".equals(textContent))
+								break;
+						} else if (shareContentItem.type.equals("text")) {
+							textContent = shareContentItem.detail;
+							if (!"".equals(imageContent))
+								break;
+						}
 					}
 				}
 
-				this.shareTextContentView.setText(textContent);
+				int totalHeight = (int) (355 * displayMetrics.density + 0.5f);
+				if ("".equals(imageContent)) {
+					totalHeight = (int) (165 * displayMetrics.density + 0.5f);
+					RelativeLayout.LayoutParams params2 = (android.widget.RelativeLayout.LayoutParams) shareTextContentView.getLayoutParams();
+					params2.topMargin = (int) (1 * displayMetrics.density + 0.5f);
+				} else if ("".equals(textContent)) {
+					totalHeight = (int) (65 * displayMetrics.density + 0.5f + shareImageHeight);
+				}
+
+				FrameLayout.LayoutParams params = (LayoutParams) background_share_item.getLayoutParams();
+				params.height = totalHeight;
+
+				this.shareTextContentView.setMText(textContent);
 				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
 				final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
 				final int showImageHeight = shareImageHeight;// (int)

@@ -446,6 +446,7 @@ public class ShareSubController {
 							sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 						}
 						modifyPraiseusersToMessage(option, data.localStatus.localData.currentSelectedGroup, shareMessage.gsid);
+						view.setTag(R.id.time, null);
 					}
 				}
 			}
@@ -610,7 +611,7 @@ public class ShareSubController {
 					if (currentScanMessageKey != null) {
 						SharesMessageBody body = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
 						if (body != null) {
-							body.setContent(body.message, body.fileName);
+							body.setContent(body.message, body.fileName, null, null);
 						}
 					}
 				}

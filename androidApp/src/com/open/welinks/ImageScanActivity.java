@@ -115,6 +115,7 @@ public class ImageScanActivity extends FragmentActivity {
 		mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), imagesBrowseList.size());
 		mPager = (ViewPager) findViewById(R.id.pager);
 		mPager.setAdapter(mAdapter);
+		mPager.setCurrentItem(currentPosition);
 		mPager.setOnPageChangeListener(new OnPageChangeListener() {
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
