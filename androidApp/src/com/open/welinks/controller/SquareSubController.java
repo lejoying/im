@@ -16,9 +16,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -30,6 +30,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
+import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.FindMoreActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
@@ -42,12 +43,15 @@ import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Shares.Share;
+import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.SquareSubView;
 import com.open.welinks.view.SquareSubView.GroupDialogItem;
 import com.open.welinks.view.SquareSubView.SharesMessageBody;
+import com.open.welinks.view.SquareSubView.SharesMessageBody1;
 
 public class SquareSubController {
 
@@ -217,6 +221,9 @@ public class SquareSubController {
 					} else if (view_class.equals("share_head")) {
 						onTouchDownView = view;
 						isTouchDown = true;
+					} else if (view_class.equals("share_praise")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					} else if (view_class.equals("title_share")) {
 						long currentTime = System.currentTimeMillis();
 						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
@@ -305,7 +312,7 @@ public class SquareSubController {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
 					String type = tagContent.substring(0, index);
-					String content = tagContent.substring(index + 1);
+					final String content = tagContent.substring(index + 1);
 					if ("GroupDialogContentItem".equals(type)) {
 						parser.check();
 						// modify data
@@ -344,6 +351,37 @@ public class SquareSubController {
 					} else if ("ShareMessage".equals(type)) {
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent("point", content);
 						thisView.businessCardPopView.showUserCardDialogView();
+					} else if ("ShareMessagePraise".equals(type)) {
+						// TODO
+						parser.check();
+						String phone = data.userInformation.currentUser.phone;
+						Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare);
+						if (share != null) {
+							boolean option = false;
+							ShareMessage shareMessage = share.shareMessagesMap.get(content);
+							List<String> praiseUsers = shareMessage.praiseusers;
+							if (praiseUsers.contains(phone)) {
+								option = false;
+								List<String> list = new ArrayList<String>();
+								for (int i = 0; i < praiseUsers.size(); i++) {
+									String userPhone = praiseUsers.get(i);
+									if (phone.equals(userPhone) || userPhone == null || "".equals(userPhone)) {
+										list.add(userPhone);
+									}
+								}
+								if (list.size() != 0) {
+									praiseUsers.removeAll(list);
+								}
+							} else {
+								option = true;
+								praiseUsers.add(phone);
+							}
+							data.shares.isModified = true;
+							reflashMessageContent(content);
+							view.setTag(R.id.time, null);
+							modifyPraiseusersToMessage(option, shareMessage.gsid);
+							log.e(praiseUsers.size() + "-praiseUsers size:" + praiseUsers.toString());
+						}
 					}
 				}
 			}
@@ -373,6 +411,45 @@ public class SquareSubController {
 				}
 			}
 		};
+	}
+
+	public void modifyPraiseusersToMessage(boolean option, String gsid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedSquare);
+		params.addBodyParameter("gsid", gsid);
+		params.addBodyParameter("option", option + "");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
+	}
+
+	public void reflashMessageContent(String gsid) {
+		if (gsid == null || "".equals(gsid)) {
+			return;
+		}
+		try {
+			ShareMessage shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare).shareMessagesMap.get(gsid);
+			String keyName1 = "message#" + gsid;
+			List<String> listItemsSequence = thisView.squareMessageListBody.listItemsSequence;
+			Map<String, MyListItemBody> listItemBodiesMap = thisView.squareMessageListBody.listItemBodiesMap;
+			if (listItemsSequence.size() > 0 && listItemBodiesMap.size() > 0) {
+				for (int i = 0; i < listItemsSequence.size(); i++) {
+					String item = listItemsSequence.get(i);
+					if (keyName1.equals(item)) {
+						if (listItemBodiesMap.get(item) != null) {
+							SharesMessageBody1 sharesMessageBody1 = (SharesMessageBody1) listItemBodiesMap.get(item);
+							sharesMessageBody1.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+						}
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.e(e.toString());
+		}
 	}
 
 	public void bindEvent() {
@@ -502,6 +579,8 @@ public class SquareSubController {
 			} else if (view_class.equals("group_head")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("share_head")) {
+				onTouchDownView.performClick();
+			} else if (view_class.equals("share_praise")) {
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;

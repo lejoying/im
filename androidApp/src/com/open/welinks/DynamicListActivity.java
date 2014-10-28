@@ -89,7 +89,6 @@ public class DynamicListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		selectType = getIntent().getIntExtra("type", 3);
-		
 
 		viewManage.dynamicListActivity = this;
 		friendsMap = data.relationship.friendsMap;
@@ -209,44 +208,10 @@ public class DynamicListActivity extends Activity {
 					if ("event_group".equals(tag_class)) {
 						String key = (String) view.getTag(R.id.tag_first);
 						businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_GROUP, key);
-						// parser.check();
-						// boolean isExists = data.relationship.groups.contains(key);
-						// if (isExists) {
-						// // Group group = data.relationship.groupsMap.get(key);
-						// businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_GROUP, key);
-						// // setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, 0, isExists);
-						// } else {
-						// Group group = data.relationship.groupsMap.get(key);
-						// if (group != null) {
-						// setSmallBusinessCardContent(group.gid + "", group.icon, group.name, "", group.longitude, group.latitude, TYPE_CARD_GROUP, isExists);
-						// } else {
-						// setSmallBusinessCardContent(key, "", "", "", "0", "0", TYPE_CARD_GROUP, isExists);
-						// }
-						// scanGroupCard(key);
-						// }
 						businessCardPopView.showUserCardDialogView();
 					} else if ("event_user".equals(tag_class)) {
 						String key = (String) view.getTag(R.id.tag_first);
 						businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_POINT, key);
-						// parser.check();
-						// User user = data.userInformation.currentUser;
-						// if (user.phone.equals(key)) {
-						// setSmallBusinessCardContent(user.phone + "", user.head, user.nickName, "", user.longitude, user.latitude, TYPE_CARD_FRIEND, true);
-						// } else {
-						// boolean isExists = data.relationship.friends.contains(key);
-						// if (isExists) {
-						// Friend friend = data.relationship.friendsMap.get(key);
-						// setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, true);
-						// } else {
-						// Friend friend = data.relationship.friendsMap.get(key);
-						// if (friend != null) {
-						// setSmallBusinessCardContent(friend.phone + "", friend.head, friend.nickName, "", friend.longitude, friend.latitude, TYPE_CARD_FRIEND, false);
-						// } else {
-						// setSmallBusinessCardContent(key, "", "", "", "0", "0", TYPE_CARD_FRIEND, false);
-						// }
-						// }
-						// scanUserCard(key);
-						// }
 						businessCardPopView.showUserCardDialogView();
 					}
 				}
@@ -365,7 +330,11 @@ public class DynamicListActivity extends Activity {
 			} else if ("group_create".equals(contentType)) {
 				content = "【" + nickName + "】创建了新的群组:【" + groupName + "】.";
 			} else if ("group_addme".equals(contentType)) {
-				content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
+				if ("您".equals(nickName)) {
+					content = "加入：【" + groupName + "】群组.";
+				} else {
+					content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
+				}
 			} else if ("group_removeme".equals(contentType)) {
 				content = "【" + nickName + "】退出了【" + groupName + "】群组.";
 			}

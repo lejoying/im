@@ -335,6 +335,9 @@ public class Parser {
 			String userInformationStr = gson.toJson(data.userInformation);
 			saveToRootForder("userInformation.js", userInformationStr);
 		}
+		if (phone == null || "".equals(phone) || phone == "none") {
+			return;
+		}
 
 		if (data.relationship != null) {
 			if (data.relationship.isModified) {
@@ -371,5 +374,4 @@ public class Parser {
 			saveToUserForder(phone, "localData.js", localDataStr);
 		}
 	}
-
 }

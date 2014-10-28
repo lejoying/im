@@ -167,7 +167,9 @@ public class DateUtil {
 		if (differentials == 0) {
 			result = sdfSecond.format(oldDate);
 		} else if (differentials == 1) {
-			result = "昨天";
+			result = "昨天 " + sdfSecond.format(oldDate);
+		} else if (differentials == 2) {
+			result = "前天  " + sdfSecond.format(oldDate);
 		} else {
 			String[] old = getWeekOfDate(oldDate);
 			String[] now = getWeekOfDate(nowDate);

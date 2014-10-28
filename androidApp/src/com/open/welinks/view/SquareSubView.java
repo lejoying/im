@@ -652,6 +652,8 @@ public class SquareSubView {
 		public ImageView shareCommentIconView;
 		public View buttonBar;
 
+		public View praiseAreaView;
+
 		public DownloadFile downloadFile = null;
 
 		public ShareMessage message;
@@ -680,6 +682,7 @@ public class SquareSubView {
 				this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
 				this.shareCommentIconView = (ImageView) this.cardView.findViewById(R.id.share_comment_icon);
 				this.buttonBar = this.cardView.findViewById(R.id.buttonBar);
+				this.praiseAreaView = this.cardView.findViewById(R.id.praise_area);
 
 				shareTextContentView.setBackgroundColor(Color.parseColor("#38000000"));
 				shareTextContentView.setTextColor(Color.WHITE);
@@ -726,6 +729,13 @@ public class SquareSubView {
 				this.headView.setTag(R.id.tag_first, shareMessage.phone);
 				this.headView.setOnClickListener(thisController.mOnClickListener);
 				this.headView.setOnTouchListener(thisController.mOnTouchListener);
+
+				this.praiseAreaView.setTag("ShareMessagePraise#" + shareMessage.gsid);
+				this.praiseAreaView.setTag(R.id.tag_class, "share_praise");
+				this.praiseAreaView.setTag(R.id.tag_first, shareMessage.phone);
+				this.praiseAreaView.setOnClickListener(thisController.mOnClickListener);
+				this.praiseAreaView.setOnTouchListener(thisController.mOnTouchListener);
+
 				// businessCardPopView.showUserCardDialogView();
 
 				this.releaseTimeView.setText(DateUtil.formatTime(shareMessage.time));
@@ -773,7 +783,6 @@ public class SquareSubView {
 					buttonbarpParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f) + sHeight;
 					shareTextContentView.setSingleLine();
 				}
-				// buttonBar.setBackgroundColor(Color.RED);
 				buttonbarpParams.height = (int) (displayMetrics.density * 40 + 0.5f);
 
 				// log.e(shareTextContentView.getLineCount() + "-----" + shareTextContentView.getLineHeight());
@@ -787,12 +796,6 @@ public class SquareSubView {
 				// }
 				// });
 				File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
-				// final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
-				// final int showImageHeight = (int) (displayMetrics.density * 136);
-
-				// FrameLayout.LayoutParams shareImageParams = new FrameLayout.LayoutParams(showImageWidth, showImageHeight);
-				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
-				// shareImageContentView.setLayoutParams(shareImageParams);
 				if (!imageContent.equals("")) {
 					width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
 					// Log.e(tag, width1 + "----" + imageHeight);

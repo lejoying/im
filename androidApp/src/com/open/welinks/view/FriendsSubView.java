@@ -5,13 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +25,7 @@ import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
@@ -40,13 +37,15 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.utils.MCImageUtils;
 
 public class FriendsSubView {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public String tag = "FriendsSubView";
+
+	public MyLog log = new MyLog(tag, true);
 
 	public DisplayMetrics displayMetrics;
 
@@ -59,8 +58,6 @@ public class FriendsSubView {
 	public Map<String, Friend> friendsMap;
 
 	public MainView mainView;
-
-	public Parser parser = Parser.getInstance();
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
@@ -99,6 +96,10 @@ public class FriendsSubView {
 		this.friendListBody.height = 0;
 		this.friendListBody.y = 0;
 
+		if (circles == null || circlesMap == null) {
+			return;
+		}
+
 		this.friendListBody.listItemsSequence.clear();
 
 		for (int i = 0; i < circles.size(); i++) {
@@ -107,14 +108,16 @@ public class FriendsSubView {
 			if (circle == null) {
 				continue;
 			}
-
-			CircleBody circleBody = null;
-			circleBody = new CircleBody(this.friendListBody);
-			circleBody.initialize();
+			String keyName = "circle#" + circle.rid;
+			CircleBody circleBody = (CircleBody) this.friendListBody.listItemBodiesMap.get(keyName);
+			if (circleBody == null) {
+				circleBody = new CircleBody(this.friendListBody);
+				circleBody.initialize();
+				this.friendListBody.listItemBodiesMap.put(keyName, circleBody);
+			}
 			circleBody.setContent(circle);
 
-			this.friendListBody.listItemsSequence.add("circle#" + circle.rid);
-			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
+			this.friendListBody.listItemsSequence.add(keyName);
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 10 * displayMetrics.density));
 			circleBody.y = this.friendListBody.height;
@@ -123,14 +126,12 @@ public class FriendsSubView {
 
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
 			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight;
-			// Log.d(tag, "addView");
-			Log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);
+
+			log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);
 		}
 
 		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
 	}
-
-	Bitmap bitmap = null;
 
 	public class CircleBody extends MyListItemBody {
 
@@ -147,14 +148,9 @@ public class FriendsSubView {
 		public TouchView gripView = null;
 		public ImageView gripCardBackground = null;
 
-		int lineCount = 0;
+		public int lineCount = 0;
 
 		public View initialize() {
-
-			Resources resources = mainView.thisActivity.getResources();
-			bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
-
 			this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 			this.gripView = (TouchView) this.cardView.findViewById(R.id.grip);
@@ -206,18 +202,29 @@ public class FriendsSubView {
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(singleWidth, (int) (78 * displayMetrics.density));
 			this.friendsSequence.clear();
-			// Log.e(tag, circle.friends.size() + "---size");
 			for (int i = 0; i < size; i++) {
-				FriendBody friendBody = new FriendBody();
-				if (circle.rid == 8888888 && i == size - 1) {
-					friendBody.Initialize(true);
-					friendBody.setData(null);
+				Friend friend = null;
+				String phone = null;
+				if (i >= circle.friends.size()) {
+					phone = null;
 				} else {
-					String phone = circle.friends.get(i);
-					Friend friend = friendsMap.get(phone);
-					friendBody.Initialize(false);
-					friendBody.setData(friend);
+					phone = circle.friends.get(i);
 				}
+				if (phone != null) {
+					friend = friendsMap.get(phone);
+				}
+				String key = "friend#" + phone;
+				FriendBody friendBody = friendBodiesMap.get(key);
+				if (friendBody == null) {
+					friendBody = new FriendBody();
+					if (circle.rid == 8888888 && i == size - 1) {
+						friendBody.Initialize(true);
+					} else {
+						friendBody.Initialize(false);
+					}
+				}
+
+				friendBody.setData(friend);
 
 				this.cardView.addView(friendBody.friendView, layoutParams);
 				int x = (i % 4 + 1) * spacing + (i % 4) * singleWidth;
@@ -225,15 +232,12 @@ public class FriendsSubView {
 
 				friendBody.friendView.setX(x);
 				friendBody.friendView.setY(y);
-
-				// if (this.friendBodiesMap.get(phone) == null) {
-				// optimize friendBodiesMap pool
-				// }
 			}
 		}
 	}
 
 	public class FriendBody {
+
 		public View friendView = null;
 
 		public ImageView headImageView;
@@ -251,11 +255,9 @@ public class FriendsSubView {
 
 		public void setData(Friend friend) {
 			if (this.flag) {
-				// fileHandlers.getHeadImage(friend.head, this.headImageView, options);
 				this.headImageView.setImageResource(R.drawable.button_addmembers);
 				this.headImageView.setColorFilter(Color.parseColor("#0099cd"));
 				this.nickNameView.setText("添加好友");
-				// this.friendView.setTag(R.id.friendsContainer, "");
 				this.friendView.setTag(R.id.tag_class, "addfriend_view");
 			} else {
 				fileHandlers.getHeadImage(friend.head, this.headImageView, options);

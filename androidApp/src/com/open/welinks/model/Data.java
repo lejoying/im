@@ -34,7 +34,7 @@ public class Data {
 
 		public ArrayList<String> selectedImageList;
 
-		public List<String> praiseusersList;
+		public ArrayList<String> praiseusersList;
 
 		public List<ShareMessage> tempShares;
 
@@ -251,7 +251,7 @@ public class Data {
 				public String nickName;
 				public String head;
 				public long time;
-				public List<String> praiseusers = new ArrayList<String>();
+				public ArrayList<String> praiseusers = new ArrayList<String>();
 				public List<Comment> comments = new ArrayList<Comment>();
 				public String content;
 				public String status;// sending sent failed

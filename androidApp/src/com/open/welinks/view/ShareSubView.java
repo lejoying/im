@@ -59,7 +59,7 @@ public class ShareSubView {
 
 	public String tag = "ShareSubView";
 
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 

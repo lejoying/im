@@ -80,6 +80,7 @@ public class SharePraiseusersView {
 
 		praiseUsersAdapter = new PraiseUsersAdapter();
 		listView.setAdapter(praiseUsersAdapter);
+		thisController.getUsersData();
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
 	}
@@ -159,7 +160,7 @@ public class SharePraiseusersView {
 			}
 			holder.sign.setText(mainBusiness);
 
-			convertView.setTag("user#" + thisController.praiseusersList.get(position));
+			convertView.setTag(R.id.tag_first, "user#" + thisController.praiseusersList.get(position));
 			convertView.setOnClickListener(thisController.mOnClickListener);
 			return convertView;
 		}

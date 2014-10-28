@@ -24,7 +24,7 @@ public class MyGson {
 		return t;
 	}
 
-	public String toJson(JsonElement jsonElement) {
+	public String toJson(Object jsonElement) {
 		String result = null;
 		try {
 			result = gson.toJson(jsonElement);

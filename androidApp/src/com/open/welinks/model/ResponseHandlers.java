@@ -424,7 +424,6 @@ public class ResponseHandlers {
 							friend.nickName = account.nickName;
 							friend.mainBusiness = account.mainBusiness;
 							friend.sex = account.sex;
-							friend.sex = account.sex;
 							friend.age = Integer.valueOf(account.age);
 							friend.createTime = account.createTime;
 							friend.lastLoginTime = account.lastLoginTime;
