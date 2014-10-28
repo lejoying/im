@@ -444,6 +444,9 @@ public class MainController {
 		group.icon = (String) map.get("icon");
 		group.description = (String) map.get("description");
 		group.distance = (Integer) map.get("distance");
+		if (map.get("conver") != null) {
+			group.conver = (String) map.get("conver");
+		}
 
 		if (!data.relationship.squares.contains(group.gid + "")) {
 			data.relationship.squares.add(group.gid + "");
@@ -454,6 +457,12 @@ public class MainController {
 			group2.icon = (String) map.get("icon");
 			group2.description = (String) map.get("description");
 			group2.distance = (Integer) map.get("distance");
+			if (map.get("conver") != null) {
+				group2.conver = (String) map.get("conver");
+				if (data.localStatus.localData.currentSelectedSquare.equals(group2.gid + "")) {
+					thisView.squareSubView.setConver();
+				}
+			}
 		}
 
 		data.relationship.isModified = true;
@@ -582,6 +591,8 @@ public class MainController {
 		public String description;
 		public String gtype;
 		public String background;
+		public String conver;
+
 	}
 
 	public class TouchStatus {

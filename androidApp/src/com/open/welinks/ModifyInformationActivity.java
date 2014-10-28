@@ -110,8 +110,10 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUESTCODE_SELECT && resultCode == Activity.RESULT_OK) {
-			Uri selectedImage = Uri.parse("file://" + this.data.tempData.selectedImageList.get(0));
-			startPhotoZoom(selectedImage);
+			if(this.data.tempData.selectedImageList!=null && this.data.tempData.selectedImageList.size()>0){
+				Uri selectedImage = Uri.parse("file://" + this.data.tempData.selectedImageList.get(0));
+				startPhotoZoom(selectedImage);
+			}
 		} else if (requestCode == REQUESTCODE_TAKE && resultCode == Activity.RESULT_OK) {
 			Uri uri = Uri.fromFile(tempFile);
 			startPhotoZoom(uri);

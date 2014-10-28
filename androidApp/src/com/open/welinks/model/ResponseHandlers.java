@@ -1079,6 +1079,7 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("修改群组信息成功")) {
 				Group group = response.group;
 				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
+				log.e("nullPointException:" + currentGroup);
 				String key = currentGroup.gid + "";
 				currentGroup.icon = group.icon;
 				currentGroup.name = group.name;
@@ -1087,15 +1088,17 @@ public class ResponseHandlers {
 				currentGroup.createTime = group.createTime;
 				currentGroup.description = group.description;
 				currentGroup.background = group.background;
-				if (!currentGroup.background.equals(group.conver)) {
-					viewManage.shareSubView.setConver();
+				if (currentGroup.conver != null && !currentGroup.conver.equals(group.conver)) {
+					if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
+						viewManage.shareSubView.setConver();
+					}
 				}
 				currentGroup.conver = group.conver;
 				currentGroup.permission = group.permission;
 				data.relationship.isModified = true;
 				viewManage.postNotifyView("ShareSubView");
 				viewManage.postNotifyView("GroupListActivity");
-				log.e(tag, "---------------------修改群组信息成功");
+				log.e(tag, "---------------------修改群组信息成功, is square:" + data.relationship.squares.contains(key));
 				if (data.relationship.squares.contains(key)) {
 					lbsHandlers.uplodSquareLbsData(key);
 				} else if (data.relationship.groups.contains(key)) {

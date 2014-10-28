@@ -113,7 +113,9 @@ public class FriendsSubView {
 			}
 			String keyName = "circle#" + circle.rid;
 			CircleBody circleBody = (CircleBody) this.friendListBody.listItemBodiesMap.get(keyName);
+			boolean flag = true;
 			if (circleBody == null) {
+				flag = false;
 				circleBody = new CircleBody(this.friendListBody);
 				circleBody.initialize();
 				this.friendListBody.listItemBodiesMap.put(keyName, circleBody);
@@ -123,11 +125,15 @@ public class FriendsSubView {
 			this.friendListBody.listItemsSequence.add(keyName);
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 10 * displayMetrics.density));
+			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
 			circleBody.y = this.friendListBody.height;
 			circleBody.cardView.setY(circleBody.y);
-			circleBody.cardView.setX(0);
+			if (flag) {
+				circleBody.cardView.setX(10 * displayMetrics.density + 0.5f);
+			} else {
+				circleBody.cardView.setX(0);
+			}
 
-			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
 			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight;
 
 			log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);

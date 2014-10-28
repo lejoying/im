@@ -554,8 +554,14 @@ public class SquareSubView {
 		this.squareMessageListBody.height = this.squareMessageListBody.height + (215) * displayMetrics.density;// 215 - 48
 		this.squareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 
-		imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
+		// imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+		if (group.conver != null && !group.conver.equals("")) {
+			setConver();
+		} else {
+			imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
+		}
+
 		titleName.setText(group.name + "广场");
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
 

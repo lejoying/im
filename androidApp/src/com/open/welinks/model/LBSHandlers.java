@@ -100,6 +100,7 @@ public class LBSHandlers {
 			data.gid = group.gid + "";
 			data.description = group.description;
 			data.background = group.background;
+			data.conver = group.conver;
 			// data.gtype = "group";
 			params.addBodyParameter("data", gson.toJson(data));
 			if ("Group".equals(type)) {

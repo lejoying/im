@@ -245,7 +245,7 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
 				callback.onSuccess((ResponseInfo<T>) values[1]);
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.e(tag, e.toString());
+				Log.e(tag, "Exception:" + e);
 			}
 			break;
 		default:

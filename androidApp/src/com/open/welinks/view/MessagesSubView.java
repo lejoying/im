@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -258,13 +259,17 @@ public class MessagesSubView {
 
 				headView.setImageResource(R.drawable.msg_list_friends_notice_icon);
 				if (data.event.userNotReadMessage) {
-					lastChatTimeView.setVisibility(View.VISIBLE);
+					// lastChatTimeView.setVisibility(View.VISIBLE);
 					lastChatTimeView.setBackgroundResource(R.drawable.noread_message);
 					FrameLayout.LayoutParams layoutParams = (LayoutParams) lastChatTimeView.getLayoutParams();
 					layoutParams.width = 30;
 					layoutParams.height = 30;
 				} else {
 					// lastChatTimeView.setVisibility(View.GONE);
+					lastChatTimeView.setBackgroundColor(Color.parseColor("#00000000"));
+					FrameLayout.LayoutParams layoutParams = (LayoutParams) lastChatTimeView.getLayoutParams();
+					layoutParams.width = android.widget.LinearLayout.LayoutParams.WRAP_CONTENT;
+					layoutParams.height = android.widget.LinearLayout.LayoutParams.WRAP_CONTENT;
 				}
 
 				String content = "";
@@ -314,13 +319,17 @@ public class MessagesSubView {
 				headView.setImageResource(R.drawable.msg_list_group_notice_icon);
 				lastChatTimeView.setText("");
 				if (data.event.groupNotReadMessage) {
-					lastChatTimeView.setVisibility(View.VISIBLE);
+					// lastChatTimeView.setVisibility(View.VISIBLE);
 					lastChatTimeView.setBackgroundResource(R.drawable.noread_message);
 					FrameLayout.LayoutParams layoutParams = (LayoutParams) lastChatTimeView.getLayoutParams();
 					layoutParams.width = 30;
 					layoutParams.height = 30;
 				} else {
 					// lastChatTimeView.setVisibility(View.GONE);
+					lastChatTimeView.setBackgroundColor(Color.parseColor("#00000000"));
+					FrameLayout.LayoutParams layoutParams = (LayoutParams) lastChatTimeView.getLayoutParams();
+					layoutParams.width = android.widget.LinearLayout.LayoutParams.WRAP_CONTENT;
+					layoutParams.height = android.widget.LinearLayout.LayoutParams.WRAP_CONTENT;
 				}
 				String content = "";
 				try {
