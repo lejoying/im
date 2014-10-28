@@ -31,6 +31,7 @@ import com.open.lib.TestHttp;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnUploadLoadingListener;
+import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.ResponseHandlers;
@@ -38,7 +39,6 @@ import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.Debug1View;
-import com.open.welinks.view.Debug1View.ControlProgress;
 import com.open.welinks.view.Debug1View.Status;
 import com.open.welinks.view.Debug1View.TransportingList.TransportingItem;
 

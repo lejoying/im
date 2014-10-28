@@ -1,6 +1,5 @@
 package com.open.welinks.controller;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,6 +65,7 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
+import com.open.welinks.utils.ViewUtil;
 import com.open.welinks.view.MainView;
 
 public class MainController {
@@ -146,7 +146,7 @@ public class MainController {
 		thisView.shareSubView.showShareMessages();
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 
-		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
+		data.tempData.statusBarHeight = ViewUtil.getStatusBarHeight(thisActivity);
 
 		DataHandlers.getUserInfomation();
 		DataHandlers.getUserCurrentAllGroup();
@@ -790,23 +790,6 @@ public class MainController {
 		DataHandlers.clearData();
 		thisActivity.finish();
 		thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
-	}
-
-	public int getStatusBarHeight(Context context) {
-		Class<?> c = null;
-		Object obj = null;
-		Field field = null;
-		int x = 0, statusBarHeight = 0;
-		try {
-			c = Class.forName("com.android.internal.R$dimen");
-			obj = c.newInstance();
-			field = c.getField("status_bar_height");
-			x = Integer.parseInt(field.get(obj).toString());
-			statusBarHeight = context.getResources().getDimensionPixelSize(x);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		return statusBarHeight;
 	}
 
 	boolean isShowDialg = false;

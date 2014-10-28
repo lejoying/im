@@ -36,6 +36,7 @@ import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
@@ -51,7 +52,6 @@ import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareReleaseImageTextView;
-import com.open.welinks.view.ShareSubView.ControlProgress;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 

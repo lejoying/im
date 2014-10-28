@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -28,6 +27,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.R;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.controller.UploadMultipart;
+import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
@@ -67,7 +67,11 @@ public class Debug1View {
 		this.thisActivity = activity;
 	}
 
+	public DisplayMetrics displayMetrics;
+
 	public void initView() {
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		mInflater = thisActivity.getLayoutInflater();
 		animateFirstListener = new AnimateFirstDisplayListener();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
@@ -85,7 +89,7 @@ public class Debug1View {
 
 		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
 		titleControlProgress = new ControlProgress();
-		titleControlProgress.initialize(controlProgressView);
+		titleControlProgress.initialize(controlProgressView, displayMetrics);
 
 	}
 
@@ -165,7 +169,7 @@ public class Debug1View {
 
 				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
-				this.controlProgress.initialize(this.controlProgressView);
+				this.controlProgress.initialize(this.controlProgressView, displayMetrics);
 				// if (imageSource.multipart != null) {
 				// long time = imageSource.multipart.time.received - imageSource.multipart.time.start;
 				// if (time < 0) {
@@ -208,51 +212,6 @@ public class Debug1View {
 					displayedImages.add(imageUri);
 				}
 			}
-		}
-	}
-
-	public class ControlProgress {
-
-		public View controlProgressView;
-
-		public ImageView progress_line1;
-
-		public ImageView progress_line2;
-		public TranslateAnimation move_progress_line1;
-
-		public int percentage = 0;
-		public int width = 0;
-
-		public void initialize(View container) {
-			DisplayMetrics displayMetrics = new DisplayMetrics();
-			thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
-
-			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
-			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
-			controlProgressView = container;
-
-			width = displayMetrics.widthPixels;
-
-		}
-
-		public void moveTo(int targetPercentage) {
-			float position = targetPercentage / 100.0f * this.width;
-			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
-			// TODO old animation becomes memory fragment
-			move_progress_line1.setStartOffset(0);
-			move_progress_line1.setDuration(200);
-
-			progress_line1.startAnimation(move_progress_line1);
-
-			progress_line1.setX(position);
-			percentage = targetPercentage;
-		}
-
-		public void setTo(int targetPercentage) {
-			float position = targetPercentage / 100.0f * this.width;
-			progress_line1.setX(position);
-			percentage = targetPercentage;
 		}
 	}
 }

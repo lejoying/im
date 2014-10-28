@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
@@ -29,6 +28,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadOssFileController;
+import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
@@ -64,7 +64,11 @@ public class DownloadOssFileView {
 		this.thisActivity = activity;
 	}
 
+	DisplayMetrics displayMetrics;
+
 	public void initView() {
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		mInflater = thisActivity.getLayoutInflater();
 		animateFirstListener = new AnimateFirstDisplayListener();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
@@ -82,7 +86,7 @@ public class DownloadOssFileView {
 
 		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
 		titleControlProgress = new ControlProgress();
-		titleControlProgress.initialize(controlProgressView);
+		titleControlProgress.initialize(controlProgressView, displayMetrics);
 	}
 
 	public class TransportingList {
@@ -104,13 +108,13 @@ public class DownloadOssFileView {
 
 				View transportingItemView = transportingItem.initialize(imageBean);
 				String path = imageBean.path;
-//				if (imageBean.downloadFile == null) {
-//					imageBean.downloadFile = thisController.downloadFile(path);
-//				}
-//
-//				imageBean.downloadFile.transportingItem = transportingItem;
-//				transportingItem.downloadFile = imageBean.downloadFile;
-//				imageBean.downloadFile.imageBean = imageBean;
+				// if (imageBean.downloadFile == null) {
+				// imageBean.downloadFile = thisController.downloadFile(path);
+				// }
+				//
+				// imageBean.downloadFile.transportingItem = transportingItem;
+				// transportingItem.downloadFile = imageBean.downloadFile;
+				// imageBean.downloadFile.imageBean = imageBean;
 				transportingItemView.setTag(path);
 				// controlProgress.setTag(uploadMultipart);
 				transportingList.addFooterView(transportingItemView);
@@ -160,23 +164,23 @@ public class DownloadOssFileView {
 
 				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
-				this.controlProgress.initialize(this.controlProgressView);
-//				if (imageSource.downloadFile != null) {
-//					long time = imageSource.downloadFile.time.received - imageSource.downloadFile.time.start;
-//					if (time < 0) {
-//						time = 0;
-//					}
-//					text_transport_time_view.setText(time + "ms");
-//					long size = Long.valueOf(imageSource.size);
-//					int currentUploadSize = (int) Math.floor(size * imageSource.downloadFile.uploadPrecent / 100f);
-//					text_file_size_view.setText(currentUploadSize / 1000 + "/" + size / 1000 + "k");
-//					if (imageSource.downloadFile.isDownloadStatus == DownloadFile.DOWNLOAD_SUCCESS) {
-//						String fileName = thisController.urlToLocalFileName(path);
-//						File file = new File(sdFile, "test0/" + fileName);
-//						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, options, animateFirstListener);
-//					}
-//					this.controlProgress.moveTo(imageSource.downloadFile.uploadPrecent);
-//				}
+				this.controlProgress.initialize(this.controlProgressView, displayMetrics);
+				// if (imageSource.downloadFile != null) {
+				// long time = imageSource.downloadFile.time.received - imageSource.downloadFile.time.start;
+				// if (time < 0) {
+				// time = 0;
+				// }
+				// text_transport_time_view.setText(time + "ms");
+				// long size = Long.valueOf(imageSource.size);
+				// int currentUploadSize = (int) Math.floor(size * imageSource.downloadFile.uploadPrecent / 100f);
+				// text_file_size_view.setText(currentUploadSize / 1000 + "/" + size / 1000 + "k");
+				// if (imageSource.downloadFile.isDownloadStatus == DownloadFile.DOWNLOAD_SUCCESS) {
+				// String fileName = thisController.urlToLocalFileName(path);
+				// File file = new File(sdFile, "test0/" + fileName);
+				// imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, options, animateFirstListener);
+				// }
+				// this.controlProgress.moveTo(imageSource.downloadFile.uploadPrecent);
+				// }
 
 				LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);
@@ -200,51 +204,6 @@ public class DownloadOssFileView {
 					displayedImages.add(imageUri);
 				}
 			}
-		}
-	}
-
-	public class ControlProgress {
-
-		public View controlProgressView;
-
-		public ImageView progress_line1;
-
-		public ImageView progress_line2;
-		public TranslateAnimation move_progress_line1;
-
-		public int percentage = 0;
-		public int width = 0;
-
-		public void initialize(View container) {
-			DisplayMetrics displayMetrics = new DisplayMetrics();
-			thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
-
-			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
-			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
-			controlProgressView = container;
-
-			width = displayMetrics.widthPixels;
-
-		}
-
-		public void moveTo(int targetPercentage) {
-			float position = targetPercentage / 100.0f * this.width;
-			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
-			// TODO old animation becomes memory fragment
-			move_progress_line1.setStartOffset(0);
-			move_progress_line1.setDuration(200);
-
-			progress_line1.startAnimation(move_progress_line1);
-
-			progress_line1.setX(position);
-			percentage = targetPercentage;
-		}
-
-		public void setTo(int targetPercentage) {
-			float position = targetPercentage / 100.0f * this.width;
-			progress_line1.setX(position);
-			percentage = targetPercentage;
 		}
 	}
 }

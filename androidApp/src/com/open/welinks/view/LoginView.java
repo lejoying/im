@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -29,6 +28,7 @@ import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.open.welinks.R;
 import com.open.welinks.controller.LoginController;
+import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;
 
 public class LoginView {
@@ -126,7 +126,7 @@ public class LoginView {
 		cardTopLine.setBackgroundColor(Color.RED);
 		controlProgressView = thisActivity.findViewById(R.id.list_item_progress_container);
 		controlProgress = new ControlProgress();
-		controlProgress.initialize(controlProgressView);
+		controlProgress.initialize(controlProgressView, displayMetrics);
 
 		cardTopLine.setVisibility(View.GONE);
 		progressBar.setVisibility(View.VISIBLE);
@@ -355,48 +355,6 @@ public class LoginView {
 				float y = inputDialigView.getTranslationY();
 				inputDialigView.setTranslationY(y - 1280 * mappedValue);
 			}
-		}
-	}
-
-	public class ControlProgress {
-
-		public View controlProgressView;
-
-		public ImageView progress_line1;
-
-		public ImageView progress_line2;
-		public TranslateAnimation move_progress_line1;
-
-		public int percentage = 0;
-		public int width = 0;
-
-		public void initialize(View container) {
-			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
-
-			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
-			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
-			controlProgressView = container;
-
-			width = displayMetrics.widthPixels;
-		}
-
-		public void moveTo(int targetPercentage) {
-			float position = targetPercentage / 100.0f * this.width;
-			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
-			// TODO old animation becomes memory fragment
-			move_progress_line1.setStartOffset(0);
-			move_progress_line1.setDuration(200);
-
-			progress_line1.startAnimation(move_progress_line1);
-
-			progress_line1.setX(position);
-			percentage = targetPercentage;
-		}
-
-		public void setTo(int targetPercentage) {
-			float position = targetPercentage / 100.0f * this.width;
-			progress_line1.setX(position);
-			percentage = targetPercentage;
 		}
 	}
 }

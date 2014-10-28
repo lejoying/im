@@ -63,8 +63,11 @@ public class FriendsSubView {
 
 	public DisplayImageOptions options;
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public FriendsSubView(MainView mainView) {
 		this.mainView = mainView;
+		viewManage.friendsSubView = this;
 	}
 
 	public void initData() {

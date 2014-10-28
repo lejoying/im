@@ -16,6 +16,7 @@ public class ViewManage {
 	public LoginView loginView = null;
 	public MainView mainView = null;
 	public MeSubView meSubView = null;
+	public FriendsSubView friendsSubView = null;
 	public SquareSubView squareSubView = null;
 	public ShareSubView shareSubView = null;
 	public ChatView chatView = null;

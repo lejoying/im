@@ -257,7 +257,6 @@ public class MessagesSubView {
 				nickNameView.setText("个人动态");
 
 				headView.setImageResource(R.drawable.msg_list_friends_notice_icon);
-				lastChatTimeView.setText("");
 				if (data.event.userNotReadMessage) {
 					lastChatTimeView.setVisibility(View.VISIBLE);
 					lastChatTimeView.setBackgroundResource(R.drawable.noread_message);
@@ -265,7 +264,7 @@ public class MessagesSubView {
 					layoutParams.width = 30;
 					layoutParams.height = 30;
 				} else {
-					lastChatTimeView.setVisibility(View.GONE);
+					// lastChatTimeView.setVisibility(View.GONE);
 				}
 
 				String content = "";
@@ -303,6 +302,7 @@ public class MessagesSubView {
 					} else if ("account_dataupdate".equals(event.type)) {
 						content = "更新个人资料";
 					}
+					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(event.time)));
 				} catch (JsonSyntaxException e) {
 					e.printStackTrace();
 					content = "";
@@ -320,7 +320,7 @@ public class MessagesSubView {
 					layoutParams.width = 30;
 					layoutParams.height = 30;
 				} else {
-					lastChatTimeView.setVisibility(View.GONE);
+					// lastChatTimeView.setVisibility(View.GONE);
 				}
 				String content = "";
 				try {
@@ -356,10 +356,15 @@ public class MessagesSubView {
 						} else if ("group_create".equals(contentType)) {
 							content = "【" + nickName + "】创建了新的群组:【" + groupName + "】.";
 						} else if ("group_addme".equals(contentType)) {
-							content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
+							if ("您".equals(nickName)) {
+								content = "加入【" + groupName + "】群组.";
+							} else {
+								content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
+							}
 						} else if ("group_removeme".equals(contentType)) {
 							content = "【" + nickName + "】退出了【" + groupName + "】群组.";
 						}
+						lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(event.time)));
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

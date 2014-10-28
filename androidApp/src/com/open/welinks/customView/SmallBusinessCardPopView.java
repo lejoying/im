@@ -1,6 +1,5 @@
 package com.open.welinks.customView;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import android.app.Activity;
@@ -41,6 +40,8 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.utils.ViewUtil;
+import com.open.welinks.view.ViewManage;
 
 public class SmallBusinessCardPopView {
 
@@ -305,7 +306,7 @@ public class SmallBusinessCardPopView {
 			distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);
 			lastLoginTimeView = (TextView) userCardMainView.findViewById(R.id.lastLoginTime);
 			userBusinessContainer = (RelativeLayout) userCardMainView.findViewById(R.id.userBusinessView);
-			int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + getStatusBarHeight(thisActivity);
+			int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + ViewUtil.getStatusBarHeight(thisActivity);
 			userBusinessContainer.getLayoutParams().height = height;
 			goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
 			goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);
@@ -431,10 +432,14 @@ public class SmallBusinessCardPopView {
 						parser.check();
 						Friend friend0 = data.relationship.friendsMap.get(friend.phone);
 						// boolean flag = data.relationship.friends.contains(friend.phone);
+						boolean flag = false;
 						if (friend0 != null) {
 							friend0.sex = friend.sex;
-							friend0.nickName = friend.nickName;
 							friend0.mainBusiness = friend.mainBusiness;
+							if (!friend0.nickName.equals(friend.nickName) || !friend0.nickName.equals(friend.nickName)) {
+								flag = true;
+							}
+							friend0.nickName = friend.nickName;
 							friend0.head = friend.head;
 							friend0.longitude = friend.longitude;
 							friend0.latitude = friend.latitude;
@@ -448,26 +453,15 @@ public class SmallBusinessCardPopView {
 							cardView.isGetData = true;
 							cardView.setSmallBusinessCardContent(cardView.type, friend.phone);
 						}
+						if (flag) {
+							if (data.relationship.friends.contains(friend0.phone)) {
+								ViewManage viewManage = ViewManage.getInstance();
+								viewManage.friendsSubView.showCircles();
+							}
+						}
 					}
 				}
 			};
 		});
-	}
-
-	public static int getStatusBarHeight(Context context) {
-		Class<?> c = null;
-		Object obj = null;
-		Field field = null;
-		int x = 0, statusBarHeight = 0;
-		try {
-			c = Class.forName("com.android.internal.R$dimen");
-			obj = c.newInstance();
-			field = c.getField("status_bar_height");
-			x = Integer.parseInt(field.get(obj).toString());
-			statusBarHeight = context.getResources().getDimensionPixelSize(x);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		return statusBarHeight;
 	}
 }
