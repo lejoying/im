@@ -101,6 +101,10 @@ public class ViewManage {
 			if (messagesSubView != null) {
 				messagesSubView.showMessagesSequence();
 			}
+		} else if (viewName.equals("ChatMessage")) {
+			if (messagesSubView != null) {
+				chatView.mChatAdapter.notifyDataSetChanged();
+			}
 		}
 	}
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
     <TextView
         android:id="@+id/time"
@@ -15,14 +15,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp" >
 
         <RelativeLayout
+            android:id="@+id/panel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_marginLeft="30dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/chat_item_background"
@@ -34,7 +35,8 @@
             <RelativeLayout
                 android:id="@+id/share"
                 android:layout_width="180dp"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/share_title"
@@ -115,7 +117,8 @@
                     android:paddingRight="20dip"
                     android:paddingTop="18dip"
                     android:scaleType="fitXY"
-                    android:src="@drawable/friends_sends_pictures_no" />
+                    android:src="@drawable/friends_sends_pictures_no"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/images_count"
@@ -128,6 +131,17 @@
                     android:text="5" />
             </FrameLayout>
         </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/message_status"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/panel"
+            android:src="@drawable/message_resend"
+            android:visibility="gone"
+            android:translationY="10dp" />
 
         <ImageView
             android:id="@+id/head"

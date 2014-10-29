@@ -250,6 +250,9 @@ public class ChatView {
 					chatHolder.share = convertView.findViewById(R.id.share);
 					chatHolder.share_text = (TextView) convertView.findViewById(R.id.share_text);
 					chatHolder.share_image = (ImageView) convertView.findViewById(R.id.share_image);
+					if (type == TYPE_SELF) {
+						chatHolder.message_status = (ImageView) convertView.findViewById(R.id.message_status);
+					}
 				}
 
 				convertView.setTag(chatHolder);
@@ -263,6 +266,26 @@ public class ChatView {
 				chatHolder.character.setText(content);
 			} else {
 				String contentType = message.contentType;
+				if (type == TYPE_SELF) {
+					chatHolder.message_status.setVisibility(View.VISIBLE);
+					if ("sending".equals(message.status)) {
+						long currentLong = System.currentTimeMillis();
+						long cha = (currentLong - Long.valueOf(message.time)) / 1000;
+						if (cha > 60) {
+							message.status = "failed";
+							chatHolder.message_status.setImageResource(R.drawable.message_resend);
+						} else {
+							chatHolder.message_status.setImageResource(R.drawable.message_send);
+						}
+					} else if ("sent".equals(message.status)) {
+						chatHolder.message_status.setVisibility(View.GONE);
+					} else if ("failed".equals(message.status)) {
+						chatHolder.message_status.setImageResource(R.drawable.message_resend);
+					} else {
+						chatHolder.message_status.setImageResource(R.drawable.message_failed);
+						chatHolder.message_status.setVisibility(View.GONE);
+					}
+				}
 
 				if ("text".equals(contentType)) {
 					chatHolder.character.setVisibility(View.VISIBLE);
@@ -348,7 +371,7 @@ public class ChatView {
 			public View images_layout, share;
 			public RelativeLayout voice;
 			public TextView time, character, voicetime, images_count, share_text, share_title;
-			public ImageView voice_icon, head, image, images, share_image;
+			public ImageView voice_icon, head, image, images, share_image, message_status;
 		}
 	}
 }

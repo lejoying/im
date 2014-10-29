@@ -658,6 +658,7 @@ public class SquareSubView {
 		public TextView shareCommentNumberView;
 		public ImageView shareCommentIconView;
 		public View buttonBar;
+		public TextView shareStatusView;
 
 		public View praiseAreaView;
 
@@ -694,6 +695,8 @@ public class SquareSubView {
 				shareTextContentView.setBackgroundColor(Color.parseColor("#38000000"));
 				shareTextContentView.setTextColor(Color.WHITE);
 
+				this.shareStatusView = (TextView) this.cardView.findViewById(R.id.share_status);
+
 				View mainContainer = cardView.findViewById(R.id.mainContainer);
 				FrameLayout.LayoutParams params = (LayoutParams) mainContainer.getLayoutParams();
 				if (i != 0) {
@@ -724,6 +727,15 @@ public class SquareSubView {
 
 				this.message = shareMessage;
 				this.fileName = fileName;
+				if (shareMessage.status != null) {
+					if ("sending".equals(shareMessage.status)) {
+						shareStatusView.setText("发送中...");
+						shareStatusView.setVisibility(View.VISIBLE);
+					} else if ("failed".equals(shareMessage.status)) {
+						shareStatusView.setText("发布失败");
+						shareStatusView.setVisibility(View.VISIBLE);
+					}
+				}
 				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);

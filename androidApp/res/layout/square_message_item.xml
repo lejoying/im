@@ -20,9 +20,20 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="70dp"
             android:layout_marginTop="5dp"
-            android:text="微型社区小伙伴"
+            android:text="小伙伴"
             android:textColor="#8c8c8c"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/share_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="发布成功"
+            android:textColor="@color/text_color_black_2"
+            android:textSize="12sp"
+             android:translationY="10dp"
+            android:visibility="gone" />
 
         <com.open.lib.TouchTextView
             android:id="@+id/share_releaseTime"
