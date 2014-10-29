@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:scaleType="centerCrop" />
 
-        <com.open.welinks.customView.MyTextView
+        <TextView
             android:id="@+id/share_textContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -138,7 +138,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="210dp"
-            android:maxLines="4"
             android:text="分享内容"
             android:textColor="@color/text_color_black" />
     </RelativeLayout>

@@ -25,14 +25,17 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.utils.MyGson;
 
 public class ChatView {
 	public Data data = Data.getInstance();
@@ -167,9 +170,10 @@ public class ChatView {
 		public ArrayList<Message> messages;
 		public User currentUser = data.userInformation.currentUser;
 
-		public int TYPECOUNT = 3;
+		public int TYPECOUNT = 4;
 		public int TYPE_SELF = 0x01;
 		public int TYPE_OTHER = 0x02;
+		public int TYPE_EVENT = 0x03;
 
 		@Override
 		public void notifyDataSetChanged() {
@@ -199,10 +203,14 @@ public class ChatView {
 		@Override
 		public int getItemViewType(int position) {
 			Message message = messages.get(position);
-			if (message.phone.equals(currentUser.phone)) {
-				return TYPE_SELF;
+			if ("event".equals(message.sendType)) {
+				return TYPE_EVENT;
 			} else {
-				return TYPE_OTHER;
+				if (message.phone.equals(currentUser.phone)) {
+					return TYPE_SELF;
+				} else {
+					return TYPE_OTHER;
+				}
 			}
 		}
 
@@ -222,103 +230,116 @@ public class ChatView {
 					convertView = mInflater.inflate(R.layout.chat_item_send, null);
 				} else if (type == TYPE_OTHER) {
 					convertView = mInflater.inflate(R.layout.chat_item_receive, null);
+				} else if (type == TYPE_EVENT) {
+					convertView = mInflater.inflate(R.layout.chat_item_event, null);
 				}
-				chatHolder.time = (TextView) convertView.findViewById(R.id.time);
-				chatHolder.character = (TextView) convertView.findViewById(R.id.character);
-				chatHolder.image = (ImageView) convertView.findViewById(R.id.image);
-				chatHolder.images_layout = convertView.findViewById(R.id.images_layout);
-				chatHolder.images = (ImageView) convertView.findViewById(R.id.images);
-				chatHolder.images_count = (TextView) convertView.findViewById(R.id.images_count);
-				chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
-				chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
-				chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
-				chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
-				chatHolder.share = convertView.findViewById(R.id.share);
-				chatHolder.share_text = (TextView) convertView.findViewById(R.id.share_text);
-				chatHolder.share_image = (ImageView) convertView.findViewById(R.id.share_image);
+
+				if (type == TYPE_EVENT) {
+					chatHolder.character = (TextView) convertView.findViewById(R.id.character);
+				} else {
+					chatHolder.time = (TextView) convertView.findViewById(R.id.time);
+					chatHolder.character = (TextView) convertView.findViewById(R.id.character);
+					chatHolder.image = (ImageView) convertView.findViewById(R.id.image);
+					chatHolder.images_layout = convertView.findViewById(R.id.images_layout);
+					chatHolder.images = (ImageView) convertView.findViewById(R.id.images);
+					chatHolder.images_count = (TextView) convertView.findViewById(R.id.images_count);
+					chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
+					chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
+					chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
+					chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
+					chatHolder.share = convertView.findViewById(R.id.share);
+					chatHolder.share_text = (TextView) convertView.findViewById(R.id.share_text);
+					chatHolder.share_image = (ImageView) convertView.findViewById(R.id.share_image);
+				}
 
 				convertView.setTag(chatHolder);
 			} else {
 				chatHolder = (ChatHolder) convertView.getTag();
 			}
-
-			String contentType = message.contentType;
-
-			if ("text".equals(contentType)) {
-				chatHolder.character.setVisibility(View.VISIBLE);
-				chatHolder.image.setVisibility(View.GONE);
-				chatHolder.voice.setVisibility(View.GONE);
-				chatHolder.share.setVisibility(View.GONE);
-				chatHolder.character.setText(message.content);
-			} else if ("image".equals(contentType)) {
-				chatHolder.character.setVisibility(View.GONE);
-				chatHolder.image.setVisibility(View.VISIBLE);
-				chatHolder.voice.setVisibility(View.GONE);
-				chatHolder.share.setVisibility(View.GONE);
-				List<String> images = thisController.getImageFromJson(message.content);
-				String image = images.get(0);
-				if (images.size() == 1) {
-					chatHolder.images_layout.setVisibility(View.GONE);
-					chatHolder.image.setVisibility(View.VISIBLE);
-					chatHolder.image.setTag(R.id.tag_first, images);
-					thisController.setImageThumbnail(image, chatHolder.image, 178, 106);
-					chatHolder.image.setOnClickListener(thisController.mOnClickListener);
-				} else {
-					chatHolder.image.setVisibility(View.GONE);
-					chatHolder.images_layout.setVisibility(View.VISIBLE);
-					chatHolder.images_count.setText(String.valueOf(images.size()));
-					chatHolder.images_layout.setTag(R.id.tag_first, images);
-					thisController.setImageThumbnail(image, chatHolder.images, 178, 106);
-					chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
-				}
-			} else if ("voice".equals(contentType)) {
-				chatHolder.character.setVisibility(View.GONE);
-				chatHolder.image.setVisibility(View.GONE);
-				chatHolder.share.setVisibility(View.GONE);
-				chatHolder.voice.setVisibility(View.VISIBLE);
-				Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_item_voice);
-				if (type == TYPE_SELF) {
-					Matrix mMatrix = new Matrix();
-					mMatrix.setRotate(180);
-					bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, true);
-				}
-				chatHolder.voice_icon.setImageBitmap(bitmap);
-				chatHolder.voicetime.setText("");
-			} else if ("share".equals(contentType)) {
-				chatHolder.character.setVisibility(View.GONE);
-				chatHolder.image.setVisibility(View.GONE);
-				chatHolder.share.setVisibility(View.VISIBLE);
-				chatHolder.voice.setVisibility(View.GONE);
-
-				MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
-				chatHolder.share_text.setText(messageContent.text);
-				if (messageContent.image != null && !"".equals(messageContent.image)) {
-					thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
-				} else {
-					thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, chatHolder.share_image, thisController.options);
-				}
-				chatHolder.share.setTag(R.id.tag_second, messageContent.gid);
-				chatHolder.share.setTag(R.id.tag_third, messageContent.gsid);
-				chatHolder.share.setOnClickListener(thisController.mOnClickListener);
-			}
-			chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
-			String fileName = "";
-			String phone = "";
-			if (message.phone.equals(currentUser.phone)) {
-				fileName = currentUser.head;
-				phone = currentUser.phone;
+			if (type == TYPE_EVENT) {
+				MyGson gson = new MyGson();
+				EventMessage event = gson.fromJson(message.content, EventMessage.class);
+				String content = DataHandlers.switchChatMessageEvent(event);
+				chatHolder.character.setText(content);
 			} else {
-				Friend friend = data.relationship.friendsMap.get(message.phone);
-				if (friend != null) {
-					fileName = friend.head;
-					phone = friend.phone;
-				}
-			}
-			fileHandlers.getHeadImage(fileName, chatHolder.head, headOptions);
+				String contentType = message.contentType;
 
-			chatHolder.head.setTag(R.id.tag_class, "head_click");
-			chatHolder.head.setTag(R.id.tag_first, phone);
-			chatHolder.head.setOnClickListener(thisController.mOnClickListener);
+				if ("text".equals(contentType)) {
+					chatHolder.character.setVisibility(View.VISIBLE);
+					chatHolder.image.setVisibility(View.GONE);
+					chatHolder.voice.setVisibility(View.GONE);
+					chatHolder.share.setVisibility(View.GONE);
+					chatHolder.character.setText(message.content);
+				} else if ("image".equals(contentType)) {
+					chatHolder.character.setVisibility(View.GONE);
+					chatHolder.image.setVisibility(View.VISIBLE);
+					chatHolder.voice.setVisibility(View.GONE);
+					chatHolder.share.setVisibility(View.GONE);
+					List<String> images = thisController.getImageFromJson(message.content);
+					String image = images.get(0);
+					if (images.size() == 1) {
+						chatHolder.images_layout.setVisibility(View.GONE);
+						chatHolder.image.setVisibility(View.VISIBLE);
+						chatHolder.image.setTag(R.id.tag_first, images);
+						thisController.setImageThumbnail(image, chatHolder.image, 178, 106);
+						chatHolder.image.setOnClickListener(thisController.mOnClickListener);
+					} else {
+						chatHolder.image.setVisibility(View.GONE);
+						chatHolder.images_layout.setVisibility(View.VISIBLE);
+						chatHolder.images_count.setText(String.valueOf(images.size()));
+						chatHolder.images_layout.setTag(R.id.tag_first, images);
+						thisController.setImageThumbnail(image, chatHolder.images, 178, 106);
+						chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
+					}
+				} else if ("voice".equals(contentType)) {
+					chatHolder.character.setVisibility(View.GONE);
+					chatHolder.image.setVisibility(View.GONE);
+					chatHolder.share.setVisibility(View.GONE);
+					chatHolder.voice.setVisibility(View.VISIBLE);
+					Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_item_voice);
+					if (type == TYPE_SELF) {
+						Matrix mMatrix = new Matrix();
+						mMatrix.setRotate(180);
+						bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, true);
+					}
+					chatHolder.voice_icon.setImageBitmap(bitmap);
+					chatHolder.voicetime.setText("");
+				} else if ("share".equals(contentType)) {
+					chatHolder.character.setVisibility(View.GONE);
+					chatHolder.image.setVisibility(View.GONE);
+					chatHolder.share.setVisibility(View.VISIBLE);
+					chatHolder.voice.setVisibility(View.GONE);
+
+					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
+					chatHolder.share_text.setText(messageContent.text);
+					if (messageContent.image != null && !"".equals(messageContent.image)) {
+						thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
+					} else {
+						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, chatHolder.share_image, thisController.options);
+					}
+					chatHolder.share.setTag(R.id.tag_second, messageContent.gid);
+					chatHolder.share.setTag(R.id.tag_third, messageContent.gsid);
+					chatHolder.share.setOnClickListener(thisController.mOnClickListener);
+				}
+				chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+				String fileName = "";
+				String phone = "";
+				if (message.phone.equals(currentUser.phone)) {
+					fileName = currentUser.head;
+					phone = currentUser.phone;
+				} else {
+					Friend friend = data.relationship.friendsMap.get(message.phone);
+					if (friend != null) {
+						fileName = friend.head;
+						phone = friend.phone;
+					}
+				}
+				fileHandlers.getHeadImage(fileName, chatHolder.head, headOptions);
+
+				chatHolder.head.setTag(R.id.tag_class, "head_click");
+				chatHolder.head.setTag(R.id.tag_first, phone);
+				chatHolder.head.setOnClickListener(thisController.mOnClickListener);
+			}
 
 			return convertView;
 		}

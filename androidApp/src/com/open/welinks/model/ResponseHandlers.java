@@ -749,9 +749,12 @@ public class ResponseHandlers {
 							Message message0 = null;
 							for (int i = 0; i < messages.size(); i++) {
 								Message message = messages.get(i);
-								if (message.time.equals(response.oldTime)) {
-									message0 = message;
-									break;
+								if ("event".equals(message.sendType)) {
+								} else {
+									if (message.time.equals(response.oldTime)) {
+										message0 = message;
+										break;
+									}
 								}
 							}
 							if (message0 != null) {
@@ -822,9 +825,8 @@ public class ResponseHandlers {
 						}
 						String sendType = message.sendType;
 						if ("event".equals(sendType)) {
-							// if (!data.event.userEvents.contains(message)) {
 							responseEventHandlers.handleEvent(message);
-							// }
+
 						} else if ("point".equals(sendType)) {
 							String key = message.phone;
 							message.type = Constant.MESSAGE_TYPE_RECEIVE;

@@ -24,7 +24,7 @@ import com.open.welinks.view.ViewManage;
 public class TestListActivity extends Activity {
 
 	public Data data = Data.getInstance();
-	public String tag = "UserIntimateActivity";
+	public String tag = "TestListActivity";
 
 	public Context context;
 	public TestListView thisView;

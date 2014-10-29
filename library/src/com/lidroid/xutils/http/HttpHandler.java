@@ -246,11 +246,66 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.e(tag, "Exception:" + e);
+				Log.e(tag, printStackTrace(System.err, "", null, e));
 			}
 			break;
 		default:
 			break;
 		}
+	}
+
+	public String printStackTrace(Appendable err0, String indent, StackTraceElement[] parentStack, Exception e) {
+		StringBuffer err = new StringBuffer();
+		err.append(toString2(e));
+		err.append("\n");
+		StackTraceElement[] stack = e.getStackTrace();
+		if (stack != null) {
+			int duplicates = parentStack != null ? countDuplicates(stack, parentStack) : 0;
+			for (int i = 0; i < stack.length - duplicates; i++) {
+				err.append(indent);
+				err.append("\tat ");
+				err.append(stack[i].toString());
+				err.append("\n");
+			}
+
+			if (duplicates > 0) {
+				err.append(indent);
+				err.append("\t... ");
+				err.append(Integer.toString(duplicates));
+				err.append(" more\n");
+			}
+		}
+
+		Throwable cause = e.getCause();
+		if (cause != null) {
+			err.append(indent);
+			err.append("Caused by: ");
+			printStackTrace(err, indent, stack, e);
+		}
+		return err.toString();
+	}
+
+	public String toString2(Exception e) {
+		String msg = e.getLocalizedMessage();
+		String name = getClass().getName();
+		if (msg == null) {
+			return name;
+		}
+		return name + ": " + msg;
+	}
+
+	private static int countDuplicates(StackTraceElement[] currentStack, StackTraceElement[] parentStack) {
+		int duplicates = 0;
+		int parentIndex = parentStack.length;
+		for (int i = currentStack.length; --i >= 0 && --parentIndex >= 0;) {
+			StackTraceElement parentFrame = parentStack[parentIndex];
+			if (parentFrame.equals(currentStack[i])) {
+				duplicates++;
+			} else {
+				break;
+			}
+		}
+		return duplicates;
 	}
 
 	@SuppressWarnings("unchecked")

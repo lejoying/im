@@ -27,6 +27,7 @@ import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
@@ -157,9 +158,17 @@ public class MessagesSubView {
 					return;
 				}
 				message = groupMessageMap.get(key).get(size);
-				key2 = "message#" + message.gid + "_" + message.time;
+				String gid = "";
+				if ("event".equals(message.sendType)) {
+					EventMessage message2 = gson.fromJson(message.content, EventMessage.class);
+					gid = message2.gid;
+					key2 = "message#" + message2.gid + "_" + message2.time;
+				} else {
+					gid = message.gid;
+					key2 = "message#" + message.gid + "_" + message.time;
+				}
 				try {
-					fileName = data.relationship.groupsMap.get(message.gid).icon;
+					fileName = data.relationship.groupsMap.get(gid).icon;
 				} catch (Exception e) {
 					fileName = "";
 				}
@@ -342,37 +351,7 @@ public class MessagesSubView {
 					if (event == null) {
 						content = "";
 					} else {
-						String nickName = event.phone;
-						Friend friend = data.relationship.friendsMap.get(nickName);
-						if (friend != null) {
-							nickName = friend.nickName;
-							if (friend.phone.equals(data.userInformation.currentUser.phone)) {
-								nickName = "您";
-							}
-						}
-						final Group group = data.relationship.groupsMap.get(event.gid + "");
-						String groupName = event.gid;
-						if (group != null) {
-							groupName = group.name;
-						}
-						String contentType = event.type;
-						if ("group_addmembers".equals(contentType)) {
-							content = "【" + nickName + "】 邀请了" + event.content + "个好友到 【" + groupName + "】 群组中.";
-						} else if ("group_removemembers".equals(contentType)) {
-							content = "【" + nickName + "】 从【" + groupName + "】 移除了" + event.content + "个好友.";
-						} else if ("group_dataupdate".equals(contentType)) {
-							content = "【" + nickName + "】 更新了 【" + groupName + "】 的资料信息.";
-						} else if ("group_create".equals(contentType)) {
-							content = "【" + nickName + "】创建了新的群组:【" + groupName + "】.";
-						} else if ("group_addme".equals(contentType)) {
-							if ("您".equals(nickName)) {
-								content = "加入【" + groupName + "】群组.";
-							} else {
-								content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
-							}
-						} else if ("group_removeme".equals(contentType)) {
-							content = "【" + nickName + "】退出了【" + groupName + "】群组.";
-						}
+						content = DataHandlers.switchChatMessageEvent(event);
 						lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(event.time)));
 					}
 				} catch (Exception e) {
@@ -381,58 +360,83 @@ public class MessagesSubView {
 				}
 				lastChatMessageView.setText(content);
 			} else {
-				data = parser.check();
-				fileHandlers.getHeadImage(fileName, headView, options);
-				if ("text".equals(message.contentType)) {
-					lastChatMessageView.setText(message.content);
-				} else if ("image".equals(message.contentType)) {
-					lastChatMessageView.setText("[图片]");
-				} else if ("voice".equals(message.contentType)) {
-					lastChatMessageView.setText("[声音]");
-				} else if ("share".equals(message.contentType)) {
-					lastChatMessageView.setText("[分享]");
-				}
-				lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
-				String sendType = message.sendType;
-				this.groupIconView.setVisibility(View.GONE);
-				if ("point".equals(sendType)) {
-					if (this.groupIconView.getVisibility() == View.VISIBLE) {
-						this.groupIconView.setVisibility(View.GONE);
-					}
-					if (data.relationship.friendsMap.get(message.phone) == null) {
-						nickNameView.setText(message.nickName);
-						notReadNumberView.setVisibility(View.GONE);
-					} else {
-						String phone = "";
-						if (message.phone.equals(data.userInformation.currentUser.phone)) {
-							phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
-						} else {
-							phone = message.phone;
-						}
-						nickNameView.setText(data.relationship.friendsMap.get(phone).nickName);
-						int notReadMessagesCount;
-						if ((notReadMessagesCount = data.relationship.friendsMap.get(message.phone).notReadMessagesCount) == 0) {
-							notReadNumberView.setVisibility(View.GONE);
-						} else {
-							notReadNumberView.setVisibility(View.VISIBLE);
-							notReadNumberView.setText(String.valueOf(notReadMessagesCount));
-						}
-					}
-				} else if ("group".equals(sendType)) {
+				if ("event".equals(message.sendType)) {
+					fileHandlers.getHeadImage(fileName, headView, options);
+					EventMessage message2 = gson.fromJson(message.content, EventMessage.class);
+					String content = DataHandlers.switchChatMessageEvent(message2);
+					lastChatMessageView.setText(content);
+					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message2.time)));
+					Group group2 = data.relationship.groupsMap.get(message2.gid);
 					if (this.groupIconView.getVisibility() == View.GONE) {
 						this.groupIconView.setVisibility(View.VISIBLE);
 					}
-					if (data.relationship.groupsMap.get(message.gid) == null) {
-						nickNameView.setText(message.nickName);
-						notReadNumberView.setVisibility(View.GONE);
-					} else {
-						nickNameView.setText(data.relationship.groupsMap.get(message.gid).name);
+					if (group2 != null) {
+						nickNameView.setText(group2.name);
 						int notReadMessagesCount;
-						if ((notReadMessagesCount = data.relationship.groupsMap.get(message.gid).notReadMessagesCount) == 0) {
+						if ((notReadMessagesCount = group2.notReadMessagesCount) == 0) {
 							notReadNumberView.setVisibility(View.GONE);
 						} else {
 							notReadNumberView.setVisibility(View.VISIBLE);
 							notReadNumberView.setText(String.valueOf(notReadMessagesCount));
+						}
+					} else {
+						nickNameView.setText(message2.gid);
+						notReadNumberView.setVisibility(View.GONE);
+					}
+				} else {
+					data = parser.check();
+					fileHandlers.getHeadImage(fileName, headView, options);
+					if ("text".equals(message.contentType)) {
+						lastChatMessageView.setText(message.content);
+					} else if ("image".equals(message.contentType)) {
+						lastChatMessageView.setText("[图片]");
+					} else if ("voice".equals(message.contentType)) {
+						lastChatMessageView.setText("[声音]");
+					} else if ("share".equals(message.contentType)) {
+						lastChatMessageView.setText("[分享]");
+					}
+					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+					String sendType = message.sendType;
+					this.groupIconView.setVisibility(View.GONE);
+					if ("point".equals(sendType)) {
+						if (this.groupIconView.getVisibility() == View.VISIBLE) {
+							this.groupIconView.setVisibility(View.GONE);
+						}
+						if (data.relationship.friendsMap.get(message.phone) == null) {
+							nickNameView.setText(message.nickName);
+							notReadNumberView.setVisibility(View.GONE);
+						} else {
+							String phone = "";
+							if (message.phone.equals(data.userInformation.currentUser.phone)) {
+								phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
+							} else {
+								phone = message.phone;
+							}
+							nickNameView.setText(data.relationship.friendsMap.get(phone).nickName);
+							int notReadMessagesCount;
+							if ((notReadMessagesCount = data.relationship.friendsMap.get(message.phone).notReadMessagesCount) == 0) {
+								notReadNumberView.setVisibility(View.GONE);
+							} else {
+								notReadNumberView.setVisibility(View.VISIBLE);
+								notReadNumberView.setText(String.valueOf(notReadMessagesCount));
+							}
+						}
+					} else if ("group".equals(sendType)) {
+						if (this.groupIconView.getVisibility() == View.GONE) {
+							this.groupIconView.setVisibility(View.VISIBLE);
+						}
+						if (data.relationship.groupsMap.get(message.gid) == null) {
+							nickNameView.setText(message.nickName);
+							notReadNumberView.setVisibility(View.GONE);
+						} else {
+							nickNameView.setText(data.relationship.groupsMap.get(message.gid).name);
+							int notReadMessagesCount;
+							if ((notReadMessagesCount = data.relationship.groupsMap.get(message.gid).notReadMessagesCount) == 0) {
+								notReadNumberView.setVisibility(View.GONE);
+							} else {
+								notReadNumberView.setVisibility(View.VISIBLE);
+								notReadNumberView.setText(String.valueOf(notReadMessagesCount));
+							}
 						}
 					}
 				}

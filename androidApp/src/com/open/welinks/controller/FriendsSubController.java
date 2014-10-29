@@ -41,7 +41,7 @@ public class FriendsSubController {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 
-	public String tag = "UserIntimateActivity";
+	public String tag = "FriendsSubController";
 	public MyLog log = new MyLog(tag, true);
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();

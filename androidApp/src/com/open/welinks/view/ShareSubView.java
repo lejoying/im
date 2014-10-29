@@ -41,7 +41,6 @@ import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.customView.ControlProgress;
-import com.open.welinks.customView.MyTextView;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -372,10 +371,10 @@ public class ShareSubView {
 				}
 			}
 
-			int totalHeight = (int) (355 * displayMetrics.density + 0.5f);
+			int totalHeight = (int) (360 * displayMetrics.density + 0.5f);
 			int height10dp = (int) (10 * displayMetrics.density + 0.5f);
 			if ("".equals(imageContent)) {
-				totalHeight = (int) (165 * displayMetrics.density + 0.5f);
+				totalHeight = (int) (155 * displayMetrics.density + 0.5f);
 			} else if ("".equals(textContent)) {
 				totalHeight = (int) (65 * displayMetrics.density + 0.5f + shareImageHeight);
 			}
@@ -426,7 +425,7 @@ public class ShareSubView {
 		public ImageView headView;
 		public TextView nickNameView;
 		public TextView releaseTimeView;
-		public MyTextView shareTextContentView;
+		public TextView shareTextContentView;
 		public ImageView shareImageContentView;
 		public TextView sharePraiseNumberView;
 		public ImageView sharePraiseIconView;
@@ -465,7 +464,7 @@ public class ShareSubView {
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
 				this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
 				this.releaseTimeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
-				this.shareTextContentView = (MyTextView) this.cardView.findViewById(R.id.share_textContent);
+				this.shareTextContentView = (TextView) this.cardView.findViewById(R.id.share_textContent);
 				this.shareImageContentView = (ImageView) this.cardView.findViewById(R.id.share_imageContent);
 				this.sharePraiseNumberView = (TextView) this.cardView.findViewById(R.id.share_praise);
 				this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
@@ -554,19 +553,22 @@ public class ShareSubView {
 					}
 				}
 
-				int totalHeight = (int) (355 * displayMetrics.density + 0.5f);
+				int totalHeight = (int) (360 * displayMetrics.density + 0.5f);
+				this.shareTextContentView.setLines(5);
 				if ("".equals(imageContent)) {
-					totalHeight = (int) (165 * displayMetrics.density + 0.5f);
+					totalHeight = (int) (155 * displayMetrics.density + 0.5f);
 					RelativeLayout.LayoutParams params2 = (android.widget.RelativeLayout.LayoutParams) shareTextContentView.getLayoutParams();
 					params2.topMargin = (int) (1 * displayMetrics.density + 0.5f);
+					this.shareTextContentView.setLines(5);
 				} else if ("".equals(textContent)) {
+					this.shareTextContentView.setLines(4);
 					totalHeight = (int) (65 * displayMetrics.density + 0.5f + shareImageHeight);
 				}
 
 				FrameLayout.LayoutParams params = (LayoutParams) background_share_item.getLayoutParams();
 				params.height = totalHeight;
 
-				this.shareTextContentView.setMText(textContent);
+				this.shareTextContentView.setText(textContent);
 				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
 				final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
 				final int showImageHeight = shareImageHeight;// (int)

@@ -23,8 +23,11 @@ import com.open.welinks.controller.UploadMultipart;
 import com.open.welinks.controller.UploadMultipartList;
 import com.open.welinks.customListener.OnUploadLoadingListListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
+import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -264,6 +267,7 @@ public class DataHandlers {
 				}
 			} catch (Exception e) {
 				flag = false;
+				Log.e("DataHandler", e.toString());
 			}
 		}
 		return flag;
@@ -462,5 +466,41 @@ public class DataHandlers {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
+	}
+
+	public static String switchChatMessageEvent(EventMessage event) {
+		String content = "";
+		String nickName = event.phone;
+		Friend friend = data.relationship.friendsMap.get(nickName);
+		if (friend != null) {
+			nickName = friend.nickName;
+			if (friend.phone.equals(data.userInformation.currentUser.phone)) {
+				nickName = "您";
+			}
+		}
+		final Group group = data.relationship.groupsMap.get(event.gid + "");
+		String groupName = event.gid;
+		if (group != null) {
+			groupName = group.name;
+		}
+		String contentType = event.type;
+		if ("group_addmembers".equals(contentType)) {
+			content = "【" + nickName + "】 邀请了" + event.content + "个好友到 【" + groupName + "】 群组中.";
+		} else if ("group_removemembers".equals(contentType)) {
+			content = "【" + nickName + "】 从【" + groupName + "】 移除了" + event.content + "个好友.";
+		} else if ("group_dataupdate".equals(contentType)) {
+			content = "【" + nickName + "】 更新了 【" + groupName + "】 的资料信息.";
+		} else if ("group_create".equals(contentType)) {
+			content = "【" + nickName + "】创建了新的群组:【" + groupName + "】.";
+		} else if ("group_addme".equals(contentType)) {
+			if ("您".equals(nickName)) {
+				content = "加入【" + groupName + "】群组.";
+			} else {
+				content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
+			}
+		} else if ("group_removeme".equals(contentType)) {
+			content = "【" + nickName + "】退出了【" + groupName + "】群组.";
+		}
+		return content;
 	}
 }

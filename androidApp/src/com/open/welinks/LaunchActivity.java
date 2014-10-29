@@ -47,13 +47,12 @@ public class LaunchActivity extends Activity {
 		// parser.parse();
 		// parser.saveDataToLocal();
 		// parser.readSdFileToData();
-
 		// getLocalInformation();
-//		if (isDebug) {
-//			startActivity(new Intent(LaunchActivity.this, TestListActivity.class));
-//		} else {
-//			startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
-//		}
+		// if (isDebug) {
+		// startActivity(new Intent(LaunchActivity.this, TestListActivity.class));
+		// } else {
+		// startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+		// }
 	}
 
 	public void getLocalInformation() {
@@ -64,5 +63,6 @@ public class LaunchActivity extends Activity {
 		localConfig.line1Number = telephonyManager.getLine1Number();
 		localConfig.imei = telephonyManager.getSimSerialNumber();
 		localConfig.imsi = telephonyManager.getSubscriberId();
+		Log.e(tag, "deviceid:" + localConfig.deviceid + "-line1Number:" + localConfig.line1Number + "--imei:" + localConfig.imei + "--imsi:" + localConfig.imsi);
 	}
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -765,7 +766,7 @@ public class SquareSubView {
 					}
 				}
 
-				this.shareTextContentView.setText(textContent);
+				this.shareTextContentView.setText(Html.fromHtml(textContent));
 				if (textContent.length() == 0) {
 					shareTextContentView.setBackgroundColor(Color.parseColor("#00000000"));
 				}

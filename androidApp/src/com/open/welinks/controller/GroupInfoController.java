@@ -346,9 +346,11 @@ public class GroupInfoController {
 			System.out.println((String) map.get("fileName"));
 			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"), UploadMultipart.UPLOAD_TYPE_HEAD);
 		} else if (requestCode == CONVER_SET && resultCode == Activity.RESULT_OK) {
-			Intent intent = new Intent(thisActivity, CropActivity.class);
-			intent.putExtra("path", data.tempData.selectedImageList.get(0));
-			thisActivity.startActivityForResult(intent, CONVER_SET_OK);
+			if (this.data.tempData.selectedImageList != null && this.data.tempData.selectedImageList.size() != 0) {
+				Intent intent = new Intent(thisActivity, CropActivity.class);
+				intent.putExtra("path", data.tempData.selectedImageList.get(0));
+				thisActivity.startActivityForResult(intent, CONVER_SET_OK);
+			}
 		} else if (requestCode == CONVER_SET_OK && resultCode == Activity.RESULT_OK) {
 			byte[] bytes = data2.getByteArrayExtra("bitmap");
 			String fileName = new SHA1().getDigestOfString(bytes) + ".osp";

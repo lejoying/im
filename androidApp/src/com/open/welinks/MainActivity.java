@@ -37,7 +37,7 @@ import com.open.welinks.view.ViewManage;
 public class MainActivity extends Activity {
 
 	public Data data = Data.getInstance();
-	public String tag = "UserIntimateActivity";
+	public String tag = "MainActivity";
 
 	public Context context;
 	public MainView thisView;
@@ -159,8 +159,12 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		super.onTouchEvent(event);
-		return thisController.onTouchEvent(event);
+		if (thisController != null) {
+			super.onTouchEvent(event);
+			return thisController.onTouchEvent(event);
+		}else{
+			return super.onTouchEvent(event);
+		}
 	}
 
 	public Handler mHandler;

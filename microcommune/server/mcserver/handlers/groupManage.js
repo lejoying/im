@@ -1157,7 +1157,7 @@ groupManage.get = function (data, response) {
                     name: groupData.name,
                     longitude: location.longitude || 0,
                     latitude: location.latitude || 0,
-                    createTime: groupData.createTime,
+                    createTime: groupData.createTime || 0,
                     description: groupData.description || "",
                     background: groupData.background || "",
                     conver: groupData.conver || "",
@@ -1564,5 +1564,11 @@ function ResponseData(responseContent, response) {
     });
     response.write(responseContent);
     response.end();
+
+    /* response.writeHead(200, { 'Content-Type': 'text/plain',
+     'Trailer': 'Content-MD5' });
+     response.write(fileData);
+     response.addTrailers({'Content-MD5': "7895bf4b8828b55ceaf47747b4bca667"});
+     response.end();*/
 }
 module.exports = groupManage;
