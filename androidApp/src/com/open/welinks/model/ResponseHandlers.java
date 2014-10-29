@@ -738,7 +738,9 @@ public class ResponseHandlers {
 							}
 							if (message0 != null) {
 								log.e("修改聊天数据成功point");
-								message0.time = response.time;
+								if (message0.status.equals("sending")) {
+									message0.time = response.time;
+								}
 								message0.status = "sent";
 								viewManage.postNotifyView("ChatMessage");
 							} else {
@@ -761,7 +763,9 @@ public class ResponseHandlers {
 							}
 							if (message0 != null) {
 								log.e("修改发送数据成功group");
-								message0.time = response.time;
+								if (message0.status.equals("sending")) {
+									message0.time = response.time;
+								}
 								message0.status = "sent";
 								viewManage.postNotifyView("ChatMessage");
 							} else {

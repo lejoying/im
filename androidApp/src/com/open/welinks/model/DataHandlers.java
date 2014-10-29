@@ -255,12 +255,12 @@ public class DataHandlers {
 		if (m != null) {
 			try {
 				if (!"".equals(m.gid) && m.gid != null) {
-					if (message.gid.equals(m.gid) && message.phone.equals(m.phone) && message.time.equals(m.time) && message.content.equals(m.content) && message.contentType.equals(m.contentType) && message.sendType.equals(m.sendType)) {
+					if (message.gid.equals(m.gid) && message.phone.equals(m.phone) && message.time.equals(m.time) && message.content.equals(m.content) && message.contentType.equals(m.contentType)) {
 						flag = true;
 						// Log.e("Data", "聊天记录已存在group");
 					}
 				} else {
-					if (message.phone.equals(m.phone) && message.phoneto.equals(m.phoneto) && message.time.equals(m.time) && message.content.equals(m.content) && message.contentType.equals(m.contentType) && message.sendType.equals(m.sendType)) {
+					if (message.phone.equals(m.phone) && message.phoneto.equals(m.phoneto) && message.time.equals(m.time) && message.content.equals(m.content) && message.contentType.equals(m.contentType)) {
 						flag = true;
 						// Log.e("Data", "聊天记录已存在point");
 					}

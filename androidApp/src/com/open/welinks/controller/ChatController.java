@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
@@ -203,10 +204,29 @@ public class ChatController {
 					String tag_class = (String) view.getTag(R.id.tag_class);
 					if ("head_click".equals(tag_class)) {
 						String phone = (String) view.getTag(R.id.tag_first);
-						// User user = data.userInformation.currentUser;
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
 						thisView.businessCardPopView.cardView.setMenu(false);
 						thisView.businessCardPopView.showUserCardDialogView();
+					} else if ("resend_message".equals(tag_class)) {
+						log.e("resend_message");
+						int position = (Integer) view.getTag(R.id.tag_first);
+						List<Message> messages = thisView.mChatAdapter.messages;
+						if (messages.size() > position) {
+							Message message = messages.get(position);
+							if ("point".equals(message.sendType)) {
+								if ("text".equals(message.contentType)) {
+									sendMessageToServer(message.contentType, message.content, message.time);
+								} else if ("image".equals(message.contentType)) {
+									resendMessage(message);
+								}
+							} else if ("group".equals(message.sendType)) {
+								if ("text".equals(message.contentType)) {
+									sendMessageToServer(message.contentType, message.content, message.time);
+								} else if ("image".equals(message.contentType)) {
+									resendMessage(message);
+								}
+							}
+						}
 					}
 				} else if (view.getTag(R.id.tag_first) != null) {
 					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
@@ -302,6 +322,27 @@ public class ChatController {
 
 			}
 		};
+	}
+
+	public void resendMessage(Message message) {
+		List<String> selectedImageList = gson.fromJson(message.content, new TypeToken<List<String>>() {
+		}.getType());
+		View view2 = new View(thisActivity);
+		view2.setTag(R.id.tag_first, message.time);
+
+		Map<String, String> map0 = new HashMap<String, String>();
+		map0.put("total", selectedImageList.size() + "");
+		map0.put("current", 0 + "");
+		unsendMessageInfo.put(message.time, map0);
+		map0.put("content", message.content);
+
+		for (int i = 0; i < selectedImageList.size(); i++) {
+			String fileName = selectedImageList.get(i);
+			File file = new File(thisView.fileHandlers.sdcardImageFolder, fileName);
+			String path = file.getAbsolutePath();
+			Map<String, Object> map = processImagesInformation(i, path);
+			uploadFile(path, fileName, (byte[]) map.get("bytes"), view2);
+		}
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -423,7 +464,7 @@ public class ChatController {
 				View view = new View(thisActivity);
 				// view.setTag(R.id.tag_first, selectedImageList.size());
 				// view.setTag(R.id.tag_second, 0);
-				view.setTag(R.id.tag_first, String.valueOf(time));
+				view.setTag(R.id.tag_first, time + "");
 
 				Map<String, String> map0 = new HashMap<String, String>();
 				map0.put("total", selectedImageList.size() + "");
@@ -432,7 +473,7 @@ public class ChatController {
 
 				for (int i = 0; i < selectedImageList.size(); i++) {
 					String filePath = selectedImageList.get(i);
-					Map<String, Object> map = processImagesInformation(i, filePath, targetFolder);
+					Map<String, Object> map = processImagesInformation(i, filePath);
 					content.add((String) map.get("fileName"));
 					uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
 				}
@@ -445,7 +486,7 @@ public class ChatController {
 
 	public SHA1 sha1 = new SHA1();
 
-	Map<String, Object> processImagesInformation(int i, String filePath, File targetFolder) {
+	Map<String, Object> processImagesInformation(int i, String filePath) {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		String suffixName = filePath.substring(filePath.lastIndexOf("."));
@@ -525,7 +566,7 @@ public class ChatController {
 
 			parser.check();
 			// TODO null point exception ?
-			message.phoneto = data.relationship.groupsMap.get(key).members.toString();
+			// message.phoneto = data.relationship.groupsMap.get(key).members.toString();
 			Map<String, ArrayList<Message>> groupMessageMap = data.messages.groupMessageMap;
 			if (groupMessageMap == null) {
 				groupMessageMap = new HashMap<String, ArrayList<Message>>();

@@ -274,6 +274,9 @@ public class ChatView {
 						if (cha > 60) {
 							message.status = "failed";
 							chatHolder.message_status.setImageResource(R.drawable.message_resend);
+							chatHolder.message_status.setTag(R.id.tag_class, "resend_message");
+							chatHolder.message_status.setTag(R.id.tag_first, position);
+							chatHolder.message_status.setOnClickListener(thisController.mOnClickListener);
 						} else {
 							chatHolder.message_status.setImageResource(R.drawable.message_send);
 						}
@@ -281,6 +284,9 @@ public class ChatView {
 						chatHolder.message_status.setVisibility(View.GONE);
 					} else if ("failed".equals(message.status)) {
 						chatHolder.message_status.setImageResource(R.drawable.message_resend);
+						chatHolder.message_status.setTag(R.id.tag_class, "resend_message");
+						chatHolder.message_status.setTag(R.id.tag_first, position);
+						chatHolder.message_status.setOnClickListener(thisController.mOnClickListener);
 					} else {
 						chatHolder.message_status.setImageResource(R.drawable.message_failed);
 						chatHolder.message_status.setVisibility(View.GONE);
