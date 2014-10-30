@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
 		if (thisController != null) {
 			super.onTouchEvent(event);
 			return thisController.onTouchEvent(event);
-		}else{
+		} else {
 			return super.onTouchEvent(event);
 		}
 	}
@@ -260,8 +260,8 @@ public class MainActivity extends Activity {
 			thisView.mainPagerBody.flipTo(2);
 			thisView.messages_friends_me_PagerBody.flipTo(0);
 		}
-		Log.e(tag, thisView.shareSubView.groupCoverView.getHeight() + ":height");
-		Log.e(tag, thisView.shareSubView.groupCoverView.getWidth() + ":width");
+		// Log.e(tag, thisView.shareSubView.groupCoverView.getHeight() + ":height");
+		// Log.e(tag, thisView.shareSubView.groupCoverView.getWidth() + ":width");
 		NotificationUtils.cancelNotification(MainActivity.this);
 		super.onWindowFocusChanged(hasFocus);
 	}

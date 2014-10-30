@@ -211,6 +211,7 @@ public class FriendsSubView {
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(singleWidth, (int) (78 * displayMetrics.density));
 			this.friendsSequence.clear();
+			// this.cardView.removeAllViews();
 			for (int i = 0; i < size; i++) {
 				Friend friend = null;
 				String phone = null;

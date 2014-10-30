@@ -1,8 +1,6 @@
 package com.open.welinks.view;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +38,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
+import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -143,6 +142,9 @@ public class SquareSubView {
 	TextView titleName;
 	public SmallBusinessCardPopView businessCardPopView;
 
+	public ControlProgress controlProgress;
+	public View controlProgressView;
+
 	public void initViews() {
 
 		this.squareView = mainView.squareView;
@@ -170,8 +172,6 @@ public class SquareSubView {
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
-		mImageFile = fileHandlers.sdcardHeadImageFolder;
-
 		data = parser.check();
 
 		try {
@@ -198,6 +198,13 @@ public class SquareSubView {
 		bigHeadOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(56)).build();
 
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
+
+		// progress
+		this.controlProgressView = squareView.findViewById(R.id.title_control_progress_container);
+		this.controlProgress = new ControlProgress();
+		this.controlProgress.initialize(this.controlProgressView, displayMetrics);
+		this.controlProgress.moveTo(0);
+
 		initData();
 		showSquareMessages(true);
 		initReleaseShareDialogView();
@@ -222,7 +229,7 @@ public class SquareSubView {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
 		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
 		final String path = file.getAbsolutePath();
-		log.e(file.exists() + "---exists" + group.conver);
+		// log.e(file.exists() + "---exists" + group.conver);
 		if (file.exists()) {
 			imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
 				@Override
@@ -540,12 +547,14 @@ public class SquareSubView {
 		if (flag) {
 			this.squareMessageListBody.y = 0;
 		}
+		boolean isNewTitle = false;
 		if (sharesMessageBody0 == null) {
+			isNewTitle = true;
 			sharesMessageBody0 = new SharesMessageBody1(this.squareMessageListBody);
 			sharesMessageBody0.initialize(-1);
 			sharesMessageBody0.itemHeight = (280 - 48) * displayMetrics.density;
 		}
-		sharesMessageBody0.setContent(null, "", null);
+		sharesMessageBody0.setContent(null, "", null, null, null, isNewTitle);
 		this.squareMessageListBody.listItemsSequence.add("message#" + "topBar");
 		this.squareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
 		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (250 * displayMetrics.density));
@@ -568,6 +577,9 @@ public class SquareSubView {
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
+		float total = sharesOrder.size() + 1;
+		// this.controlProgress.setTo(0);
+		// this.controlProgress.moveTo((int) ((1 / total) * 100));
 		A: for (int i = 0; i < sharesOrder.size(); i++) {// sharesOrder.size()
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
@@ -581,9 +593,11 @@ public class SquareSubView {
 			if (this.squareMessageListBody.listItemsSequence.contains(keyName)) {
 				continue A;
 			}
+			boolean isNew = false;
 			if (this.squareMessageListBody.listItemBodiesMap.get(keyName) != null) {
 				sharesMessageBody = (SharesMessageBody1) this.squareMessageListBody.listItemBodiesMap.get(keyName);
 			} else {
+				isNew = true;
 				sharesMessageBody = new SharesMessageBody1(this.squareMessageListBody);
 				sharesMessageBody.initialize(i);
 				this.squareMessageListBody.listItemBodiesMap.put(keyName, sharesMessageBody);
@@ -598,15 +612,28 @@ public class SquareSubView {
 			boolean isExistsImage = false;
 			int cHeight = imageHeight;
 			ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
-			sharesMessageBody.setContent(shareMessage, fileName, shareContent);
 			List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+			String textContent = "";
+			String imageContent = "";
 			B: for (int j = 0; j < shareContentItems.size(); j++) {
 				ShareContentItem shareContentItem = shareContentItems.get(j);
 				if (shareContentItem.type.equals("image")) {
+					imageContent = shareContentItem.detail;
 					isExistsImage = true;
-					break B;
+					if (!"".equals(textContent))
+						break B;
+				} else if (shareContentItem.type.equals("text")) {
+					textContent = shareContentItem.detail;
+					if (!"".equals(imageContent))
+						break B;
 				}
 			}
+			if (isNew) {
+				sharesMessageBody.setContent(shareMessage, fileName, shareContent, textContent, imageContent, isNew);
+			} else {
+				sharesMessageBody.setContent(shareMessage, fileName, shareContent, textContent, imageContent, isNew);
+			}
+
 			if (!isExistsImage) {
 				cHeight = 0;
 			}
@@ -633,6 +660,8 @@ public class SquareSubView {
 			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
 			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
+			// this.controlProgress.moveTo((int) (((1 + i + 1) / total) * 100));
+			log.e((int) (((1 + i + 1) / total) * 100) + "-----progress");
 		}
 
 		this.squareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
@@ -714,19 +743,22 @@ public class SquareSubView {
 			return cardView;
 		}
 
-		public int setContent(ShareMessage shareMessage, String fileName, ShareContent shareContent) {
+		public void setContent(ShareMessage shareMessage, String fileName, ShareContent shareContent, String textContent, String imageContent, boolean flag) {
 			if (i == -1) {
-				releaseShareView.setOnClickListener(thisController.mOnClickListener);
-				releaseShareView.setOnTouchListener(thisController.mOnTouchListener);
-				groupHeadView.setOnClickListener(thisController.mOnClickListener);
-				groupHeadView.setOnTouchListener(thisController.mOnTouchListener);
-				groupCoverView.setOnClickListener(thisController.mOnClickListener);
-				groupCoverView.setOnTouchListener(thisController.mOnTouchListener);
+				if (flag) {
+					releaseShareView.setOnClickListener(thisController.mOnClickListener);
+					releaseShareView.setOnTouchListener(thisController.mOnTouchListener);
+					groupHeadView.setOnClickListener(thisController.mOnClickListener);
+					groupHeadView.setOnTouchListener(thisController.mOnTouchListener);
+					groupCoverView.setOnClickListener(thisController.mOnClickListener);
+					groupCoverView.setOnTouchListener(thisController.mOnTouchListener);
+				}
 			} else {
 				data = parser.check();
 
 				this.message = shareMessage;
 				this.fileName = fileName;
+
 				if (shareMessage.status != null) {
 					if ("sending".equals(shareMessage.status)) {
 						shareStatusView.setText("发送中...");
@@ -743,165 +775,130 @@ public class SquareSubView {
 					this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
 				}
 
-				this.headView.setTag("ShareMessage#" + shareMessage.phone);
-				this.headView.setTag(R.id.tag_class, "share_head");
-				this.headView.setTag(R.id.tag_first, shareMessage.phone);
-				this.headView.setOnClickListener(thisController.mOnClickListener);
-				this.headView.setOnTouchListener(thisController.mOnTouchListener);
-
-				this.praiseAreaView.setTag("ShareMessagePraise#" + shareMessage.gsid);
-				this.praiseAreaView.setTag(R.id.tag_class, "share_praise");
-				this.praiseAreaView.setTag(R.id.tag_first, shareMessage.phone);
-				this.praiseAreaView.setOnClickListener(thisController.mOnClickListener);
-				this.praiseAreaView.setOnTouchListener(thisController.mOnTouchListener);
-
-				// businessCardPopView.showUserCardDialogView();
-
-				this.releaseTimeView.setText(DateUtil.formatTime(shareMessage.time));
-				if (shareContent == null) {
-					shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
-				}
-				String textContent = "";
-				String imageContent = "";
-				int cHeight = imageHeight;
-				List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
-				for (int i = 0; i < shareContentItems.size(); i++) {
-					ShareContentItem shareContentItem = shareContentItems.get(i);
-					if (shareContentItem.type.equals("image")) {
-						imageContent = shareContentItem.detail;
-						if (!"".equals(textContent))
-							break;
-					} else if (shareContentItem.type.equals("text")) {
-						textContent = shareContentItem.detail;
-						if (!"".equals(imageContent))
-							break;
-					}
-				}
-
-				this.shareTextContentView.setText(Html.fromHtml(textContent));
-				if (textContent.length() == 0) {
-					shareTextContentView.setBackgroundColor(Color.parseColor("#00000000"));
-				}
-				if (imageContent.equals("")) {
-					cHeight = 0;// (int) (displayMetrics.density * 30 + 0.5f);
-					shareTextContentView.setBackgroundColor(Color.parseColor("#00000000"));
-					shareTextContentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-					shareTextContentView.setTextColor(Color.parseColor("#aa000000"));
-				}
-				final int sHeight = cHeight;
-				// ViewTreeObserver vto = shareTextContentView.getViewTreeObserver();
-				FrameLayout.LayoutParams textParams = (LayoutParams) shareTextContentView.getLayoutParams();
-				FrameLayout.LayoutParams buttonbarpParams = (LayoutParams) buttonBar.getLayoutParams();
-				int textHeigth1 = (int) (displayMetrics.density * 90 + 0.5);
-				int textHeigth2 = (int) (displayMetrics.density * 20 + 0.5);
-				if (sHeight == 0) {
-					textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f);
-					buttonbarpParams.topMargin = (int) (displayMetrics.density * 50 + 0.5f) + textHeigth1;
-				} else {
-					textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f + sHeight - textHeigth2);
-					buttonbarpParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f) + sHeight;
-					shareTextContentView.setSingleLine();
-				}
-				buttonbarpParams.height = (int) (displayMetrics.density * 40 + 0.5f);
-
-				// log.e(shareTextContentView.getLineCount() + "-----" + shareTextContentView.getLineHeight());
-
-				// vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-				// @SuppressWarnings("deprecation")
-				// public void onGlobalLayout() {
-				// // Log.e(tag, shareTextContentView.getHeight() + "::::::::::::::::;;");
-				// shareTextContentView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				//
-				// }
-				// });
-				File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
-				if (!imageContent.equals("")) {
-					width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
-					// Log.e(tag, width1 + "----" + imageHeight);
-					final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + width1 / 2 + "w_" + imageHeight / 2 + "h_1c_1e_100q";
-					final String path = file.getAbsolutePath();
-					if (file.exists()) {
-						imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
-							@Override
-							public void onLoadingStarted(String imageUri, View view) {
-							}
-
-							@Override
-							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-								downloadFile = new DownloadFile(url, path);
-								downloadFile.view = shareImageContentView;
-								downloadFile.view.setTag("image");
-								downloadFile.setDownloadFileListener(thisController.downloadListener);
-								downloadFileList.addDownloadFile(downloadFile);
-							}
-
-							@Override
-							public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-								// int height = showImageHeight;
-								// FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(showImageWidth, height);
-								// shareImageContentView.setLayoutParams(params);
-							}
-						});
-					} else {
-						File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
-						final String path2 = file2.getAbsolutePath();
-						if (file2.exists()) {
-							imageLoader.displayImage("file://" + path2, shareImageContentView, options);
-						}
-						downloadFile = new DownloadFile(url, path);
-						downloadFile.view = shareImageContentView;
-						downloadFile.view.setTag("image");
-						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						downloadFileList.addDownloadFile(downloadFile);
-					}
-				}
-
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
-				String userPhone = data.userInformation.currentUser.phone;
-				if (shareMessage.praiseusers.contains(userPhone)) {
-					// this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-				} else {
-					// this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-				}
-				List<Comment> comments = shareMessage.comments;
-				// this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
-				for (int i = 0; i < comments.size(); i++) {
-					Comment comment = comments.get(i);
-					if (comment.phone.equals(userPhone)) {
-						// this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
-						break;
+
+				if (flag) {
+					this.headView.setTag("ShareMessage#" + shareMessage.phone);
+					this.headView.setTag(R.id.tag_class, "share_head");
+					this.headView.setTag(R.id.tag_first, shareMessage.phone);
+					this.headView.setOnClickListener(thisController.mOnClickListener);
+					this.headView.setOnTouchListener(thisController.mOnTouchListener);
+
+					this.praiseAreaView.setTag("ShareMessagePraise#" + shareMessage.gsid);
+					this.praiseAreaView.setTag(R.id.tag_class, "share_praise");
+					this.praiseAreaView.setTag(R.id.tag_first, shareMessage.phone);
+					this.praiseAreaView.setOnClickListener(thisController.mOnClickListener);
+					this.praiseAreaView.setOnTouchListener(thisController.mOnTouchListener);
+
+					// businessCardPopView.showUserCardDialogView();
+
+					this.releaseTimeView.setText(DateUtil.formatTime(shareMessage.time));
+					// if (shareContent == null) {
+					// shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+					// }
+					int cHeight = imageHeight;
+
+					// List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+					// for (int i = 0; i < shareContentItems.size(); i++) {
+					// ShareContentItem shareContentItem = shareContentItems.get(i);
+					// if (shareContentItem.type.equals("image")) {
+					// imageContent = shareContentItem.detail;
+					// if (!"".equals(textContent))
+					// break;
+					// } else if (shareContentItem.type.equals("text")) {
+					// textContent = shareContentItem.detail;
+					// if (!"".equals(imageContent))
+					// break;
+					// }
+					// }
+
+					this.shareTextContentView.setText(Html.fromHtml(textContent));
+					if (textContent.length() == 0) {
+						shareTextContentView.setBackgroundColor(Color.parseColor("#00000000"));
+					}
+					if (imageContent.equals("")) {
+						cHeight = 0;// (int) (displayMetrics.density * 30 + 0.5f);
+						shareTextContentView.setBackgroundColor(Color.parseColor("#00000000"));
+						shareTextContentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+						shareTextContentView.setTextColor(Color.parseColor("#aa000000"));
+					}
+					final int sHeight = cHeight;
+					// ViewTreeObserver vto = shareTextContentView.getViewTreeObserver();
+					FrameLayout.LayoutParams textParams = (LayoutParams) shareTextContentView.getLayoutParams();
+					FrameLayout.LayoutParams buttonbarpParams = (LayoutParams) buttonBar.getLayoutParams();
+					int textHeigth1 = (int) (displayMetrics.density * 90 + 0.5);
+					int textHeigth2 = (int) (displayMetrics.density * 20 + 0.5);
+					if (sHeight == 0) {
+						textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f);
+						buttonbarpParams.topMargin = (int) (displayMetrics.density * 50 + 0.5f) + textHeigth1;
+					} else {
+						textParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f + sHeight - textHeigth2);
+						buttonbarpParams.topMargin = (int) (displayMetrics.density * 40 + 0.5f) + sHeight;
+						shareTextContentView.setSingleLine();
+					}
+					buttonbarpParams.height = (int) (displayMetrics.density * 40 + 0.5f);
+
+					fileHandlers.getThumbleImage(imageContent, shareImageContentView, width1 / 2, imageHeight / 2, options, fileHandlers.THUMBLE_TYEP_SQUARE);
+					// File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
+					// if (!imageContent.equals("")) {
+					// width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
+					// // Log.e(tag, width1 + "----" + imageHeight);
+					// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + width1 / 2 + "w_" + imageHeight / 2 + "h_1c_1e_100q";
+					// final String path = file.getAbsolutePath();
+					// if (file.exists()) {
+					// imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
+					// @Override
+					// public void onLoadingStarted(String imageUri, View view) {
+					// }
+					//
+					// @Override
+					// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					// downloadFile = new DownloadFile(url, path);
+					// downloadFile.view = shareImageContentView;
+					// downloadFile.view.setTag("image");
+					// downloadFile.setDownloadFileListener(thisController.downloadListener);
+					// downloadFileList.addDownloadFile(downloadFile);
+					// }
+					//
+					// @Override
+					// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					// // int height = showImageHeight;
+					// // FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(showImageWidth, height);
+					// // shareImageContentView.setLayoutParams(params);
+					// }
+					// });
+					// } else {
+					// File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
+					// final String path2 = file2.getAbsolutePath();
+					// if (file2.exists()) {
+					// imageLoader.displayImage("file://" + path2, shareImageContentView, options);
+					// }
+					// downloadFile = new DownloadFile(url, path);
+					// downloadFile.view = shareImageContentView;
+					// downloadFile.view.setTag("image");
+					// downloadFile.setDownloadFileListener(thisController.downloadListener);
+					// downloadFileList.addDownloadFile(downloadFile);
+					// }
+					// }
+
+					String userPhone = data.userInformation.currentUser.phone;
+					if (shareMessage.praiseusers.contains(userPhone)) {
+						// this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+					} else {
+						// this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+					}
+					List<Comment> comments = shareMessage.comments;
+					// this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
+					for (int i = 0; i < comments.size(); i++) {
+						Comment comment = comments.get(i);
+						if (comment.phone.equals(userPhone)) {
+							// this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
+							break;
+						}
 					}
 				}
-				// position
-
-				// FrameLayout.LayoutParams sharePraiseIconViewParams = (LayoutParams) sharePraiseIconView.getLayoutParams();
-				// sharePraiseIconViewParams.gravity = Gravity.LEFT;
-				// sharePraiseIconViewParams.gravity = Gravity.CENTER_VERTICAL;
-				// // sharePraiseIconViewParams.rightMargin = 5;
-				// sharePraiseNumberView.setTranslationX(0);
-				// FrameLayout.LayoutParams sharePraiseNumberViewParams = (LayoutParams) sharePraiseNumberView.getLayoutParams();
-				// sharePraiseNumberViewParams.gravity = Gravity.LEFT;
-				// sharePraiseNumberViewParams.gravity = Gravity.CENTER_VERTICAL;
-				// sharePraiseNumberViewParams.rightMargin = (int) (sharePraiseIconViewParams.width + displayMetrics.density * 10 + 0.5f);
-				// // sharePraiseNumberView.setTranslationX(sharePraiseIconViewParams.width + displayMetrics.density * 10 + 0.5f);
-				//
-				// // FrameLayout.LayoutParams sharePraiseNumberViewParams = (LayoutParams) sharePraiseNumberView.getLayoutParams();
-				// // sharePraiseNumberViewParams.gravity = Gravity.LEFT;
-				// // sharePraiseNumberViewParams.leftMargin = (int) (sharePraiseIconViewParams.width + displayMetrics.density * 5 + 0.5f);
-				// FrameLayout.LayoutParams shareCommentIconViewParams = (LayoutParams) shareCommentIconView.getLayoutParams();
-				// shareCommentIconViewParams.gravity = Gravity.RIGHT;
-				// shareCommentIconViewParams.gravity = Gravity.CENTER_VERTICAL;
-				// shareCommentIconView.setVisibility(View.GONE);
-				// shareCommentIconViewParams.rightMargin = (int) (sharePraiseNumberViewParams.rightMargin + sharePraiseNumberViewParams.width + displayMetrics.density * 10 + 0.5f);
-				// FrameLayout.LayoutParams shareCommentNumberViewParams = (LayoutParams) shareCommentNumberView.getLayoutParams();
-				// shareCommentNumberViewParams.gravity = Gravity.RIGHT;
-				// shareCommentNumberViewParams.gravity = Gravity.CENTER_VERTICAL;
-				// shareCommentNumberView.setVisibility(View.GONE);
-				// shareCommentNumberViewParams.rightMargin = (int) (shareCommentIconViewParams.rightMargin + shareCommentIconViewParams.width + displayMetrics.density * 10 + 0.5f);
-				// shareCommentNumberViewParams.rightMargin = (int) (displayMetrics.density * 10 + 0.5f);
 			}
-			return 0;
 		}
 	}
 
@@ -1093,60 +1090,7 @@ public class SquareSubView {
 	}
 
 	public int width;
-	public File mImageFile;
 	public DisplayImageOptions headOptions;
-
-	public class MyScrollImageBody {
-		public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
-		public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
-
-		public RelativeLayout contentView;
-
-		public RelativeLayout initialize(RelativeLayout view) {
-			this.contentView = view;
-			return view;
-		}
-
-		public void recordChildrenPosition() {
-			for (int i = 0; i < selectedImagesSequence.size(); i++) {
-				String key = selectedImagesSequence.get(i);
-				ImageBody imageBody = selectedImagesSequenceMap.get(key);
-				imageBody.x = imageBody.imageView.getX();
-				imageBody.y = imageBody.imageView.getY();
-			}
-		}
-
-		public void setChildrenPosition(float deltaX, float deltaY) {
-			float screenWidth = displayMetrics.widthPixels;
-			float totalLength = selectedImagesSequence.size() * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;
-			if (totalLength < screenWidth) {
-				return;
-			}
-			for (int i = 0; i < selectedImagesSequence.size(); i++) {
-				String key = selectedImagesSequence.get(i);
-				ImageBody imageBody = selectedImagesSequenceMap.get(key);
-				if ((imageBody.x + deltaX) < (screenWidth - totalLength))
-					break;
-				if (i == 0 && (imageBody.x + deltaX) > (5 * displayMetrics.density))
-					break;
-				imageBody.imageView.setX(imageBody.x + deltaX);
-				imageBody.imageView.setY(imageBody.y + deltaY);
-			}
-		}
-	}
-
-	public class ImageBody {
-		public int i;
-
-		public float x;
-		public float y;
-		public TouchImageView imageView;
-
-		public TouchImageView initialize() {
-			this.imageView = new TouchImageView(mainView.context);
-			return this.imageView;
-		}
-	}
 
 	public View shareMessageRootView;
 
@@ -1193,5 +1137,4 @@ public class SquareSubView {
 			releaseSharePopWindow.dismiss();
 		}
 	}
-
 }

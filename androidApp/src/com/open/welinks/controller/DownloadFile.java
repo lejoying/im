@@ -49,6 +49,11 @@ public class DownloadFile {
 	public View view;
 	public DisplayImageOptions options;
 
+	public int type;
+	public static int TYPE_HEAD_IMAGE = 0x01;
+	public static int TYPE_THUMBLE_IMAGE = 0x02;
+	public static int TYPE_IMAGE = 0x03;
+
 	public TimeLine time = new TimeLine();
 
 	public int uploadPrecent;

@@ -121,7 +121,7 @@ public class PushService extends Service {
 		if (operation) {
 			HttpUtils httpUtils = new HttpUtils();
 			httpHandler = httpUtils.send(HttpMethod.GET, API.SESSION_EVENT + "/?i=" + i, params, longPull);
-			Log.e(tag, i + "-----------");
+			Log.e(tag, "Long Service Count：" + i);
 		}
 		i++;
 	}

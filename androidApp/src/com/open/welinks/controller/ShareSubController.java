@@ -192,7 +192,7 @@ public class ShareSubController {
 						@Override
 						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 							if (instance.view.getTag() != null) {
-								fileHandlers.bitmaps.put(imageUri, loadedImage);
+								// fileHandlers.bitmaps.put(imageUri, loadedImage);
 							}
 						}
 					});

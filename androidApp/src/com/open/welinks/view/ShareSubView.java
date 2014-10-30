@@ -569,7 +569,7 @@ public class ShareSubView {
 				params.height = totalHeight;
 
 				this.shareTextContentView.setText(textContent);
-				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
+				// File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
 				final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
 				final int showImageHeight = shareImageHeight;// (int)
 																// (displayMetrics.density
@@ -578,44 +578,45 @@ public class ShareSubView {
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				if (!imageContent.equals("")) {
-					final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
-					final String path = file.getAbsolutePath();
-					if (file.exists()) {
-						imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
-							@Override
-							public void onLoadingStarted(String imageUri, View view) {
-							}
-
-							@Override
-							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-								downloadFile = new DownloadFile(url, path);
-								downloadFile.view = shareImageContentView;
-								downloadFile.view.setTag("image");
-								downloadFile.setDownloadFileListener(thisController.downloadListener);
-								downloadFileList.addDownloadFile(downloadFile);
-							}
-
-							@Override
-							public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-								int height = showImageHeight;
-								RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(showImageWidth, height);
-								shareImageContentView.setLayoutParams(params);
-							}
-						});
-					} else {
-						File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
-						final String path2 = file2.getAbsolutePath();
-						if (file2.exists()) {
-							imageLoader.displayImage("file://" + path2, shareImageContentView, options);
-						}
-						downloadFile = new DownloadFile(url, path);
-						downloadFile.view = shareImageContentView;
-						downloadFile.view.setTag("image");
-						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						downloadFileList.addDownloadFile(downloadFile);
-					}
-				}
+				fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP);
+				// if (!imageContent.equals("")) {
+				// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+				// final String path = file.getAbsolutePath();
+				// if (file.exists()) {
+				// imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
+				// @Override
+				// public void onLoadingStarted(String imageUri, View view) {
+				// }
+				//
+				// @Override
+				// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+				// downloadFile = new DownloadFile(url, path);
+				// downloadFile.view = shareImageContentView;
+				// downloadFile.view.setTag("image");
+				// downloadFile.setDownloadFileListener(thisController.downloadListener);
+				// downloadFileList.addDownloadFile(downloadFile);
+				// }
+				//
+				// @Override
+				// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				// // int height = showImageHeight;
+				// // RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(showImageWidth, height);
+				// // shareImageContentView.setLayoutParams(params);
+				// }
+				// });
+				// } else {
+				// File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
+				// final String path2 = file2.getAbsolutePath();
+				// if (file2.exists()) {
+				// imageLoader.displayImage("file://" + path2, shareImageContentView, options);
+				// }
+				// downloadFile = new DownloadFile(url, path);
+				// downloadFile.view = shareImageContentView;
+				// downloadFile.view.setTag("image");
+				// downloadFile.setDownloadFileListener(thisController.downloadListener);
+				// downloadFileList.addDownloadFile(downloadFile);
+				// }
+				// }
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;

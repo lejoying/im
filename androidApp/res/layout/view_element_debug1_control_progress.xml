@@ -8,7 +8,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="1.5dip"
 		android:layout_marginTop="0dp"
-		android:background="#FF0099cd" 
+		android:background="#0099cd" 
 		android:contentDescription="@string/description_image" />
     	
 	<ImageView

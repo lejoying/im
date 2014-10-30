@@ -18,7 +18,6 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -34,9 +33,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
@@ -74,9 +71,8 @@ public class ChatController {
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
-	public OnFocusChangeListener mFocusChangeListener;
 	public OnUploadLoadingListener uploadLoadingListener;
-	public OnDownloadListener downloadListener, headDownloadListener;
+	public OnDownloadListener downloadListener;
 
 	public Data data = Data.getInstance();
 	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
@@ -84,7 +80,6 @@ public class ChatController {
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public Gson gson = new Gson();
 
-	public DownloadFile downloadFile = null;
 	public DisplayImageOptions options, headOptions;
 	public InputMethodManager inputMethodManager;
 
@@ -150,7 +145,6 @@ public class ChatController {
 	public void initializeListeners() {
 		mOnClickListener = new OnClickListener() {
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.backView)) {
@@ -229,6 +223,7 @@ public class ChatController {
 						}
 					}
 				} else if (view.getTag(R.id.tag_first) != null) {
+					// TODO qxs:The proposed transfer of common data types
 					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
 					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
 					intent.putExtra("position", String.valueOf(0));
@@ -293,33 +288,7 @@ public class ChatController {
 
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
-
-			}
-		};
-		headDownloadListener = new OnDownloadListener() {
-
-			@Override
-			public void onSuccess(DownloadFile instance, int status) {
-				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, headOptions);
-			}
-
-			@Override
-			public void onLoading(DownloadFile instance, int precent, int status) {
-
-			}
-
-			@Override
-			public void onFailure(DownloadFile instance, int status) {
-				ImageView headView = (ImageView) instance.view;
-				// headView.setImageBitmap(thisView.bitmap);
-				thisView.fileHandlers.getHeadImage("", headView, headOptions);
-			}
-		};
-		mFocusChangeListener = new OnFocusChangeListener() {
-
-			@Override
-			public void onFocusChange(View view, boolean hasFocus) {
-
+				log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
 			}
 		};
 	}
@@ -334,15 +303,22 @@ public class ChatController {
 		map0.put("total", selectedImageList.size() + "");
 		map0.put("current", 0 + "");
 		unsendMessageInfo.put(message.time, map0);
+		List<String> imageContent = new ArrayList<String>();
 		map0.put("content", message.content);
+		List<UploadMultipart> multiparts = new ArrayList<UploadMultipart>();
 
 		for (int i = 0; i < selectedImageList.size(); i++) {
 			String fileName = selectedImageList.get(i);
 			File file = new File(thisView.fileHandlers.sdcardImageFolder, fileName);
 			String path = file.getAbsolutePath();
 			Map<String, Object> map = processImagesInformation(i, path);
-			uploadFile(path, fileName, (byte[]) map.get("bytes"), view2);
+			imageContent.add((String) map.get("fileName"));
+			UploadMultipart multipart = uploadFile(path, (String) map.get("fileName"), (byte[]) map.get("bytes"), view2);
+			multiparts.add(multipart);
 		}
+		message.content = gson.toJson(imageContent);
+		map0.put("content", message.content);
+		uploadMultipartList.addMultipart(multiparts);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -369,29 +345,36 @@ public class ChatController {
 		return gson.fromJson(content, ArrayList.class);
 	}
 
-	public void setImageThumbnail(String fileName, ImageView view, int width, int height) {
-		File file = new File(thisView.fileHandlers.sdcardThumbnailFolder, fileName);
-		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + (int) (width * thisView.displayMetrics.density + 0.5f) / 2 + "w_" + (int) (height * thisView.displayMetrics.density + 0.5f) / 2 + "h_1c_1e_100q";
-		final String path = file.getAbsolutePath();
-		imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-			}
-
-			@Override
-			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-				downloadFile = new DownloadFile(url, path);
-				downloadFile.view = view;
-				downloadFile.setDownloadFileListener(thisController.downloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
-			}
-
-			@Override
-			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-			}
-		});
-	}
+	// public void setImageThumbnail(String fileName, ImageView view, int width, int height) {
+	// File file = new File(thisView.fileHandlers.sdcardThumbnailFolder, fileName);
+	// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + (int) (width * thisView.displayMetrics.density + 0.5f) / 2 + "w_" + (int) (height * thisView.displayMetrics.density + 0.5f) / 2 + "h_1c_1e_100q";
+	// final String path = file.getAbsolutePath();
+	// if (file.exists()) {
+	// imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
+	// @Override
+	// public void onLoadingStarted(String imageUri, View view) {
+	// }
+	//
+	// @Override
+	// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+	// DownloadFile downloadFile = new DownloadFile(url, path);
+	// downloadFile.view = view;
+	// downloadFile.setDownloadFileListener(thisController.downloadListener);
+	// downloadFileList.addDownloadFile(downloadFile);
+	// }
+	//
+	// @Override
+	// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+	//
+	// }
+	// });
+	// } else {
+	// DownloadFile downloadFile = new DownloadFile(url, path);
+	// downloadFile.view = view;
+	// downloadFile.setDownloadFileListener(thisController.downloadListener);
+	// downloadFileList.addDownloadFile(downloadFile);
+	// }
+	// }
 
 	public void showSelectTab() {
 		if (inputMethodManager.isActive()) {
@@ -458,7 +441,7 @@ public class ChatController {
 					return;
 				}
 				data.tempData.selectedImageList = null;
-				File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
+				// File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
 				ArrayList<String> content = new ArrayList<String>();
 				long time = new Date().getTime();
 				View view = new View(thisActivity);
@@ -470,16 +453,18 @@ public class ChatController {
 				map0.put("total", selectedImageList.size() + "");
 				map0.put("current", 0 + "");
 				unsendMessageInfo.put(time + "", map0);
-
+				List<UploadMultipart> multiparts = new ArrayList<UploadMultipart>();
 				for (int i = 0; i < selectedImageList.size(); i++) {
 					String filePath = selectedImageList.get(i);
 					Map<String, Object> map = processImagesInformation(i, filePath);
 					content.add((String) map.get("fileName"));
-					uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
+					UploadMultipart multipart = uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
+					multiparts.add(multipart);
 				}
 				String messageContent = gson.toJson(content);
 				map0.put("content", messageContent);
 				sendMessageToLocal(gson.toJson(content), "image", time);
+				uploadMultipartList.addMultipart(multiparts);
 			}
 		}).start();
 	}
@@ -634,41 +619,15 @@ public class ChatController {
 		httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
 	}
 
-	public void uploadFile(final String filePath, final String fileName, final byte[] bytes, final View view) {
+	public UploadMultipart uploadFile(final String filePath, final String fileName, final byte[] bytes, final View view) {
 		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
 		multipart.view = view;
-		uploadMultipartList.addMultipart(multipart);
+		// uploadMultipartList.addMultipart(multipart);
 		multipart.setUploadLoadingListener(uploadLoadingListener);
-	}
-
-	public void setHeadImage(String fileName, ImageView view) {
-		File sdFile = Environment.getExternalStorageDirectory();
-		File file = new File(sdFile, "welinks/heads/" + fileName);
-		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
-		final String path = file.getAbsolutePath();
-		imageLoader.displayImage("file://" + file.getAbsolutePath(), view, headOptions, new SimpleImageLoadingListener() {
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-			}
-
-			@Override
-			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-				downloadFile = new DownloadFile(url, path);
-				downloadFile.view = view;
-				downloadFile.setDownloadFileListener(thisController.headDownloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
-			}
-
-			@Override
-			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-			}
-		});
+		return multipart;
 	}
 
 	public void onBackPressed() {
-		// mFinish();
-		// thisActivity.finish();
 	}
 
 	public void finish() {

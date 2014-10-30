@@ -29,6 +29,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.open.welinks.customView.ImageDetailFragment;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.StreamParser;

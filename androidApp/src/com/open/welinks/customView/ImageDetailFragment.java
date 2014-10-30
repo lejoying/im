@@ -1,4 +1,4 @@
-package com.open.welinks;
+package com.open.welinks.customView;
 
 import java.io.File;
 
@@ -18,6 +18,8 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.ImageScanActivity;
+import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.OnDownloadListener;

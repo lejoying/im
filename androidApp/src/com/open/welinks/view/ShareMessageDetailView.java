@@ -301,6 +301,7 @@ public class ShareMessageDetailView {
 		showImages = new ArrayList<String>();
 		for (int i = 0; i < shareContentItems.size(); i++) {
 			final ImageView imageView = new ImageView(thisActivity);
+			imageView.setTag(R.id.tag_first, "max");
 			shareMessageDetailContentView.addView(imageView);
 			ShareContentItem shareContentItem = shareContentItems.get(i);
 			String type = shareContentItem.type;
@@ -316,54 +317,57 @@ public class ShareMessageDetailView {
 			index++;
 			imageView.setOnClickListener(thisController.mOnClickListener);
 
+			fileHandlers.getImage(imageFileName, imageView, displayImageOptions);
+
 			File currentImageFile = new File(mImageFile, imageFileName);
 			String filepath = currentImageFile.getAbsolutePath();
-			if (imagePath.equals("")) {
-				imagePath = imageFileName;
-			}
 			showImages.add(filepath);
-			boolean isFlag = false;
-			String path = "";
-			if (currentImageFile.exists()) {
-				BitmapFactory.Options boptions = new BitmapFactory.Options();
-				boptions.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(currentImageFile.getAbsolutePath(), boptions);
-				if (boptions.outWidth > 0) {
-					isFlag = true;
-				}
-			}
-			if (isFlag) {
-				path = "file://" + filepath;
-			} else {
-				path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
-			}
-			shareView.firstPath.add(API.DOMAIN_COMMONIMAGE + "images/" + imageFileName);
-			if (!isFlag) {
-				DownloadFile downloadFile = new DownloadFile(path, filepath);
-				downloadFile.view = imageView;
-				downloadFile.setDownloadFileListener(thisController.downloadListener);
-				thisController.downloadFileList.addDownloadFile(downloadFile);
-			} else {
-				imageLoader.displayImage(path, imageView, displayImageOptions, new SimpleImageLoadingListener() {
-					@Override
-					public void onLoadingStarted(String imageUri, View view) {
-					}
 
-					@Override
-					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					}
-
-					@Override
-					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						if (thisController.WeChatBitmap == null) {
-							thisController.WeChatBitmap = loadedImage;
-						}
-						int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
-						LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
-						imageView.setLayoutParams(params);
-					}
-				});
-			}
+			// if (imagePath.equals("")) {
+			// imagePath = imageFileName;
+			// }
+			// boolean isFlag = false;
+			// String path = "";
+			// if (currentImageFile.exists()) {
+			// BitmapFactory.Options boptions = new BitmapFactory.Options();
+			// boptions.inJustDecodeBounds = true;
+			// BitmapFactory.decodeFile(currentImageFile.getAbsolutePath(), boptions);
+			// if (boptions.outWidth > 0) {
+			// isFlag = true;
+			// }
+			// }
+			// if (isFlag) {
+			// path = "file://" + filepath;
+			// } else {
+			// path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
+			// }
+			// shareView.firstPath.add(API.DOMAIN_COMMONIMAGE + "images/" + imageFileName);
+			// if (!isFlag) {
+			// DownloadFile downloadFile = new DownloadFile(path, filepath);
+			// downloadFile.view = imageView;
+			// downloadFile.setDownloadFileListener(thisController.downloadListener);
+			// thisController.downloadFileList.addDownloadFile(downloadFile);
+			// } else {
+			// imageLoader.displayImage(path, imageView, displayImageOptions, new SimpleImageLoadingListener() {
+			// @Override
+			// public void onLoadingStarted(String imageUri, View view) {
+			// }
+			//
+			// @Override
+			// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+			// }
+			//
+			// @Override
+			// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+			// if (thisController.WeChatBitmap == null) {
+			// thisController.WeChatBitmap = loadedImage;
+			// }
+			// int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
+			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
+			// imageView.setLayoutParams(params);
+			// }
+			// });
+			// }
 		}
 		if (!"".equals(thisController.textContent)) {
 			TextView textView = new TextView(thisActivity);

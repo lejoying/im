@@ -61,4 +61,15 @@
         </RelativeLayout>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/title_control_progress_container"
+        android:layout_width="fill_parent"
+        android:layout_height="1.5dp"
+        android:translationY="47dp" >
+
+        <include
+            android:id="@+id/title_control_progress"
+            layout="@layout/view_element_debug1_control_progress" />
+    </RelativeLayout>
+
 </merge>

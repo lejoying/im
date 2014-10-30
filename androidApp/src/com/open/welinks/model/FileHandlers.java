@@ -6,31 +6,33 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
-import java.util.Hashtable;
-import java.util.Map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.utils.StreamParser;
+import com.open.welinks.view.ViewManage;
 
 public class FileHandlers {
 
 	public String tag = "FileHandlers";
+	public MyLog log = new MyLog(tag, true);
 
 	public static FileHandlers fileHandlers;
 
@@ -55,39 +57,7 @@ public class FileHandlers {
 
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
-	{
-		onDownloadListener = new OnDownloadListener() {
-			@Override
-			public void onSuccess(DownloadFile instance, int status) {
-				super.onSuccess(instance, status);
-				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, instance.options);
-			}
-
-			@Override
-			public void onFailure(DownloadFile instance, int status) {
-				super.onFailure(instance, status);
-				// Log.e("FileHandlers", instance.path + "----" + instance.url);
-				// imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
-			}
-		};
-	}
-
-	public class Bitmaps {
-		public Map<String, SoftReference<Bitmap>> softBitmaps = new Hashtable<String, SoftReference<Bitmap>>();
-
-		public void put(String key, Bitmap bitmap) {
-			softBitmaps.put(key, new SoftReference<Bitmap>(bitmap));
-		}
-
-		public Bitmap get(String key) {
-			if (softBitmaps.get(key) == null) {
-				return null;
-			}
-			return softBitmaps.get(key).get();
-		}
-	}
-
-	public Bitmaps bitmaps = new Bitmaps();
+	public ViewManage viewManage = ViewManage.getInstance();
 
 	public static FileHandlers getInstance() {
 		if (fileHandlers == null) {
@@ -143,6 +113,83 @@ public class FileHandlers {
 		if (!sdcardCacheImageFolder.exists()) {
 			sdcardCacheImageFolder.mkdirs();
 		}
+
+		initListener();
+	}
+
+	private void initListener() {
+		onDownloadListener = new OnDownloadListener() {
+			@Override
+			public void onSuccess(final DownloadFile instance, int status) {
+				super.onSuccess(instance, status);
+				if (instance.type == DownloadFile.TYPE_HEAD_IMAGE) {
+					imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, instance.options);
+				} else if (instance.type == DownloadFile.TYPE_THUMBLE_IMAGE) {
+					imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, instance.options);
+				} else if (instance.type == DownloadFile.TYPE_IMAGE) {
+					final ImageView imageView = ((ImageView) instance.view);
+					imageLoader.displayImage("file://" + instance.path, imageView, new SimpleImageLoadingListener() {
+
+						@Override
+						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+							if (imageView.getTag(R.id.tag_first) != null) {
+								float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
+								int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
+								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
+								imageView.setLayoutParams(params);
+							}
+						}
+					});
+				}
+				log.e("200----download:     " + instance.url + "-" + instance.path + "-path");
+			}
+
+			@Override
+			public void onFailure(DownloadFile instance, int status) {
+				super.onFailure(instance, status);
+				if (instance.type == DownloadFile.TYPE_HEAD_IMAGE) {
+					// imageLoader.displayImage("drawable://" + R.drawable.face_man, imageView, options);
+				} else if (instance.type == DownloadFile.TYPE_THUMBLE_IMAGE) {
+					log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
+				} else if (instance.type == DownloadFile.TYPE_IMAGE) {
+					log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
+				}
+			}
+		};
+	}
+
+	public void getImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
+		if (fileName == null || "".equals(fileName)) {
+			return;
+		} else {
+			File file = new File(sdcardImageFolder, fileName);
+			final String path = file.getAbsolutePath();
+			final String url = API.DOMAIN_COMMONIMAGE + "images/" + fileName;
+			if (file.exists()) {
+				imageLoader.displayImage("file://" + path, imageView, options, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						if (imageView.getTag(R.id.tag_first) != null) {
+							float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
+							int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
+							LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
+							imageView.setLayoutParams(params);
+						}
+					}
+				});
+			} else {
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE);
+			}
+		}
 	}
 
 	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
@@ -159,7 +206,7 @@ public class FileHandlers {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadHeadFile(url, path, imageView, options);
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE);
 					}
 
 					@Override
@@ -167,30 +214,66 @@ public class FileHandlers {
 					}
 				});
 			} else {
-				downloadHeadFile(url, path, imageView, options);
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE);
 			}
 		}
 	}
 
-	public void downloadHeadFile(String url, String path, ImageView imageView, DisplayImageOptions options) {
+	public int THUMBLE_TYEP_SQUARE = 0x01;
+	public int THUMBLE_TYEP_GROUP = 0x02;
+	public int THUMBLE_TYEP_CHAT = 0x03;
+
+	public void getThumbleImage(String fileName, final ImageView imageView, int width, int height, final DisplayImageOptions options, int thumbleType) {
+		// type : square or group
+		if (fileName == null || "".equals(fileName)) {
+			if (thumbleType == THUMBLE_TYEP_SQUARE) {
+				// imageLoader.displayImage("drawable://" + R.drawable.icon, imageView, options);
+			} else if (thumbleType == THUMBLE_TYEP_GROUP) {
+			} else if (thumbleType == THUMBLE_TYEP_CHAT) {
+				imageView.setBackgroundColor(Color.parseColor("#990099cd"));
+			}
+			// imageLoader.displayImage("drawable://" + R.drawable.icon, imageView);
+			return;
+		}
+		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + width + "w_" + height + "h_1c_1e_100q";
+		File file = null;
+		if (thumbleType == THUMBLE_TYEP_SQUARE) {
+			file = new File(sdcardSquareThumbnailFolder, fileName);
+		} else if (thumbleType == THUMBLE_TYEP_GROUP) {
+			file = new File(sdcardThumbnailFolder, fileName);
+		} else if (thumbleType == THUMBLE_TYEP_CHAT) {
+			file = new File(sdcardThumbnailFolder, fileName);
+		}
+		if (file != null) {
+			final String path = file.getAbsolutePath();
+			if (file.exists()) {
+				imageLoader.displayImage("file://" + path, imageView, options, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						imageView.setBackgroundColor(Color.parseColor("#990099cd"));
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					}
+				});
+			} else {
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE);
+			}
+		}
+	}
+
+	private void downloadImageFile(String url, String path, ImageView imageView, DisplayImageOptions options, int downloadType) {
 		DownloadFile downloadFile = new DownloadFile(url, path);
 		downloadFile.view = imageView;
 		downloadFile.options = options;
-		downloadFile.setDownloadFileListener(new OnDownloadListener() {
-			@Override
-			public void onSuccess(DownloadFile instance, int status) {
-				super.onSuccess(instance, status);
-				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, instance.options);
-			}
-
-			@Override
-			public void onFailure(DownloadFile instance, int status) {
-				super.onFailure(instance, status);
-				// Log.e("FileHandlers", instance.path + "----" + instance.url);
-				// imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
-			}
-		});
-		// System.out.println("--------------000------" + onDownloadListener);
+		downloadFile.type = downloadType;
+		downloadFile.setDownloadFileListener(onDownloadListener);
 		downloadFileList.addDownloadFile(downloadFile);
 	}
 
