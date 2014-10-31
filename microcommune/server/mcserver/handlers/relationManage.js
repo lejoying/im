@@ -351,7 +351,7 @@ relationManage.deletefriend = function (data, response) {
                     var account1Data = results[index].account1.data;
                     var account2Data = results[index].account2.data;
                     var rData = rNode.data;
-                    if (rData.friendStatus == "delete") {
+                    if (rData.friendStatus == "delete" && rData.phone != phone) {
                         deleteAccountToAccountRelationNode(account1Data.phone, account2Data.phone);
                     } else {
                         rData.friendStatus = "delete";
@@ -450,6 +450,7 @@ relationManage.deletefriend = function (data, response) {
         });
     }
 }
+
 /***************************************
  *     URL：/api2/relation/blacklist
  ***************************************/

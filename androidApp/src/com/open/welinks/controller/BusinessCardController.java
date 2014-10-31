@@ -424,31 +424,6 @@ public class BusinessCardController {
 		}).show();
 	}
 
-	public void setHeadImage(String fileName, ImageView view) {
-		File sdFile = Environment.getExternalStorageDirectory();
-		file = new File(sdFile, "welinks/heads/" + fileName);
-		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
-		final String path = file.getAbsolutePath();
-		imageLoader.displayImage("file://" + file.getAbsolutePath(), view, options, new SimpleImageLoadingListener() {
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-			}
-
-			@Override
-			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-				downloadFile = new DownloadFile(url, path);
-				downloadFile.view = view;
-				downloadFile.setDownloadFileListener(thisController.downloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
-			}
-
-			@Override
-			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-			}
-		});
-	}
-
 	public void addFriend() {
 		Intent intent = new Intent(thisActivity, AddFriendActivity.class);
 		intent.putExtra("key", key);
