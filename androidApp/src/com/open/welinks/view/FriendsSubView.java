@@ -155,6 +155,7 @@ public class FriendsSubView {
 		public TextView leftTopText = null;
 		public TouchView leftTopTextButton = null;
 		public TouchView gripView = null;
+		public TouchView contaner = null;
 		public ImageView gripCardBackground = null;
 
 		public int lineCount = 0;
@@ -163,6 +164,7 @@ public class FriendsSubView {
 			this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 			this.gripView = (TouchView) this.cardView.findViewById(R.id.grip);
+			this.contaner = (TouchView) this.cardView.findViewById(R.id.contaner);
 			this.leftTopTextButton = (TouchView) this.cardView.findViewById(R.id.leftTopTextButton);
 
 			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
@@ -211,7 +213,7 @@ public class FriendsSubView {
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(singleWidth, (int) (78 * displayMetrics.density));
 			this.friendsSequence.clear();
-			// this.cardView.removeAllViews();
+			this.contaner.removeAllViews();
 			for (int i = 0; i < size; i++) {
 				Friend friend = null;
 				String phone = null;
@@ -225,6 +227,7 @@ public class FriendsSubView {
 				}
 				String key = "friend#" + phone;
 				FriendBody friendBody = friendBodiesMap.get(key);
+				// friendBody = null;
 				if (friendBody == null) {
 					friendBody = new FriendBody();
 					if (circle.rid == 8888888 && i == size - 1) {
@@ -235,8 +238,7 @@ public class FriendsSubView {
 				}
 
 				friendBody.setData(friend);
-
-				this.cardView.addView(friendBody.friendView, layoutParams);
+				this.contaner.addView(friendBody.friendView, layoutParams);
 				int x = (i % 4 + 1) * spacing + (i % 4) * singleWidth;
 				int y = (int) ((i / 4) * (95 * displayMetrics.density) + 64 * displayMetrics.density);
 

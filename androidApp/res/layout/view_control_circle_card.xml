@@ -18,6 +18,12 @@
         android:background="@drawable/card_login_background_press"
         android:visibility="invisible" />
 
+    <com.open.lib.TouchView
+        android:id="@+id/contaner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </com.open.lib.TouchView>
+
     <include
         android:layout_width="match_parent"
         android:layout_height="286dp"
