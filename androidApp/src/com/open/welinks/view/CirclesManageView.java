@@ -37,7 +37,7 @@ public class CirclesManageView {
 
 	public Data data = Data.getInstance();
 
-	public String tag = "CirclesManageActivity";
+	public String tag = "CirclesManageView";
 	public MyLog log = new MyLog(tag, true);
 
 	public Context context;

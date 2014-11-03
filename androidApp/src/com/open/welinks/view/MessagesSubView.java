@@ -386,15 +386,7 @@ public class MessagesSubView {
 				} else {
 					data = parser.check();
 					fileHandlers.getHeadImage(fileName, headView, options);
-					if ("text".equals(message.contentType)) {
-						lastChatMessageView.setText(message.content);
-					} else if ("image".equals(message.contentType)) {
-						lastChatMessageView.setText("[图片]");
-					} else if ("voice".equals(message.contentType)) {
-						lastChatMessageView.setText("[声音]");
-					} else if ("share".equals(message.contentType)) {
-						lastChatMessageView.setText("[分享]");
-					}
+					String leftText = "";
 					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 					String sendType = message.sendType;
 					this.groupIconView.setVisibility(View.GONE);
@@ -438,6 +430,16 @@ public class MessagesSubView {
 								notReadNumberView.setText(String.valueOf(notReadMessagesCount));
 							}
 						}
+						leftText = data.relationship.friendsMap.get(message.phone).nickName + ":";
+					}
+					if ("text".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + message.content);
+					} else if ("image".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + "[图片]");
+					} else if ("voice".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + "[声音]");
+					} else if ("share".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + "[分享]");
 					}
 				}
 			}

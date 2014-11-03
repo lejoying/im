@@ -8,10 +8,10 @@ import android.app.Activity;
 import android.content.Context;
 
 public class CirclesManageController {
-	
+
 	public Data data = Data.getInstance();
 
-	public String tag = "CirclesManageActivity";
+	public String tag = "CirclesManageController";
 	public MyLog log = new MyLog(tag, true);
 
 	public Context context;

@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:ellipsize="end"
-        android:maxEms="10"
+        android:maxEms="17"
         android:singleLine="true"
         android:text=""
         android:textColor="@color/text_color_black"
