@@ -51,7 +51,7 @@ public class BusinessCardView {
 	public LinearLayout content, infomationLayout, sexLayout, ageLayout;
 	public TextView spacingOne, spacingTwo, spacingThree, backTitleView, businessTitle, lableTitle, creatTimeTitle, nickName, id, business, lable, creatTime, sex, age, distance;
 	public ImageView head, qrCodeView;
-	public Button buttonOne, buttonTwo, buttonThree;
+	public Button buttonOne, buttonTwo, buttonThree, buttonFour;
 	public RelativeLayout rightContainer;
 	public TextView rightTopButton;
 
@@ -116,6 +116,7 @@ public class BusinessCardView {
 		buttonOne = (Button) thisActivity.findViewById(R.id.button_one);
 		buttonTwo = (Button) thisActivity.findViewById(R.id.button_two);
 		buttonThree = (Button) thisActivity.findViewById(R.id.button_three);
+		buttonFour = (Button) thisActivity.findViewById(R.id.button_four);
 
 		rightTopButton = new TextView(thisActivity);
 		int dp_5 = (int) (5 * displayMetrics.density);
@@ -137,6 +138,7 @@ public class BusinessCardView {
 
 	public void fillData() {
 		businessCard = new BusinessCard();
+		buttonFour.setVisibility(View.GONE);
 		if (status.equals(Status.SELF)) {
 			sexLayout.setVisibility(View.VISIBLE);
 			ageLayout.setVisibility(View.VISIBLE);
@@ -173,7 +175,7 @@ public class BusinessCardView {
 			businessCard.sex = friend.sex;
 			businessCard.age = friend.age + "";
 			String nickName = "";
-			if (friend.alias.equals("")) {
+			if (friend.alias == null || "".equals(friend.alias)) {
 				nickName = friend.nickName;
 			} else {
 				nickName = friend.alias + "(" + friend.nickName + ")";
@@ -187,6 +189,12 @@ public class BusinessCardView {
 			businessCard.button_one = "发起聊天";
 			businessCard.button_two = "修改备注";
 			businessCard.button_three = "解除好友关系";
+			buttonFour.setVisibility(View.VISIBLE);
+			if (user.blackList.contains(friend.phone)) {
+				buttonFour.setText("从黑名单移除");
+			} else {
+				buttonFour.setText("添加到黑名单");
+			}
 			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
 		} else if (status.equals(Status.TEMPFRIEND)) {
 			sexLayout.setVisibility(View.VISIBLE);

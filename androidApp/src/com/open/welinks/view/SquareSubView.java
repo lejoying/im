@@ -661,7 +661,7 @@ public class SquareSubView {
 			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 			// this.controlProgress.moveTo((int) (((1 + i + 1) / total) * 100));
-			log.e((int) (((1 + i + 1) / total) * 100) + "-----progress");
+			// log.e((int) (((1 + i + 1) / total) * 100) + "-----progress");
 		}
 
 		this.squareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);

@@ -593,6 +593,7 @@ accountManage.get = function (data, response) {
                             }
                         } catch (e) {
                             console.error(e);
+                            account.blackList = [];
                         }
                     }
                     accounts.push(account);

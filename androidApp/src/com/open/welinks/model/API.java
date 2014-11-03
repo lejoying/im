@@ -130,6 +130,10 @@ public class API {
 	 */
 	public static String RELATION_DELETEFRIEND = API_DOMAIN + "api2/relation/deletefriend";
 	/**
+	 * http://www.we-links.com/api2/relation/blacklist
+	 */
+	public static String RELATION_BLACKLIST = API_DOMAIN + "api2/relation/blacklist";
+	/**
 	 * http://www.we-links.com/api2/relation/addfriend
 	 */
 	public static String RELATION_ADDFRIEND = API_DOMAIN + "api2/relation/addfriend";

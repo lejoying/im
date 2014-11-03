@@ -141,7 +141,7 @@ public class FileHandlers {
 						}
 					});
 				}
-				log.e("200----download:     " + instance.url + "-" + instance.path + "-path");
+				// log.e("200----download:     " + instance.url + "-" + instance.path + "-path");
 			}
 
 			@Override

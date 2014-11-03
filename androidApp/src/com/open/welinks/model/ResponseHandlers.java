@@ -83,13 +83,13 @@ public class ResponseHandlers {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
-			public List<Friend> accounts;
+			public List<User> accounts;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if ("获取用户信息成功".equals(response.提示信息)) {
-				Friend friend = response.accounts.get(0);
+				User friend = response.accounts.get(0);
 				if (friend != null) {
 					parser.check();
 					User user = data.userInformation.currentUser;
@@ -101,6 +101,7 @@ public class ResponseHandlers {
 					user.createTime = friend.createTime;
 					user.lastLoginTime = friend.lastLoginTime;
 					user.mainBusiness = friend.mainBusiness;
+					user.blackList = friend.blackList;
 					user.head = friend.head;
 					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
 
@@ -383,6 +384,8 @@ public class ResponseHandlers {
 			public String createTime;
 			public String lastLoginTime;
 			public String userBackground;
+			public List<String> blackList;
+			// public String friendStatus;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -401,6 +404,7 @@ public class ResponseHandlers {
 						user.createTime = account.createTime;
 						user.lastLoginTime = account.lastLoginTime;
 						user.userBackground = account.userBackground;
+						user.blackList = account.blackList;
 						data.userInformation.isModified = true;
 					} else {
 						boolean isTemp = true;
@@ -429,6 +433,7 @@ public class ResponseHandlers {
 							friend.lastLoginTime = account.lastLoginTime;
 							friend.userBackground = account.userBackground;
 							friend.id = account.ID;
+							// friend.friendStatus = account.friendStatus;
 
 							data.tempData.tempFriend = friend;
 
@@ -444,6 +449,7 @@ public class ResponseHandlers {
 								friend.createTime = account.createTime;
 								friend.lastLoginTime = account.lastLoginTime;
 								friend.userBackground = account.userBackground;
+								// friend.friendStatus = account.friendStatus;
 							}
 						}
 						viewManage.searchFriendActivity.searchCallBack(account.phone, isTemp);
@@ -518,6 +524,7 @@ public class ResponseHandlers {
 				data.relationship.circlesMap = circlesMap;
 				Map<String, Friend> friendsMap = response.relationship.friendsMap;
 				Iterator<Entry<String, Friend>> iterator = friendsMap.entrySet().iterator();
+				List<String> singleDeleteFriendList = new ArrayList<String>();
 				if (data.relationship.friendsMap != null && data.relationship.friendsMap.size() != 0) {
 					while (iterator.hasNext()) {
 						Map.Entry<String, Friend> entry = iterator.next();
@@ -535,6 +542,10 @@ public class ResponseHandlers {
 							oldFriend.lastLoginTime = friend.lastLoginTime;
 							oldFriend.userBackground = friend.userBackground;
 							oldFriend.id = friend.id;
+							oldFriend.friendStatus = friend.friendStatus;
+							if ("delete".equals(friend.friendStatus)) {
+								singleDeleteFriendList.add(friend.phone);
+							}
 						} else {
 							data.relationship.friendsMap.put(key, friend);
 						}
@@ -543,6 +554,11 @@ public class ResponseHandlers {
 					data.relationship.friendsMap.putAll(response.relationship.friendsMap);
 				}
 
+				Set<String> set = new LinkedHashSet<String>();
+				set.clear();
+				set.addAll(singleDeleteFriendList);
+				singleDeleteFriendList.clear();
+				singleDeleteFriendList.addAll(set);
 				if (data.relationship.friends == null) {
 					data.relationship.friends = new ArrayList<String>();
 				} else {
@@ -550,17 +566,20 @@ public class ResponseHandlers {
 				}
 				for (int i = 0; i < circles.size(); i++) {
 					Circle circle = circlesMap.get(circles.get(i));
-					if (circle.rid == 8888888) {
+					if (circle.rid == Constant.DEFAULTCIRCLEID) {
 						if (defaultCircleName != null) {
 							circle.name = defaultCircleName;
 						}
 					}
 					data.relationship.friends.addAll(circle.friends);
 				}
-				Set<String> set = new LinkedHashSet<String>();
+
+				set.clear();
 				set.addAll(data.relationship.friends);
 				data.relationship.friends.clear();
 				data.relationship.friends.addAll(set);
+
+				data.relationship.friends.removeAll(singleDeleteFriendList);
 
 				data.relationship.isModified = true;
 				if (data.localStatus.debugMode.equals("NONE")) {
@@ -683,6 +702,21 @@ public class ResponseHandlers {
 				log.e(tag, "---------------------删除成功");
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public ResponseHandler<String> relation_blackList = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("更新黑名单成功")) {
+				log.e(tag, "relation_blackList:更新黑名单成功");
+			} else {
+				log.e(tag, "relation_blackList:" + response.失败原因);
 			}
 		};
 	};
@@ -1018,6 +1052,7 @@ public class ResponseHandlers {
 								oldFriend.lastLoginTime = friend.lastLoginTime;
 								oldFriend.userBackground = friend.userBackground;
 								oldFriend.id = friend.id;
+								// oldFriend.friendStatus = friend.friendStatus;
 							} else {
 								data.relationship.friendsMap.put(key, friend);
 							}
@@ -1251,6 +1286,7 @@ public class ResponseHandlers {
 						friend.createTime = serverFriend.createTime;
 						friend.userBackground = serverFriend.userBackground;
 						friend.lastLoginTime = serverFriend.lastLoginTime;
+						// friend.friendStatus = serverFriend.friendStatus;
 					}
 				}
 				data.relationship.isModified = true;
@@ -1297,6 +1333,7 @@ public class ResponseHandlers {
 							friend.createTime = serverFriend.createTime;
 							friend.userBackground = serverFriend.userBackground;
 							friend.lastLoginTime = serverFriend.lastLoginTime;
+							// friend.friendStatus = serverFriend.friendStatus;
 						}
 					}
 					data.relationship.isModified = true;

@@ -97,7 +97,7 @@ public class FriendsSubView {
 
 		this.friendListBody.containerView.removeAllViews();
 		this.friendListBody.height = 0;
-		this.friendListBody.y = 0;
+		// this.friendListBody.y = 0;
 
 		if (circles == null || circlesMap == null) {
 			return;
@@ -273,7 +273,11 @@ public class FriendsSubView {
 				this.friendView.setTag(R.id.tag_class, "addfriend_view");
 			} else {
 				fileHandlers.getHeadImage(friend.head, this.headImageView, options);
-				this.nickNameView.setText(friend.nickName);
+				if (friend.alias != null && !"".equals(friend.alias)) {
+					this.nickNameView.setText(friend.alias);
+				} else {
+					this.nickNameView.setText(friend.nickName);
+				}
 				this.friendView.setTag(R.id.friendsContainer, friend);
 				this.friendView.setTag(R.id.tag_class, "friend_view");
 			}

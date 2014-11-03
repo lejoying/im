@@ -2,11 +2,11 @@ package com.open.welinks.controller;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -22,9 +22,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.AddFriendActivity;
@@ -38,6 +36,7 @@ import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -205,6 +204,8 @@ public class BusinessCardController {
 					} else if (thisView.status.equals(Status.SQUARE)) {
 						// unused
 					}
+				} else if (view.equals(thisView.buttonFour)) {
+					updateFriendToBlackList();
 				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.rightTopButton)) {
@@ -242,12 +243,10 @@ public class BusinessCardController {
 
 			@Override
 			public void onLoading(DownloadFile instance, int precent, int status) {
-
 			}
 
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
-
 			}
 		};
 	}
@@ -258,6 +257,7 @@ public class BusinessCardController {
 		thisView.buttonOne.setOnClickListener(mOnClickListener);
 		thisView.buttonTwo.setOnClickListener(mOnClickListener);
 		thisView.buttonThree.setOnClickListener(mOnClickListener);
+		thisView.buttonFour.setOnClickListener(mOnClickListener);
 		thisView.myShareView.setOnClickListener(mOnClickListener);
 	}
 
@@ -293,15 +293,14 @@ public class BusinessCardController {
 				String alias = dialog.getInputText();
 				friend.alias = alias;
 				thisView.fillData();
+				viewManage.postNotifyView("UserIntimateView");
 				uploadAlias(alias);
 			}
-
 		}).show();
-
 	}
 
-	HttpClient httpClient = HttpClient.getInstance();
-	Gson gson = new Gson();
+	public HttpClient httpClient = HttpClient.getInstance();
+	public Gson gson = new Gson();
 
 	public void getFriendCard(String phone) {
 		RequestParams params = new RequestParams();
@@ -402,17 +401,54 @@ public class BusinessCardController {
 		});
 	}
 
+	public void updateFriendToBlackList() {
+		final Friend friend = thisController.data.relationship.friendsMap.get(key);
+		User user = data.userInformation.currentUser;
+		final List<String> blackList = user.blackList;
+		String title = "";
+		if (blackList.contains(key)) {
+			title = "确定把" + friend.nickName + "移出黑名单吗？";
+		} else {
+			title = "确定把" + friend.nickName + "添加到黑名单吗？";
+		}
+		Alert.createDialog(thisActivity).setTitle(title).setOnConfirmClickListener(new OnDialogClickListener() {
+
+			@Override
+			public void onClick(AlertInputDialog dialog) {
+				boolean flag = false;
+				if (blackList.contains(key)) {
+					flag = false;
+					blackList.remove(key);
+				} else {
+					flag = true;
+					blackList.add(key);
+				}
+				data.userInformation.isModified = true;
+				thisView.fillData();
+				HttpUtils httpUtils = new HttpUtils();
+				RequestParams params = new RequestParams();
+				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+				params.addBodyParameter("phoneto", "[\"" + friend.phone + "\"]");
+				params.addBodyParameter("operation", flag + "");
+				ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+				httpUtils.send(HttpMethod.POST, API.RELATION_BLACKLIST, params, responseHandlers.relation_blackList);
+			}
+		}).show();
+	}
+
 	public void terminateRelationship() {
 		final Friend friend = thisController.data.relationship.friendsMap.get(key);
 		Alert.createDialog(thisActivity).setTitle("确定解除和" + friend.nickName + "的好友关系吗？").setOnConfirmClickListener(new OnDialogClickListener() {
 
 			@Override
 			public void onClick(AlertInputDialog dialog) {
+				deleteCircleFriendData(key);
 				thisController.data.relationship.friends.remove(key);
 				thisView.status = Status.TEMPFRIEND;
 				data.tempData.tempFriend = friend;
 				thisView.fillData();
-				viewManage.mainView.friendsSubView.showCircles();
+				viewManage.postNotifyView("UserIntimateView");
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();
 				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
@@ -422,6 +458,24 @@ public class BusinessCardController {
 				httpUtils.send(HttpMethod.POST, API.RELATION_DELETEFRIEND, params, responseHandlers.relation_deletefriend);
 			}
 		}).show();
+	}
+
+	public void deleteCircleFriendData(String phone) {
+		data = parser.check();
+		List<String> circles = data.relationship.circles;
+		Map<String, Circle> circlesMap = data.relationship.circlesMap;
+		for (int i = 0; i < circles.size(); i++) {
+			String key1 = circles.get(i);
+			Circle circle = circlesMap.get(key1);
+			B: for (int j = 0; j < circle.friends.size(); j++) {
+				String key2 = circle.friends.get(j);
+				if (key2.equals(phone)) {
+					circle.friends.remove(key2);
+					break B;
+				}
+			}
+		}
+		data.relationship.isModified = true;
 	}
 
 	public void addFriend() {

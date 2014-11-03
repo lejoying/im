@@ -17,6 +17,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.NotificationUtils;
@@ -268,16 +269,22 @@ public class ResponseEventHandlers {
 	}
 
 	public void handleRelationDeletefriendEvent(EventMessage message) {
-		String key = message.eid;
-		if (!data.event.userEvents.contains(key)) {
-			data.event.userEvents.add(key);
-			data.event.userEventsMap.put(key, message);
-			data.event.userNotReadMessage = true;
-			String eventKey = "event_user";
-			checkEventIsMessageOrder(eventKey);
-			// viewManage.postNotifyView("MessagesSubView");
-			DataHandlers.getIntimateFriends();
-		}
+		// String key = message.eid;
+		// if (!data.event.userEvents.contains(key)) {
+		// data.event.userEvents.add(key);
+		// data.event.userEventsMap.put(key, message);
+		// data.event.userNotReadMessage = true;
+		// String eventKey = "event_user";
+		// checkEventIsMessageOrder(eventKey);
+		// viewManage.postNotifyView("MessagesSubView");
+		String key = message.phone;
+		parser.check();
+		data.relationship.friends.remove(key);
+		Friend friend = data.relationship.friendsMap.get(key);
+		friend.friendStatus = "delete";
+		data.relationship.isModified = true;
+		DataHandlers.getIntimateFriends();
+		// }
 	}
 
 	// OK

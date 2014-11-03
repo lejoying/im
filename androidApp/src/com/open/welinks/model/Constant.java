@@ -14,4 +14,9 @@ public class Constant {
 
 	// wechat id
 	public static String WECHAT_ADDID = "wxbbf27e2f87ef9083";
+
+	/**
+	 * defaultCircleId = 8888888
+	 */
+	public static long DEFAULTCIRCLEID = 8888888;
 }

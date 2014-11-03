@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -21,6 +22,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
+import com.open.welinks.CirclesManageActivity;
 import com.open.welinks.R;
 import com.open.welinks.SearchFriendActivity;
 import com.open.welinks.customListener.MyOnClickListener;
@@ -77,6 +79,7 @@ public class FriendsSubController {
 				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
 					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, friend.phone);
 					thisView.businessCardPopView.showUserCardDialogView();
+					// Toast.makeText(mainController.thisActivity, friend.friendStatus + "---status", Toast.LENGTH_SHORT).show();
 				}
 				String view_class = (String) view.getTag(R.id.tag_class);
 				if (view_class != null) {
@@ -180,8 +183,20 @@ public class FriendsSubController {
 				vibrator.vibrate(pattern, -1);
 
 				thisView.friendListBody.startOrdering("circle#" + circle.rid);
+			} else if (view_class == "friend_view") {
+				onTouchDownView = null;
+				onClickView = null;
+				Toast.makeText(mainController.thisActivity, "long press", Toast.LENGTH_SHORT).show();
 			}
-
+		} else if (onTouchDownView != null) {
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			if (view_class == "friend_view") {
+				onTouchDownView = null;
+				onClickView = null;
+				Toast.makeText(mainController.thisActivity, "long press", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent(mainController.thisActivity,CirclesManageActivity.class);
+				mainController.thisActivity.startActivity(intent);
+			}
 		}
 	}
 

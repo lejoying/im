@@ -122,6 +122,8 @@ public class Data {
 
 			public String groupsSequenceString;
 			public String circlesOrderString;
+
+			public List<String> blackList;
 		}
 
 		public LocalConfig localConfig;
