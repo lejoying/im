@@ -459,6 +459,7 @@ relationManage.blacklist = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
+    var operation = data.operation;
     var phoneTo = [];
     var arr = [phoneToStr];
     var time = new Date().getTime();
@@ -467,10 +468,9 @@ relationManage.blacklist = function (data, response) {
         try {
             phoneTo = JSON.parse(phoneToStr);
             addFriendToMyBlackList(phone, phoneTo);
-//            modifyAccountBetweenRelation(phone, phoneTo);
         } catch (e) {
             response.write(JSON.stringify({
-                "提示信息": "添加黑名单失败",
+                "提示信息": "更新黑名单失败",
                 "失败原因": "参数格式错误"
             }));
             response.end();
@@ -490,7 +490,7 @@ relationManage.blacklist = function (data, response) {
         db.query(query, params, function (error, results) {
             if (error) {
                 response.write(JSON.stringify({
-                    "提示信息": "添加黑名单失败",
+                    "提示信息": "更新黑名单失败",
                     "失败原因": "数据异常"
                 }));
                 response.end();
@@ -498,7 +498,7 @@ relationManage.blacklist = function (data, response) {
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
-                    "提示信息": "添加黑名单失败",
+                    "提示信息": "更新黑名单失败",
                     "失败原因": "用户不存在"
                 }));
                 response.end();
@@ -506,18 +506,39 @@ relationManage.blacklist = function (data, response) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 if (accountData.blacklist) {
-                    var blackListObj = JSON.parse(accountData.blacklist);
-                    for (var index in phoneTo) {
-                        blackListObj.push(phoneTo[index]);
+                    if (operation) {
+                        var blackListObj = JSON.parse(accountData.blacklist);
+                        for (var index in phoneTo) {
+                            var key = phoneTo[index];
+                            if (key != null && key != "") {
+                                blackListObj.push(key);
+                            }
+                        }
+                    } else {
+                        var phoneToMap;
+                        for (var index in phoneTo) {
+                            phoneToMap[index] = "in";
+                        }
+                        var list = [];
+                        var blackListObj = JSON.parse(accountData.blacklist);
+                        for (var index in blackListObj) {
+                            var key = blackListObj[index];
+                            if (!phoneToMap[key]) {
+                                list.push(key);
+                            }
+                        }
+                        blackListObj = list;
                     }
                     accountData.blacklist = JSON.stringify(blackListObj);
                 } else {
-                    accountData.blacklist = phoneToStr;
+                    if (operation) {
+                        accountData.blacklist = phoneToStr;
+                    }
                 }
                 accountNode.save(function (error, node) {
                     if (error) {
                         response.write(JSON.stringify({
-                            "提示信息": "添加黑名单失败",
+                            "提示信息": "更新黑名单失败",
                             "失败原因": "数据异常"
                         }));
                         response.end();
@@ -525,77 +546,11 @@ relationManage.blacklist = function (data, response) {
                         return;
                     } else {
                         response.write(JSON.stringify({
-                            "提示信息": "添加黑名单成功"
+                            "提示信息": "更新黑名单成功"
                         }));
                         response.end();
                     }
                 });
-            }
-        });
-    }
-
-    function modifyAccountBetweenRelation(phone, phoneTo) {
-        var query = [
-            'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
-            'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
-            'SET r.friendStatus="blacklist",r.phone={phone}',
-            'RETURN r'
-        ].join('\n');
-        var params = {
-            phone: phone,
-            phoneTo: phoneTo
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "添加黑名单失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-                console.log(error);
-                return;
-            } else if (results.length > 0) {
-                /*var rNode = results.pop().r;
-                 var rData = rNode.data;
-                 rData.friendStatus = "blacklist";
-                 rData.phone = phone;
-                 rNode.save(function (error, node) {
-                 });*/
-                response.write(JSON.stringify({
-                    "提示信息": "添加黑名单成功"
-                }));
-                response.end();
-                var event = JSON.stringify({
-                    sendType: "event",
-                    contentType: "relation_blacklist",
-                    content: JSON.stringify({
-                        type: "relation_blacklist",
-                        phone: phone,
-                        phoneTo: phoneTo,
-                        eid: eid,
-                        time: new Date().getTime(),
-                        status: "success",
-                        content: ""
-                    })
-                });
-                for (var index in phoneTo) {
-                    var phoneto = phoneTo[index];
-                    client.rpush(phoneto, event, function (err, reply) {
-                        if (err) {
-                            console.error("保存Event失败");
-                        } else {
-                            console.log("保存Event成功");
-                        }
-                    });
-                    //{"提示信息": "成功", event: "friendstatuschanged", event_content: {phone: phone, operation: "blacklist"}}
-                    push.inform(phone, phoneto, accessKey, "*", event);
-                }
-            } else {
-                response.write(JSON.stringify({
-                    "提示信息": "添加黑名单失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
             }
         });
     }

@@ -529,8 +529,16 @@ accountManage.get = function (data, response) {
     var target = data.target;
     var arr = [phone, target];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
-        target = JSON.parse(target);
-        getAccountNode(target);
+        try {
+            target = JSON.parse(target);
+            getAccountNode(target);
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "获取用户信息失败",
+                "失败原因": "数据格式不正确"
+            }), response);
+            console.error(e);
+        }
     }
     function getAccountNode(target) {
         var query = [
@@ -571,11 +579,22 @@ accountManage.get = function (data, response) {
                         createTime: accountData.createTime,
                         userBackground: accountData.userBackground,
                         lastLoginTime: accountData.lastlogintime,
-                        circlesOrderString: accountData.circlesOrderString,
                         longitude: accountData.longitude,
-                        latitude: accountData.latitude,
-                        groupsSequenceString: accountData.groupsSequenceString
+                        latitude: accountData.latitude
                     };
+                    if (account.phone == phone) {
+                        account.circlesOrderString = accountData.circlesOrderString || "[]";
+                        account.groupsSequenceString = accountData.groupsSequenceString || "[]";
+                        try {
+                            if (accountData.blacklist) {
+                                account.blackList = JSON.parse(accountData.blacklist);
+                            } else {
+                                account.blackList = [];
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
                     accounts.push(account);
                 }
                 ResponseData(JSON.stringify({
@@ -856,7 +875,7 @@ accountManage.getuserinfomation = function (data, response) {
                     sex: accountData.sex,
                     age: accountData.age,
                     lastLoginTime: accountData.lastlogintime,
-                    userBackground: accountData.userBackground,
+                    userBackground: accountData.userBackground
 //                    accessKey: accessKey,
 //                    flag: 0
                 };

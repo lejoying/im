@@ -52,7 +52,11 @@ api.session = {
             typical: {"phone": "XXX", "accessKey": "XXX"}
         },
         response: {
-            success: {"提示信息": "成功", event: "message" || "newfriend" || "friendaccept", event_content: {phone: "XXX", messages: "XXX"}},
+            success: {
+                "提示信息": "成功",
+                event: "message" || "newfriend" || "friendaccept",
+                event_content: {phone: "XXX", messages: "XXX"}
+            },
             failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
         }
     },
@@ -139,11 +143,13 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", target: ["XXX", "XXX", "XXX"]}
         },
         response: {
-            success: {"提示信息": "获取用户信息成功", accounts: [
-                {},
-                {},
-                {}
-            ]},
+            success: {
+                "提示信息": "获取用户信息成功", accounts: [
+                    {},
+                    {},
+                    {}
+                ]
+            },
             failed: {"提示信息": "获取用户信息失败", "失败原因": "用户不存在" || "数据异常"}
         }
     },
@@ -156,7 +162,20 @@ api = {
             url: "/api2/account/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", oldpassword: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", sex: "XXX", mainBusiness: "XXX", password: "XXX", head: "XXX", userBackground: "XXX"})}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                oldpassword: "XXX",
+                account: JSON.stringify({
+                    phone: "XXX",
+                    nickName: "XXX",
+                    sex: "XXX",
+                    mainBusiness: "XXX",
+                    password: "XXX",
+                    head: "XXX",
+                    userBackground: "XXX"
+                })
+            }
         },
         response: {
             success: {"提示信息": "修改用户信息成功"},
@@ -264,7 +283,7 @@ api = {
             url: "/api2/relation/blacklist"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phoneto: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: "XXX", operation: true || false}
         },
         response: {
             success: {"提示信息": "添加黑名单成功"},
@@ -283,11 +302,13 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取好友成功", friends: [
-                {},
-                {},
-                {}
-            ]},
+            success: {
+                "提示信息": "获取好友成功", friends: [
+                    {},
+                    {},
+                    {}
+                ]
+            },
             failed: {"提示信息": "获取好友失败", "失败原因": ["数据异常"]}
         }
     },
@@ -303,15 +324,19 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取密友圈成功", circles: [
-                {rid: "XX", name: "XX", accounts: [
-                    {},
+            success: {
+                "提示信息": "获取密友圈成功", circles: [
+                    {
+                        rid: "XX", name: "XX", accounts: [
+                        {},
+                        {},
+                        {}
+                    ]
+                    },
                     {},
                     {}
-                ]},
-                {},
-                {}
-            ]},
+                ]
+            },
             failed: {"提示信息": "获取密友圈失败", "失败原因": ["数据异常"]}
         }
     },
@@ -327,11 +352,13 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取好友请求成功", accounts: [
-                {},
-                {},
-                {}
-            ]},
+            success: {
+                "提示信息": "获取好友请求成功", accounts: [
+                    {},
+                    {},
+                    {}
+                ]
+            },
             failed: {"提示信息": "获取好友请求失败", "失败原因": ["数据异常"]}
         }
     },
@@ -411,7 +438,14 @@ api = {
             url: "/api2/community/add"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", name: "XXX", description: "XXX", longitude: "XXX", latitude: "XXX"}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                name: "XXX",
+                description: "XXX",
+                longitude: "XXX",
+                latitude: "XXX"
+            }
         },
         response: {
             success: {"提示信息": "创建服务站成功", community: {}},
@@ -478,11 +512,13 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取社区成功", communities: [
-                {},
-                {},
-                {}
-            ]},
+            success: {
+                "提示信息": "获取社区成功", communities: [
+                    {},
+                    {},
+                    {}
+                ]
+            },
             failed: {"提示信息": "获取社区失败", "失败原因": ["数据异常"]}
         }
     },
@@ -498,11 +534,13 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", name: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取社区好友成功", accounts: [
-                {},
-                {},
-                {}
-            ]},
+            success: {
+                "提示信息": "获取社区好友成功", accounts: [
+                    {},
+                    {},
+                    {}
+                ]
+            },
             failed: {"提示信息": "获取社区好友失败", "失败原因": "数据异常"}
         }
     }
@@ -553,7 +591,13 @@ api = {
             url: "/api2/circle/moveorout"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], rid: "XXX", filter: ["REMOVE", "SHIFTIN"]}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                phoneto: ["XXX", "XXX", "XXX"],
+                rid: "XXX",
+                filter: ["REMOVE", "SHIFTIN"]
+            }
         },
         response: {
             success: {"提示信息": "移出成功" || "移入成功"},
@@ -606,11 +650,26 @@ api = {
             url: "/api2/message/send"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], gid: "XXX", sendType: ["point" || "group" || "tempGroup"], contentType: "text" || "image" || "voice", content: "XXX"}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                phoneto: ["XXX", "XXX", "XXX"],
+                gid: "XXX",
+                sendType: ["point" || "group" || "tempGroup"],
+                contentType: "text" || "image" || "voice",
+                content: "XXX"
+            }
         },
         response: {
             success: {"提示信息": "发送成功", time: "XXX", sendType: "XXX", gidL: "NNN", phoneTo: JSON.stringify(["XXX"])},
-            failed: {"提示信息": "发送失败", "失败原因": "数据异常", time: "XXX", sendType: "XXX", gidL: "NNN", phoneTo: JSON.stringify(["XXX"])}
+            failed: {
+                "提示信息": "发送失败",
+                "失败原因": "数据异常",
+                time: "XXX",
+                sendType: "XXX",
+                gidL: "NNN",
+                phoneTo: JSON.stringify(["XXX"])
+            }
         }
     },
     /***************************************
@@ -625,9 +684,18 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", flag: "NNN"}
         },
         response: {
-            success: {"提示信息": "获取成功", messages: [
-                {type: "text" || "image" || "voice", phone: "NNN", phoneto: "NNN", content: "XXX", time: new Date().getTime(), flag: "NNN"}
-            ]},
+            success: {
+                "提示信息": "获取成功", messages: [
+                    {
+                        type: "text" || "image" || "voice",
+                        phone: "NNN",
+                        phoneto: "NNN",
+                        content: "XXX",
+                        time: new Date().getTime(),
+                        flag: "NNN"
+                    }
+                ]
+            },
             failed: {"提示信息": "获取失败", "失败原因": "数据异常"}
         }
     }
@@ -849,7 +917,16 @@ api = {
             url: "/api2/group/create"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", type: ["createTempGroup", "createGroup", "upgradeGroup"], tempGid: "XXX", name: "XXX", description: "XXX", members: ["XXX", "XXX", "XXX"], location: {longitude: "NNN", latitude: "NNN"}}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                type: ["createTempGroup", "createGroup", "upgradeGroup"],
+                tempGid: "XXX",
+                name: "XXX",
+                description: "XXX",
+                members: ["XXX", "XXX", "XXX"],
+                location: {longitude: "NNN", latitude: "NNN"}
+            }
         },
         response: {
             success: {"提示信息": "创建群组成功", group: {}},
@@ -900,11 +977,13 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取群组成员成功", members: [
-                {},
-                {},
-                {}
-            ]},
+            success: {
+                "提示信息": "获取群组成员成功", members: [
+                    {},
+                    {},
+                    {}
+                ]
+            },
             failed: {"提示信息": "获取群组成员失败", "失败原因": "群组不存在" || "数据异常"}
         }
     },
@@ -917,7 +996,16 @@ api = {
             url: "/api2/group/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", name: "XXX", description: "XXX", background: "XXX", icon: "XXX", location: {longitude: "NNN", latitude: "NNN"}}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                gid: "XXX",
+                name: "XXX",
+                description: "XXX",
+                background: "XXX",
+                icon: "XXX",
+                location: {longitude: "NNN", latitude: "NNN"}
+            }
         },
         response: {
             success: {"提示信息": "修改群组信息成功", group: {}},
@@ -968,11 +1056,13 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取群组成功", groups: [
-                {},
-                {},
-                {}
-            ]},
+            success: {
+                "提示信息": "获取群组成功", groups: [
+                    {},
+                    {},
+                    {}
+                ]
+            },
             failed: {"提示信息": "获取群组失败", "失败原因": "数据异常"}
         }
     },
@@ -1019,7 +1109,12 @@ api = {
             url: "/lbs/updatelocation"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", location: {longitude: "NNN", latitude: "NNN"}, account: { mainBusiness: "XXX", head: "XXX", nickName: "XXX" }}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                location: {longitude: "NNN", latitude: "NNN"},
+                account: {mainBusiness: "XXX", head: "XXX", nickName: "XXX"}
+            }
         },
         response: {
             success: {"提示信息": "标记用户位置成功", phone: "XXX"},
@@ -1035,7 +1130,12 @@ api = {
             url: "/lbs/setgrouplocation"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", location: {longitude: "NNN", latitude: "NNN"}, group: {gid: "NNN", name: "XXX", description: "XXX"}}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                location: {longitude: "NNN", latitude: "NNN"},
+                group: {gid: "NNN", name: "XXX", description: "XXX"}
+            }
         },
         response: {
             success: {"提示信息": "标记群组位置成功", gid: "NNN"},
@@ -1054,9 +1154,19 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", area: {longitude: "NNN", latitude: "NNN", radius: "NNN"}}
         },
         response: {
-            success: {"提示信息": "获取附近用户成功", accounts: [
-                {phone: "NNN", mainBusiness: "XXX", head: "XXX", nickName: "XXX", location: {longitude: "NNN", latitude: "NNN"}, modify_time: "NNN", distance: "NNN"}
-            ]},
+            success: {
+                "提示信息": "获取附近用户成功", accounts: [
+                    {
+                        phone: "NNN",
+                        mainBusiness: "XXX",
+                        head: "XXX",
+                        nickName: "XXX",
+                        location: {longitude: "NNN", latitude: "NNN"},
+                        modify_time: "NNN",
+                        distance: "NNN"
+                    }
+                ]
+            },
             failed: {"提示信息": "获取附近用户失败", "失败原因": "数据异常" || "参数格式错误"}
         }
     },
@@ -1072,9 +1182,18 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", area: {longitude: "NNN", latitude: "NNN", radius: "NNN"}}
         },
         response: {
-            success: {"提示信息": "获取附近群组成功", groups: [
-                {gid: "NNN", name: "XXX", description: "XXX", location: {longitude: "NNN", latitude: "NNN"}, modify_time: "NNN", distance: "NNN"}
-            ]},
+            success: {
+                "提示信息": "获取附近群组成功", groups: [
+                    {
+                        gid: "NNN",
+                        name: "XXX",
+                        description: "XXX",
+                        location: {longitude: "NNN", latitude: "NNN"},
+                        modify_time: "NNN",
+                        distance: "NNN"
+                    }
+                ]
+            },
             failed: {"提示信息": "获取附近群组失败", "失败原因": "数据异常" || "参数格式错误"}
         }
     }
@@ -1092,7 +1211,12 @@ api = {
             url: "/api2/square/sendsquaremessage"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", message: {contentType: "text" || "image" || "voice", content: "XXX"}}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                gid: "NNN",
+                message: {contentType: "text" || "image" || "voice", content: "XXX"}
+            }
         },
         response: {
             success: {"提示信息": "发布广播成功", time: "NNN"},
@@ -1112,9 +1236,17 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", flag: "NNN"}
         },
         response: {
-            success: {"提示信息": "获取广播成功", messages: [
-                {contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
-            ], flag: "NNN", onlinecount: "NNN"},
+            success: {
+                "提示信息": "获取广播成功", messages: [
+                    {
+                        contentType: "text" || "image" || "voice",
+                        phone: "NNN",
+                        gid: "NNN",
+                        content: "XXX",
+                        time: new Date().getTime()
+                    }
+                ], flag: "NNN", onlinecount: "NNN"
+            },
             failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
     }
@@ -1129,7 +1261,15 @@ api = {
             url: "/api2/square/sendsquaremessage"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", head: "XXX", nickName: "XXX", cover: "XXX", gid: "NNN", message: {messageType: "精华" || "...", contentType: "text" || "image" || "voice", content: "XXX"}}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                head: "XXX",
+                nickName: "XXX",
+                cover: "XXX",
+                gid: "NNN",
+                message: {messageType: "精华" || "...", contentType: "text" || "image" || "voice", content: "XXX"}
+            }
         },
         response: {
             success: {"提示信息": "发布广播成功", time: "NNN", gmid: "NNN"},
@@ -1142,12 +1282,18 @@ api = {
             url: "/api2/square/sendsquaremessage"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", head: "XXX", nickName: "XXX", cover: "XXX", gid: "NNN",
-                message: {messageType: [], contentType: "text" || "image" || "voice" || "voiceandimage" || "textandimage" || "textandvoice" || "vit", content: [
-                    {type: "text" || "image" || "voice", details: "XXX"},
-                    {},
-                    {}
-                ]}}
+            typical: {
+                phone: "XXX", accessKey: "XXX", head: "XXX", nickName: "XXX", cover: "XXX", gid: "NNN",
+                message: {
+                    messageType: [],
+                    contentType: "text" || "image" || "voice" || "voiceandimage" || "textandimage" || "textandvoice" || "vit",
+                    content: [
+                        {type: "text" || "image" || "voice", details: "XXX"},
+                        {},
+                        {}
+                    ]
+                }
+            }
         },
         response: {
             success: {"提示信息": "发布广播成功", time: "NNN", gmid: "NNN"},
@@ -1167,9 +1313,23 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", flag: "NNN"}
         },
         response: {
-            success: {"提示信息": "获取广播成功", messages: [
-                {gmid: "NNN", messageType: "XXX", praiseusers: [], sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", nickName: "XXX", head: "XXX", gid: "NNN", content: "XXX", time: new Date().getTime()}
-            ], flag: "NNN", onlinecount: "NNN"},
+            success: {
+                "提示信息": "获取广播成功", messages: [
+                    {
+                        gmid: "NNN",
+                        messageType: "XXX",
+                        praiseusers: [],
+                        sendType: "square",
+                        contentType: "text" || "image" || "voice",
+                        phone: "NNN",
+                        nickName: "XXX",
+                        head: "XXX",
+                        gid: "NNN",
+                        content: "XXX",
+                        time: new Date().getTime()
+                    }
+                ], flag: "NNN", onlinecount: "NNN"
+            },
             failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
     },
@@ -1182,7 +1342,14 @@ api = {
             url: "/api2/square/addsquarepraise"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", gid: "XXX", gmid: "NNN", operation: true || false}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                nickName: "XXX",
+                gid: "XXX",
+                gmid: "NNN",
+                operation: true || false
+            }
         },
         response: {
             success: {"提示信息": "点赞广播成功"},
@@ -1214,7 +1381,15 @@ api = {
             url: "/api2/square/addsquarecomment"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", gid: "XXX", gmid: "NNN", contentType: "text" || "image" || "voice", content: "XXX"}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                nickName: "XXX",
+                gid: "XXX",
+                gmid: "NNN",
+                contentType: "text" || "image" || "voice",
+                content: "XXX"
+            }
         },
         response: {
             success: {"提示信息": "评论广播成功", time: "NNN"},
@@ -1233,9 +1408,17 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", gmid: "NNN"}
         },
         response: {
-            success: {"提示信息": "获取广播评论成功", gmid: "NNN", comments: [
-                {phone: "NNN", nickName: "XXX", contentType: "text" || "image" || "voice", content: "XXX", time: "NNN"}
-            ]},
+            success: {
+                "提示信息": "获取广播评论成功", gmid: "NNN", comments: [
+                    {
+                        phone: "NNN",
+                        nickName: "XXX",
+                        contentType: "text" || "image" || "voice",
+                        content: "XXX",
+                        time: "NNN"
+                    }
+                ]
+            },
             failed: {"提示信息": "获取广播评论失败", "失败原因": "数据异常"}
         }
     },
@@ -1251,9 +1434,11 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取广场在线用户成功", users: [
-                {phone: "NNN", nickName: "XXX", head: "XXX"}
-            ]},
+            success: {
+                "提示信息": "获取广场在线用户成功", users: [
+                    {phone: "NNN", nickName: "XXX", head: "XXX"}
+                ]
+            },
             failed: {"提示信息": "获取广场在线用户失败", "失败原因": "数据异常"}
         }
     },
@@ -1270,7 +1455,7 @@ api = {
         },
         response: {
             success: {"提示信息": "获取广场在线用户数量成功", onlinecount: "NNN"},
-            failed: { "提示信息": "获取广场在线用户数量失败", "失败原因": "数据异常" }
+            failed: {"提示信息": "获取广场在线用户数量失败", "失败原因": "数据异常"}
         }
     },
     /***************************************
@@ -1285,9 +1470,23 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", detailphone: "XXX", gid: "NNN", gmid: "NNN"}
         },
         response: {
-            success: {"提示信息": "获取广播成功", messages: [
-                {gmid: "NNN", messageType: "XXX", praiseusers: [], sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", nickName: "XXX", head: "XXX", gid: "NNN", content: "XXX", time: new Date().getTime()}
-            ], flag: "NNN", onlinecount: "NNN"},
+            success: {
+                "提示信息": "获取广播成功", messages: [
+                    {
+                        gmid: "NNN",
+                        messageType: "XXX",
+                        praiseusers: [],
+                        sendType: "square",
+                        contentType: "text" || "image" || "voice",
+                        phone: "NNN",
+                        nickName: "XXX",
+                        head: "XXX",
+                        gid: "NNN",
+                        content: "XXX",
+                        time: new Date().getTime()
+                    }
+                ], flag: "NNN", onlinecount: "NNN"
+            },
             failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
     }
@@ -1305,17 +1504,23 @@ api = {
             url: "/api2/share/sendshare"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", ogsid: "XXX", message: {type: "imagetext" || "voicetext" || "vote", content: JSON.stringify([
-                {type: "text" || "image" || "voice", detail: "XXX"},
-                {},
-                {}
-            ]) || JSON.stringify({title: "XXX", options: [
-                {content: "XXX", voteusers: ["XXX", "XXX"]}
-            ]})}}
+            typical: {
+                phone: "XXX", accessKey: "XXX", gid: "XXX", ogsid: "XXX", message: {
+                    type: "imagetext" || "voicetext" || "vote", content: JSON.stringify([
+                        {type: "text" || "image" || "voice", detail: "XXX"},
+                        {},
+                        {}
+                    ]) || JSON.stringify({
+                        title: "XXX", options: [
+                            {content: "XXX", voteusers: ["XXX", "XXX"]}
+                        ]
+                    })
+                }
+            }
         },
         response: {
             success: {"提示信息": "发布群分享成功", time: "XXX", gid: "NNN", gsid: "XXX", ogsid: "XXX"},
-            failed: { "提示信息": "发布群分享失败", "失败原因": "数据异常" }
+            failed: {"提示信息": "发布群分享失败", "失败原因": "数据异常"}
         }
     },
     /***************************************
@@ -1330,16 +1535,28 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", nowpage: "NNN", pagesize: "NNN"}
         },
         response: {
-            success: {"提示信息": "获取群分享成功", shares: [
-                {phone: "NNN", nickName: "XXX", head: "XXX", sex: "XXX", type: "XXX", content: "XXX", praise: JSON.stringify(["XXX", "XXX", "XXX"]), comment: JSON.stringify([
-                    {phone: "NNN", nickName: "XXX", head: "XXX", content: "XXX"},
+            success: {
+                "提示信息": "获取群分享成功", shares: [
+                    {
+                        phone: "NNN",
+                        nickName: "XXX",
+                        head: "XXX",
+                        sex: "XXX",
+                        type: "XXX",
+                        content: "XXX",
+                        praise: JSON.stringify(["XXX", "XXX", "XXX"]),
+                        comment: JSON.stringify([
+                            {phone: "NNN", nickName: "XXX", head: "XXX", content: "XXX"},
+                            {},
+                            {}
+                        ]),
+                        collect: "XXX"
+                    },
                     {},
                     {}
-                ]), collect: "XXX"},
-                {},
-                {}
-            ]},
-            failed: { "提示信息": "获取群分享失败", "失败原因": "数据异常" }
+                ]
+            },
+            failed: {"提示信息": "获取群分享失败", "失败原因": "数据异常"}
         }
     },
     /***************************************
@@ -1355,7 +1572,7 @@ api = {
         },
         response: {
             success: {"提示信息": "点赞群分享成功", gid: "XXX", gsid: "NNN"},
-            failed: { "提示信息": "点赞群分享失败", "失败原因": "数据异常" || "消息不存在", gid: "XXX", gsid: "NNN" }
+            failed: {"提示信息": "点赞群分享失败", "失败原因": "数据异常" || "消息不存在", gid: "XXX", gsid: "NNN"}
         }
     },
     /***************************************
@@ -1367,11 +1584,22 @@ api = {
             url: "/api2/share/addcomment"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", head: "XXX", phoneTo: "NNN", nickNameTo: "XXX", gid: "XXX", gsid: "NNN", contentType: "text", content: "XXX"}
+            typical: {
+                phone: "XXX",
+                accessKey: "XXX",
+                nickName: "XXX",
+                head: "XXX",
+                phoneTo: "NNN",
+                nickNameTo: "XXX",
+                gid: "XXX",
+                gsid: "NNN",
+                contentType: "text",
+                content: "XXX"
+            }
         },
         response: {
             success: {"提示信息": "评论群分享成功", gid: "XXX", gsid: "NNN"},
-            failed: { "提示信息": "评论群分享失败", "失败原因": "数据异常" || "消息不存在", gid: "XXX", gsid: "NNN"}
+            failed: {"提示信息": "评论群分享失败", "失败原因": "数据异常" || "消息不存在", gid: "XXX", gsid: "NNN"}
         }
     },
     /***************************************
@@ -1387,7 +1615,7 @@ api = {
         },
         response: {
             success: {"提示信息": "删除群分享成功"},
-            failed: { "提示信息": "删除群分享失败", "失败原因": "数据异常" || "群分享不存在" }
+            failed: {"提示信息": "删除群分享失败", "失败原因": "数据异常" || "群分享不存在"}
         }
     },
     /***************************************
@@ -1403,7 +1631,7 @@ api = {
         },
         response: {
             success: {"提示信息": "删除评论成功"},
-            failed: { "提示信息": "删除评论失败", "失败原因": "数据异常" || "群分享不存在" }
+            failed: {"提示信息": "删除评论失败", "失败原因": "数据异常" || "群分享不存在"}
         }
     },
     /***************************************
@@ -1419,7 +1647,7 @@ api = {
         },
         response: {
             success: {"提示信息": "获取群分享成功"},
-            failed: { "提示信息": "获取群分享失败", "失败原因": "数据异常" || "群分享不存在" }
+            failed: {"提示信息": "获取群分享失败", "失败原因": "数据异常" || "群分享不存在"}
         }
     },
     /***************************************
@@ -1435,7 +1663,7 @@ api = {
         },
         response: {
             success: {"提示信息": "获取群分享成功"},
-            failed: { "提示信息": "获取群分享失败", "失败原因": "数据异常" || "群分享不存在" }
+            failed: {"提示信息": "获取群分享失败", "失败原因": "数据异常" || "群分享不存在"}
         }
     }
 }
