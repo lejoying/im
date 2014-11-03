@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -30,6 +29,8 @@ public class Parser {
 	public MyLog log = new MyLog(tag, false);
 
 	public static Parser parser;
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public static Parser getInstance() {
 		if (parser == null) {
@@ -115,7 +116,7 @@ public class Parser {
 	}
 
 	public void saveToUserForder(String phone, String fileName, String content) {
-		File sdFile = Environment.getExternalStorageDirectory();
+		File sdFile = fileHandlers.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
 		if (!userForder.exists()) {
@@ -126,7 +127,7 @@ public class Parser {
 	}
 
 	public void saveToRootForder(String fileName, String content) {
-		File sdFile = Environment.getExternalStorageDirectory();
+		File sdFile = fileHandlers.getSdCardFile();
 		File rootForder = new File(sdFile, "welinks/");
 
 		if (!rootForder.exists()) {
@@ -158,7 +159,7 @@ public class Parser {
 
 	public String getFromUserForder(String phone, String fileName) {
 		String result = null;
-		File sdFile = Environment.getExternalStorageDirectory();
+		File sdFile = fileHandlers.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
 		if (!userForder.exists()) {
@@ -176,7 +177,7 @@ public class Parser {
 
 	public String getFromRootForder(String fileName) {
 		String result = null;
-		File sdFile = Environment.getExternalStorageDirectory();
+		File sdFile = fileHandlers.getSdCardFile();
 		File rootForder = new File(sdFile, "welinks/");
 
 		result = getFromSD(rootForder, fileName);
@@ -301,7 +302,7 @@ public class Parser {
 	}
 
 	public void deleteFile(String phone, String fileName) {
-		File sdFile = Environment.getExternalStorageDirectory();
+		File sdFile = fileHandlers.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
 		if (!userForder.exists()) {

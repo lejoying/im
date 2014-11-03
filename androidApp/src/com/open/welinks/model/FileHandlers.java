@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -66,21 +67,30 @@ public class FileHandlers {
 		return fileHandlers;
 	}
 
+	@SuppressLint("SdCardPath")
+	public File getSdCardFile() {
+		File sdcard = Environment.getExternalStorageDirectory();
+		if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			sdcard = new File("/sdcard/");
+			log.e("sdcard  spance:" + sdcard.getFreeSpace());
+			if (sdcard.getFreeSpace() == 0) {
+				sdcard = new File("/sdcard1/");
+				log.e("sdcard1 space:" + sdcard.getFreeSpace());
+			}
+			if (sdcard.getFreeSpace() == 0) {
+				sdcard = new File("/sdcard2/");
+				log.e("sdcard2 space:" + sdcard.getFreeSpace());
+			}
+		}
+		return sdcard;
+	}
+
 	public FileHandlers() {
-		sdcard = Environment.getExternalStorageDirectory();
-		if (!sdcard.exists()) {
-			// sdcard = Environment.getDataDirectory();
-			// sdcard = Environment.getRootDirectory();
-			// sdcard = MainActivity.instance.getFilesDir();
-			System.out.println(sdcard.getAbsolutePath() + "---Memory");
-		}
+		sdcard = getSdCardFile();
 		sdcardFolder = new File(sdcard, "welinks");
-		System.out.println(sdcardFolder.getAbsolutePath() + "---Memory1");
 		if (!sdcardFolder.exists()) {
-			boolean falg = sdcardFolder.mkdirs();
-			System.out.println(sdcardFolder.exists() + "--" + falg + "-Memory3");
+			sdcardFolder.mkdirs();
 		}
-		System.out.println(sdcardFolder.exists() + "---Memory2");
 		sdcardImageFolder = new File(sdcardFolder, "images");
 		if (!sdcardImageFolder.exists()) {
 			sdcardImageFolder.mkdirs();

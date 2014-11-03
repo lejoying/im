@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -67,7 +66,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public OnUploadLoadingListener uploadLoadingListener;
 	public OnDownloadListener downloadListener;
 
-	public File tempFile, sdFile;
+	public File tempFile;
 
 	public User user;
 	public Group group;
@@ -88,7 +87,6 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		type = getIntent().getStringExtra("type");
 		inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(45)).build();
-		sdFile = new File(Environment.getExternalStorageDirectory(), "welinks/heads/");
 		initView();
 		initializeListeners();
 	}
@@ -110,7 +108,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUESTCODE_SELECT && resultCode == Activity.RESULT_OK) {
-			if(this.data.tempData.selectedImageList!=null && this.data.tempData.selectedImageList.size()>0){
+			if (this.data.tempData.selectedImageList != null && this.data.tempData.selectedImageList.size() > 0) {
 				Uri selectedImage = Uri.parse("file://" + this.data.tempData.selectedImageList.get(0));
 				startPhotoZoom(selectedImage);
 			}
@@ -118,7 +116,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			Uri uri = Uri.fromFile(tempFile);
 			startPhotoZoom(uri);
 		} else if (requestCode == REQUESTCODE_CAT && resultCode == Activity.RESULT_OK) {
-			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), sdFile);
+			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), fileHandlers.sdcardHeadImageFolder);
 			headFileName = (String) map.get("fileName");
 			fileHandlers.getHeadImage(headFileName, head, options);
 			System.out.println((String) map.get("fileName"));
@@ -373,10 +371,10 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	void takePicture(int requestCode) {
-		tempFile = new File(sdFile, "tempimage");
+		tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(sdFile, "tempimage" + (i++));
+			tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage" + (i++));
 		}
 		Uri uri = Uri.fromFile(tempFile);
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -386,10 +384,10 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	public void startPhotoZoom(Uri uri) {
-		tempFile = new File(sdFile, "tempimage.png");
+		tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage.png");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(sdFile, "tempimage" + (i++) + ".png");
+			tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage" + (i++) + ".png");
 		}
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");

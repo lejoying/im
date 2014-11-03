@@ -13,7 +13,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
@@ -91,8 +90,6 @@ public class ChatController {
 
 	public User currentUser = data.userInformation.currentUser;
 
-	public File sdFile;
-
 	public ViewManage viewManage = ViewManage.getInstance();
 
 	public ChatController(ChatActivity thisActivity) {
@@ -111,7 +108,6 @@ public class ChatController {
 			this.type = type;
 		}
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-		sdFile = Environment.getExternalStorageDirectory();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.defaultimage).showImageForEmptyUri(R.drawable.defaultimage).showImageOnFail(R.drawable.defaultimage).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 		unsendMessageInfo = new HashMap<String, Map<String, String>>();

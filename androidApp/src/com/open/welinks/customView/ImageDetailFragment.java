@@ -4,7 +4,6 @@ import java.io.File;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +23,7 @@ import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
+import com.open.welinks.model.FileHandlers;
 
 public class ImageDetailFragment extends Fragment {
 	// private static final String IMAGE_DATA_EXTRA = "resId";
@@ -90,8 +90,8 @@ public class ImageDetailFragment extends Fragment {
 		};
 		if (ImageScanActivity.class.isInstance(getActivity())) {
 			if (path.lastIndexOf("/") == -1) {
-				File sdFile = Environment.getExternalStorageDirectory();
-				File file = new File(sdFile, "welinks/images/" + path);
+				FileHandlers fileHandlers = FileHandlers.getInstance();
+				File file = new File(fileHandlers.sdcardImageFolder, path);
 				path = file.getAbsolutePath();
 			}
 			final String path0 = path;
