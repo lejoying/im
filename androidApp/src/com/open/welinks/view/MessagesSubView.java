@@ -430,7 +430,10 @@ public class MessagesSubView {
 								notReadNumberView.setText(String.valueOf(notReadMessagesCount));
 							}
 						}
-						leftText = data.relationship.friendsMap.get(message.phone).nickName + ":";
+						Friend friend = data.relationship.friendsMap.get(message.phone);
+						if (friend != null) {
+							leftText += friend.nickName + ":";
+						}
 					}
 					if ("text".equals(message.contentType)) {
 						lastChatMessageView.setText(leftText + message.content);

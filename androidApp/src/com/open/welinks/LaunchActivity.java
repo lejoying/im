@@ -35,11 +35,18 @@ public class LaunchActivity extends Activity {
 			String userInformationStr = parser.getFromRootForder("userInformation.js");
 			data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
 		}
-		if (!"".equals(data.userInformation.currentUser.phone) && !"".equals(data.userInformation.currentUser.accessKey)) {
-			startActivity(new Intent(LaunchActivity.this, LoadingActivity.class));
-			LaunchActivity.this.finish();
-			return;
-		} else {
+		try {
+			if (!"".equals(data.userInformation.currentUser.phone) && !"".equals(data.userInformation.currentUser.accessKey)) {
+				startActivity(new Intent(LaunchActivity.this, LoadingActivity.class));
+				LaunchActivity.this.finish();
+				return;
+			} else {
+				startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+				LaunchActivity.this.finish();
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 			startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
 			LaunchActivity.this.finish();
 			return;

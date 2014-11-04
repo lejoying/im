@@ -9,12 +9,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -49,6 +53,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.MyLog;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.LoginActivity;
 import com.open.welinks.R;
@@ -74,6 +79,8 @@ public class MainController {
 	public Parser parser = Parser.getInstance();
 
 	public String tag = "MainController";
+	public MyLog log = new MyLog(tag, true);
+
 	public MainView thisView;
 	public Context context;
 	public Activity thisActivity;
@@ -155,6 +162,8 @@ public class MainController {
 		dataHandlers.sendShareMessage();
 
 		requestLocation();
+
+		getContacts();
 	}
 
 	public void onResume() {
@@ -848,5 +857,79 @@ public class MainController {
 			thisActivity.unregisterReceiver(this.connectionChangeReceiver);
 			connectionChangeReceiver = null;
 		}
+	}
+
+	class Contact {
+		public String nickName;
+		public String head;
+	}
+
+	Map<String, Contact> contacts = new HashMap<String, Contact>();
+
+	public void getContacts() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				ContentResolver contentResolver = thisActivity.getContentResolver();
+				try {
+					Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+					while (cursor.moveToNext()) {
+
+						int nameFieldColumnIndex = cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME);
+						String nickName = cursor.getString(nameFieldColumnIndex);
+						String ContactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+						Cursor phone = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + ContactId, null, null);
+
+						while (phone.moveToNext()) {
+							String phoneNumber = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+							if (phoneNumber.indexOf("+86") == 0) {
+								phoneNumber = phoneNumber.substring(3);
+							}
+							phoneNumber = phoneNumber.replaceAll(" ", "");
+							if (phoneNumber.indexOf("1") == 0 && phoneNumber.length() == 11) {
+								Contact contact = new Contact();
+								contact.nickName = nickName;
+								contact.head = "abc";
+								contacts.put(phoneNumber, contact);
+								// log.e(phoneNumber.length() + "---------------------------------" + phoneNumber);
+							}
+							// TODO contact photo
+							// Uri uriNumber2Contacts = Uri.parse("content://com.android.contacts/" + "data/phones/filter/" + PhoneNumber);
+							// final Cursor cursorCantacts = contentResolver.query(uriNumber2Contacts, null, null, null, null);
+							// if (cursorCantacts.getCount() > 0) {
+							// cursorCantacts.moveToFirst();
+							// Long contactID = cursorCantacts.getLong(cursorCantacts.getColumnIndex("contact_id"));
+							// final Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactID);
+							// final InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(contentResolver, uri);
+							// }
+						}
+						phone.close();
+					}
+					cursor.close();
+					log.e("获取通讯录成功");
+					if (contacts.size() > 0) {
+						updateContactServer();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e("Exception", e.toString());
+				}
+			}
+		}).start();
+	}
+
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+	public void updateContactServer() {
+		log.e("开始上传通讯录");
+		String contactString = gson.toJson(contacts);
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("contact", contactString);
+
+		httpUtils.send(HttpMethod.POST, API.RELATION_UPDATECONTACT, params, responseHandlers.updateContactCallBack);
 	}
 }

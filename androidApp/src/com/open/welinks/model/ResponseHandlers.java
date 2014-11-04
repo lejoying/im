@@ -633,6 +633,21 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> updateContactCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("更新通讯录成功")) {
+				log.e(tag, "---------------------更新通讯录成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
 	// TODO Upload
 
 	public ResponseHandler<String> upload = httpClient.new ResponseHandler<String>() {

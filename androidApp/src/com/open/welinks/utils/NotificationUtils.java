@@ -13,7 +13,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Vibrator;
+import android.util.Log;
 
 import com.open.welinks.MainActivity;
 import com.open.welinks.R;
@@ -203,11 +205,11 @@ public final class NotificationUtils {
 			contentTitle = "微型公社";
 			contentText = "有" + friendCount + "个好友给您发来了" + messageCount + "条消息。";
 		}
+		
 		NotificationUtils.message = message;
 		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.notifyicon, sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS, Notification.FLAG_AUTO_CANCEL, intent);
 		if (isNotice) {
 			commonVibrate(context);
 		}
 	}
-
 }
