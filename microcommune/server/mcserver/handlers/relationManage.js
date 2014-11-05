@@ -11,7 +11,7 @@ var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 /***************************************
  *     URL：/api2/relation/addfriend
  ***************************************/
-relationManage.addfriend = function (data, response) {
+relationManage.addfriend2 = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.phone;
@@ -300,7 +300,7 @@ relationManage.addfriend = function (data, response) {
 /***************************************
  *     URL：/api2/relation/deletefriend
  ***************************************/
-relationManage.deletefriend = function (data, response) {
+relationManage.deletefriend2 = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.phone;
@@ -451,110 +451,6 @@ relationManage.deletefriend = function (data, response) {
     }
 }
 
-/***************************************
- *     URL：/api2/relation/blacklist
- ***************************************/
-relationManage.blacklist = function (data, response) {
-    response.asynchronous = 1;
-    var phone = data.phone;
-    var accessKey = data.accessKey;
-    var phoneToStr = data.phoneto;
-    var operation = data.operation;
-    var phoneTo = [];
-    var arr = [phoneToStr];
-    var time = new Date().getTime();
-    var eid = phone + "_" + time;
-    if (verifyEmpty.verifyEmpty(data, arr, response)) {
-        try {
-            phoneTo = JSON.parse(phoneToStr);
-            addFriendToMyBlackList(phone, phoneTo);
-        } catch (e) {
-            response.write(JSON.stringify({
-                "提示信息": "更新黑名单失败",
-                "失败原因": "参数格式错误"
-            }));
-            response.end();
-            console.error(e);
-            return;
-        }
-    }
-    function addFriendToMyBlackList(phone, phoneTo) {
-        var query = [
-            "MATCH (account:Account)",
-            "WHERE account.phone={phone}",
-            "RETURN account"
-        ].join("\n");
-        var params = {
-            phone: phone
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "更新黑名单失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-                console.log(error);
-                return;
-            } else if (results.length == 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "更新黑名单失败",
-                    "失败原因": "用户不存在"
-                }));
-                response.end();
-            } else {
-                var accountNode = results.pop().account;
-                var accountData = accountNode.data;
-                if (accountData.blacklist) {
-                    if (operation) {
-                        var blackListObj = JSON.parse(accountData.blacklist);
-                        for (var index in phoneTo) {
-                            var key = phoneTo[index];
-                            if (key != null && key != "") {
-                                blackListObj.push(key);
-                            }
-                        }
-                    } else {
-                        var phoneToMap;
-                        for (var index in phoneTo) {
-                            phoneToMap[index] = "in";
-                        }
-                        var list = [];
-                        var blackListObj = JSON.parse(accountData.blacklist);
-                        for (var index in blackListObj) {
-                            var key = blackListObj[index];
-                            if (!phoneToMap[key]) {
-                                list.push(key);
-                            }
-                        }
-                        blackListObj = list;
-                    }
-                    accountData.blacklist = JSON.stringify(blackListObj);
-                } else {
-                    if (operation) {
-                        accountData.blacklist = phoneToStr;
-                    }
-                }
-                accountNode.save(function (error, node) {
-                    if (error) {
-                        response.write(JSON.stringify({
-                            "提示信息": "更新黑名单失败",
-                            "失败原因": "数据异常"
-                        }));
-                        response.end();
-                        console.log(error);
-                        return;
-                    } else {
-                        response.write(JSON.stringify({
-                            "提示信息": "更新黑名单成功"
-                        }));
-                        response.end();
-                    }
-                });
-            }
-        });
-    }
-}
 /***************************************
  *     URL：/api2/relation/getfriends
  ***************************************/
@@ -807,7 +703,7 @@ relationManage.getcirclesandfriends = function (data, response) {
 /***************************************
  *     URL：/api2/relation/addfriendagree
  ***************************************/
-relationManage.addfriendagree = function (data, response) {
+relationManage.addfriendagree2 = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.phone;
@@ -1188,7 +1084,7 @@ relationManage.getaskfriends = function (data, response) {
 /***************************************
  *     URL：/api2/relation/modifyalias
  ***************************************/
-relationManage.modifyalias = function (data, response) {
+relationManage.modifyalias2 = function (data, response) {
     response.asynchronous = 1;
     console.info(data);
     var phone = data.phone;
@@ -1259,7 +1155,7 @@ relationManage.modifyalias = function (data, response) {
 /*************************************************************
  * * * * * * * * * * * * New Api * * * * * * * * * * * * * * *
  *************************************************************/
-relationManage.intimatefriends = function (data, response) {
+relationManage.intimatefriends2 = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.phone;
@@ -1509,7 +1405,7 @@ relationManage.intimatefriends = function (data, response) {
 }
 //   /api2 / relation / modifysequence
 
-relationManage.modifysequence = function (data, response) {
+relationManage.modifysequence2 = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var circleSequence = data.sequence;
@@ -1575,7 +1471,914 @@ relationManage.modifysequence = function (data, response) {
         });
     }
 }
+//TODO
+/**
+ * *********************************************************************************************************************
+ * @type {exports.GraphDatabase}
+ */
+var contactDB = new neo4j.GraphDatabase("http://182.92.1.150:7474/");
+relationManage.updatecontact = function (data, response) {
+    response.asynchronous = 1;
+    var startTime = new Date().getTime();
+    console.log(data);
+    var phone = data.phone;
+    var contact = data.contact;
+    var arr = [contact];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        try {
+            contact = JSON.parse(contact);
+            //for (var index in contact) {
+            //    phone = index;
+            //    break;
+            //}
+            checkUserExists(phone);
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "更新通讯录失败",
+                "失败原因": "数据异常"
+            }), response);
+            console.error(e);
+        }
+    }
+    function checkUserExists(phone) {
+        var query = [
+            "MATCH (account:Account{phone:{phone}})",
+            "WITH count(account) AS number",
+            "WHERE number = 0",
+            "CREATE (account:Account{account2})",
+            "SET account.uid=ID(account)",
+            "RETURN account"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            account2: {
+                phone: phone,
+                isregist: true
+            }
+        };
+        contactDB.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "更新通讯录失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error("checkUserExists:" + error);
+            } else {
+                var phones = [];
+                for (var index in contact) {
+                    if (index != phone) {
+                        phones.push(index);
+                    }
+                }
+                createContactAccountNode(phones);
+            }
+        });
+    }
 
+    function createContactAccountNode(phones) {
+        //console.log(phones);
+        var query = [
+            "MATCH (account:Account{phone:{phone}})-[HAS_CONTACT]->(account2:Account)",
+            "WHERE account2.phone IN {phones}",
+            "SET account.isregist={isregist}",
+            "RETURN account,account2"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phones: phones,
+            isregist: true
+        };
+        contactDB.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "更新通讯录失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error("createContactAccountNode:" + error);
+            } else {
+                var alreadyExists = {};
+                for (var index in results) {
+                    var accountData = results[index].account2.data;
+                    alreadyExists[accountData.phone] = "in";
+                    //console.log(accountData.phone);
+                }
+                var updateList = [];
+                var updateMap = {};
+                for (var index in contact) {
+                    if (!alreadyExists[index]) {
+                        updateList.push(index);
+                        updateMap[index] = "in";
+                    }
+                }
+                console.error("通讯录全部:" + phones.length + "个,已存在关系:" + ( phones.length - updateList.length) + "个");
+                //console.log(JSON.stringify(updateList));
+                if (updateList.length > 0) {
+                    createAlreadyExistsAccount(updateMap, updateList);
+                } else {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "更新通讯录成功"
+                    }), response);
+                }
+            }
+        });
+    }
+
+    function createAlreadyExistsAccount(updateMap, updateList) {
+        var query = [
+            "MATCH (account:Account{phone:{phone}}),(account2:Account)",
+            "WHERE account2.phone IN {phones}",
+            "CREATE UNIQUE account-[r:HAS_CONTACT]->account2",
+            "RETURN account2,r"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phones: updateList
+        };
+        contactDB.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "更新通讯录失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error("createAlreadyExistsAccount:" + error);
+            } else {
+                var alreadyCreateAccount = {};
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    alreadyCreateAccount[account2Data.phone] = "in";
+                    var rNode = results[index].r;
+                    var rData = rNode.data;
+                    console.log(contact[account2Data.phone]);
+                    rData.nickName = contact[account2Data.phone].nickName;
+                    rData.head = contact[account2Data.phone].head;
+                    rNode.save(function (err, node) {
+                    });
+                }
+                var needCreateAccout = [];
+                for (var index in updateMap) {
+                    if (!alreadyCreateAccount[index]) {
+                        needCreateAccout.push(index);
+                    }
+                }
+                createAccountAndRelatiuon(needCreateAccout);
+            }
+        });
+    }
+
+    function createAccountAndRelatiuon(needCreateAccout) {
+        console.error("通过通讯录创建的新用户个数:" + needCreateAccout.length);
+        for (var index in needCreateAccout) {
+            var key = needCreateAccout[index];
+            var query = [
+                "MATCH (account:Account{phone:{phone}})",
+                "CREATE UNIQUE account-[r:HAS_CONTACT]->(account2:Account{account2})",
+                "SET account2.uid=ID(account2),r.nickName={nickName},r.head={head}",
+                "RETURN  account2, r"
+            ].join("\n");
+            var params = {
+                phone: phone,
+                nickName: contact[key].nickName,
+                head: contact[key].head,
+                account2: {
+                    phone: key,
+                    isregist: false
+                }
+            };
+            contactDB.query(query, params, function (error, results) {
+                if (error) {
+                    console.error(error);
+                } else if (results.length == 0) {
+                    console.log("创建失败");
+                } else {
+                    console.log("创建成功");
+                }//
+            });
+        }
+        ResponseData(JSON.stringify({
+            "提示信息": "更新通讯录成功"
+        }), response);
+        var endTime = new Date().getTime();
+        console.error("初始化所有时长：" + (endTime - startTime));
+    }
+}
+relationManage.intimatefriends = function (data, response) {
+    response.asynchronous = 1;
+    console.log(data);
+    var phone = data.phone;
+    getFriends();
+    function getFriends() {
+        var query = [
+            "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)-[r2:FOLLOW]->(account:Account)",
+            "WHERE account.phone={phone}",
+            "RETURN account,account2,r"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取密友圈失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length > 0) {
+                var accountNode = results[0].account;
+                var accountData = accountNode.data;
+                var circlesOrderString = accountData.circlesOrderString;
+                var flag = false;
+                var circles = [];
+                var circlesMap = {};
+                if (circlesOrderString) {
+                    try {
+                        var circleOrder = JSON.parse(circlesOrderString);
+                        for (var index in circleOrder) {
+                            var circle = circleOrder[index];
+                            if (!circle.rid) {
+                                flag = true;
+                                break;
+                            }
+                            circles.push(circle.rid);
+                            circle.friends = [];
+                            circlesMap[circle.rid] = circle;
+                        }
+                        if (!circlesMap["8888888"] || !circlesMap["9999999"]) {
+                            flag = true;
+                        }
+                    } catch (e) {
+                        flag = true;
+                    }
+                }
+                if (flag) {
+                    circles = [];
+                    circlesMap = {};
+                    circles.push("9999999");
+                    circlesMap["9999999"] = {
+                        rid: "9999999",
+                        name: "通讯录好友",
+                        friends: []
+                    };
+                    circles.push("8888888");
+                    circlesMap["8888888"] = {
+                        rid: "8888888",
+                        name: "默认分组",
+                        friends: []
+                    };
+                    accountData.circlesOrderString = JSON.stringify([{
+                        rid: "9999999",
+                        name: "通讯录好友"
+                    }, {
+                        rid: "8888888",
+                        name: "默认分组"
+                    }]);
+                    accountNode.save(function (err, node) {
+                        console.log("初始化分组顺序.");
+                    });
+                }
+                var friendsMap = {};
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    var rNode = results[index].r;
+                    var rData = rNode.data;
+                    if (circlesMap[rData.rid]) {
+                        circlesMap[rData.rid].friends.push(account2Data.phone);
+                    } else {
+                        circlesMap["8888888"].friends.push(account2Data.phone);
+                    }
+                    var account = {
+                        id: account2Data.ID,
+                        sex: account2Data.sex,
+                        age: account2Data.age,
+                        phone: account2Data.phone,
+                        mainBusiness: account2Data.mainBusiness,
+                        head: account2Data.head,
+                        nickName: account2Data.nickName,
+                        userBackground: account2Data.userBackground,
+                        addMessage: rData.message,
+                        lastLoginTime: account2Data.lastlogintime,
+                        alias: "",
+                        createTime: account2Data.createTime,
+                        longitude: account2Data.longitude || 0,
+                        latitude: account2Data.latitude || 0
+                    };
+                    if (rData.alias != null) {
+                        account.alias = rData.alias;
+                    }
+                    friendsMap[account2Data.phone] = account;
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取密友圈成功",
+                    relationship: {
+                        circles: circles,
+                        circlesMap: circlesMap,
+                        friendsMap: friendsMap
+                    }
+                }), response);
+            } else {
+                var circles = [];
+                var circlesMap = {};
+                circles.push("9999999");
+                circlesMap["9999999"] = {
+                    rid: "9999999",
+                    name: "通讯录好友",
+                    friends: []
+                };
+                circles.push("8888888");
+                circlesMap["8888888"] = {
+                    rid: "8888888",
+                    name: "默认分组",
+                    friends: []
+                };
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取密友圈成功",
+                    relationship: {
+                        circles: circles,
+                        circlesMap: circlesMap,
+                        friendsMap: {}
+                    }
+                }), response);
+            }
+        });
+    }
+}
+relationManage.getfollow = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    getAttentionNode();
+    function getAttentionNode() {
+        var query = [
+            "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)",
+            "WHERE account.phone = {phone}",
+            "RETURN account,r,account2"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取关注列表失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else {
+                var friends = [];
+                var friendsMap = {};
+                for (var index in results) {
+                    var rData = results[index].r.data;
+                    var account2Data = results[index].account2.data;
+                    var account = {
+                        id: account2Data.ID,
+                        sex: account2Data.sex,
+                        age: account2Data.age,
+                        phone: account2Data.phone,
+                        mainBusiness: account2Data.mainBusiness,
+                        head: account2Data.head,
+                        nickName: account2Data.nickName,
+                        userBackground: account2Data.userBackground,
+                        addMessage: rData.message || "",
+                        lastLoginTime: account2Data.lastlogintime,
+                        alias: "",
+                        createTime: account2Data.createTime,
+                        longitude: account2Data.longitude || 0,
+                        latitude: account2Data.latitude || 0
+                    };
+                    if (rData.alias != null) {
+                        account.alias = rData.alias;
+                    }
+                    friends.push(account.phone);
+                    friendsMap[account.phone] = account;
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取关注列表成功",
+                    friends: friends,
+                    friendsMap: friendsMap
+                }), response);
+            }
+        });
+    }
+}
+relationManage.getfans = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    getAttentionNode();
+    function getAttentionNode() {
+        var query = [
+            "MATCH (account:Account)<-[r:FOLLOW]-(account2:Account)",
+            "WHERE account.phone = {phone}",
+            "RETURN account,r,account2"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取粉丝列表失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else {
+                var friends = [];
+                var friendsMap = {};
+                for (var index in results) {
+                    var rData = results[index].r.data;
+                    var account2Data = results[index].account2.data;
+                    var account = {
+                        id: account2Data.ID,
+                        sex: account2Data.sex,
+                        age: account2Data.age,
+                        phone: account2Data.phone,
+                        mainBusiness: account2Data.mainBusiness,
+                        head: account2Data.head,
+                        nickName: account2Data.nickName,
+                        userBackground: account2Data.userBackground,
+                        addMessage: rData.message || "",
+                        lastLoginTime: account2Data.lastlogintime,
+                        alias: "",
+                        createTime: account2Data.createTime,
+                        longitude: account2Data.longitude || 0,
+                        latitude: account2Data.latitude || 0
+                    };
+                    if (rData.alias != null) {
+                        account.alias = rData.alias;
+                    }
+                    friends.push(account.phone);
+                    friendsMap[account.phone] = account;
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取粉丝列表成功",
+                    friends: friends,
+                    friendsMap: friendsMap
+                }), response);
+            }
+        });
+    }
+}
+relationManage.follow = function (data, response) {
+    response.asynchronous = 1;
+    console.log(data);
+    var phone = data.phone;
+    var phoneTo = data.phoneto;
+    var message = data.message || "";
+    var accessKey = data.accessKey;
+    if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
+        checkRelation();
+    }
+    function checkRelation() {
+        var query = [
+            "MATCH (account:Account)<-[r:FOLLOW]-(account2:Account)",
+            "WHERE account.phone={phone} AND account2.phone={phoneTo}",
+            "RETURN account,r,account2"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "添加好友失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length > 0) {
+                createRelation(true);
+            } else {
+                createRelation(false);
+            }
+        });
+    }
+
+    function createRelation(flag) {
+        var query = [
+            "MATCH (account:Account),(account2:Account)",
+            "WHERE account.phone={phone} AND account2.phone={phoneTo}",
+            "CREATE UNIQUE account-[r:FOLLOW]->account2",
+            "RETURN account,r,account2"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo,
+            message: message
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "添加好友失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "添加好友失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            } else {
+                var event = "";
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                if (flag) {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "添加好友成功"
+                    }), response);
+                    event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "relation_friendaccept",
+                        content: JSON.stringify({
+                            type: "relation_friendaccept",
+                            phone: phone,
+                            phoneTo: phoneTo,
+                            eid: eid,
+                            time: time,
+                            status: "success",
+                            content: message || ""
+                        })
+                    });
+                } else {
+                    var rNode = results.pop().r;
+                    var rData = rNode.data;
+                    rData.message = message;
+                    rNode.save(function (error, results) {
+                    });
+                    ResponseData(JSON.stringify({
+                        "提示信息": "发送请求成功"
+                    }), response);
+                    event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "relation_addfriend",
+                        content: JSON.stringify({
+                            type: "relation_addfriend",
+                            phone: phone,
+                            phoneTo: phoneTo,
+                            eid: eid,
+                            time: time,
+                            status: "waiting",
+                            content: message || ""
+                        })
+                    });
+                }
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
+                client.rpush(phoneTo, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phoneTo, accessKey, "*", event);
+            }
+        });
+    }
+}
+relationManage.modifycircle = function (data, response) {
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var phoneTo = data.targetphones;
+    var rid = data.rid;
+    if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
+        try {
+            phoneTo = JSON.parse(phoneTo);
+            modifyRid(phoneTo);
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "修改失败",
+                "失败原因": "数据格式不正确"
+            }), response);
+            console.error(e);
+        }
+    }
+    function modifyRid(phoneTo) {
+        var query = [
+            "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)",
+            "WHERE account.phone={phone} AND account2.phone IN {phoneTo}",
+            "SET r.rid={rid}",
+            "RETURN account,r,account2"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo,
+            rid: rid
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length > 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改成功"
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            }
+        });
+    }
+}
+relationManage.modifyalias = function (data, response) {
+    response.asynchronous = 1;
+    console.info(data);
+    var phone = data.phone;
+    var friend = data.target;
+    var friendAlias = data.alias;
+    var arr;
+    if (friendAlias == "") {
+        arr = [phone, friend];
+    } else {
+        arr = [phone, friend, friendAlias];
+    }
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        modifyAlias();
+    }
+    function modifyAlias() {
+        var query = [
+            'MATCH (account1:Account)-[r:FOLLOW]->(account2:Account)',
+            'WHERE account1.phone={phone} AND account2.phone={friend}',
+            "SET r.alias={alias}",
+            'RETURN r'
+        ].join('\n');
+        var params = {
+            phone: phone,
+            friend: friend,
+            alias: friendAlias
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改备注失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error("modifyAlias:" + error);
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改备注失败",
+                    "失败原因": "好友不存在"
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改备注成功"
+                }), response);
+            }
+        });
+    }
+}
+relationManage.canclefollow = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var phoneTo = data.target;
+    if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
+        try {
+            //phoneTo = JSON.parse(phoneTo);
+            cancelFellowRelation();
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "取消关注失败",
+                "失败原因": "数据格式不正确"
+            }), response);
+            console.error(e);
+        }
+    }
+    function cancelFellowRelation() {
+        var query = [
+            "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)",
+            "WHERE account.phone={phone} AND account2.phone IN {phoneTo}",
+            "DELETE r",
+            "RETURN account,account2"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "取消关注失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length > 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "取消关注成功"
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "取消关注失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            }
+        });
+    }
+}
+relationManage.deletefriend = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var phoneTo = data.target;
+    if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
+        try {
+            //phoneTo = JSON.parse(phoneTo);
+            deleteFellow();
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "删除好友失败",
+                "失败原因": "数据格式不正确"
+            }), response);
+            console.error(e);
+        }
+    }
+    function deleteFellow() {
+        var query = [
+            "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)-[r2:FOLLOW]->(account:Account)",
+            "WHERE account.phone={phone} AND account2.phone IN {phoneTo}",
+            "DELETE r,r2",
+            "RETURN account,account2"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除好友失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length > 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除好友成功"
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除好友失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            }
+        });
+    }
+}
+relationManage.blacklist = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var phoneTo = data.target;
+    var operation = data.operation;
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
+    if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
+        try {
+            addFriendToMyBlackList(phone, phoneTo);
+        } catch (e) {
+            response.write(JSON.stringify({
+                "提示信息": "更新黑名单失败",
+                "失败原因": "参数格式错误"
+            }));
+            response.end();
+            console.error(e);
+        }
+    }
+    function addFriendToMyBlackList(phone, phoneTo) {
+        var query = [
+            "MATCH (account:Account)",
+            "WHERE account.phone={phone}",
+            "RETURN account"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "更新黑名单失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "更新黑名单失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                var praise = accountData.praises;
+                var praiseJSON;
+                try {
+                    praiseJSON = JSON.parse(praise);
+                } catch (e) {
+                    praiseJSON = [];
+                }
+                if (operation == "true") {
+                    praiseJSON.push(phoneTo);
+                } else if (operation == "false") {
+                    var tempPraise = [];
+                    for (var index in praiseJSON) {
+                        if (praiseJSON[index] != phoneTo) {
+                            tempPraise.push(praiseJSON[index]);
+                        }
+                    }
+                    praiseJSON = tempPraise;
+                }
+                accountData.blacklist = JSON.stringify(praiseJSON);
+                accountNode.save(function (err, node) {
+                    if (err) {
+                        response.write(JSON.stringify({
+                            "提示信息": "更新黑名单失败",
+                            "失败原因": "数据异常"
+                        }));
+                        response.end();
+                        console.log(err);
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "更新黑名单成功"
+                        }));
+                        response.end();
+                    }
+                });
+            }
+        });
+    }
+}
+relationManage.modifysequence = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var circleSequence = data.sequence;
+    var accessKey = data.accessKey;
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
+    modifyAccountSeqence();
+    function modifyAccountSeqence() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改分组顺序失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改分组顺序失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                accountData.circlesOrderString = circleSequence;
+                accountNode.save(function (err, node) {
+                    if (error) {
+                        console.error(err);
+                    }
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改分组顺序成功"
+                }), response);
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "account_dataupdate",
+                    content: JSON.stringify({
+                        type: "account_dataupdate",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: "",
+                        eid: eid
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
+            }
+        });
+    }
+}
 function ResponseData(responseContent, response) {
     response.writeHead(200, {
         "Content-Type": "application/json; charset=UTF-8",

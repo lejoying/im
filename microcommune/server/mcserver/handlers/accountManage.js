@@ -180,14 +180,14 @@ accountManage.verifyphone = function (data, response) {
     }
 
     function sendSMSMessage(account, code, promptMessage, response) {
-        var message = "微型公社手机验证码：" + code + "，10分钟内有效，请勿泄漏，欢迎您使用【微型公社】";
+        var message = "验证码：" + code + "，10分钟内有效，请勿泄漏，欢迎您使用【微型社区】";
         console.log(message);
         if (sms_power == true) {
             push.smsSend(account.phone, message, function (data) {
                 if (JSON.parse(data).information == "notify success") {
                     next();
                 } else {
-                    responseFailMessage(response, promptMessage + "失败", "手机号不正确");
+                    responseFailMessage(response, promptMessage + "失败", "服务器异常");
                 }
             });
             /*sms.sendMsg(account.phone, message, function (data) {

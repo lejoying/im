@@ -133,11 +133,6 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
             relationManage.addfriendagree(data, response);
         });
     }
-    else if (operation == "modifyalias") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            relationManage.modifyalias(data, response);
-        });
-    }
 
     /*************************************************************
      * * * * * * * * * * * * New Api * * * * * * * * * * * * * * *
@@ -150,6 +145,39 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     else if (operation == "modifysequence") {
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.modifysequence(data, response);
+        });
+    }
+    else if (operation == "updatecontact") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.updatecontact(data, response);
+        });
+    }
+    else if (operation == "getfollow") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.getfollow(data, response);
+        });
+    }
+    else if (operation == "getfans") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.getfans(data, response);
+        });
+    }
+    else if (operation == "follow") {
+        console.log(data);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.follow(data, response);
+        });
+    }
+    else if (operation == "modifycircle") {
+        console.log(data);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.modifycircle(data, response);
+        });
+    }
+    else if (operation == "canclefollow") {
+        console.log(data);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.canclefollow(data, response);
         });
     }
 
