@@ -1487,10 +1487,6 @@ relationManage.updatecontact = function (data, response) {
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
             contact = JSON.parse(contact);
-            //for (var index in contact) {
-            //    phone = index;
-            //    break;
-            //}
             checkUserExists(phone);
         } catch (e) {
             ResponseData(JSON.stringify({
@@ -1575,6 +1571,7 @@ relationManage.updatecontact = function (data, response) {
                 if (updateList.length > 0) {
                     createAlreadyExistsAccount(updateMap, updateList);
                 } else {
+                    checkContactDBFollowTWo();
                     ResponseData(JSON.stringify({
                         "提示信息": "更新通讯录成功"
                     }), response);
@@ -1627,38 +1624,289 @@ relationManage.updatecontact = function (data, response) {
 
     function createAccountAndRelatiuon(needCreateAccout) {
         console.error("通过通讯录创建的新用户个数:" + needCreateAccout.length);
-        for (var index in needCreateAccout) {
-            var key = needCreateAccout[index];
-            var query = [
-                "MATCH (account:Account{phone:{phone}})",
-                "CREATE UNIQUE account-[r:HAS_CONTACT]->(account2:Account{account2})",
-                "SET account2.uid=ID(account2),r.nickName={nickName},r.head={head}",
-                "RETURN  account2, r"
-            ].join("\n");
-            var params = {
-                phone: phone,
-                nickName: contact[key].nickName,
-                head: contact[key].head,
-                account2: {
-                    phone: key,
-                    isregist: false
-                }
-            };
-            contactDB.query(query, params, function (error, results) {
-                if (error) {
-                    console.error(error);
-                } else if (results.length == 0) {
-                    console.log("创建失败");
-                } else {
-                    console.log("创建成功");
-                }//
-            });
+        for2();
+
+        function for2() {
+            var successCount = 0;
+            var failedCount = 0;
+
+            for (var index in needCreateAccout) {
+                var key = needCreateAccout[index];
+                var query = [
+                    "MATCH (account:Account{phone:{phone}})",
+                    "CREATE UNIQUE account-[r:HAS_CONTACT]->(account2:Account{account2})",
+                    "SET account2.uid=ID(account2),r.nickName={nickName},r.head={head}",
+                    "RETURN  account2, r"
+                ].join("\n");
+                var params = {
+                    phone: phone,
+                    nickName: contact[key].nickName,
+                    head: contact[key].head,
+                    account2: {
+                        phone: key,
+                        isregist: false
+                    }
+                };
+                contactDB.query(query, params, function (error, results) {
+                    if (error) {
+                        console.error(error);
+                    } else if (results.length == 0) {
+                        successCount++;
+                    } else {
+                        failedCount++;
+                    }//
+                });
+            }
+            ResponseData(JSON.stringify({
+                "提示信息": "更新通讯录成功"
+            }), response);
+            var endTime = new Date().getTime();
+            console.log("初始化所有时长：" + (endTime - startTime));
+            console.log("创建成功:" + successCount + "个，创建失败:" + failedCount);
+
+            checkContactDBFollowTWo();
         }
-        ResponseData(JSON.stringify({
-            "提示信息": "更新通讯录成功"
-        }), response);
-        var endTime = new Date().getTime();
-        console.error("初始化所有时长：" + (endTime - startTime));
+    }
+
+    function checkContactDBFollowTWo() {
+        console.log("start check follow relation : ContactDB");
+        var query = [
+            "MATCH (account:Account)-[r:HAS_CONTACT]->(account2:Account)-[r2:HAS_CONTACT]->(account:Account)",
+            "WHERE account.phone={phone}",
+            "RETURN account2"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        contactDB.query(query, params, function (error, results) {
+            if (error) {
+                console.log(error);
+            } else if (results.length > 0) {
+                var accounts = [];
+                var accountsMap = {};
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    accounts.push(account2Data.phone);
+                    accountsMap[account2Data.phone] = "in"
+                }
+                console.log("存在的互粉关系:" + results.length + "个，需要处理：" + accounts.length);
+                checkDBFollowTWo(accounts, accountsMap);
+            } else {
+                console.log("无需要处理的互粉关系.");
+            }
+        });
+    }
+
+    function checkDBFollowTWo(accountsD, accountsMapD) {
+        console.log("start check follow relation :DB");
+        var query = [
+            "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)-[r2:FOLLOW]->(account:Account)",
+            "WHERE account.phone={phone} AND account2.phone IN {phones}",
+            "RETURN account2"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phones: accountsD
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.log(error);
+            } else if (results.length > 0) {
+                var accounts = [];
+                var accountsMap = {};
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    accountsMapD[account2Data.phone] = "out"
+                }
+                for (var index in accountsMapD) {
+                    if (accountsMapD[index] == "in") {
+                        accounts.push(index);
+                        accountsMap[index] = "in";
+                    }
+                }
+                console.log("已经存在的粉丝：" + results.length + ",需要添加的粉丝：" + accounts.length);
+                //checkLeftrelation(accounts, accountsMap);
+                justTry(accounts, accountsMap);
+            } else {
+                //checkLeftrelation(accountsD, accountsMapD);
+                justTry(accountsD, accountsMapD);
+            }
+        });
+    }
+
+    function justTry(accountsA, accountsMapA) {
+        console.log(phone + "---" + accountsA.length);
+        var query = [
+            "MATCH (account:Account),(account2:Account)",
+            "WHERE account.phone = {phoneNumber} AND account2.phone IN {phoneTo}",
+            "MERGE account2-[r2:FOLLOW]->account-[r:FOLLOW]->account2",
+            "RETURN account,account2,r,r2"
+        ].join("\n");
+        var params = {
+            phoneNumber: phone,
+            phoneTo: accountsA
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log("成功：" + results.length);
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    var rNode = results[index].r;
+                    var rData = rNode.data;
+                    rData.rid = "9999999";
+                    if (contact[account2Data.phone]) {
+                        rData.alias = contact[account2Data.phone].nickName || "";
+                    }
+                    rNode.save(function (err, node) {
+                    });
+                }
+            }
+        });
+    }
+
+    //old code
+    function checkLeftrelation(accountsF, accountsMapF) {
+        console.log("start check follow relation : 判断向右的单向follow");
+        var query = [
+            "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)",
+            "WHERE account.phone = {phone} AND account2.phone IN {phoneTo}",
+            "RETURN account,account2,r"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: accountsF
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+            } else if (results.length > 0) {
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    accountsMapF[account2Data.phone] = "out";
+                    var rNode = results[index].r;
+                    var rData = rNode.data;
+                    rData.alias = contact[account2Data.phone].nickName || ""
+                    rNode.save(function (err, node) {
+                    });
+                }
+                var accounts = [];
+                var accountsMap = [];
+                for (var index in accountsMapF) {
+                    if (accountsMapF[index] == "in") {
+                        accounts.push(index);
+                        accountsMap[index] = "in";
+                    } else {
+                        accountsMapF[index] = "in";
+                    }
+                }
+                console.log("存在向右的单向follow:" + results.length);
+                if (accounts.length > 0) {
+                    createLeftrelation(accounts, accountsMap, accountsF, accountsMapF);
+                } else {
+                    checkRightRelation(accountsF, accountsMapF);
+                }
+            } else {
+                createLeftrelation(accountsF, accountsMapF, accountsF, accountsMapF);
+            }
+        });
+    }
+
+    function createLeftrelation(accountsG, accountsMapG, accountsF, accountsMapF) {
+        var query = [
+            "MATCH (account:Account),(account2:Account)",
+            "WHERE account.phone = {phone} AND account2.phone IN {phoneTo}",
+            "CREATE UNIQUE account-[r:FOLLOW]->account2",
+            "RETURN account,account2,r"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: accountsG
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+            } else {
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    var rNode = results[index].r;
+                    var rData = rNode.data;
+                    rData.alias = contact[account2Data.phone].nickName || ""
+                    rNode.save(function (err, node) {
+                    });
+                }
+                console.log("更新向右的单向follow:" + results.length);
+                checkRightRelation(accountsF, accountsMapF);
+            }
+        });
+    }
+
+    function checkRightRelation(accountsF, accountsMapF) {
+        console.log("start check follow relation : 判断向左的单向follow");
+        var query = [
+            "MATCH (account:Account)<-[r:FOLLOW]-(account2:Account)",
+            "WHERE account.phone = {phone} AND account2.phone IN {phoneTo}",
+            "RETURN account,account2,r"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: accountsF
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+            } else if (results.length > 0) {
+                for (var index in results) {
+                    var account2Data = results[index].account2.data;
+                    accountsMapF[account2Data.phone] = "out";
+                }
+                var accounts = [];
+                var accountsMap = [];
+                for (var index in accountsMapF) {
+                    if (accountsMapF[index] == "in") {
+                        accounts.push(index);
+                        accountsMap[index] = "in";
+                    } else {
+                        accountsMapF[index] = "in";
+                    }
+                }
+                console.log("存在向左的单向follow:" + results.length);
+                if (accounts.length > 0) {
+                    createRightrelation(accounts, accountsMap);
+                }
+            } else {
+                createRightrelation(accountsF, accountsMapF);
+            }
+        });
+    }
+
+    function createRightrelation(accountsH, accountsMapH) {
+        var query = [
+            "MATCH (account:Account),(account2:Account)",
+            "WHERE account.phone = {phone} AND account2.phone IN {phoneTo}",
+            "CREATE UNIQUE account-[r:FOLLOW]->account2",
+            "RETURN account,account2,r"
+        ].join("\n");
+        var params = {
+            phone: phone,
+            phoneTo: accountsH
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log("更新向左的单向follow:" + results.length);
+                //for (var index in results) {
+                //    var account2Data = results[index].account2.data;
+                //    var rNode = results[index].r;
+                //    var rData = rNode.data;
+                //    rData.alias = contact[account2Data.phone].nickName || ""
+                //    rNode.save(function (err, node) {
+                //    });
+                //}
+            }
+        });
     }
 }
 relationManage.intimatefriends = function (data, response) {
@@ -2154,7 +2402,7 @@ relationManage.canclefollow = function (data, response) {
     function cancelFellowRelation() {
         var query = [
             "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)",
-            "WHERE account.phone={phone} AND account2.phone IN {phoneTo}",
+            "WHERE account.phone={phone} AND account2.phone={phoneTo}",
             "DELETE r",
             "RETURN account,account2"
         ].join("\n");
@@ -2202,7 +2450,7 @@ relationManage.deletefriend = function (data, response) {
     function deleteFellow() {
         var query = [
             "MATCH (account:Account)-[r:FOLLOW]->(account2:Account)-[r2:FOLLOW]->(account:Account)",
-            "WHERE account.phone={phone} AND account2.phone IN {phoneTo}",
+            "WHERE account.phone={phone} AND account2.phone={phoneTo}",
             "DELETE r,r2",
             "RETURN account,account2"
         ].join("\n");
