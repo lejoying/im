@@ -63,6 +63,8 @@ public class FriendsSubController {
 
 	public Circle onTouchDownCircle;
 
+	public boolean isTouchDown = false;
+
 	public FriendsSubController(MainController mainController) {
 		this.mainController = mainController;
 	}
@@ -116,11 +118,15 @@ public class FriendsSubController {
 					// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 					Object viewTag = view.getTag(R.id.tag_first);
 					if (Circle.class.isInstance(viewTag) == true) {
-						Circle circle = (Circle) viewTag;
-						Log.d(tag, "onTouch: rid:" + circle.rid + "name" + circle.name);
 
-						onTouchDownCircle = circle;
-						onTouchDownView = view;
+						if (!isTouchDown) {
+							Circle circle = (Circle) viewTag;
+							Log.d(tag, "onTouch: rid:" + circle.rid + "name" + circle.name);
+
+							onTouchDownCircle = circle;
+							onTouchDownView = view;
+							isTouchDown = true;
+						}
 					} else {
 						Log.d(tag, "onTouch: " + (String) viewTag);
 					}
@@ -186,7 +192,6 @@ public class FriendsSubController {
 		if (onTouchDownView != null && onTouchDownCircle != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class == "card_title") {
-
 				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 				thisView.showCircleSettingDialog(onTouchDownCircle);
 				onTouchDownView = null;
@@ -203,21 +208,15 @@ public class FriendsSubController {
 				vibrator.vibrate(pattern, -1);
 
 				thisView.friendListBody.startOrdering("circle#" + circle.rid);
-			} else if (view_class == "friend_view") {
-				onTouchDownView = null;
-				onClickView = null;
-				Toast.makeText(mainController.thisActivity, "long press", Toast.LENGTH_SHORT).show();
-			}
-		} else if (onTouchDownView != null) {
-			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
-			if (view_class == "friend_view") {
-				onTouchDownView = null;
-				onClickView = null;
-				Toast.makeText(mainController.thisActivity, "long press", Toast.LENGTH_SHORT).show();
+			} else if (view_class == "card_contaner") {
+				// onTouchDownView = null;
+				// onClickView = null;
+				Toast.makeText(mainController.thisActivity, "long press max", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(mainController.thisActivity, CirclesManageActivity.class);
 				mainController.thisActivity.startActivity(intent);
 			}
 		}
+		isTouchDown = false;
 	}
 
 	public void onSingleTapUp(MotionEvent event) {
@@ -242,6 +241,7 @@ public class FriendsSubController {
 				}
 			}
 		}
+		isTouchDown = false;
 	}
 
 	public void onDoubleTapEvent(MotionEvent event) {
@@ -263,6 +263,10 @@ public class FriendsSubController {
 		}
 		data = parser.check();
 		Circle circle = data.relationship.circlesMap.get("" + inputCircle.rid);
+		if (circle == null) {
+			Toast.makeText(mainController.thisActivity, "该分组不存在.", Toast.LENGTH_SHORT).show();
+			return;
+		}
 		circle.name = inputContent;
 		data.relationship.isModified = true;
 
@@ -295,10 +299,14 @@ public class FriendsSubController {
 	}
 
 	public void deleteCircle(final String rid) {
-		if (!rid.equals("8888888")) {
+		if (!rid.equals("8888888") && !rid.equals("9999999")) {
 			data = parser.check();
 			final Circle defaultCircle = data.relationship.circlesMap.get("8888888");
 			final Circle deleteCircle = data.relationship.circlesMap.get(rid);
+			if (deleteCircle == null) {
+				Toast.makeText(mainController.thisActivity, "该分组不存在.", Toast.LENGTH_SHORT).show();
+				return;
+			}
 			Alert.createDialog(thisView.mainView.context).setTitle("是否删除该分组（" + deleteCircle.name + "）").setOnConfirmClickListener(new OnDialogClickListener() {
 				@Override
 				public void onClick(AlertInputDialog dialog) {
@@ -321,6 +329,8 @@ public class FriendsSubController {
 
 				}
 			}).show();
+		} else {
+			Toast.makeText(mainController.thisActivity, "不能删除该分组.", Toast.LENGTH_SHORT).show();
 		}
 	}
 

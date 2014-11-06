@@ -23,6 +23,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.Debug1Controller;
+import com.open.welinks.controller.FriendsSubController.Circle2;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Circle;
@@ -452,7 +453,9 @@ public class ResponseHandlers {
 								// friend.friendStatus = account.friendStatus;
 							}
 						}
-						viewManage.searchFriendActivity.searchCallBack(account.phone, isTemp);
+						if (viewManage.searchFriendActivity != null) {
+							viewManage.searchFriendActivity.searchCallBack(account.phone, isTemp);
+						}
 					}
 					viewManage.postNotifyView("MeSubView");
 				}
@@ -584,6 +587,8 @@ public class ResponseHandlers {
 				data.relationship.isModified = true;
 				if (data.localStatus.debugMode.equals("NONE")) {
 					// viewManage.postNotifyView("UserIntimateView");
+					viewManage.postNotifyView("DynamicListActivity");
+					viewManage.postNotifyView("MessagesSubView");
 					log.e(tag, "刷新好友分组");
 					viewManage.mainView.friendsSubView.showCircles();
 				}
@@ -1720,7 +1725,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改成功")) {
-
+				viewManage.postNotifyView("UserIntimateView");
+				viewManage.postNotifyView("CirclesManageView");
+				log.e("修改分组名称成功");
 			} else {
 				log.d("修改失败===================" + response.失败原因);
 
@@ -1736,7 +1743,15 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("删除成功")) {
-				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
+				List<Circle2> list = new ArrayList<Circle2>();
+				for (int i = 0; i < data.relationship.circles.size(); i++) {
+					String key = data.relationship.circles.get(i);
+					Circle circleData = data.relationship.circlesMap.get(key);
+					if (circleData != null) {
+						list.add(viewManage.friendsSubView.thisController.new Circle2(circleData.rid + "", circleData.name));
+					}
+				}
+				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(list));
 			} else {
 				log.d("删除失败===================" + response.失败原因);
 
@@ -1761,7 +1776,10 @@ public class ResponseHandlers {
 				data.relationship.circlesMap.put(String.valueOf(response.circle.rid), response.circle);
 				data.relationship.isModified = true;
 
-//				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
+				viewManage.postNotifyView("UserIntimateView");
+				viewManage.postNotifyView("CirclesManageView");
+
+				// viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
 
 			} else {
 				log.d("添加失败===================" + response.失败原因);

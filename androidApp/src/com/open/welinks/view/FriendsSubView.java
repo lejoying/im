@@ -122,6 +122,9 @@ public class FriendsSubView {
 			}
 			circleBody.setContent(circle);
 
+			if (this.friendListBody.listItemsSequence.contains(keyName)) {
+				continue;
+			}
 			this.friendListBody.listItemsSequence.add(keyName);
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 10 * displayMetrics.density));
@@ -140,6 +143,11 @@ public class FriendsSubView {
 		}
 
 		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
+
+		if (this.friendListBody.height < this.friendListBody.containerHeight) {
+			this.friendListBody.y = 0;
+		}
+		this.friendListBody.setChildrenPosition();
 	}
 
 	public class CircleBody extends MyListItemBody {
@@ -174,6 +182,8 @@ public class FriendsSubView {
 
 			this.gripView.setOnTouchListener(thisController.onTouchListener);
 
+			this.contaner.setOnTouchListener(thisController.onTouchListener);
+
 			itemWidth = mainView.displayMetrics.widthPixels - 20 * mainView.displayMetrics.density;
 			itemHeight = 260 * displayMetrics.density;
 
@@ -190,6 +200,9 @@ public class FriendsSubView {
 			this.gripView.setTag(R.id.tag_first, circle);
 			this.gripView.setTag(R.id.tag_class, "card_grip");
 
+			this.contaner.setTag(R.id.tag_first, circle);
+			this.contaner.setTag(R.id.tag_class, "card_contaner");
+
 			int size = circle.friends.size();
 			if (circle.rid == 8888888) {
 				size += 1;
@@ -200,7 +213,7 @@ public class FriendsSubView {
 				lineCount = 1;
 			}
 			int membrane = size % 4;
-			if (membrane != 0) {
+			if (lineCount > 1 && membrane != 0) {
 				lineCount++;
 			}
 			itemHeight = (78 + lineCount * 96) * displayMetrics.density;// 174 to 78

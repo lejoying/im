@@ -10,7 +10,6 @@ import android.widget.EditText;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.welinks.customView.Alert;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
@@ -50,13 +49,13 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 			finish();
 		} else if (view.equals(send)) {
 			String addMessage = message.getText().toString();
-			if (!"".equals(addMessage)) {
-				addFriend(addMessage);
-				setResult(Activity.RESULT_OK);
-				finish();
-			} else {
-				Alert.showMessage("请输入验证信息");
-			}
+			// if (!"".equals(addMessage)) {
+			addFriend(addMessage);
+			setResult(Activity.RESULT_OK);
+			finish();
+			// } else {
+			// Alert.showMessage("请输入验证信息");
+			// }
 		}
 
 	}

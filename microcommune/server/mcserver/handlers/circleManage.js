@@ -8,11 +8,12 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
  ***************************************/
 circleManage.modify = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var accessKey = data.accessKey;
     var rid = data.rid;
     var name = data.name;
-
+    modifyCircleName();
     function modifyCircleName() {
         var query = [
             "MATCH (account:Account{phone:{phone}})",
@@ -80,7 +81,6 @@ circleManage.modify = function (data, response) {
                         "失败原因": "数据异常"
                     }), response);
                 }
-
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改失败",
@@ -95,45 +95,96 @@ circleManage.modify = function (data, response) {
  ***************************************/
 circleManage.delete = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var accessKey = data.accessKey;
     var rid = data.rid;
     try {
         rid = parseInt(rid);
+        deleteCircle();
     } catch (e) {
-        response.write(JSON.stringify({
-            "提示消息": "删除成功",
+        ResponseData(JSON.stringify({
+            "提示信息": "删除失败",
             "失败原因": "参数格式错误"
-        }));
-        response.end();
-        console.log(error);
-        return;
+        }), response);
+        console.log(e);
     }
-    var query = [
-        'MATCH other-[r]-(circle:Circle)',
-        'WHERE circle.rid={rid}',
-        'DELETE r,circle'
-    ].join('\n');
-    var params = {
-        rid: rid
-    };
-    db.query(query, params, function (error, results) {
-        if (error) {
-            response.write(JSON.stringify({
-                "提示消息": "删除成功",
-                "失败原因": "数据异常"
-            }));
-            response.end();
-            console.log(error);
-            return;
-        } else {
-            console.log("删除密友圈成功---");
-            response.write(JSON.stringify({
-                "提示信息": "删除成功"
-            }));
-            response.end();
-        }
-    });
+
+    function deleteCircle() {
+        var query = [
+            "MATCH (account:Account{phone:{phone}})",
+            "RETURN account"
+        ].join("\n");
+        var params = {phone: phone};
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.log(error);
+            } else if (results.length > 0) {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                var circleOrderString = accountData.circlesOrderString;
+                if (circleOrderString) {
+                    try {
+                        var orderObj = JSON.parse(circleOrderString);
+                        var newOrder = [];
+                        for (var index in orderObj) {
+                            var obj = orderObj[index];
+                            if (rid != obj.rid) {
+                                newOrder.push(obj);
+                            }
+                        }
+                        accountData.circlesOrderString = JSON.stringify(newOrder);
+                        accountNode.save(function (err, node) {
+                        });
+                        ResponseData(JSON.stringify({
+                            "提示信息": "删除成功"
+                        }), response);
+                        var time = new Date().getTime();
+                        var eid = phone + "_" + time;
+                        var event = JSON.stringify({
+                            sendType: "event",
+                            contentType: "relation_dataupdate",
+                            content: JSON.stringify({
+                                type: "relation_dataupdate",
+                                phone: phone,
+                                eid: eid,
+                                time: time,
+                                status: "success",
+                                content: ""
+                            })
+                        });
+                        client.rpush(phone, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, phone, accessKey, "*", event);
+                    } catch (e) {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "删除失败",
+                            "失败原因": "数据异常"
+                        }), response);
+                    }
+                } else {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "删除失败",
+                        "失败原因": "数据异常"
+                    }), response);
+                }
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            }
+        });
+    }
 }
 /***************************************
  *     URL：/api2/circle/moveorout

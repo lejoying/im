@@ -28,6 +28,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
+import com.open.lib.MyLog;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
@@ -46,6 +47,7 @@ import com.open.welinks.view.ViewManage;
 public class DynamicListActivity extends Activity {
 
 	public String tag = "DynamicListActivity";
+	public MyLog log = new MyLog(tag, true);
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
@@ -410,6 +412,10 @@ public class DynamicListActivity extends Activity {
 					}
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 					holder.eventContentView.setText("【" + nickName + "】  请求加你为好友!验证信息:" + content);
+					if (data.relationship.friends.contains(event.phone)) {
+						event.status = "success";
+						data.event.isModified = true;
+					}
 					if (event.status.equals("waiting")) {
 						holder.eventOperationView.setVisibility(View.VISIBLE);
 						holder.processedView.setVisibility(View.GONE);
@@ -453,6 +459,7 @@ public class DynamicListActivity extends Activity {
 						holder0.eventOperationView.setVisibility(View.GONE);
 						holder0.processedView.setVisibility(View.GONE);
 					}
+					convertView.setTag(R.id.tag_first, event.phone);
 				} else if ("relation_addfriend".equals(event.type)) {
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.VISIBLE);
@@ -468,6 +475,10 @@ public class DynamicListActivity extends Activity {
 					}
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 					holder.eventContentView.setText("您请求加" + nickName + "为好友!验证信息:" + content);
+					if (data.relationship.friends.contains(event.phoneTo)) {
+						event.status = "success";
+						data.event.isModified = true;
+					}
 					if (event.status.equals("waiting")) {
 						holder.processedView.setText("等待验证");
 					} else if (event.status.equals("success")) {
@@ -482,15 +493,18 @@ public class DynamicListActivity extends Activity {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					convertView.setTag(R.id.tag_first, event.phoneTo);
 				} else if ("account_dataupdate".equals(event.type)) {
 					headFileName = data.userInformation.currentUser.head;
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 					holder.eventContentView.setText("更新个人资料");
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.GONE);
+					convertView.setTag(R.id.tag_first, event.phone);
+				} else {
+					log.e("TODO:" + event.type);
 				}
 				convertView.setTag(R.id.tag_class, "event_user");
-				convertView.setTag(R.id.tag_first, event.phone);
 				convertView.setOnClickListener(mOnClickListener);
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();

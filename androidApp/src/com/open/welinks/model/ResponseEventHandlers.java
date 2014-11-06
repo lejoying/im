@@ -344,16 +344,16 @@ public class ResponseEventHandlers {
 		String key = message.eid;
 		parser.check();
 		EventMessage event = data.event.userEventsMap.get(key);
-		if (message != null) {
+		if (message != null && event != null) {
 			event.status = "success";
 			data.event.isModified = true;
 		}
 		data.event.userNotReadMessage = true;
 		String eventKey = "event_user";
 		checkEventIsMessageOrder(eventKey);
+		DataHandlers.getIntimateFriends();
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
-		DataHandlers.getIntimateFriends();
 		// data.event.userEventsMap.put(message.gid, message);
 	}
 

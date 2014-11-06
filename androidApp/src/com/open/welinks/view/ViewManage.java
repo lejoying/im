@@ -23,6 +23,8 @@ public class ViewManage {
 	public MessagesSubView messagesSubView = null;
 	public ShareMessageDetailView shareMessageDetailView = null;
 
+	public CirclesManageView circlesManageView = null;
+
 	public DynamicListActivity dynamicListActivity = null;
 	public GroupListActivity groupListActivity = null;
 	public SearchFriendActivity searchFriendActivity = null;
@@ -104,6 +106,10 @@ public class ViewManage {
 		} else if (viewName.equals("ChatMessage")) {
 			if (messagesSubView != null) {
 				chatView.mChatAdapter.notifyDataSetChanged();
+			}
+		} else if (viewName.equals("CirclesManageView")) {
+			if (circlesManageView != null) {
+				circlesManageView.showCircles();
 			}
 		}
 	}

@@ -3,6 +3,7 @@ package com.open.welinks;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
 
 import com.open.lib.MyLog;
 import com.open.welinks.controller.CirclesManageController;
@@ -24,7 +25,7 @@ public class CirclesManageActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		linkViewController();
 
 	}
@@ -37,9 +38,21 @@ public class CirclesManageActivity extends Activity {
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 
+		thisController.initializeListeners();
 		thisView.initView();
 		// thisController.onCreate();
-		// thisController.initializeListeners();
-		// thisController.bindEvent();
+		thisController.bindEvent();
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		super.onTouchEvent(event);
+		return thisController.onTouchEvent(event);
+	}
+
+	@Override
+	public void finish() {
+		super.finish();
+		thisView.viewManage.circlesManageView = null;
 	}
 }

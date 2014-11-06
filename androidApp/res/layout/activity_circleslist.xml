@@ -2,15 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:id="@+id/maxView"
     android:orientation="vertical" >
 
-<!--     <include layout="@layout/view_back_view" android:visibility="gone" /> -->
+    <include
+        layout="@layout/view_back_view"
+        android:visibility="gone" />
 
     <com.open.lib.TouchView
         android:id="@+id/friendsContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#75c2b8"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:translationY="2dp"

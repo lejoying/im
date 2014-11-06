@@ -1956,10 +1956,12 @@ relationManage.intimatefriends = function (data, response) {
                     } catch (e) {
                         flag = true;
                     }
+                } else {
+                    flag = true;
                 }
                 if (flag) {
-                    //circles = [];
-                    //circlesMap = {};
+                    circles = [];
+                    circlesMap = {};
                     circles.push("9999999");
                     circlesMap["9999999"] = {
                         rid: "9999999",
@@ -2223,14 +2225,13 @@ relationManage.follow = function (data, response) {
                     "失败原因": "用户不存在"
                 }), response);
             } else {
-                var event = "";
                 var time = new Date().getTime();
                 var eid = phone + "_" + time;
                 if (flag) {
                     ResponseData(JSON.stringify({
                         "提示信息": "添加好友成功"
                     }), response);
-                    event = JSON.stringify({
+                    var event = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_friendaccept",
                         content: JSON.stringify({
@@ -2243,6 +2244,22 @@ relationManage.follow = function (data, response) {
                             content: message || ""
                         })
                     });
+                    client.rpush(phone, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phone, accessKey, "*", event);
+                    client.rpush(phoneTo, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phoneTo, accessKey, "*", event);
                 } else {
                     var rNode = results.pop().r;
                     var rData = rNode.data;
@@ -2252,7 +2269,7 @@ relationManage.follow = function (data, response) {
                     ResponseData(JSON.stringify({
                         "提示信息": "发送请求成功"
                     }), response);
-                    event = JSON.stringify({
+                    var event0 = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_addfriend",
                         content: JSON.stringify({
@@ -2265,23 +2282,36 @@ relationManage.follow = function (data, response) {
                             content: message || ""
                         })
                     });
+                    client.rpush(phone, event0, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phone, accessKey, "*", event0);
+                    var event1 = JSON.stringify({
+                        sendType: "event",
+                        contentType: "relation_newfriend",
+                        content: JSON.stringify({
+                            type: "relation_newfriend",
+                            phone: phone,
+                            phoneTo: phoneTo,
+                            eid: eid,
+                            time: time,
+                            status: "waiting",
+                            content: message || ""
+                        })
+                    });
+                    client.rpush(phoneTo, event1, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phoneTo, accessKey, "*", event1);
                 }
-                client.rpush(phone, event, function (err, reply) {
-                    if (err) {
-                        console.error("保存Event失败");
-                    } else {
-                        console.log("保存Event成功");
-                    }
-                });
-                push.inform(phone, phone, accessKey, "*", event);
-                client.rpush(phoneTo, event, function (err, reply) {
-                    if (err) {
-                        console.error("保存Event失败");
-                    } else {
-                        console.log("保存Event成功");
-                    }
-                });
-                push.inform(phone, phoneTo, accessKey, "*", event);
             }
         });
     }
@@ -2459,6 +2489,7 @@ relationManage.deletefriend = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneTo = data.target;
+    var time = new Date().getTime();
     var eid = phone + "_" + time;
     if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
         try {

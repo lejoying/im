@@ -39,7 +39,7 @@ import com.open.welinks.view.ViewManage;
 
 public class DataHandlers {
 
-	public String tag = "DataUtil";
+	public static String tag = "DataUtil";
 	public static Data data = Data.getInstance();
 	public static Parser parser = Parser.getInstance();
 	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -54,6 +54,7 @@ public class DataHandlers {
 	}
 
 	public static void getIntimateFriends() {
+		Log.e(tag, "getIntimateFriends");
 		data = parser.check();
 		RequestParams params = new RequestParams();
 		User user = data.userInformation.currentUser;
