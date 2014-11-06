@@ -223,6 +223,7 @@ public class SquareSubView {
 		screenWidth = displayMetrics.widthPixels;
 		width = (int) (screenWidth - (displayMetrics.density * 20 + 0.5f));
 		imageHeight = (int) (width * imageHeightScale);
+		width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
 	}
 
 	public void setConver() {
@@ -577,7 +578,7 @@ public class SquareSubView {
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
-		float total = sharesOrder.size() + 1;
+		// float total = sharesOrder.size() + 1;
 		// this.controlProgress.setTo(0);
 		// this.controlProgress.moveTo((int) ((1 / total) * 100));
 		A: for (int i = 0; i < sharesOrder.size(); i++) {// sharesOrder.size()
@@ -643,7 +644,6 @@ public class SquareSubView {
 			if (cHeight == 0) {
 				totalHeight = (int) (displayMetrics.density * 110 + 0.5f + textHeigth1);
 			}
-			width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width1, totalHeight);
 			sharesMessageBody.itemHeight = totalHeight;
 

@@ -12,42 +12,83 @@ circleManage.modify = function (data, response) {
     var accessKey = data.accessKey;
     var rid = data.rid;
     var name = data.name;
-    var circle = {
-        name: name
-    };
-    var query = [
-        'MATCH (circle:Circle)',
-        'WHERE circle.rid={rid}',
-        'SET circle.name={name}',
-        'RETURN circle'
-    ].join('\n');
-    var params = {
-        rid: parseInt(rid),
-        name: name
-    };
-    db.query(query, params, function (error, results) {
-        if (error) {
-            response.write(JSON.stringify({
-                "提示信息": "修改失败",
-                "失败原因": "数据异常"
-            }));
-            response.end();
-            console.log(error);
-            return;
-        } else if (results.length > 0) {
-            console.log("修改密友圈成功---");
-            response.write(JSON.stringify({
-                "提示信息": "修改成功"
-            }));
-            response.end();
-        } else {
-            response.write(JSON.stringify({
-                "提示信息": "修改失败",
-                "失败原因": "数据异常"
-            }));
-            response.end();
-        }
-    });
+
+    function modifyCircleName() {
+        var query = [
+            "MATCH (account:Account{phone:{phone}})",
+            "RETURN account"
+        ].join("\n");
+        var params = {phone: phone};
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length > 0) {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                var circleOrderString = accountData.circlesOrderString;
+                if (circleOrderString) {
+                    try {
+                        var orderObj = JSON.parse(circleOrderString);
+                        for (var index in orderObj) {
+                            var obj = orderObj[index];
+                            if (rid == obj.rid) {
+                                obj.name = name;
+                                break;
+                            }
+                        }
+                        accountData.circlesOrderString = JSON.stringify(orderObj);
+                        accountNode.save(function (err, node) {
+                        });
+                        ResponseData(JSON.stringify({
+                            "提示信息": "修改成功"
+                        }), response);
+                        var time = new Date().getTime();
+                        var eid = phone + "_" + time;
+                        var event = JSON.stringify({
+                            sendType: "event",
+                            contentType: "relation_dataupdate",
+                            content: JSON.stringify({
+                                type: "relation_dataupdate",
+                                phone: phone,
+                                eid: eid,
+                                time: time,
+                                status: "success",
+                                content: ""
+                            })
+                        });
+                        client.rpush(phone, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, phone, accessKey, "*", event);
+                    } catch (e) {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "修改失败",
+                            "失败原因": "数据异常"
+                        }), response);
+                    }
+                } else {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "修改失败",
+                        "失败原因": "数据异常"
+                    }), response);
+                }
+
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            }
+        });
+    }
 }
 /***************************************
  *     URL：/api2/circle/delete
@@ -413,9 +454,9 @@ circleManage.createcircle = function (data, response) {
                 var eid = phone + "_" + time;
                 var event = JSON.stringify({
                     sendType: "event",
-                    contentType: "relation_dataupdate",
+                    contentType: "relation_addcircle",
                     content: JSON.stringify({
-                        type: "relation_dataupdate",
+                        type: "relation_addcircle",
                         phone: phone,
                         eid: eid,
                         time: time,

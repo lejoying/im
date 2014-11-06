@@ -102,6 +102,12 @@ public class ResponseEventHandlers {
 					handleRelationBlacklistEvent(eventMessage);
 				} else if ("relation_dataupdate".equals(contentType)) {
 					handleRelationDataupdateEvent(eventMessage);
+				} else if ("relation_addcircle".equals(contentType)) {
+					handleRelationAddCircleEvent(eventMessage);
+				} else if ("relation_circlesequence".equals(contentType)) {
+					handleRelationCircleSequenceEvent(eventMessage);
+				} else if ("relation_updatefriendcircle".equals(contentType)) {
+					handleRelationUpdateFriendCircleEvent(eventMessage);
 				} else if ("group_addmembers".equals(contentType)) {
 					handleGroupAddmembersEvent(message, eventMessage);
 				} else if ("group_removemembers".equals(contentType)) {
@@ -120,7 +126,46 @@ public class ResponseEventHandlers {
 		}
 	}
 
+	private void handleRelationUpdateFriendCircleEvent(EventMessage eventMessage) {
+		// String key = eventMessage.eid;
+		// if (!data.event.userEvents.contains(key)) {
+		// data.event.userEvents.add(key);
+		// data.event.userEventsMap.put(key, eventMessage);
+		// data.event.userNotReadMessage = true;
+		// String eventKey = "event_user";
+		// checkEventIsMessageOrder(eventKey);
+		// }
+		DataHandlers.getIntimateFriends();
+	}
+
+	private void handleRelationCircleSequenceEvent(EventMessage eventMessage) {
+		// String key = eventMessage.eid;
+		// if (!data.event.userEvents.contains(key)) {
+		// data.event.userEvents.add(key);
+		// data.event.userEventsMap.put(key, eventMessage);
+		// data.event.userNotReadMessage = true;
+		// String eventKey = "event_user";
+		// checkEventIsMessageOrder(eventKey);
+		// }
+		DataHandlers.getUserInfomation();
+		DataHandlers.getIntimateFriends();
+	}
+
+	private void handleRelationAddCircleEvent(EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.userEvents.contains(key)) {
+			data.event.userEvents.add(key);
+			data.event.userEventsMap.put(key, eventMessage);
+			data.event.userNotReadMessage = true;
+			String eventKey = "event_user";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getUserInfomation();
+			DataHandlers.getIntimateFriends();
+		}
+	}
+
 	public void handleRelationDataupdateEvent(EventMessage eventMessage) {
+		DataHandlers.getUserInfomation();
 		DataHandlers.getIntimateFriends();
 	}
 
@@ -290,6 +335,7 @@ public class ResponseEventHandlers {
 		friend.friendStatus = "delete";
 		data.relationship.isModified = true;
 		DataHandlers.getIntimateFriends();
+		DataHandlers.getUserInfomation();
 		// }
 	}
 

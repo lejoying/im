@@ -453,7 +453,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void deleteGroupShare() {
-		if (shareMessage.phone.equals(data.userInformation.currentUser.phone)) {
+		if (data.userInformation.currentUser.phone.equals(shareMessage.phone)) {
 			Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
 				@Override
 				public void onClick(AlertInputDialog dialog) {

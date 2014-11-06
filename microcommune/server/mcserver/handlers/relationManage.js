@@ -2327,9 +2327,9 @@ relationManage.modifycircle = function (data, response) {
                 var eid = phone + "_" + time;
                 var event = JSON.stringify({
                     sendType: "event",
-                    contentType: "relation_dataupdate",
+                    contentType: "relation_updatefriendcircle",
                     content: JSON.stringify({
-                        type: "relation_dataupdate",
+                        type: "relation_updatefriendcircle",
                         phone: phone,
                         eid: eid,
                         time: time,
@@ -2570,16 +2570,24 @@ relationManage.blacklist = function (data, response) {
             } else {
                 var event = JSON.stringify({
                     sendType: "event",
-                    contentType: "account_dataupdate",
+                    contentType: "relation_blacklist",
                     content: JSON.stringify({
-                        type: "account_dataupdate",
+                        type: "relation_blacklist",
                         phone: phone,
+                        phoneTo: phoneTo,
                         time: time,
                         status: "success",
                         content: "",
                         content: "",
                         eid: eid
                     })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
                 });
                 push.inform(phone, phone, accessKey, "*", event);
                 var accountNode = results.pop().account;
@@ -2666,9 +2674,9 @@ relationManage.modifysequence = function (data, response) {
                 }), response);
                 var event = JSON.stringify({
                     sendType: "event",
-                    contentType: "account_dataupdate",
+                    contentType: "relation_circlesequence",
                     content: JSON.stringify({
-                        type: "account_dataupdate",
+                        type: "relation_circlesequence",
                         phone: phone,
                         time: time,
                         status: "success",
