@@ -1942,13 +1942,13 @@ relationManage.intimatefriends = function (data, response) {
                         var circleOrder = JSON.parse(circlesOrderString);
                         for (var index in circleOrder) {
                             var circle = circleOrder[index];
-                            if (!circle.rid) {
+                            if (circle.rid) {
+                                circles.push(circle.rid);
+                                circle.friends = [];
+                                circlesMap[circle.rid] = circle;
+                            } else {
                                 flag = true;
-                                break;
                             }
-                            circles.push(circle.rid);
-                            circle.friends = [];
-                            circlesMap[circle.rid] = circle;
                         }
                         if (!circlesMap["8888888"] || !circlesMap["9999999"]) {
                             flag = true;
@@ -1958,8 +1958,8 @@ relationManage.intimatefriends = function (data, response) {
                     }
                 }
                 if (flag) {
-                    circles = [];
-                    circlesMap = {};
+                    //circles = [];
+                    //circlesMap = {};
                     circles.push("9999999");
                     circlesMap["9999999"] = {
                         rid: "9999999",
@@ -2165,9 +2165,9 @@ relationManage.getfans = function (data, response) {
 }
 relationManage.follow = function (data, response) {
     response.asynchronous = 1;
-    console.log(data);
+    console.log("follow" + data);
     var phone = data.phone;
-    var phoneTo = data.phoneto;
+    var phoneTo = data.target;
     var message = data.message || "";
     var accessKey = data.accessKey;
     if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
@@ -2323,6 +2323,28 @@ relationManage.modifycircle = function (data, response) {
                 }), response);
                 console.error(error);
             } else if (results.length > 0) {
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_dataupdate",
+                    content: JSON.stringify({
+                        type: "relation_dataupdate",
+                        phone: phone,
+                        eid: eid,
+                        time: time,
+                        status: "success",
+                        content: ""
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
                 ResponseData(JSON.stringify({
                     "提示信息": "修改成功"
                 }), response);
@@ -2370,6 +2392,7 @@ relationManage.modifyalias = function (data, response) {
                 }), response);
                 console.error("modifyAlias:" + error);
             } else if (results.length == 0) {
+                //TODO event
                 ResponseData(JSON.stringify({
                     "提示信息": "修改备注失败",
                     "失败原因": "好友不存在"
@@ -2418,6 +2441,7 @@ relationManage.canclefollow = function (data, response) {
                 }), response);
                 console.error(error);
             } else if (results.length > 0) {
+                //TODO event
                 ResponseData(JSON.stringify({
                     "提示信息": "取消关注成功"
                 }), response);
@@ -2435,6 +2459,7 @@ relationManage.deletefriend = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneTo = data.target;
+    var eid = phone + "_" + time;
     if (verifyEmpty.verifyEmpty(data, [phoneTo], response)) {
         try {
             //phoneTo = JSON.parse(phoneTo);
@@ -2466,6 +2491,27 @@ relationManage.deletefriend = function (data, response) {
                 }), response);
                 console.error(error);
             } else if (results.length > 0) {
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_deletefriend",
+                    content: JSON.stringify({
+                        type: "relation_deletefriend",
+                        phone: phone,
+                        phoneTo: phoneTo,
+                        eid: eid,
+                        time: new Date().getTime(),
+                        status: "success",
+                        content: ""
+                    })
+                });
+                client.rpush(phoneTo, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phoneTo, accessKey, "*", event);
                 ResponseData(JSON.stringify({
                     "提示信息": "删除好友成功"
                 }), response);
@@ -2522,6 +2568,20 @@ relationManage.blacklist = function (data, response) {
                 }));
                 response.end();
             } else {
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "account_dataupdate",
+                    content: JSON.stringify({
+                        type: "account_dataupdate",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: "",
+                        content: "",
+                        eid: eid
+                    })
+                });
+                push.inform(phone, phone, accessKey, "*", event);
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 var praise = accountData.praises;
@@ -2564,6 +2624,7 @@ relationManage.blacklist = function (data, response) {
 }
 relationManage.modifysequence = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var circleSequence = data.sequence;
     var accessKey = data.accessKey;

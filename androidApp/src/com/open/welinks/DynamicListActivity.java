@@ -98,7 +98,7 @@ public class DynamicListActivity extends Activity {
 		initData("all");
 		showEventList();
 		changData(selectType);
-		getRequareAddFriendList();
+		// getRequareAddFriendList();
 	}
 
 	@Override
@@ -537,9 +537,9 @@ public class DynamicListActivity extends Activity {
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("phoneask", phoneTo);
-		params.addBodyParameter("status", "true");
+		params.addBodyParameter("target", phoneTo);
+		// params.addBodyParameter("status", "true");
 
-		httpUtils.send(HttpMethod.POST, API.RELATION_ADDFRIENDAGREE, params, responseHandlers.addFriendAgreeCallBack);
+		httpUtils.send(HttpMethod.POST, API.RELATION_FOLLOW, params, responseHandlers.relation_addfriend);
 	}
 }

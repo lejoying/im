@@ -113,11 +113,6 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
             relationManage.blacklist(data, response);
         });
     }
-    else if (operation == "getfriends") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            relationManage.getfriends(data, response);
-        });
-    }
     else if (operation == "getcirclesandfriends") {
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.getcirclesandfriends(data, response);
@@ -212,6 +207,11 @@ requestHandlers.circleManage = function (request, response, pathObject, data) {
     else if (operation == "addcircle") {
         oauth6(data.phone, data.accessKey, response, function () {
             circleManage.addcircle(data, response);
+        });
+    }
+    else if (operation == "createcircle") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            circleManage.createcircle(data, response);
         });
     }
 }

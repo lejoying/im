@@ -713,7 +713,7 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("删除成功")) {
+			if (response.提示信息.equals("删除好友成功")) {
 				log.e(tag, "---------------------删除成功");
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
@@ -745,6 +745,8 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发送请求成功")) {
 				log.e(tag, "---------------------发送请求成功");
+			} else if (response.提示信息.equals("添加好友成功")) {
+				DataHandlers.getIntimateFriends();
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
 			}
@@ -1759,7 +1761,7 @@ public class ResponseHandlers {
 				data.relationship.circlesMap.put(String.valueOf(response.circle.rid), response.circle);
 				data.relationship.isModified = true;
 
-				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
+//				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
 
 			} else {
 				log.d("添加失败===================" + response.失败原因);

@@ -134,23 +134,25 @@ public class API {
 	 */
 	public static String RELATION_BLACKLIST = API_DOMAIN + "api2/relation/blacklist";
 	/**
-	 * http://www.we-links.com/api2/relation/addfriend
+	 * http://www.we-links.com/api2/relation/fellow
 	 */
-	public static String RELATION_ADDFRIEND = API_DOMAIN + "api2/relation/fellow";
+	public static String RELATION_FOLLOW = API_DOMAIN + "api2/relation/follow";
 	/**
 	 * http://www.we-links.com/api2/relation/modifysequence
 	 */
 	public static String RELATION_MODIFYCIRCLESEQUENCE = API_DOMAIN + "api2/relation/modifysequence";
-
+	/**
+	 * http://www.we-links.com/api2/relation/intimatefriends
+	 */
 	public static String RELATION_GETINTIMATEFRIENDS = API_DOMAIN + "api2/relation/intimatefriends";
 	/**
-	 * http://www.we-links.com/api2/relation/getaskfriends
+	 * http://www.we-links.com/api2/relation/getaskfriends unused
 	 */
 	public static String RELATION_GETASKFRIENDS = API_DOMAIN + "api2/relation/getaskfriends";
 	/**
 	 * http://www.we-links.com/api2/relation/addfriendagree
 	 */
-	public static String RELATION_ADDFRIENDAGREE = API_DOMAIN + "api2/relation/addfriendagree";
+//	 public static String RELATION_ADDFRIENDAGREE = API_DOMAIN + "api2/relation/addfriendagree";
 	/**
 	 * http://www.we-links.com/api2/relation/updatecontact
 	 */
@@ -166,9 +168,9 @@ public class API {
 	 */
 	public static String CIRCLE_DELETE = API_DOMAIN + "api2/circle/delete";
 	/**
-	 * http://www.we-links.com/api2/circle/addcircle
+	 * http://www.we-links.com/api2/circle/createcircle
 	 */
-	public static String CIRCLE_ADDCIRCLE = API_DOMAIN + "api2/circle/addcircle";
+	public static String CIRCLE_ADDCIRCLE = API_DOMAIN + "api2/circle/createcircle";
 
 	// image
 

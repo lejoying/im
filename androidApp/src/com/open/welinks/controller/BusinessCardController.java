@@ -429,7 +429,7 @@ public class BusinessCardController {
 				RequestParams params = new RequestParams();
 				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-				params.addBodyParameter("phoneto", "[\"" + friend.phone + "\"]");
+				params.addBodyParameter("target", friend.phone);
 				params.addBodyParameter("operation", flag + "");
 				ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 				httpUtils.send(HttpMethod.POST, API.RELATION_BLACKLIST, params, responseHandlers.relation_blackList);
@@ -453,7 +453,7 @@ public class BusinessCardController {
 				RequestParams params = new RequestParams();
 				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-				params.addBodyParameter("phoneto", "[\"" + friend.phone + "\"]");
+				params.addBodyParameter("target", friend.phone);
 				ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 				httpUtils.send(HttpMethod.POST, API.RELATION_DELETEFRIEND, params, responseHandlers.relation_deletefriend);
 			}
@@ -508,7 +508,7 @@ public class BusinessCardController {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("friend", key);
+		params.addBodyParameter("target", key);
 		params.addBodyParameter("alias", alias);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.RELATION_MODIFYALIAS, params, responseHandlers.relation_modifyAlias);

@@ -134,9 +134,17 @@ public class FriendsSubController {
 			public void onStopOrdering(List<String> listItemsSequence) {
 				super.onStopOrdering(listItemsSequence);
 				List<String> circles = new ArrayList<String>();
+
+				List<Circle2> list = new ArrayList<Circle2>();
 				for (int i = 0; i < listItemsSequence.size(); i++) {
 					String key = listItemsSequence.get(i);
-					circles.add(key.substring(key.indexOf("#") + 1));
+					String rid = key.substring(key.indexOf("#") + 1);
+					circles.add(rid);
+					Circle circleData = data.relationship.circlesMap.get(rid);
+					if (circleData != null) {
+						log.e(circleData.rid + "---" + circleData.name);
+						list.add(new Circle2(circleData.rid + "", circleData.name));
+					}
 				}
 				// modify local data
 				Gson gson = new Gson();
@@ -146,7 +154,9 @@ public class FriendsSubController {
 				String ridSequence = gson.toJson(circles);
 				// modify server data
 				if (!oldSequece.equals(ridSequence)) {
-					modifyGroupSequence(ridSequence);
+					String circleSequece = gson.toJson(list);
+					log.e(circleSequece);
+					modifyGroupSequence(circleSequece);
 					log.e("分组顺序发生改动");
 				} else {
 					log.e(oldSequece);
@@ -155,6 +165,16 @@ public class FriendsSubController {
 				}
 			}
 		};
+	}
+
+	public class Circle2 {
+		public String rid;
+		public String name;
+
+		public Circle2(String rid, String name) {
+			this.rid = rid;
+			this.name = name;
+		}
 	}
 
 	public void bindEvent() {
@@ -194,7 +214,7 @@ public class FriendsSubController {
 				onTouchDownView = null;
 				onClickView = null;
 				Toast.makeText(mainController.thisActivity, "long press", Toast.LENGTH_SHORT).show();
-				Intent intent = new Intent(mainController.thisActivity,CirclesManageActivity.class);
+				Intent intent = new Intent(mainController.thisActivity, CirclesManageActivity.class);
 				mainController.thisActivity.startActivity(intent);
 			}
 		}
@@ -301,9 +321,7 @@ public class FriendsSubController {
 
 				}
 			}).show();
-
 		}
-
 	}
 
 	public void createCircle() {
@@ -322,13 +340,14 @@ public class FriendsSubController {
 					data.relationship.circles.add(String.valueOf(rid));
 					data.relationship.circlesMap.put(String.valueOf(rid), circle);
 					data.relationship.isModified = true;
+					thisView.showCircles();
 
 					HttpUtils httpUtils = new HttpUtils();
 					RequestParams params = new RequestParams();
 					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 					params.addBodyParameter("name", circleName);
-					params.addBodyParameter("rid", String.valueOf(rid));
+					params.addBodyParameter("rid", rid + "");
 
 					httpUtils.send(HttpMethod.POST, API.CIRCLE_ADDCIRCLE, params, responseHandlers.circle_addcircle);
 

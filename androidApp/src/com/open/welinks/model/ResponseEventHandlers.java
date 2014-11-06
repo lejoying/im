@@ -100,6 +100,8 @@ public class ResponseEventHandlers {
 					handleRelationDeletefriendEvent(eventMessage);
 				} else if ("relation_blacklist".equals(contentType)) {
 					handleRelationBlacklistEvent(eventMessage);
+				} else if ("relation_dataupdate".equals(contentType)) {
+					handleRelationDataupdateEvent(eventMessage);
 				} else if ("group_addmembers".equals(contentType)) {
 					handleGroupAddmembersEvent(message, eventMessage);
 				} else if ("group_removemembers".equals(contentType)) {
@@ -116,6 +118,10 @@ public class ResponseEventHandlers {
 				data.event.isModified = true;
 			}
 		}
+	}
+
+	public void handleRelationDataupdateEvent(EventMessage eventMessage) {
+		DataHandlers.getIntimateFriends();
 	}
 
 	public void checkEventIsMessageOrder(String key) {

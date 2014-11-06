@@ -730,7 +730,7 @@ accountManage.modify = function (data, response) {
                     if (accountData.status == "init") {
                         accountData.ID = ++accountID;
                         accountData.status = "active";
-                        client.set("ID", accountID, function (err, reply) {
+                        IDclient.set("ID", accountID, function (err, reply) {
                             if (err != null) {
                                 response.write(JSON.stringify({
                                     "提示信息": "修改用户信息失败",

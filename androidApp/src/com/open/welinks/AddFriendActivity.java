@@ -66,9 +66,9 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("phoneto", phoneto);
+		params.addBodyParameter("target", phoneto);
 		params.addBodyParameter("message", addMessage);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.RELATION_ADDFRIEND, params, responseHandlers.relation_addfriend);
+		httpUtils.send(HttpMethod.POST, API.RELATION_FOLLOW, params, responseHandlers.relation_addfriend);
 	}
 }
