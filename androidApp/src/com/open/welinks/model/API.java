@@ -157,6 +157,10 @@ public class API {
 	 * http://www.we-links.com/api2/relation/updatecontact
 	 */
 	public static String RELATION_UPDATECONTACT = API_DOMAIN + "api2/relation/updatecontact";
+	/**
+	 * http://www.we-links.com/api2/relation/modifycircle
+	 */
+	public static String RELATION_MODIFYCIRCLE = API_DOMAIN + "api2/relation/modifycircle";
 
 	// circle
 	/**

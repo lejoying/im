@@ -2318,6 +2318,7 @@ relationManage.follow = function (data, response) {
 }
 relationManage.modifycircle = function (data, response) {
     var phone = data.phone;
+    console.log(data);
     var accessKey = data.accessKey;
     var phoneTo = data.targetphones;
     var rid = data.rid;

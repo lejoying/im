@@ -213,7 +213,7 @@ public class FriendsSubView {
 				lineCount = 1;
 			}
 			int membrane = size % 4;
-			if (lineCount > 1 && membrane != 0) {
+			if (size / 4 >= 1 && membrane != 0) {
 				lineCount++;
 			}
 			itemHeight = (78 + lineCount * 96) * displayMetrics.density;// 174 to 78

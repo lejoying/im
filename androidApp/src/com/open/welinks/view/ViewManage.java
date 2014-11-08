@@ -109,7 +109,9 @@ public class ViewManage {
 			}
 		} else if (viewName.equals("CirclesManageView")) {
 			if (circlesManageView != null) {
-				circlesManageView.showCircles();
+				if (circlesManageView.thisController.touchStatus.state == circlesManageView.thisController.touchStatus.NORMAL) {
+					circlesManageView.showCircles();
+				}
 			}
 		}
 	}

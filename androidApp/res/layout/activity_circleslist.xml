@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/maxView"
-    android:orientation="vertical" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <include
-        layout="@layout/view_back_view"
-        android:visibility="gone" />
+    <include layout="@layout/view_back_view" />
 
     <com.open.lib.TouchView
         android:id="@+id/friendsContainer"
@@ -16,8 +13,8 @@
         android:background="#75c2b8"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:translationY="2dp"
+        android:translationY="50dp"
         android:visibility="visible" >
     </com.open.lib.TouchView>
 
-</LinearLayout>
+</RelativeLayout>

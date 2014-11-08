@@ -37,6 +37,7 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.utils.ViewUtil;
 
 public class CirclesManageView {
 
@@ -57,7 +58,7 @@ public class CirclesManageView {
 
 	public View backView;
 	public TextView backTitleView;
-	public View maxView;
+	public RelativeLayout maxView;
 
 	public ListBody1 friendListBody;
 
@@ -71,6 +72,8 @@ public class CirclesManageView {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
+	public int barHeight;
+
 	public CirclesManageView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -78,15 +81,22 @@ public class CirclesManageView {
 		viewManage.circlesManageView = this;
 	}
 
+	public int containerWidth;
+	public int spacing;
+	public int singleWidth;
+
 	public void initView() {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		this.mInflater = thisActivity.getLayoutInflater();
-
+		barHeight = (int) (48 * thisView.displayMetrics.density + 0.5f);// + ViewUtil.getStatusBarHeight(context)
+		containerWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density);
+		spacing = (int) (20 * displayMetrics.density);
+		singleWidth = (containerWidth - spacing * 5) / 4;
 		thisActivity.setContentView(R.layout.activity_circleslist);
 		this.friendsView = (TouchView) thisActivity.findViewById(R.id.friendsContainer);
 		this.backView = thisActivity.findViewById(R.id.backView);
-		this.maxView = thisActivity.findViewById(R.id.maxView);
+		this.maxView = (RelativeLayout) thisActivity.findViewById(R.id.maxView);
 		View title_control_progress_container = thisActivity.findViewById(R.id.title_control_progress_container);
 		title_control_progress_container.setVisibility(View.GONE);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
@@ -140,22 +150,36 @@ public class CirclesManageView {
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
 			circleBody.y = this.friendListBody.height;
 			circleBody.cardView.setY(circleBody.y);
+			circleBody.cy = (this.friendListBody.height + 48 * displayMetrics.density + 0.5f) + 50;
+			circleBody.cx = (int) (10 * displayMetrics.density + 0.5f);
 			if (flag) {
 				circleBody.cardView.setX(10 * displayMetrics.density + 0.5f);
 			} else {
 				circleBody.cardView.setX(0);
 			}
 
+			circleBody.index = i;
+			circleBody.height = (int) circleBody.itemHeight;
+
 			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight;
 
 			log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);
 		}
 
-		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
+		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewUtil.getStatusBarHeight(context) - displayMetrics.density * 48);
 		if (this.friendListBody.height < this.friendListBody.containerHeight) {
 			this.friendListBody.y = 0;
 		}
 		this.friendListBody.setChildrenPosition();
+	}
+
+	public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
+
+	public void setViewXY() {
+		for (int i = 0; i < friendListBody.listItemsSequence.size(); i++) {
+			CircleBody circleBody = (CircleBody) friendListBody.listItemBodiesMap.get(friendListBody.listItemsSequence.get(i));
+			circleBody.setChildXY();
+		}
 	}
 
 	public class CircleBody extends MyListItemBody {
@@ -165,7 +189,6 @@ public class CirclesManageView {
 		}
 
 		public List<String> friendsSequence = new ArrayList<String>();
-		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
 
 		public TouchView cardView = null;
 		public TextView leftTopText = null;
@@ -176,7 +199,17 @@ public class CirclesManageView {
 
 		public int lineCount = 0;
 
+		public CircleBody instance;
+
+		public float cx, cy;
+
+		public int index;
+		public int height;
+
+		public Circle circle;
+
 		public View initialize() {
+			instance = this;
 			this.cardView = (TouchView) mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 			this.gripView = (TouchView) this.cardView.findViewById(R.id.grip);
@@ -197,7 +230,18 @@ public class CirclesManageView {
 			return cardView;
 		}
 
+		public void setChildXY() {
+			this.cy = this.y + friendListBody.y + 48 * displayMetrics.density + 0.5f + 50;
+			for (int i = 0; i < friendsSequence.size(); i++) {
+				String key = friendsSequence.get(i);
+				FriendBody friendBody = friendBodiesMap.get(key);
+				friendBody.cy = this.cy + friendBody.y;
+				friendBody.cx = this.cx + friendBody.x;
+			}
+		}
+
 		public void setContent(Circle circle) {
+			this.circle = circle;
 			this.leftTopText.setText(circle.name);
 
 			this.leftTopTextButton.setTag(R.id.tag_first, circle);
@@ -213,16 +257,10 @@ public class CirclesManageView {
 				lineCount = 1;
 			}
 			int membrane = size % 4;
-			if (lineCount > 1 && membrane != 0) {
+			if (size / 4 >= 1 && membrane != 0) {
 				lineCount++;
 			}
 			itemHeight = (78 + lineCount * 96) * displayMetrics.density;// 174 to 78
-
-			//
-			int containerWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density);
-			int spacing = (int) (20 * displayMetrics.density);
-			int singleWidth = (containerWidth - spacing * 5) / 4;
-			//
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(singleWidth, (int) (78 * displayMetrics.density));
 			this.friendsSequence.clear();
@@ -238,20 +276,36 @@ public class CirclesManageView {
 				if (phone != null) {
 					friend = friendsMap.get(phone);
 				}
-				String key = "friend#" + phone;
+				String key = "friend#" + circle.rid + "#" + phone;
 				FriendBody friendBody = friendBodiesMap.get(key);
 				if (friendBody == null) {
 					friendBody = new FriendBody();
 					friendBody.Initialize();
+					friendBodiesMap.put(key, friendBody);
 				}
+				friendBody.key = key;
+
+				friendsSequence.add(key);
 
 				friendBody.setData(friend);
 				this.contaner.addView(friendBody.friendView, layoutParams);
 				int x = (i % 4 + 1) * spacing + (i % 4) * singleWidth;
 				int y = (int) ((i / 4) * (95 * displayMetrics.density) + 64 * displayMetrics.density);
 
+				friendBody.circle = circle;
+				friendBody.circleBody = instance;
+				friendBody.friend = friend;
+				friendBody.index = i;
+				friendBody.x = x;
+				friendBody.y = y;
+				friendBody.friendsSequence = friendsSequence;
 				friendBody.friendView.setX(x);
 				friendBody.friendView.setY(y);
+
+				friendBody.friendView.setTag(R.id.tag_first, circle);
+				friendBody.friendView.setTag(R.id.tag_second, friend);
+				friendBody.friendView.setTag(R.id.tag_class, "card_friend");
+				friendBody.friendView.setOnTouchListener(thisController.mOnTouchListener);
 			}
 		}
 	}
@@ -260,13 +314,35 @@ public class CirclesManageView {
 
 		public View friendView = null;
 
+		public ImageView friendBackground;
 		public ImageView headImageView;
 		public TextView nickNameView;
 
+		public int index;
+		public Circle circle;
+		public CircleBody circleBody;
+		public Friend friend;
+		public float x, y;
+		public float cx, cy;
+		public int width, height;
+		public float next_x, next_y;
+
+		public int state = 0;
+		public int STATIC_STATE = 1;
+		public int TRANSLATION_STATE = 2;
+		public int MOVE_STATE = 3;
+
+		public String key;
+
+		public List<String> friendsSequence;
+
 		public View Initialize() {
+			this.width = (int) (displayMetrics.density * 52 + 0.5f);
+			this.height = (int) (displayMetrics.density * 75 + 0.5f);
 			this.friendView = mInflater.inflate(R.layout.circles_gridpage_item, null);
 			this.headImageView = (ImageView) this.friendView.findViewById(R.id.head_image);
 			this.nickNameView = (TextView) this.friendView.findViewById(R.id.nickname);
+			this.friendBackground = (ImageView) this.friendView.findViewById(R.id.grip_card_background);
 			return friendView;
 		}
 

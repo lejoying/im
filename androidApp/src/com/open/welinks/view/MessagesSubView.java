@@ -3,6 +3,7 @@ package com.open.welinks.view;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -387,7 +388,10 @@ public class MessagesSubView {
 					data = parser.check();
 					fileHandlers.getHeadImage(fileName, headView, options);
 					String leftText = "";
-					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+					Pattern pattern = Pattern.compile("[0-9]*"); 
+					if(pattern.matcher(message.time).matches()){
+						lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+					}
 					String sendType = message.sendType;
 					this.groupIconView.setVisibility(View.GONE);
 					if ("point".equals(sendType)) {
