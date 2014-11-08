@@ -52,7 +52,7 @@
             android:shadowDx="3"
             android:shadowDy="3"
             android:shadowRadius="0.01"
-            android:text="群分享"
+            android:text="房间"
             android:textColor="#eeffffff"
             android:textSize="18sp"
             android:translationX="80dp"

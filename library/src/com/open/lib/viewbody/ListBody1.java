@@ -330,8 +330,19 @@ public class ListBody1 {
 		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {
 			deltaY = deltaY / 4;
 		}
-
+		float y1 = this.y;
 		this.y = this.y + deltaY;
+		if (y1 > this.y) {
+			// 下拉 TODO
+			if (this.y < 50) {
+				// Log.e(tag, ">>>下拉" + this.y);
+			}
+		} else {
+			// 上拉 TODO
+			if (this.y + this.height < 50) {
+				// Log.e(tag, ">>>上拉" + this.y);
+			}
+		}
 	}
 
 	public void setChildrenPosition() {
@@ -451,6 +462,7 @@ public class ListBody1 {
 				if (bondary_offset > refreshBaseHeight) {
 					isRefresh = true;
 				}
+				// Log.e(tag, bondary_offset + "--11-" + refreshBaseHeight);
 			}
 		}
 
@@ -461,6 +473,7 @@ public class ListBody1 {
 				bodyStatus.state = bodyStatus.FIXED;
 				hideOverScreenViews();
 				this.openLooper.stop();
+				// Log.e(tag, -bondary_offset + "+++" + -refreshBaseHeight);
 				if (isRefresh) {
 					isRefresh = false;
 					if (bodyCallback != null) {
@@ -473,6 +486,7 @@ public class ListBody1 {
 				if (bondary_offset < -refreshBaseHeight) {
 					isRefresh = true;
 				}
+				// Log.e(tag, bondary_offset + "---" + -refreshBaseHeight);
 			}
 		}
 		this.setChildrenPosition();

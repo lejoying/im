@@ -172,20 +172,20 @@ public class SmallBusinessCardPopView {
 				}
 				if (data.relationship.groups != null) {
 					if (data.relationship.groups.contains(key)) {
-						relation = "已加入该群组";
+						relation = "已加入该房间";
 						Group group = data.relationship.groupsMap.get(key);
 						if (group != null) {
 							setContent(true, "", "", group.icon, group.name, relation, type, key, group.longitude, group.latitude, 0 + "");
 						}
 					} else {
-						relation = "未加入该群组";
+						relation = "未加入该房间";
 						Group group = data.relationship.groupsMap.get(key);
 						if (group != null) {
 							setContent(false, "", "", group.icon, group.name, relation, type, key, group.longitude, group.latitude, 0 + "");
 						}
 					}
 				} else {
-					relation = "未加入该群组";
+					relation = "未加入该房间";
 					Group group = data.relationship.groupsMap.get(key);
 					if (group != null) {
 						setContent(false, "", "", group.icon, group.name, relation, type, key, group.longitude, group.latitude, 0 + "");
@@ -194,20 +194,20 @@ public class SmallBusinessCardPopView {
 			} else if (type.equals(TYPE_SQUARE)) {
 				if (data.relationship.groups != null) {
 					if (data.relationship.squares.contains(key)) {
-						relation = "已加入该广场";
+						relation = "已加入该社区";
 						Group group = data.relationship.groupsMap.get(key);
 						if (group != null) {
 							setContent(false, "", "", group.icon, group.name, relation, type, key, group.longitude, group.latitude, 0 + "");
 						}
 					} else {
-						relation = "未加入该广场";
+						relation = "未加入该社区";
 						Group group = data.relationship.groupsMap.get(key);
 						if (group != null) {
 							setContent(false, "", "", group.icon, group.name, relation, type, key, group.longitude, group.latitude, 0 + "");
 						}
 					}
 				} else {
-					relation = "未加入该广场";
+					relation = "未加入该社区";
 					Group group = data.relationship.groupsMap.get(key);
 					if (group != null) {
 						setContent(false, "", "", group.icon, group.name, relation, type, key, group.longitude, group.latitude, 0 + "");
@@ -270,9 +270,10 @@ public class SmallBusinessCardPopView {
 				}
 			} else if (type.equals(TYPE_GROUP)) {
 				if (data.relationship.groups.contains(key)) {
-					goInfomationView.setText("群组信息");
+					goInfomationView.setText("房间信息");
+					goChatView.setText("聊天室");
 				} else {
-					singleButtonView.setText("群组信息");
+					singleButtonView.setText("房间信息");
 				}
 				userAgeView.setVisibility(View.GONE);
 				lastLoginTimeView.setText("");
@@ -281,7 +282,7 @@ public class SmallBusinessCardPopView {
 					scanGroupCard(key);
 				}
 			} else if (type.equals(TYPE_SQUARE)) {
-				goInfomationView.setText("广场资料");
+				goInfomationView.setText("社区资料");
 				userAgeView.setVisibility(View.GONE);
 				lastLoginTimeView.setText("");
 				vLineView.setVisibility(View.GONE);

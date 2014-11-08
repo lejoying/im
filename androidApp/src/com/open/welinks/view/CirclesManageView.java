@@ -327,10 +327,10 @@ public class CirclesManageView {
 		public int width, height;
 		public float next_x, next_y;
 
-		public int state = 0;
 		public int STATIC_STATE = 1;
 		public int TRANSLATION_STATE = 2;
 		public int MOVE_STATE = 3;
+		public int state = STATIC_STATE;
 
 		public String key;
 

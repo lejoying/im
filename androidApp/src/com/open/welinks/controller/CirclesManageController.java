@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -370,7 +369,7 @@ public class CirclesManageController {
 		}
 		if (!isLoop) {
 			// openLooper.stop();
-			log.e("stop-----------isLoop");
+			// log.e("stop-----------isLoop");
 			// touchStatus.state = touchStatus.DRAG;
 			isLooper = false;
 		} else {
@@ -429,6 +428,7 @@ public class CirclesManageController {
 				dragView.setTranslationX(x - dragView.getWidth() / 2);
 				dragView.setTranslationY(y - dragView.getHeight() / 2 - 48);
 				modifyFriendInCircle();
+				dragView.setBackgroundResource(0);
 				// thisView.maxView.removeView(dragView);
 			}
 		}
@@ -439,8 +439,8 @@ public class CirclesManageController {
 	public FriendBody dragFriendBody;
 
 	private void modifyFriendInCircle() {
+		openLooper.stop();
 		thisView.maxView.removeView(dragView);
-		dragView.setBackgroundColor(Color.parseColor("#00000000"));
 		touchStatus.state = touchStatus.NORMAL;
 		if (dragFriendBody == null) {
 			return;
@@ -508,7 +508,7 @@ public class CirclesManageController {
 					FriendBody friendBody = thisView.friendBodiesMap.get(fKey);
 					float x1 = circleBady.cx + friendBody.x + friendBody.width;
 					float y1 = circleBady.cy + friendBody.y + friendBody.height;
-					if (circleBady.cx + friendBody.x < x && x < x1 && circleBady.cy + friendBody.y < y && y < y1) {
+					if (circleBady.cx + friendBody.x < x && x < x1 && circleBady.cy + friendBody.y < y && y < y1 && friendBody.state == friendBody.STATIC_STATE) {
 						// friendBody.friendView.setBackgroundColor(Color.GREEN);
 						// TODO
 						this.friendBody = friendBody;
@@ -522,6 +522,7 @@ public class CirclesManageController {
 						isLooper = true;
 						break;
 					} else {
+						// friendBody.friendView.setBackgroundColor(Color.parseColor("#00000000"));
 						// friendBody.friendView.setBackgroundColor(Color.parseColor("#00000000"));
 					}
 				}
@@ -578,7 +579,7 @@ public class CirclesManageController {
 			berfoePosition = friendBody.index;
 		}
 		int A = friendBody.index;
-		log.e(A + ">>>>>>>>>>>>>>>>>A");
+		// log.e(A + ">>>>>>>>>>>>>>>>>A");
 		boolean isEmpty = false;
 		for (int i = 0; i < friendBody.friendsSequence.size(); i++) {
 			FriendBody body = thisView.friendBodiesMap.get(friendBody.friendsSequence.get(i));
@@ -601,7 +602,7 @@ public class CirclesManageController {
 			body.next_y = ((j / 4) * (95 * thisView.displayMetrics.density) + 64 * thisView.displayMetrics.density);
 			body.state = body.TRANSLATION_STATE;
 			body.index = j;
-			log.e(body.x + "--" + body.next_x);
+			// log.e(body.x + "--" + body.next_x);
 		}
 	}
 
@@ -662,17 +663,27 @@ public class CirclesManageController {
 						Friend friend = (Friend) viewTag;
 						FriendBody friendBody = thisView.friendBodiesMap.get("friend#" + circleBody.circle.rid + "#" + friend.phone);
 						if (friendBody != null) {
-							friendBody.friendBackground.setVisibility(View.VISIBLE);
+							Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
+							long[] pattern = { 100, 100, 300 };
+							vibrator.vibrate(pattern, -1);
+
+							// friendBody.friendBackground.setVisibility(View.VISIBLE);
 							touchStatus.state = touchStatus.DRAG;
 							dragFriendBody = friendBody;
 							dragView = friendBody.friendView;
 							circleBody.contaner.removeView(dragView);
-							dragView.setBackgroundColor(Color.RED);
+							dragView.setBackgroundResource(R.drawable.card_login_background_press);
 							thisView.maxView.removeView(dragView);
 							thisView.maxView.addView(dragView);
-							x = event.getRawX();
-							y = event.getRawY();
-							circleBody.friendsSequence.remove(friendBody.index);
+							// x = event.getRawX() - 20 * thisView.displayMetrics.density;
+							// y = event.getRawY() - 48 * thisView.displayMetrics.density - ViewUtil.getStatusBarHeight(thisActivity);
+							x = circleBody.cx + friendBody.x;
+							y = circleBody.cy + friendBody.y - 35 * thisView.displayMetrics.density;
+							if (circleBody.friendsSequence.size() > 0) {
+								circleBody.friendsSequence.remove(friendBody.index);
+							}
+							dragView.setTranslationX(x);
+							dragView.setTranslationY(y);
 						}
 					}
 				}

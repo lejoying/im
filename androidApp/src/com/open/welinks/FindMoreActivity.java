@@ -100,13 +100,13 @@ public class FindMoreActivity extends Activity {
 
 	private void changData(int selectType) {
 		if (selectType == 1) {
-			text_one.setText("附近的广场");
-			text_two.setText("查找广场");
+			text_one.setText("附近的社区");
+			text_two.setText("查找社区");
 			layout_two.setVisibility(View.GONE);
 			layout_three.setVisibility(View.GONE);
 		} else if (selectType == 2) {
-			text_one.setText("附近的群组");
-			text_two.setText("查找群组");
+			text_one.setText("附近的房间");
+			text_two.setText("查找房间");
 			layout_two.setVisibility(View.GONE);
 			layout_three.setVisibility(View.GONE);
 		} else if (selectType == 3) {

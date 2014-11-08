@@ -25,6 +25,100 @@
                 android:background="#aac0c0c0" />
 
             <RelativeLayout
+                android:id="@+id/memberListTop"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/backview_background1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="房间成员"
+                    android:textColor="#aa000000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/groupMemberCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="99人"
+                    android:textColor="#aa000000"
+                    android:textSize="14sp"
+                    android:translationX="-25dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:src="@drawable/into"
+                    android:tint="#c0c0c0" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#aac0c0c0" />
+
+            <LinearLayout
+                android:id="@+id/memberList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/backview_background1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/face_man" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/face_man" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/face_man" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/face_man" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/face_man" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#aac0c0c0" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="#aac0c0c0" />
+
+            <RelativeLayout
                 android:id="@+id/nickNameOption"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -46,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="微型公社"
+                    android:text="微型社区"
                     android:textColor="#aa000000"
                     android:textSize="14sp"
                     android:translationX="-25dp" />
@@ -204,11 +298,13 @@
                 android:background="@drawable/backview_background1"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:padding="10dp" >
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:text="封面"
                     android:textColor="#aa000000"
                     android:textSize="16sp" />
@@ -223,9 +319,19 @@
                     android:translationX="-25dp" />
 
                 <ImageView
+                    android:id="@+id/converImage"
+                    android:layout_width="80dp"
+                    android:layout_height="50dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="25dp" />
+
+                <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:src="@drawable/into"
@@ -292,7 +398,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="群名片"
+                    android:text="房间名片"
                     android:textColor="#aa000000"
                     android:textSize="16sp" />
 
@@ -441,100 +547,6 @@
                 android:layout_height="1dp"
                 android:background="#aac0c0c0" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/memberListTop"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="群成员"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/groupMemberCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="99人"
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <LinearLayout
-                android:id="@+id/memberList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp" >
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
             <RelativeLayout
                 android:id="@+id/exit2DeleteGroup"
                 android:layout_width="340dp"
@@ -548,7 +560,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="删除并退出"
+                    android:text="删除并退出房间"
                     android:textColor="#fff"
                     android:textSize="16sp" />
             </RelativeLayout>

@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1.0"
         android:background="@drawable/threechoice_one"
-        android:text="广场" />
+        android:text="社区" />
 
     <ImageView
         android:layout_width="1.5dp"
@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1.0"
             android:background="@drawable/threechoice_two"
-            android:text="群组" />
+            android:text="房间" />
 
         <ImageView
             android:layout_width="1.5dp"

@@ -211,7 +211,7 @@ public class FriendsSubController {
 			} else if (view_class == "card_contaner") {
 				// onTouchDownView = null;
 				// onClickView = null;
-				Toast.makeText(mainController.thisActivity, "long press max", Toast.LENGTH_SHORT).show();
+				// Toast.makeText(mainController.thisActivity, "long press max", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(mainController.thisActivity, CirclesManageActivity.class);
 				mainController.thisActivity.startActivity(intent);
 			}

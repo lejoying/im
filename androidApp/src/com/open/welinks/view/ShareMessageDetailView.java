@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -45,16 +44,12 @@ import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
-import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.ShareView;
-import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Shares.Share.Comment;
@@ -63,7 +58,6 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MCImageUtils;
 
 public class ShareMessageDetailView {
 
@@ -150,7 +144,6 @@ public class ShareMessageDetailView {
 		mImageFile = fileHandlers.sdcardImageFolder;
 	}
 
-	public Bitmap bitmap;
 	public DisplayMetrics displayMetrics;
 
 	public ImageView menuImage;
@@ -160,8 +153,6 @@ public class ShareMessageDetailView {
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		Resources resources = thisActivity.getResources();
-		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 		displayMetrics = new DisplayMetrics();
 
@@ -322,52 +313,6 @@ public class ShareMessageDetailView {
 			File currentImageFile = new File(mImageFile, imageFileName);
 			String filepath = currentImageFile.getAbsolutePath();
 			showImages.add(filepath);
-
-			// if (imagePath.equals("")) {
-			// imagePath = imageFileName;
-			// }
-			// boolean isFlag = false;
-			// String path = "";
-			// if (currentImageFile.exists()) {
-			// BitmapFactory.Options boptions = new BitmapFactory.Options();
-			// boptions.inJustDecodeBounds = true;
-			// BitmapFactory.decodeFile(currentImageFile.getAbsolutePath(), boptions);
-			// if (boptions.outWidth > 0) {
-			// isFlag = true;
-			// }
-			// }
-			// if (isFlag) {
-			// path = "file://" + filepath;
-			// } else {
-			// path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
-			// }
-			// shareView.firstPath.add(API.DOMAIN_COMMONIMAGE + "images/" + imageFileName);
-			// if (!isFlag) {
-			// DownloadFile downloadFile = new DownloadFile(path, filepath);
-			// downloadFile.view = imageView;
-			// downloadFile.setDownloadFileListener(thisController.downloadListener);
-			// thisController.downloadFileList.addDownloadFile(downloadFile);
-			// } else {
-			// imageLoader.displayImage(path, imageView, displayImageOptions, new SimpleImageLoadingListener() {
-			// @Override
-			// public void onLoadingStarted(String imageUri, View view) {
-			// }
-			//
-			// @Override
-			// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-			// }
-			//
-			// @Override
-			// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-			// if (thisController.WeChatBitmap == null) {
-			// thisController.WeChatBitmap = loadedImage;
-			// }
-			// int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
-			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
-			// imageView.setLayoutParams(params);
-			// }
-			// });
-			// }
 		}
 		if (!"".equals(thisController.textContent)) {
 			TextView textView = new TextView(thisActivity);
@@ -529,7 +474,7 @@ public class ShareMessageDetailView {
 				reply.setVisibility(View.GONE);
 				received.setVisibility(View.GONE);
 			}
-			head.setImageBitmap(bitmap);
+			fileHandlers.getHeadImage(comment.head, head, headOptions);
 			view.setTag("ShareComment#" + comment.phone);
 			view.setTag(R.id.commentEditTextView, comment);
 

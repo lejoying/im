@@ -129,7 +129,7 @@ public class GroupMemberManageController {
 							thisView.groupMembersAdapter.notifyDataSetChanged();
 							thisView.showAlreayList();
 						}
-					} else if (thisView.isSubtract == thisView.MANAGE_COMMON) {
+					} else if (thisView.isSubtract == thisView.MANAGE_COMMON || thisView.isSubtract == thisView.MANAGE_INIT) {
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, content);
 						thisView.businessCardPopView.showUserCardDialogView();
 						// Toast.makeText(thisActivity, "好友资料", Toast.LENGTH_SHORT).show();

@@ -185,7 +185,7 @@ public class SquareSubView {
 		// square cover layout
 		this.groupMembersView = mainView.mInflater.inflate(R.layout.share_group_members_show, null);
 		titleName = (TextView) this.groupMembersView.findViewById(R.id.share_praise);
-		titleName.setText("广场广播");
+		titleName.setText("微型社区广播");
 		groupMembersListContentView = (ViewGroup) this.groupMembersView.findViewById(R.id.groupMembersListContent);
 		groupMembersListContentView.setTag(R.id.tag_class, "group_members");
 		releaseShareView = (TouchImageView) this.groupMembersView.findViewById(R.id.releaseShare);
@@ -314,7 +314,7 @@ public class SquareSubView {
 		}
 
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
-		titleName.setText(group.name + "广场");
+		titleName.setText(group.name);
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
@@ -573,7 +573,7 @@ public class SquareSubView {
 			imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		}
 
-		titleName.setText(group.name + "广场");
+		titleName.setText(group.name);
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
 
 		List<String> sharesOrder = share.shareMessagesOrder;

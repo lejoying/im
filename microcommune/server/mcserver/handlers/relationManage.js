@@ -1480,7 +1480,7 @@ var contactDB = new neo4j.GraphDatabase("http://182.92.1.150:7474/");
 relationManage.updatecontact = function (data, response) {
     response.asynchronous = 1;
     var startTime = new Date().getTime();
-    console.log(data);
+    //console.log(data);
     var phone = data.phone;
     var contact = data.contact;
     var arr = [contact];

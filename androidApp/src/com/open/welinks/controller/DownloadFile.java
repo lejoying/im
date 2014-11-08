@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.http.Header;
 
-import android.util.Log;
 import android.view.View;
 
 import com.lidroid.xutils.HttpUtils;
@@ -14,6 +13,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
+import com.open.lib.MyLog;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.view.DownloadOssFileView.TransportingList.TransportingItem;
@@ -21,6 +21,7 @@ import com.open.welinks.view.DownloadOssFileView.TransportingList.TransportingIt
 public class DownloadFile {
 
 	public String tag = "DownloadFile";
+	public MyLog log = new MyLog(tag, true);
 
 	public DownloadFile instance;
 
@@ -73,7 +74,7 @@ public class DownloadFile {
 			return;
 		}
 		HttpUtils httpUtils = new HttpUtils();
-		// Log.e(tag, "-----startAAA-----");
+		// log.e(tag, "-----startAAA-----");
 
 		httpUtils.download(url, path, download);
 	}
@@ -83,7 +84,7 @@ public class DownloadFile {
 		public void onStart() {
 			time.start = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_START;
-			// Log.e(tag, "-----start-----");
+			// log.e(tag, "-----start-----");
 		}
 
 		@Override
@@ -112,7 +113,7 @@ public class DownloadFile {
 					}
 				}
 			}
-			// Log.e(tag, "-----onConneced-----");
+			// log.e(tag, "-----onConneced-----");
 		};
 
 		@Override
@@ -123,7 +124,7 @@ public class DownloadFile {
 			if (downloadListener != null) {
 				downloadListener.onLoading(instance, uploadPrecent, isDownloadStatus);
 			}
-			// Log.e(tag, "-----onLoading-----");
+			// log.e(tag, "-----onLoading-----");
 		}
 
 		@Override
@@ -133,7 +134,7 @@ public class DownloadFile {
 			if (downloadListener != null) {
 				downloadListener.onSuccess(instance, isDownloadStatus);
 			}
-			Log.e(tag, "-----success-----" + responseInfo.statusCode);
+			log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 
 		@Override
@@ -142,7 +143,7 @@ public class DownloadFile {
 			if (downloadListener != null) {
 				downloadListener.onFailure(instance, isDownloadStatus);
 			}
-			Log.d(tag, "onFailure: -----" + msg);
+			log.d(tag, "onFailure: -----" + msg);
 		}
 	};
 

@@ -486,21 +486,21 @@ public class DataHandlers {
 		}
 		String contentType = event.type;
 		if ("group_addmembers".equals(contentType)) {
-			content = "【" + nickName + "】 邀请了" + event.content + "个好友到 【" + groupName + "】 群组中.";
+			content = "【" + nickName + "】 邀请了" + event.content + "个好友到 【" + groupName + "】 房间中.";
 		} else if ("group_removemembers".equals(contentType)) {
 			content = "【" + nickName + "】 从【" + groupName + "】 移除了" + event.content + "个好友.";
 		} else if ("group_dataupdate".equals(contentType)) {
 			content = "【" + nickName + "】 更新了 【" + groupName + "】 的资料信息.";
 		} else if ("group_create".equals(contentType)) {
-			content = "【" + nickName + "】创建了新的群组:【" + groupName + "】.";
+			content = "【" + nickName + "】创建了新的房间:【" + groupName + "】.";
 		} else if ("group_addme".equals(contentType)) {
 			if ("您".equals(nickName)) {
-				content = "加入【" + groupName + "】群组.";
+				content = "加入【" + groupName + "】房间.";
 			} else {
-				content = "【" + nickName + "】把你从添加到群组：【" + groupName + "】.";
+				content = "【" + nickName + "】把你从添加到房间：【" + groupName + "】.";
 			}
 		} else if ("group_removeme".equals(contentType)) {
-			content = "【" + nickName + "】退出了【" + groupName + "】群组.";
+			content = "【" + nickName + "】退出了【" + groupName + "】房间.";
 		}
 		return content;
 	}

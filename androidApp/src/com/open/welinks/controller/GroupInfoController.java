@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
@@ -30,11 +31,12 @@ import com.open.welinks.CreateGroupLocationActivity;
 import com.open.welinks.CropActivity;
 import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.ImagesDirectoryActivity;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
-import com.open.welinks.customView.Alert.AlertSelectDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.customView.Alert.AlertSelectDialog;
 import com.open.welinks.customView.Alert.AlertSelectDialog.OnDialogClickListener2;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -63,6 +65,7 @@ public class GroupInfoController {
 	public OnClickListener mOnClickListener;
 	public OnUploadLoadingListener uploadLoadingListener;
 	public OnSeekBarChangeListener mOnSeekBarChangeListener;
+	public OnDownloadListener downloadListener;
 
 	public Group currentGroup;
 
@@ -95,6 +98,21 @@ public class GroupInfoController {
 	public int REQUESTCODE_SELECT = 0x1, REQUESTCODE_TAKE = 0x2, REQUESTCODE_CAT = 0x3, TAG_EXIT = 0x99, TAG_EDIT = 0x98;
 
 	public void initializeListeners() {
+		downloadListener = new OnDownloadListener() {
+
+			@Override
+			public void onLoading(DownloadFile instance, int precent, int status) {
+			}
+
+			@Override
+			public void onSuccess(final DownloadFile instance, int status) {
+				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view);
+			}
+
+			@Override
+			public void onFailure(DownloadFile instance, int status) {
+			}
+		};
 		mOnSeekBarChangeListener = new OnSeekBarChangeListener() {
 
 			@Override

@@ -230,7 +230,7 @@ public class BusinessCardView {
 			myShareView.setVisibility(View.GONE);
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
-			rightTopButton.setText("发起群聊");
+			rightTopButton.setText("聊天室");
 			Group group = thisController.data.relationship.groupsMap.get(thisController.key);
 			if (!isGetData)
 				thisController.getGroupCard(group.gid + "", "group");
@@ -238,8 +238,8 @@ public class BusinessCardView {
 			businessCard.icon = group.icon;
 			businessCard.nickname = group.name;
 			String description = "";
-			if (group.description == null || group.description.equals("") || group.description.equals("请输入群组描述信息")) {
-				description = "此群组暂无业务";
+			if (group.description == null || group.description.equals("") || group.description.equals("请输入房间描述信息")) {
+				description = "此房间暂无业务";
 			} else {
 				description = group.description;
 			}
@@ -248,8 +248,8 @@ public class BusinessCardView {
 			businessCard.mainBusiness = description;
 			businessCard.lable = "暂无标签";
 			businessCard.creattime = group.createTime;
-			businessCard.button_one = "发起聊天";
-			businessCard.button_two = "修改群名片";
+			businessCard.button_one = "聊天室";
+			businessCard.button_two = "修改房间名片";
 			businessCard.button_three = "";
 			buttonThree.setVisibility(View.GONE);
 			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
@@ -257,7 +257,7 @@ public class BusinessCardView {
 			myShareView.setVisibility(View.GONE);
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
-			rightTopButton.setText("加入群组");
+			rightTopButton.setText("加入房间");
 			if (data.tempData.tempGroup == null) {
 				thisController.getGroupCard(thisController.key, "group");
 			}
@@ -273,7 +273,7 @@ public class BusinessCardView {
 				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
 				businessCard.lable = "暂无标签";
 				businessCard.creattime = data.tempData.tempGroup.createTime;
-				businessCard.button_one = "加入群组";
+				businessCard.button_one = "加入房间";
 				businessCard.button_two = "";
 				businessCard.button_three = "";
 				buttonTwo.setVisibility(View.GONE);
@@ -284,7 +284,7 @@ public class BusinessCardView {
 			myShareView.setVisibility(View.GONE);
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
-			rightTopButton.setText("进入广场");
+			rightTopButton.setText("进入社区");
 			rightTopButton.setVisibility(View.GONE);
 			Group square = data.relationship.groupsMap.get(thisController.key);
 			if (square == null) {
@@ -300,7 +300,7 @@ public class BusinessCardView {
 				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, square.longitude, square.latitude);
 				businessCard.lable = "暂无标签";
 				businessCard.creattime = square.createTime;
-				businessCard.button_one = "进入广场";
+				businessCard.button_one = "进入社区";
 				businessCard.button_two = "";
 				businessCard.button_three = "";
 				buttonOne.setVisibility(View.GONE);
@@ -347,13 +347,13 @@ public class BusinessCardView {
 			lableTitle.setText("爱好：");
 			creatTimeTitle.setText("注册时间：");
 		} else if (status.equals(Status.JOINEDGROUP) || status.equals(Status.NOTJOINGROUP)) {
-			backTitleView.setText("群组详情");
+			backTitleView.setText("房间详情");
 			businessTitle.setText("名称：");
 			lableTitle.setText("标签：");
 			creatTimeTitle.setText("创建时间：");
 			buttonTwo.setVisibility(View.GONE);
 		} else if (status.equals(Status.SQUARE)) {
-			backTitleView.setText("广场详情");
+			backTitleView.setText("社区详情");
 			businessTitle.setText("名称：");
 			lableTitle.setText("标签：");
 			creatTimeTitle.setText("创建时间：");

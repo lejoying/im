@@ -1,5 +1,6 @@
 package com.open.welinks.view;
 
+import java.io.File;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -13,12 +14,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.GroupInfoController;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 
 public class GroupInfoView {
@@ -53,6 +61,8 @@ public class GroupInfoView {
 	public LinearLayout memberListView;
 	public View cardOptionView;
 
+	public ImageView converImageView;
+
 	public TextView groupMemberCountView;
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
@@ -75,7 +85,7 @@ public class GroupInfoView {
 		this.thisActivity.setContentView(R.layout.activity_group_info);
 		this.backView = thisActivity.findViewById(R.id.backView);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
-		this.backTitleView.setText("群组信息");
+		this.backTitleView.setText("房间信息");
 		this.headOptionView = thisActivity.findViewById(R.id.headOption);
 		this.headIvView = (ImageView) thisActivity.findViewById(R.id.headIv);
 		this.nickNameOptionView = thisActivity.findViewById(R.id.nickNameOption);
@@ -97,6 +107,7 @@ public class GroupInfoView {
 		this.memberListTopView = thisActivity.findViewById(R.id.memberListTop);
 		this.memberListView = (LinearLayout) thisActivity.findViewById(R.id.memberList);
 		this.cardOptionView = thisActivity.findViewById(R.id.cardOption);
+		this.converImageView = (ImageView) thisActivity.findViewById(R.id.converImage);
 	}
 
 	public DisplayImageOptions options0 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.face_man).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(70)).build();
@@ -146,5 +157,51 @@ public class GroupInfoView {
 		}
 		groupMemberCountView.setText(thisController.currentGroup.members.size() + "人");
 		setMembersList();
+		setConver();
+	}
+
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+
+	public void setConver() {
+		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		if (group.conver == null || "".equals(group.conver)) {
+			imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
+			return;
+		}
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		final String path = file.getAbsolutePath();
+		if (file.exists()) {
+			imageLoader.displayImage("file://" + path, converImageView, new SimpleImageLoadingListener() {
+				@Override
+				public void onLoadingStarted(String imageUri, View view) {
+				}
+
+				@Override
+				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					downloadConver(group.conver, path);
+				}
+
+				@Override
+				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				}
+			});
+		} else {
+			if (group.conver != null) {
+				downloadConver(group.conver, path);
+			} else {
+				imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
+			}
+		}
+	}
+
+	public void downloadConver(String converName, String path) {
+		converImageView.setTag("conver");
+		String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + converName;
+		DownloadFile downloadFile = new DownloadFile(url, path);
+		downloadFile.view = converImageView;
+		downloadFile.setDownloadFileListener(thisController.downloadListener);
+		downloadFileList.addDownloadFile(downloadFile);
 	}
 }
