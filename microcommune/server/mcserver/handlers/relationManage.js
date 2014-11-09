@@ -1766,7 +1766,7 @@ relationManage.updatecontact = function (data, response) {
         });
     }
 
-    //old code
+    //old code ****************************************************
     function checkLeftrelation(accountsF, accountsMapF) {
         console.log("start check follow relation : 判断向右的单向follow");
         var query = [

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
@@ -41,6 +42,7 @@ public class ChatView {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public String tag = "ChatView";
+	public MyLog log = new MyLog(tag, true);
 
 	public DisplayMetrics displayMetrics;
 	public LayoutInflater mInflater;
@@ -292,7 +294,8 @@ public class ChatView {
 						chatHolder.message_status.setVisibility(View.GONE);
 					}
 				}
-
+				// TODO
+				log.e(contentType);
 				if ("text".equals(contentType)) {
 					chatHolder.character.setVisibility(View.VISIBLE);
 					chatHolder.image.setVisibility(View.GONE);
@@ -306,13 +309,14 @@ public class ChatView {
 					chatHolder.share.setVisibility(View.GONE);
 					List<String> images = thisController.getImageFromJson(message.content);
 					String image = images.get(0);
+					log.e(image);
 					if (images.size() == 1) {
 						chatHolder.images_layout.setVisibility(View.GONE);
 						chatHolder.image.setVisibility(View.VISIBLE);
 						chatHolder.image.setTag(R.id.tag_first, images);
 						// chatHolder.image.setImageResource(R.drawable.login_background_1);
 						// thisController.setImageThumbnail(image, chatHolder.image, 178, 106);
-						fileHandlers.getThumbleImage(image, chatHolder.image, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
 						chatHolder.image.setOnClickListener(thisController.mOnClickListener);
 					} else {
 						chatHolder.image.setVisibility(View.GONE);
@@ -320,7 +324,7 @@ public class ChatView {
 						chatHolder.images_count.setText(String.valueOf(images.size()));
 						chatHolder.images_layout.setTag(R.id.tag_first, images);
 						// thisController.setImageThumbnail(image, chatHolder.images, 178, 106);
-						fileHandlers.getThumbleImage(image, chatHolder.image, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
 						chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
 					}
 				} else if ("voice".equals(contentType)) {
