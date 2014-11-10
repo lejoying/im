@@ -270,7 +270,7 @@ public class FileHandlers {
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						log.e(path+"-complete");
+						// log.e(path+"-complete");
 					}
 				});
 			} else {

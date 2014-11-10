@@ -295,12 +295,13 @@ public class ChatView {
 					}
 				}
 				// TODO
-				log.e(contentType);
+				// log.e(contentType);
 				if ("text".equals(contentType)) {
 					chatHolder.character.setVisibility(View.VISIBLE);
 					chatHolder.image.setVisibility(View.GONE);
 					chatHolder.voice.setVisibility(View.GONE);
 					chatHolder.share.setVisibility(View.GONE);
+					chatHolder.images_layout.setVisibility(View.GONE);
 					chatHolder.character.setText(message.content);
 				} else if ("image".equals(contentType)) {
 					chatHolder.character.setVisibility(View.GONE);
@@ -309,14 +310,14 @@ public class ChatView {
 					chatHolder.share.setVisibility(View.GONE);
 					List<String> images = thisController.getImageFromJson(message.content);
 					String image = images.get(0);
-					log.e(image);
+					// log.e(image);
 					if (images.size() == 1) {
 						chatHolder.images_layout.setVisibility(View.GONE);
 						chatHolder.image.setVisibility(View.VISIBLE);
 						chatHolder.image.setTag(R.id.tag_first, images);
 						// chatHolder.image.setImageResource(R.drawable.login_background_1);
 						// thisController.setImageThumbnail(image, chatHolder.image, 178, 106);
-						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						fileHandlers.getThumbleImage(image, chatHolder.image, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
 						chatHolder.image.setOnClickListener(thisController.mOnClickListener);
 					} else {
 						chatHolder.image.setVisibility(View.GONE);
@@ -341,6 +342,7 @@ public class ChatView {
 					chatHolder.voice_icon.setImageBitmap(bitmap);
 					chatHolder.voicetime.setText("");
 				} else if ("share".equals(contentType)) {
+					chatHolder.message_status.setVisibility(View.GONE);
 					chatHolder.character.setVisibility(View.GONE);
 					chatHolder.image.setVisibility(View.GONE);
 					chatHolder.share.setVisibility(View.VISIBLE);
@@ -349,7 +351,7 @@ public class ChatView {
 					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
 					chatHolder.share_text.setText(messageContent.text);
 					if (messageContent.image != null && !"".equals(messageContent.image)) {
-						fileHandlers.getThumbleImage(messageContent.image, chatHolder.image, (int) (50 * displayMetrics.density + 0.5f) / 2, (int) (50 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						fileHandlers.getThumbleImage(messageContent.image, chatHolder.share_image, (int) (50 * displayMetrics.density + 0.5f) / 2, (int) (50 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
 						// thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
 					} else {
 						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, chatHolder.share_image, thisController.options);

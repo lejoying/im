@@ -37,6 +37,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
+import com.open.lib.MyLog;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
@@ -69,6 +70,7 @@ public class ShareMessageDetailController {
 	public String tag = "ShareMessageDetailController";
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+	public MyLog log = new MyLog(tag, true);
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -132,22 +134,28 @@ public class ShareMessageDetailController {
 			if (data.shares.shareMap.containsKey(gid)) {
 				share = data.shares.shareMap.get(gid);
 				shareMessage = share.shareMessagesMap.get(gsid);
+				getShareMessageDetail();
+				log.e("1");
 			} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
 				share = data.shares.new Share();
 				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
 				getShareMessageDetail();
+				log.e("2");
 			} else {
 				share = data.shares.new Share();
 				// getShareFromServer(gid, gsid);
 				getShareMessageDetail();
+				log.e("3");
 			}
 		}
+		log.e(gid + "!---!" + gsid);
 	}
 
 	public void initShareListener() {
 		mOnWeChatClickListener = thisView.shareView.new onWeChatClickListener() {
 			@Override
 			public void onWeChatClick() {
+				WeChatBitmap = thisView.imageView.getDrawingCache();
 				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, gid, thisController.gsid);
 			}
 		};
@@ -453,36 +461,41 @@ public class ShareMessageDetailController {
 	}
 
 	public void deleteGroupShare() {
-		if (data.userInformation.currentUser.phone.equals(shareMessage.phone)) {
-			Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
-				@Override
-				public void onClick(AlertInputDialog dialog) {
-					RequestParams params = new RequestParams();
-					HttpUtils httpUtils = new HttpUtils();
-					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-					params.addBodyParameter("gid", gid);
-					params.addBodyParameter("gsid", gsid);
+		if (shareMessage == null) {
+			log.e("此分享==null   异常");
+		} else {
 
-					data = parser.check();
-					Share share = data.shares.shareMap.get(gid);
-					if (share != null && share.shareMessagesOrder != null) {
-						share.shareMessagesOrder.remove(gsid);
+			if (data.userInformation.currentUser.phone.equals(shareMessage.phone)) {
+				Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
+					@Override
+					public void onClick(AlertInputDialog dialog) {
+						RequestParams params = new RequestParams();
+						HttpUtils httpUtils = new HttpUtils();
+						params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+						params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+						params.addBodyParameter("gid", gid);
+						params.addBodyParameter("gsid", gsid);
+
+						data = parser.check();
+						Share share = data.shares.shareMap.get(gid);
+						if (share != null && share.shareMessagesOrder != null) {
+							share.shareMessagesOrder.remove(gsid);
+						}
+						// share.shareMessagesMap.remove(gsid);
+						data.shares.isModified = true;
+						if (data.relationship.squares.contains(gid)) {
+							viewManage.postNotifyView("SquareSubViewMessage");
+						} else {
+							viewManage.postNotifyView("ShareSubViewMessage");
+						}
+						httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
+						Intent intent = new Intent();
+						intent.putExtra("key", gsid);
+						thisActivity.setResult(Activity.RESULT_OK, intent);
+						thisActivity.finish();
 					}
-					// share.shareMessagesMap.remove(gsid);
-					data.shares.isModified = true;
-					if (data.relationship.squares.contains(gid)) {
-						viewManage.postNotifyView("SquareSubViewMessage");
-					} else {
-						viewManage.postNotifyView("ShareSubViewMessage");
-					}
-					httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
-					Intent intent = new Intent();
-					intent.putExtra("key", gsid);
-					thisActivity.setResult(Activity.RESULT_OK, intent);
-					thisActivity.finish();
-				}
-			}).show();
+				}).show();
+			}
 		}
 	}
 

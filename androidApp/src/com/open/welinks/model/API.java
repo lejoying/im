@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://192.168.0.105/";// http://www.we-links.com/
 
 	/**
 	 * http://images2.we-links.com/
@@ -12,6 +12,8 @@ public class API {
 	 * http://images3.we-links.com/
 	 */
 	public static String DOMAIN_OSS_THUMBNAIL = "http://images3.we-links.com/";
+
+	public static String BUG_SEND = API_DOMAIN + "api2/bug/send";
 	// account
 	/**
 	 * http://www.we-links.com/api2/account/modify
@@ -152,7 +154,7 @@ public class API {
 	/**
 	 * http://www.we-links.com/api2/relation/addfriendagree
 	 */
-//	 public static String RELATION_ADDFRIENDAGREE = API_DOMAIN + "api2/relation/addfriendagree";
+	// public static String RELATION_ADDFRIENDAGREE = API_DOMAIN + "api2/relation/addfriendagree";
 	/**
 	 * http://www.we-links.com/api2/relation/updatecontact
 	 */

@@ -24,6 +24,7 @@ import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.UpdateManager;
 import com.open.welinks.service.PushService;
 import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.FriendsSubView;
@@ -56,12 +57,21 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
+		// Context context = instance.instance.context;
 		instance = this;
 		initImageLoader(getApplicationContext());
 
 		startPushService();
 
 		thisActivity.setContentView(R.layout.activity_welinks);
+
+//		try {
+			UpdateManager manager = new UpdateManager(MainActivity.this);
+			manager.checkUpdate();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+
 	}
 
 	public void startPushService() {

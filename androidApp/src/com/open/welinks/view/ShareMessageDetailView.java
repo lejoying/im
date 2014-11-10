@@ -10,7 +10,6 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.Spannable;
@@ -41,7 +40,6 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -58,6 +56,7 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.utils.MyGson;
 
 public class ShareMessageDetailView {
 
@@ -81,7 +80,7 @@ public class ShareMessageDetailView {
 	public float screenDip;
 	public float screenDensity;
 
-	public Gson gson = new Gson();
+	public MyGson gson = new MyGson();
 
 	public RelativeLayout backView;
 	public RelativeLayout rightContainer;
@@ -151,8 +150,6 @@ public class ShareMessageDetailView {
 	public void initView() {
 		initData();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
-
-		Resources resources = thisActivity.getResources();
 
 		displayMetrics = new DisplayMetrics();
 
@@ -262,6 +259,7 @@ public class ShareMessageDetailView {
 	public Friend friend;
 
 	public String imagePath = "";
+	public ImageView imageView;
 
 	public void showShareMessageDetail() {
 		shareMessageDetailContentView.removeAllViews();
@@ -284,7 +282,15 @@ public class ShareMessageDetailView {
 			}
 		}
 		String content = thisController.shareMessage.content;
+		if (thisController.shareMessage.type != "imagetext") {
+			
+		}
 		ShareContent shareContent = gson.fromJson("{shareContentItems:" + content + "}", ShareContent.class);
+		if (shareContent == null) {
+			// TODO why gson Exception
+			Log.e(tag, content);
+			return;
+		}
 		List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 		thisController.textContent = "";
 		thisController.imageContent = "";
@@ -303,6 +309,8 @@ public class ShareMessageDetailView {
 			String imageFileName = shareContentItem.detail;
 			if ("".equals(thisController.imageContent)) {
 				thisController.imageContent = imageFileName;
+				this.imageView = imageView;
+				imageView.setDrawingCacheEnabled(true);
 			}
 			imageView.setTag("ShareMessageDetailImage#" + index);
 			index++;

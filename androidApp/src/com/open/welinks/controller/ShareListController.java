@@ -97,11 +97,13 @@ public class ShareListController {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if (position != 0) {
+					// if (view.getTag(R.id.tag_third) == null) {
 					ShareMessage message = sharesMap.get(shares.get(position - 1));
 					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 					intent.putExtra("gid", message.gid);
 					intent.putExtra("gsid", message.gsid);
 					thisActivity.startActivityForResult(intent, resultCodeDetail);
+					// }
 				}
 			}
 		};

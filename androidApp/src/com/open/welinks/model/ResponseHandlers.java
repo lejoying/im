@@ -886,11 +886,7 @@ public class ResponseHandlers {
 					List<String> messages = response.messages;
 					parser.check();
 					User user = data.userInformation.currentUser;
-					if (messages.size() == 0) {
-						user.flag = "none";
-					} else {
-						user.flag = response.flag;
-					}
+					user.flag = response.flag;
 					data.userInformation.isModified = true;
 					data.messages.isModified = true;
 					log.e("message size:" + messages.size());

@@ -11,6 +11,16 @@ var zookeeper = require("./lib/zookeeper-client.js");
 //    accessKeyPool = KeyPool;
 //    console.info(mcServer.name + " accessKeyPool update :  " + mcServer.ip + ":" + mcServer.port + " " + mcServer.timeout);
 //});
+var bugManage = require("./handlers/bugManage.js");
+requestHandlers.bugManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "send") {
+        bugManage.send(data, response);
+    }
+}
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
     if (data == null) {

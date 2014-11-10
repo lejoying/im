@@ -178,13 +178,19 @@ public class ShareListView {
 				holder.headView.setTag(R.id.tag_class, "conver_head");
 				holder.headView.setOnClickListener(thisController.mOnClickListener);
 			} else {
-				holder.textContentView.setText(position + "");
+				// holder.textContentView.setText(position + "");
 
 				String gsid = thisController.shares.get(position - 1);
 				ShareMessage message = thisController.sharesMap.get(gsid);
+				holder.imageContainer.removeAllViews();
 				if (message != null) {
 					ShareContent shareContent = thisController.gson.fromJson("{shareContentItems:" + message.content + "}", ShareContent.class);
 					if (shareContent == null) {
+						holder.imageContainer.removeAllViews();
+						holder.imageCountView.setVisibility(View.GONE);
+						holder.imageContainer.setVisibility(View.GONE);
+						holder.textContentView.setText("此数据目前暂无展示方式,\n敬请谅解。");
+						convertView.setTag(R.id.tag_third, "null");
 						return convertView;
 					}
 					String textContent = "";
