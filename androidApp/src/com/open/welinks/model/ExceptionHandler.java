@@ -47,6 +47,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 		this.service = service;
 	}
 
+	public Data data = Data.getInstance();
+
 	@Override
 	public void uncaughtException(Thread arg0, Throwable arg1) {
 		log.e("程序挂掉了 ");
@@ -61,7 +63,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 
 		// 4.把所有的信息 还有信息对应的时间 提交到服务器
 		try {
-			service.sendContent("Data：\n" + dataFormat.format(new Date()) + "\n版本信息：\n" + versioninfo + "\n手机信息：\n" + mobileInfo + "\nbug内容：\n" + errorinfo);
+			log.e(errorinfo);
+			if (!"NONE".equals(data.localStatus.sendBug)) {
+				service.sendContent("Data：\n" + dataFormat.format(new Date()) + "\n版本信息：\n" + versioninfo + "\n手机信息：\n" + mobileInfo + "\nbug内容：\n" + errorinfo);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -110,7 +110,7 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     var operation = pathObject["operation"];
     if (operation == "addfriend") {
         oauth6(data.phone, data.accessKey, response, function () {
-            relationManage.addfriend(data, response);
+            //relationManage.addfriend(data, response);
         });
     }
     else if (operation == "deletefriend") {
@@ -135,7 +135,7 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     }
     else if (operation == "addfriendagree") {
         oauth6(data.phone, data.accessKey, response, function () {
-            relationManage.addfriendagree(data, response);
+            //relationManage.addfriendagree(data, response);
         });
     }
 

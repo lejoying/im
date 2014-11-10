@@ -212,8 +212,16 @@ public class FriendsSubController {
 				// onTouchDownView = null;
 				// onClickView = null;
 				// Toast.makeText(mainController.thisActivity, "long press max", Toast.LENGTH_SHORT).show();
-				Intent intent = new Intent(mainController.thisActivity, CirclesManageActivity.class);
-				mainController.thisActivity.startActivity(intent);
+				if (onClickView.getTag(R.id.tag_class) == null) {
+					Intent intent = new Intent(mainController.thisActivity, CirclesManageActivity.class);
+					mainController.thisActivity.startActivity(intent);
+				} else {
+					String view_class2 = (String) onClickView.getTag(R.id.tag_class);
+					if (!"addfriend_view".equals(view_class2)) {
+						Intent intent = new Intent(mainController.thisActivity, CirclesManageActivity.class);
+						mainController.thisActivity.startActivity(intent);
+					}
+				}
 			}
 		}
 		isTouchDown = false;

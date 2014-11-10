@@ -1,14 +1,24 @@
 package com.open.welinks.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +33,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
+import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
@@ -303,6 +314,37 @@ public class ChatView {
 					chatHolder.share.setVisibility(View.GONE);
 					chatHolder.images_layout.setVisibility(View.GONE);
 					chatHolder.character.setText(message.content);
+					chatHolder.character.setAutoLinkMask(Linkify.ALL);
+					chatHolder.character.setMovementMethod(LinkMovementMethod.getInstance());
+					URLSpan[] urls = chatHolder.character.getUrls();
+					String contentString = message.content;
+					SpannableStringBuilder style = new SpannableStringBuilder(message.content);
+					Map<String, Integer> positionMap = new HashMap<String, Integer>();
+					if (urls.length > 0) {
+						Log.e(tag, "Url length:" + urls.length);
+						for (int i = 0; i < urls.length; i++) {
+							String str = urls[i].getURL();
+							Log.e(tag, "Url content:" + str);
+							int start = 0;
+							int end = 0;
+							if (positionMap.get(str) == null) {
+								start = contentString.indexOf(str);
+								end = start + str.length();
+							} else {
+								start = positionMap.get(str);
+								start = contentString.indexOf(str, start);
+								end = start + str.length();
+							}
+							MyURLSpan myURLSpan = new MyURLSpan(str);
+							if (start == -1 || end > contentString.length()) {
+								continue;
+							} else {
+								positionMap.put(str, end);
+								style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+							}
+						}
+					}
+					chatHolder.character.setText(style);
 				} else if ("image".equals(contentType)) {
 					chatHolder.character.setVisibility(View.GONE);
 					chatHolder.image.setVisibility(View.VISIBLE);
@@ -388,6 +430,22 @@ public class ChatView {
 			public RelativeLayout voice;
 			public TextView time, character, voicetime, images_count, share_text, share_title;
 			public ImageView voice_icon, head, image, images, share_image, message_status;
+		}
+	}
+
+	private class MyURLSpan extends ClickableSpan {
+
+		private String mUrl;
+
+		MyURLSpan(String url) {
+			mUrl = url;
+		}
+
+		@Override
+		public void onClick(View widget) {
+			Intent intent = new Intent(thisActivity, WebViewActivity.class);
+			intent.putExtra("url", mUrl);
+			thisActivity.startActivity(intent);
 		}
 	}
 }

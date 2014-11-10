@@ -96,26 +96,36 @@ public class ImageDetailFragment extends Fragment {
 			}
 			final String path0 = path;
 			final String url = API.DOMAIN_COMMONIMAGE + "images/" + path.substring(path.lastIndexOf("/") + 1);
-			imageLoader.displayImage("file://" + path0, mImageView, new SimpleImageLoadingListener() {
-				@Override
-				public void onLoadingStarted(String imageUri, View view) {
-					mProgressBar.setVisibility(View.VISIBLE);
-				}
+			File imageFile = new File(path);
+			if (imageFile.exists()) {
 
-				@Override
-				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					DownloadFile downloadFile = new DownloadFile(url, path);
-					downloadFile.view = view;
-					downloadFile.setDownloadFileListener(downloadListener);
-					downloadFileList.addDownloadFile(downloadFile);
-					mProgressBar.setVisibility(View.GONE);
-				}
+				imageLoader.displayImage("file://" + path0, mImageView, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+						mProgressBar.setVisibility(View.VISIBLE);
+					}
 
-				@Override
-				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-					mProgressBar.setVisibility(View.GONE);
-				}
-			});
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						DownloadFile downloadFile = new DownloadFile(url, path);
+						downloadFile.view = mImageView;
+						downloadFile.setDownloadFileListener(downloadListener);
+						downloadFileList.addDownloadFile(downloadFile);
+						mProgressBar.setVisibility(View.GONE);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						mProgressBar.setVisibility(View.GONE);
+					}
+				});
+			} else {
+				DownloadFile downloadFile = new DownloadFile(url, path);
+				downloadFile.view = mImageView;
+				downloadFile.setDownloadFileListener(downloadListener);
+				downloadFileList.addDownloadFile(downloadFile);
+				mProgressBar.setVisibility(View.GONE);
+			}
 		}
 	}
 

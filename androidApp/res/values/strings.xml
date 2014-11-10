@@ -32,7 +32,7 @@
     <string name="alert_text_neterror">网络错误</string>
     <!-- button text -->
     <string name="button_search">查  找</string>
-    <string name="button_send">发送</string>
+    <string name="button_send">发送请求</string>
     <!-- text -->
     <string name="text_search">精确查找</string>
     <!-- hint text -->
