@@ -212,7 +212,7 @@ public class FriendsSubController {
 				// onTouchDownView = null;
 				// onClickView = null;
 				// Toast.makeText(mainController.thisActivity, "long press max", Toast.LENGTH_SHORT).show();
-				if (onClickView.getTag(R.id.tag_class) == null) {
+				if (onClickView == null || onClickView.getTag(R.id.tag_class) == null) {
 					Intent intent = new Intent(mainController.thisActivity, CirclesManageActivity.class);
 					mainController.thisActivity.startActivity(intent);
 				} else {

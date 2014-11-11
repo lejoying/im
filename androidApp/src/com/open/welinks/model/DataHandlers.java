@@ -200,6 +200,7 @@ public class DataHandlers {
 			data.userInformation.isModified = true;
 			data.userInformation.currentUser.phone = "";
 			data.userInformation.currentUser.accessKey = "";
+			data.userInformation.currentUser.flag = "none";
 
 			data.relationship = null;
 			// data.relationship.isModified = false;

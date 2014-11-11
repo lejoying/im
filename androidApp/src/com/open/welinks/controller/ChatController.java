@@ -341,37 +341,6 @@ public class ChatController {
 		return gson.fromJson(content, ArrayList.class);
 	}
 
-	// public void setImageThumbnail(String fileName, ImageView view, int width, int height) {
-	// File file = new File(thisView.fileHandlers.sdcardThumbnailFolder, fileName);
-	// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + (int) (width * thisView.displayMetrics.density + 0.5f) / 2 + "w_" + (int) (height * thisView.displayMetrics.density + 0.5f) / 2 + "h_1c_1e_100q";
-	// final String path = file.getAbsolutePath();
-	// if (file.exists()) {
-	// imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
-	// @Override
-	// public void onLoadingStarted(String imageUri, View view) {
-	// }
-	//
-	// @Override
-	// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-	// DownloadFile downloadFile = new DownloadFile(url, path);
-	// downloadFile.view = view;
-	// downloadFile.setDownloadFileListener(thisController.downloadListener);
-	// downloadFileList.addDownloadFile(downloadFile);
-	// }
-	//
-	// @Override
-	// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-	//
-	// }
-	// });
-	// } else {
-	// DownloadFile downloadFile = new DownloadFile(url, path);
-	// downloadFile.view = view;
-	// downloadFile.setDownloadFileListener(thisController.downloadListener);
-	// downloadFileList.addDownloadFile(downloadFile);
-	// }
-	// }
-
 	public void showSelectTab() {
 		if (inputMethodManager.isActive()) {
 			inputMethodManager.hideSoftInputFromWindow(thisView.inputMessageContentView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);

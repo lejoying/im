@@ -13,10 +13,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Vibrator;
-import android.util.Log;
 
+import com.open.lib.MyLog;
+import com.open.welinks.LaunchActivity;
 import com.open.welinks.MainActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
@@ -25,6 +25,10 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
 
 public final class NotificationUtils {
+
+	public static String tag = "AppShortCutUtil";
+	public static MyLog log = new MyLog(tag, true);
+
 	public static final int DEFAULT_ALL = Notification.DEFAULT_ALL;
 	public static final int DEFAULT_LIGHTS = Notification.DEFAULT_LIGHTS;
 	public static final int DEFAULT_SOUND = Notification.DEFAULT_SOUND;
@@ -205,7 +209,18 @@ public final class NotificationUtils {
 			contentTitle = "微型公社";
 			contentText = "有" + friendCount + "个好友给您发来了" + messageCount + "条消息。";
 		}
-		
+
+		if (AppShortCutUtil.isAuthority(context)) {
+			if (!AppShortCutUtil.isAddShortCut(context)) {
+				AppShortCutUtil.addNumShortCut(context, LaunchActivity.class, true, messageCount + "", false);
+			} else {
+				AppShortCutUtil.deleteShortCut(context, LaunchActivity.class);
+				AppShortCutUtil.addNumShortCut(context, LaunchActivity.class, true, messageCount + "", false);
+			}
+		} else {
+			log.e("系统暂不支持显示未读消息");
+		}
+
 		NotificationUtils.message = message;
 		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.notifyicon, sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS, Notification.FLAG_AUTO_CANCEL, intent);
 		if (isNotice) {

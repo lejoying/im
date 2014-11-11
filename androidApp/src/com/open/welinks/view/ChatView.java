@@ -24,9 +24,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -102,8 +104,8 @@ public class ChatView {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-		imageWidth = (int) (178 * thisView.displayMetrics.density);
-		imageHeight = (int) (106 * thisView.displayMetrics.density);
+		imageWidth = (int) (178 * thisView.displayMetrics.density + 0.5f);
+		imageHeight = (int) (106 * thisView.displayMetrics.density + 0.5f);
 
 		thisActivity.setContentView(R.layout.activity_chat);
 
@@ -314,7 +316,7 @@ public class ChatView {
 					chatHolder.share.setVisibility(View.GONE);
 					chatHolder.images_layout.setVisibility(View.GONE);
 					chatHolder.character.setText(message.content);
-					chatHolder.character.setAutoLinkMask(Linkify.ALL);
+					chatHolder.character.setAutoLinkMask(Linkify.WEB_URLS);
 					chatHolder.character.setMovementMethod(LinkMovementMethod.getInstance());
 					URLSpan[] urls = chatHolder.character.getUrls();
 					String contentString = message.content;
@@ -341,6 +343,7 @@ public class ChatView {
 							} else {
 								positionMap.put(str, end);
 								style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+								// style.setSpan(new ForegroundColorSpan(Color.MAGENTA), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 							}
 						}
 					}
@@ -359,7 +362,10 @@ public class ChatView {
 						chatHolder.image.setTag(R.id.tag_first, images);
 						// chatHolder.image.setImageResource(R.drawable.login_background_1);
 						// thisController.setImageThumbnail(image, chatHolder.image, 178, 106);
-						fileHandlers.getThumbleImage(image, chatHolder.image, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						RelativeLayout.LayoutParams params = (LayoutParams) chatHolder.image.getLayoutParams();
+						params.height = imageHeight;
+						params.width = imageWidth;
+						fileHandlers.getThumbleImage(image, chatHolder.image, (int) imageWidth / 2, (int) imageHeight / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
 						chatHolder.image.setOnClickListener(thisController.mOnClickListener);
 					} else {
 						chatHolder.image.setVisibility(View.GONE);
@@ -367,7 +373,10 @@ public class ChatView {
 						chatHolder.images_count.setText(String.valueOf(images.size()));
 						chatHolder.images_layout.setTag(R.id.tag_first, images);
 						// thisController.setImageThumbnail(image, chatHolder.images, 178, 106);
-						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (106 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) chatHolder.images.getLayoutParams();
+						params.height = (int) (imageHeight + 40 * displayMetrics.density + 0.5f);
+						params.width = imageWidth;
+						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (params.height) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
 						chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
 					}
 				} else if ("voice".equals(contentType)) {
@@ -402,7 +411,18 @@ public class ChatView {
 					chatHolder.share.setTag(R.id.tag_third, messageContent.gsid);
 					chatHolder.share.setOnClickListener(thisController.mOnClickListener);
 				}
-				chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+				if (position != 0) {
+					Message beforeMessage = messages.get(position - 1);
+					String beroreTime = DateUtil.getChatMessageListTime(Long.valueOf(beforeMessage.time));
+					String currentTime = DateUtil.getChatMessageListTime(Long.valueOf(message.time));
+					if (!beroreTime.equals(currentTime)) {
+						chatHolder.time.setText(currentTime);
+					} else {
+						chatHolder.time.setText("");
+					}
+				} else {
+					chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+				}
 				String fileName = "";
 				String phone = "";
 				if (message.phone.equals(currentUser.phone)) {
