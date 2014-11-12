@@ -26,6 +26,7 @@ import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.DataHandlers;
@@ -316,6 +317,13 @@ public class MessagesSubView {
 						content = "您请求加" + nickName + "为好友!验证信息:" + content;
 					} else if ("account_dataupdate".equals(event.type)) {
 						content = "更新个人资料";
+					} else if ("relation_addcircle".equals(event.type)) {
+						Circle circle = data.relationship.circlesMap.get(event.rid);
+						if (circle == null) {
+							content = "创建了一个好友分组";
+						} else {
+							content = "创建了【" + circle.name + "】好友分组.";
+						}
 					}
 					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(event.time)));
 				} catch (JsonSyntaxException e) {
@@ -388,8 +396,8 @@ public class MessagesSubView {
 					data = parser.check();
 					fileHandlers.getHeadImage(fileName, headView, options);
 					String leftText = "";
-					Pattern pattern = Pattern.compile("[0-9]*"); 
-					if(pattern.matcher(message.time).matches()){
+					Pattern pattern = Pattern.compile("[0-9]*");
+					if (pattern.matcher(message.time).matches()) {
 						lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 					}
 					String sendType = message.sendType;

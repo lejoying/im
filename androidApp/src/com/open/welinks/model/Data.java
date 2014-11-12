@@ -64,7 +64,7 @@ public class Data {
 
 		public String debugMode = "NONE";// NONE
 
-		public String sendBug = "NONE";
+		public String sendBug = "true";// "NONE"
 
 		public LocalData localData;
 
@@ -292,6 +292,7 @@ public class Data {
 		public class EventMessage {
 			public String eid;
 			public String gid;
+			public String rid;
 			public String type;
 			public String phone;
 			public String phoneTo;

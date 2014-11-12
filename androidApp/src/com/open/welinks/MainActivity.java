@@ -65,12 +65,12 @@ public class MainActivity extends Activity {
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 
-//		try {
-			UpdateManager manager = new UpdateManager(MainActivity.this);
-			manager.checkUpdate();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		UpdateManager manager = new UpdateManager(MainActivity.this);
+		manager.checkUpdate();
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 
 	}
 

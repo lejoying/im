@@ -35,6 +35,7 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Event.EventMessage;
+import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
@@ -125,8 +126,10 @@ public class DynamicListActivity extends Activity {
 				for (int i = userEventMessages0.size() - 1; i >= 0; i--) {
 					String key = userEventMessages0.get(i);
 					EventMessage message0 = data.event.userEventsMap.get(key);
-					if ("account_dataupdate".equals(message0.type) || "relation_newfriend".equals(message0.type) || "relation_addfriend".equals(message0.type)) {
+					if ("relation_addcircle".equals(message0.type) || "account_dataupdate".equals(message0.type) || "relation_newfriend".equals(message0.type) || "relation_addfriend".equals(message0.type)) {
 						userEventMessages.add(message0.eid);
+					}else{
+						log.e(message0.type);
 					}
 				}
 			} else {
@@ -498,6 +501,18 @@ public class DynamicListActivity extends Activity {
 					headFileName = data.userInformation.currentUser.head;
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 					holder.eventContentView.setText("更新个人资料");
+					holder.eventOperationView.setVisibility(View.GONE);
+					holder.processedView.setVisibility(View.GONE);
+					convertView.setTag(R.id.tag_first, event.phone);
+				} else if ("relation_addcircle".equals(event.type)) {
+					headFileName = data.userInformation.currentUser.head;
+					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
+					Circle circle = data.relationship.circlesMap.get(event.rid);
+					if (circle == null) {
+						holder.eventContentView.setText("创建了一个好友分组");
+					} else {
+						holder.eventContentView.setText("创建了【" + circle.name + "】好友分组.");
+					}
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.GONE);
 					convertView.setTag(R.id.tag_first, event.phone);

@@ -476,10 +476,11 @@ circleManage.createcircle = function (data, response) {
                 var accountData = accountNode.data;
                 var circlesOrderString = accountData.circlesOrderString;
                 var flag = false;
+                var rid;
                 try {
                     if (circlesOrderString) {
                         var orderObj = JSON.parse(circlesOrderString);
-                        var rid = ++RID;
+                        rid = ++RID;
                         orderObj.push({rid: rid, name: name});
                         accountData.circlesOrderString = JSON.stringify(orderObj);
                         accountNode.save(function (err, node) {
@@ -493,7 +494,7 @@ circleManage.createcircle = function (data, response) {
                     flag = true;
                 }
                 if (flag) {
-                    var rid = ++RID;
+                    rid = ++RID;
                     var orderObj = [{rid: rid, name: name}];
                     accountData.circlesOrderString = JSON.stringify(orderObj);
                     accountNode.save(function (err, node) {
@@ -510,6 +511,7 @@ circleManage.createcircle = function (data, response) {
                         type: "relation_addcircle",
                         phone: phone,
                         eid: eid,
+                        rid: rid,
                         time: time,
                         status: "success",
                         content: ""
@@ -526,7 +528,7 @@ circleManage.createcircle = function (data, response) {
 
                 ResponseData(JSON.stringify({
                     "提示信息": "添加成功",
-                    "circle": {rid: RID - 1, name: name, friends: []},
+                    "circle": {rid: rid, name: name, friends: []},
                     "rid": oldRid
                 }), response);
             } else {

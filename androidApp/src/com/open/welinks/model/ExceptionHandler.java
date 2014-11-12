@@ -27,7 +27,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 	private Context context;
 	private ExceptionService service;
 	@SuppressLint("SimpleDateFormat")
-	private SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+	private SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
 	private ExceptionHandler() {
 
@@ -65,7 +65,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 		try {
 			log.e(errorinfo);
 			if (!"NONE".equals(data.localStatus.sendBug)) {
-				service.sendContent("Data：\n" + dataFormat.format(new Date()) + "\n版本信息：\n" + versioninfo + "\n手机信息：\n" + mobileInfo + "\nbug内容：\n" + errorinfo);
+				service.sendContent("Data：\n" + dataFormat.format(new Date()), "版本信息：\n" + versioninfo + "\n手机信息：\n" + mobileInfo, "bug内容：\n" + errorinfo);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,7 +79,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 			public void run() {
 				android.os.Process.killProcess(android.os.Process.myPid());
 			}
-		}, 2 * 1000);
+		}, 1 * 1000);
 	}
 
 	public void kill() {
