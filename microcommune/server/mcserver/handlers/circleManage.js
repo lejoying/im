@@ -34,9 +34,11 @@ circleManage.modify = function (data, response) {
                 if (circleOrderString) {
                     try {
                         var orderObj = JSON.parse(circleOrderString);
+                        var oldName = "";
                         for (var index in orderObj) {
                             var obj = orderObj[index];
                             if (rid == obj.rid) {
+                                oldName = obj.name;
                                 obj.name = name;
                                 break;
                             }
@@ -51,11 +53,13 @@ circleManage.modify = function (data, response) {
                         var eid = phone + "_" + time;
                         var event = JSON.stringify({
                             sendType: "event",
-                            contentType: "relation_dataupdate",
+                            contentType: "relation_updatecirclename",
                             content: JSON.stringify({
-                                type: "relation_dataupdate",
+                                type: "relation_updatecirclename",
                                 phone: phone,
                                 eid: eid,
+                                rid: rid,
+                                name: oldName,
                                 time: time,
                                 status: "success",
                                 content: ""
@@ -128,6 +132,7 @@ circleManage.delete = function (data, response) {
                 var accountData = accountNode.data;
                 var circleOrderString = accountData.circlesOrderString;
                 if (circleOrderString) {
+                    var name = "";
                     try {
                         var orderObj = JSON.parse(circleOrderString);
                         var newOrder = [];
@@ -135,6 +140,8 @@ circleManage.delete = function (data, response) {
                             var obj = orderObj[index];
                             if (rid != obj.rid) {
                                 newOrder.push(obj);
+                            } else {
+                                name = obj.name;
                             }
                         }
                         accountData.circlesOrderString = JSON.stringify(newOrder);
@@ -147,11 +154,13 @@ circleManage.delete = function (data, response) {
                         var eid = phone + "_" + time;
                         var event = JSON.stringify({
                             sendType: "event",
-                            contentType: "relation_dataupdate",
+                            contentType: "relation_deletecircle",
                             content: JSON.stringify({
-                                type: "relation_dataupdate",
+                                type: "relation_deletecircle",
                                 phone: phone,
                                 eid: eid,
+                                rid: rid,
+                                name: name,
                                 time: time,
                                 status: "success",
                                 content: ""
@@ -512,6 +521,7 @@ circleManage.createcircle = function (data, response) {
                         phone: phone,
                         eid: eid,
                         rid: rid,
+                        name: name,
                         time: time,
                         status: "success",
                         content: ""

@@ -288,7 +288,7 @@ public class MessagesSubView {
 					Friend friend;
 					String nickName = "";
 					if (data.event.userEvents.size() == 0) {
-						lastChatMessageView.setText("暂无个人动态");
+						lastChatMessageView.setText("暂无个人动态.");
 						return;
 					}
 					String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
@@ -303,7 +303,7 @@ public class MessagesSubView {
 						} else {
 							nickName = event.phone;
 						}
-						content = "【" + nickName + "】  请求加你为好友!验证信息:" + content;
+						content = "【" + nickName + "】  请求加你为好友!验证信息:" + content + ".";
 					} else if ("relation_addfriend".equals(event.type)) {
 						friend = data.relationship.friendsMap.get(event.phoneTo);
 						if (event.content != null) {
@@ -314,15 +314,41 @@ public class MessagesSubView {
 						} else {
 							nickName = event.phone;
 						}
-						content = "您请求加" + nickName + "为好友!验证信息:" + content;
+						content = "您请求加" + nickName + "为好友!验证信息:" + content + ".";
 					} else if ("account_dataupdate".equals(event.type)) {
-						content = "更新个人资料";
+						content = "更新个人资料.";
 					} else if ("relation_addcircle".equals(event.type)) {
 						Circle circle = data.relationship.circlesMap.get(event.rid);
 						if (circle == null) {
-							content = "创建了一个好友分组";
+							if (event.name != null && !"".equals(event.name)) {
+								content = "创建了【" + event.name + "】好友分组.";
+							} else {
+								content = "创建了一个好友分组.";
+							}
 						} else {
 							content = "创建了【" + circle.name + "】好友分组.";
+						}
+					} else if ("relation_deletecircle".equals(event.type)) {
+						Circle circle = data.relationship.circlesMap.get(event.rid);
+						if (circle == null) {
+							if (event.name != null && !"".equals(event.name)) {
+								content = "删除了【" + event.name + "】好友分组.";
+							} else {
+								content = "删除了一个好友分组.";
+							}
+						} else {
+							content = "删除了【" + circle.name + "】好友分组.";
+						}
+					} else if ("relation_updatecirclename".equals(event.type)) {
+						Circle circle = data.relationship.circlesMap.get(event.rid);
+						if (circle == null) {
+							if (event.name != null && !"".equals(event.name)) {
+								content = "好友分组【" + event.name + "】名称更新.";
+							} else {
+								content = "好友分组名称更新.";
+							}
+						} else {
+							content = "好友分组【" + event.name + "】更改为【" + circle.name + "】.";
 						}
 					}
 					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(event.time)));

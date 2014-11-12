@@ -126,9 +126,9 @@ public class DynamicListActivity extends Activity {
 				for (int i = userEventMessages0.size() - 1; i >= 0; i--) {
 					String key = userEventMessages0.get(i);
 					EventMessage message0 = data.event.userEventsMap.get(key);
-					if ("relation_addcircle".equals(message0.type) || "account_dataupdate".equals(message0.type) || "relation_newfriend".equals(message0.type) || "relation_addfriend".equals(message0.type)) {
+					if ("relation_updatecirclename".equals(message0.type) || "relation_deletecircle".equals(message0.type) || "relation_addcircle".equals(message0.type) || "account_dataupdate".equals(message0.type) || "relation_newfriend".equals(message0.type) || "relation_addfriend".equals(message0.type)) {
 						userEventMessages.add(message0.eid);
-					}else{
+					} else {
 						log.e(message0.type);
 					}
 				}
@@ -212,7 +212,12 @@ public class DynamicListActivity extends Activity {
 					String tag_class = (String) view.getTag(R.id.tag_class);
 					if ("event_group".equals(tag_class)) {
 						String key = (String) view.getTag(R.id.tag_first);
-						businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_GROUP, key);
+						String second = (String) view.getTag(R.id.tag_second);
+						if ("group".equals(second)) {
+							businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_GROUP, key);
+						} else if ("user".equals(second)) {
+							businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_POINT, key);
+						}
 						businessCardPopView.showUserCardDialogView();
 					} else if ("event_user".equals(tag_class)) {
 						String key = (String) view.getTag(R.id.tag_first);
@@ -325,6 +330,7 @@ public class DynamicListActivity extends Activity {
 				groupName = group.name;
 			}
 			String contentType = event.type;
+			boolean flag = true;
 			holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 			if ("group_addmembers".equals(contentType)) {
 				content = "【" + nickName + "】 邀请了" + event.content + "个好友到 【" + groupName + "】 房间中.";
@@ -342,12 +348,20 @@ public class DynamicListActivity extends Activity {
 				}
 			} else if ("group_removeme".equals(contentType)) {
 				content = "【" + nickName + "】退出了【" + groupName + "】房间.";
+			} else if ("group_sequence".equals(contentType)) {
+				content = "调整了群组列表顺序.";
 			}
 			holder.eventContentView.setText(content);
-
-			fileHandlers.getHeadImage(headFileName, holder.headView, headOptions);
+			if (flag) {
+				fileHandlers.getHeadImage(headFileName, holder.headView, headOptions);
+				convertView.setTag(R.id.tag_first, event.gid);
+				convertView.setTag(R.id.tag_second, "group");
+			} else {
+				fileHandlers.getHeadImage(data.userInformation.currentUser.head, holder.headView, headOptions);
+				convertView.setTag(R.id.tag_first, data.userInformation.currentUser.phone);
+				convertView.setTag(R.id.tag_second, "user");
+			}
 			convertView.setTag(R.id.tag_class, "event_group");
-			convertView.setTag(R.id.tag_first, event.gid);
 			convertView.setOnClickListener(mOnClickListener);
 			return convertView;
 		}
@@ -500,7 +514,7 @@ public class DynamicListActivity extends Activity {
 				} else if ("account_dataupdate".equals(event.type)) {
 					headFileName = data.userInformation.currentUser.head;
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
-					holder.eventContentView.setText("更新个人资料");
+					holder.eventContentView.setText("更新个人资料.");
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.GONE);
 					convertView.setTag(R.id.tag_first, event.phone);
@@ -509,9 +523,45 @@ public class DynamicListActivity extends Activity {
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 					Circle circle = data.relationship.circlesMap.get(event.rid);
 					if (circle == null) {
-						holder.eventContentView.setText("创建了一个好友分组");
+						if (event.name != null && !"".equals(event.name)) {
+							holder.eventContentView.setText("创建了【" + event.name + "】好友分组.");
+						} else {
+							holder.eventContentView.setText("创建了一个好友分组.");
+						}
 					} else {
 						holder.eventContentView.setText("创建了【" + circle.name + "】好友分组.");
+					}
+					holder.eventOperationView.setVisibility(View.GONE);
+					holder.processedView.setVisibility(View.GONE);
+					convertView.setTag(R.id.tag_first, event.phone);
+				} else if ("relation_deletecircle".equals(event.type)) {
+					headFileName = data.userInformation.currentUser.head;
+					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
+					Circle circle = data.relationship.circlesMap.get(event.rid);
+					if (circle == null) {
+						if (event.name != null && !"".equals(event.name)) {
+							holder.eventContentView.setText("删除了【" + event.name + "】好友分组.");
+						} else {
+							holder.eventContentView.setText("删除了一个好友分组.");
+						}
+					} else {
+						holder.eventContentView.setText("删除了【" + circle.name + "】好友分组.");
+					}
+					holder.eventOperationView.setVisibility(View.GONE);
+					holder.processedView.setVisibility(View.GONE);
+					convertView.setTag(R.id.tag_first, event.phone);
+				} else if ("relation_updatecirclename".equals(event.type)) {
+					headFileName = data.userInformation.currentUser.head;
+					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
+					Circle circle = data.relationship.circlesMap.get(event.rid);
+					if (circle == null) {
+						if (event.name != null && !"".equals(event.name)) {
+							holder.eventContentView.setText("好友分组【" + event.name + "】名称更新.");
+						} else {
+							holder.eventContentView.setText("好友分组名称更新.");
+						}
+					} else {
+						holder.eventContentView.setText("好友分组【" + event.name + "】更改为【" + circle.name + "】.");
 					}
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.GONE);

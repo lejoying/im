@@ -61,7 +61,7 @@ public class ShareSubView {
 
 	public String tag = "ShareSubView";
 
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
@@ -332,7 +332,7 @@ public class ShareSubView {
 				// continue;
 			}
 			// .........................
-			log.e("message#---" + shareMessage.gsid);
+			// log.e("message#---" + shareMessage.gsid);
 			String keyName = "message#" + shareMessage.gsid;
 			if (this.shareMessageListBody.listItemsSequence.contains(keyName)) {
 				continue;
@@ -376,10 +376,19 @@ public class ShareSubView {
 
 			int totalHeight = (int) (360 * displayMetrics.density + 0.5f);
 			int height10dp = (int) (10 * displayMetrics.density + 0.5f);
+			TextView textView = new TextView(thisController.thisActivity);
+			textView.setWidth((int) (displayMetrics.widthPixels - 40 * displayMetrics.density));
+			textView.setText(textContent);
+			int widthMeasureSpec = 0, heightMeasureSpec = 0;
+			textView.measure(widthMeasureSpec, heightMeasureSpec);
+			// log.e(textView.getLineCount() + "---" + textView.getLineHeight());
+			// log.e(textView.getLineCount() + "---lineCount--" + textView.getHeight() + "--" + widthMeasureSpec + "--" + heightMeasureSpec + "--" + textView.getLineHeight());
 			if ("".equals(imageContent)) {
-				totalHeight = (int) (155 * displayMetrics.density + 0.5f);
+				totalHeight = (int) (65 * displayMetrics.density + 0.5f) + textView.getLineCount() * textView.getLineHeight();
 			} else if ("".equals(textContent)) {
-				totalHeight = (int) (65 * displayMetrics.density + 0.5f + shareImageHeight);
+				totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
+			} else {
+				totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + textView.getLineCount() * textView.getLineHeight();
 			}
 			sharesMessageBody.setContent(shareMessage, fileName, imageContent, textContent);
 
@@ -556,22 +565,28 @@ public class ShareSubView {
 					}
 				}
 
+				this.shareTextContentView.setText(textContent);
 				int totalHeight = (int) (360 * displayMetrics.density + 0.5f);
 				this.shareTextContentView.setLines(5);
+				int widthMeasureSpec = 0, heightMeasureSpec = 0;
+				this.shareTextContentView.measure(widthMeasureSpec, heightMeasureSpec);
 				if ("".equals(imageContent)) {
-					totalHeight = (int) (155 * displayMetrics.density + 0.5f);
+					totalHeight = (int) (65 * displayMetrics.density + 0.5f) + this.shareTextContentView.getLineCount() * this.shareTextContentView.getLineHeight();
 					RelativeLayout.LayoutParams params2 = (android.widget.RelativeLayout.LayoutParams) shareTextContentView.getLayoutParams();
 					params2.topMargin = (int) (1 * displayMetrics.density + 0.5f);
 					this.shareTextContentView.setLines(5);
 				} else if ("".equals(textContent)) {
 					this.shareTextContentView.setLines(4);
-					totalHeight = (int) (65 * displayMetrics.density + 0.5f + shareImageHeight);
+					totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
+				} else {
+					totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + this.shareTextContentView.getLineCount() * this.shareTextContentView.getLineHeight();
 				}
+
+				// shareImageContentView.setBackgroundResource(R.drawable.account_pop_black_background);
 
 				FrameLayout.LayoutParams params = (LayoutParams) background_share_item.getLayoutParams();
 				params.height = totalHeight;
 
-				this.shareTextContentView.setText(textContent);
 				// File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
 				final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
 				final int showImageHeight = shareImageHeight;// (int)
@@ -743,7 +758,7 @@ public class ShareSubView {
 		if (group0 != null) {
 			this.shareTopMenuGroupName.setText(group0.name);
 		} else {
-			this.shareTopMenuGroupName.setText("暂无群组");
+			this.shareTopMenuGroupName.setText("暂无房间");
 		}
 
 		List<String> groups = data.relationship.groups;
@@ -873,7 +888,7 @@ public class ShareSubView {
 		if (group != null) {
 			shareTopMenuGroupName.setText(group.name);
 		} else {
-			shareTopMenuGroupName.setText("暂无群组");
+			shareTopMenuGroupName.setText("暂无房间");
 			return;
 		}
 

@@ -1,6 +1,7 @@
 package com.open.welinks.view;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -520,7 +521,10 @@ public class SquareSubView {
 		}
 	}
 
+	ArrayList<String> notFriends = new ArrayList<String>();
+
 	public void showSquareMessages2(boolean flag) {
+		notFriends.clear();
 		// flag = true;
 		// this.squareMessageListBody.listItemsSequence.clear();
 		// this.squareMessageListBody.containerView.removeAllViews();
@@ -666,6 +670,8 @@ public class SquareSubView {
 
 		this.squareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
 		this.squareMessageListBody.setChildrenPosition();
+		
+		thisController.scanUserCard(gson.toJson(notFriends));
 	}
 
 	public class SharesMessageBody1 extends MyListItemBody {
@@ -770,7 +776,16 @@ public class SquareSubView {
 				}
 				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
-					this.nickNameView.setText(shareMessage.phone);
+					notFriends.add(shareMessage.phone);
+					if (shareMessage.nickName != null) {
+						this.nickNameView.setText(shareMessage.nickName);
+					} else {
+						if (shareMessage.phone.length() == 11) {
+							this.nickNameView.setText(shareMessage.phone.substring(0, 4) + "***" + shareMessage.phone.substring(7));
+						} else {
+							this.nickNameView.setText(shareMessage.phone);
+						}
+					}
 				} else {
 					this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
 				}
@@ -840,47 +855,6 @@ public class SquareSubView {
 					buttonbarpParams.height = (int) (displayMetrics.density * 40 + 0.5f);
 
 					fileHandlers.getThumbleImage(imageContent, shareImageContentView, width1 / 2, imageHeight / 2, options, fileHandlers.THUMBLE_TYEP_SQUARE);
-					// File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
-					// if (!imageContent.equals("")) {
-					// width1 = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f);
-					// // Log.e(tag, width1 + "----" + imageHeight);
-					// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + width1 / 2 + "w_" + imageHeight / 2 + "h_1c_1e_100q";
-					// final String path = file.getAbsolutePath();
-					// if (file.exists()) {
-					// imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
-					// @Override
-					// public void onLoadingStarted(String imageUri, View view) {
-					// }
-					//
-					// @Override
-					// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					// downloadFile = new DownloadFile(url, path);
-					// downloadFile.view = shareImageContentView;
-					// downloadFile.view.setTag("image");
-					// downloadFile.setDownloadFileListener(thisController.downloadListener);
-					// downloadFileList.addDownloadFile(downloadFile);
-					// }
-					//
-					// @Override
-					// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-					// // int height = showImageHeight;
-					// // FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(showImageWidth, height);
-					// // shareImageContentView.setLayoutParams(params);
-					// }
-					// });
-					// } else {
-					// File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
-					// final String path2 = file2.getAbsolutePath();
-					// if (file2.exists()) {
-					// imageLoader.displayImage("file://" + path2, shareImageContentView, options);
-					// }
-					// downloadFile = new DownloadFile(url, path);
-					// downloadFile.view = shareImageContentView;
-					// downloadFile.view.setTag("image");
-					// downloadFile.setDownloadFileListener(thisController.downloadListener);
-					// downloadFileList.addDownloadFile(downloadFile);
-					// }
-					// }
 
 					String userPhone = data.userInformation.currentUser.phone;
 					if (shareMessage.praiseusers.contains(userPhone)) {

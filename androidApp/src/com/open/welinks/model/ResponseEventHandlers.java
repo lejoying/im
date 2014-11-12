@@ -104,6 +104,10 @@ public class ResponseEventHandlers {
 					handleRelationDataupdateEvent(eventMessage);
 				} else if ("relation_addcircle".equals(contentType)) {
 					handleRelationAddCircleEvent(eventMessage);
+				} else if ("relation_deletecircle".equals(contentType)) {
+					handleRelationDeleteCircleEvent(eventMessage);
+				} else if ("relation_updatecirclename".equals(contentType)) {
+					handleRelationUpdateCircleNameEvent(eventMessage);
 				} else if ("relation_circlesequence".equals(contentType)) {
 					handleRelationCircleSequenceEvent(eventMessage);
 				} else if ("relation_updatefriendcircle".equals(contentType)) {
@@ -120,9 +124,49 @@ public class ResponseEventHandlers {
 					handleGroupAddMeEvent(message, eventMessage);
 				} else if ("group_removeme".equals(contentType)) {
 					handleGroupRemoveMeEvent(message, eventMessage);
+				} else if ("group_sequence".equals(contentType)) {
+					handleGroupSequenceEvent(message, eventMessage);
 				}
 				data.event.isModified = true;
 			}
+		}
+	}
+
+	private void handleGroupSequenceEvent(Message chatMessage, EventMessage message) {
+		String key = message.eid;
+		if (!data.event.groupEvents.contains(key)) {
+			data.event.groupEvents.add(key);
+			data.event.groupEventsMap.put(key, message);
+			data.event.groupNotReadMessage = true;
+			String eventKey = "event_group";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getUserInfomation();
+		}
+	}
+
+	private void handleRelationUpdateCircleNameEvent(EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.userEvents.contains(key)) {
+			data.event.userEvents.add(key);
+			data.event.userEventsMap.put(key, eventMessage);
+			data.event.userNotReadMessage = true;
+			String eventKey = "event_user";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getUserInfomation();
+			DataHandlers.getIntimateFriends();
+		}
+	}
+
+	private void handleRelationDeleteCircleEvent(EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.userEvents.contains(key)) {
+			data.event.userEvents.add(key);
+			data.event.userEventsMap.put(key, eventMessage);
+			data.event.userNotReadMessage = true;
+			String eventKey = "event_user";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getUserInfomation();
+			DataHandlers.getIntimateFriends();
 		}
 	}
 

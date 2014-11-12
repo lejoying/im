@@ -64,7 +64,7 @@ public class Data {
 
 		public String debugMode = "NONE";// NONE
 
-		public String sendBug = "true";// "NONE"
+		public String sendBug = "NONE";// "NONE"
 
 		public LocalData localData;
 
@@ -296,6 +296,7 @@ public class Data {
 			public String type;
 			public String phone;
 			public String phoneTo;
+			public String name;
 			public String time;
 			public String status;// waiting success
 			public String content;

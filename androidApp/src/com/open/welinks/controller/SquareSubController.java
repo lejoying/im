@@ -23,10 +23,12 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
@@ -42,6 +44,7 @@ import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
@@ -616,5 +619,49 @@ public class SquareSubController {
 			}
 		}
 		return true;
+	}
+
+	public HttpClient httpClient = HttpClient.getInstance();
+
+	public void scanUserCard(String target) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("target", target);
+
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public List<Friend> accounts;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取用户信息成功".equals(response.提示信息)) {
+					for (int i = 0; i < response.accounts.size(); i++) {
+						Friend friend = response.accounts.get(i);
+						if (friend != null) {
+							parser.check();
+							Friend friend0 = data.relationship.friendsMap.get(friend.phone);
+							if (friend0 != null) {
+								friend0.sex = friend.sex;
+								friend0.mainBusiness = friend.mainBusiness;
+								friend0.nickName = friend.nickName;
+								friend0.head = friend.head;
+								friend0.longitude = friend.longitude;
+								friend0.latitude = friend.latitude;
+								friend0.userBackground = friend.userBackground;
+								friend0.lastLoginTime = friend.lastLoginTime;
+							} else {
+								data.relationship.friendsMap.put(friend.phone, friend);
+							}
+						}
+					}
+					data.relationship.isModified = true;
+					thisView.showSquareMessages(false);
+				}
+			};
+		});
 	}
 }

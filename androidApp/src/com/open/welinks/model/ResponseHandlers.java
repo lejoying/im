@@ -68,7 +68,6 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-
 		}
 	};
 

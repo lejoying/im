@@ -389,6 +389,7 @@ public class ShareReleaseImageTextController {
 				shareMessage.gsid = currentUser.phone + "_" + time;
 				shareMessage.type = "imagetext";
 				shareMessage.phone = currentUser.phone;
+				shareMessage.nickName = currentUser.nickName;
 				shareMessage.time = time;
 				shareMessage.status = "sending";
 
@@ -447,6 +448,7 @@ public class ShareReleaseImageTextController {
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("nickName", currentUser.nickName);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentSelectedGroup);
 		params.addBodyParameter("ogsid", gsid);

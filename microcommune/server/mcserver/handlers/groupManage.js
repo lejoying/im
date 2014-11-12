@@ -1497,7 +1497,7 @@ groupManage.modifysequence = function (data, response) {
     var accessKey = data.accessKey;
     var groupSequence = data.sequence;
     var time = new Date().getTime();
-    var eid = phone + "" + time;
+    var eid = phone + "_" + time;
     modifyGroupSeqence();
     function modifyGroupSeqence() {
         var query = [
@@ -1535,9 +1535,9 @@ groupManage.modifysequence = function (data, response) {
                 }), response);
                 var event = JSON.stringify({
                     sendType: "event",
-                    contentType: "account_dataupdate",
+                    contentType: "group_sequence",
                     content: JSON.stringify({
-                        type: "account_dataupdate",
+                        type: "group_sequence",
                         phone: phone,
                         time: time,
                         status: "success",

@@ -10,6 +10,7 @@ shareManage.sendshare = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.phone;
+    var nickName = data.nickName;
     var messageStr = data.message;
     var gid = data.gid;
     var ogsid = data.ogsid;
@@ -78,8 +79,7 @@ shareManage.sendshare = function (data, response) {
         ].join("\n");
         var params = {
             gid: parseInt(gid),
-            shares: {
-            }
+            shares: {}
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -119,6 +119,7 @@ shareManage.sendshare = function (data, response) {
             gid: parseInt(gid),
             share: {
                 phone: phone,
+                nickName: nickName,
                 praises: JSON.stringify([]),
                 comments: JSON.stringify([]),
                 type: message.type,
