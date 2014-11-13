@@ -384,11 +384,11 @@ public class ShareSubView {
 			// log.e(textView.getLineCount() + "---" + textView.getLineHeight());
 			// log.e(textView.getLineCount() + "---lineCount--" + textView.getHeight() + "--" + widthMeasureSpec + "--" + heightMeasureSpec + "--" + textView.getLineHeight());
 			if ("".equals(imageContent)) {
-				totalHeight = (int) (65 * displayMetrics.density + 0.5f) + textView.getLineCount() * textView.getLineHeight();
+				totalHeight = (int) (65 * displayMetrics.density + 0.5f) + (textView.getLineCount() >= 5 ? 5 : textView.getLineCount()) * textView.getLineHeight();
 			} else if ("".equals(textContent)) {
 				totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
 			} else {
-				totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + textView.getLineCount() * textView.getLineHeight();
+				totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + (textView.getLineCount() >= 5 ? 5 : textView.getLineCount()) * textView.getLineHeight();
 			}
 			sharesMessageBody.setContent(shareMessage, fileName, imageContent, textContent);
 
@@ -571,7 +571,7 @@ public class ShareSubView {
 				int widthMeasureSpec = 0, heightMeasureSpec = 0;
 				this.shareTextContentView.measure(widthMeasureSpec, heightMeasureSpec);
 				if ("".equals(imageContent)) {
-					totalHeight = (int) (65 * displayMetrics.density + 0.5f) + this.shareTextContentView.getLineCount() * this.shareTextContentView.getLineHeight();
+					totalHeight = (int) (65 * displayMetrics.density + 0.5f) + (this.shareTextContentView.getLineCount() >= 5 ? 5 : this.shareTextContentView.getLineCount()) * this.shareTextContentView.getLineHeight();
 					RelativeLayout.LayoutParams params2 = (android.widget.RelativeLayout.LayoutParams) shareTextContentView.getLayoutParams();
 					params2.topMargin = (int) (1 * displayMetrics.density + 0.5f);
 					this.shareTextContentView.setLines(5);
@@ -579,7 +579,7 @@ public class ShareSubView {
 					this.shareTextContentView.setLines(4);
 					totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
 				} else {
-					totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + this.shareTextContentView.getLineCount() * this.shareTextContentView.getLineHeight();
+					totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + (this.shareTextContentView.getLineCount() >= 5 ? 5 : this.shareTextContentView.getLineCount()) * this.shareTextContentView.getLineHeight();
 				}
 
 				// shareImageContentView.setBackgroundResource(R.drawable.account_pop_black_background);

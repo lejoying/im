@@ -33,6 +33,7 @@ import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.utils.ViewUtil;
 
 public class MessagesSubView {
 
@@ -225,7 +226,7 @@ public class MessagesSubView {
 			messageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 
 		}
-		this.messageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
+		this.messageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewUtil.getStatusBarHeight(thisController.mainController.thisActivity) - displayMetrics.density * 84);
 		this.messageListBody.setChildrenPosition();
 	}
 
