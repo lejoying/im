@@ -186,6 +186,12 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
         });
     }
 
+    else if (operation == "fuzzyquery") {
+        console.log(data);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.fuzzyquery(data, response);
+        });
+    }
 }
 
 var circleManage = require("./handlers/circleManage.js");

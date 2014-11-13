@@ -1986,6 +1986,7 @@ relationManage.intimatefriends = function (data, response) {
                     });
                 }
                 var friendsMap = {};
+                var friends = [];
                 for (var index in results) {
                     var account2Data = results[index].account2.data;
                     var rNode = results[index].r;
@@ -2014,6 +2015,9 @@ relationManage.intimatefriends = function (data, response) {
                     if (rData.alias != null) {
                         account.alias = rData.alias;
                     }
+                    if (!friendsMap[account2Data.phone]) {
+                        friends.push(account2Data.phone);
+                    }
                     friendsMap[account2Data.phone] = account;
                 }
                 ResponseData(JSON.stringify({
@@ -2021,7 +2025,8 @@ relationManage.intimatefriends = function (data, response) {
                     relationship: {
                         circles: circles,
                         circlesMap: circlesMap,
-                        friendsMap: friendsMap
+                        friendsMap: friendsMap,
+                        friends: friends
                     }
                 }), response);
             } else {
@@ -2044,7 +2049,8 @@ relationManage.intimatefriends = function (data, response) {
                     relationship: {
                         circles: circles,
                         circlesMap: circlesMap,
-                        friendsMap: {}
+                        friendsMap: {},
+                        friends: []
                     }
                 }), response);
             }
@@ -2209,8 +2215,7 @@ relationManage.follow = function (data, response) {
         ].join("\n");
         var params = {
             phone: phone,
-            phoneTo: phoneTo,
-            message: message
+            phoneTo: phoneTo
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -2735,5 +2740,67 @@ function ResponseData(responseContent, response) {
     });
     response.write(responseContent);
     response.end();
+}
+
+
+//liaoliao new APi************************************************************************
+relationManage.fuzzyquery = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var keyWord = data.keyword;
+    getFuzzyAccountNodes();
+    function getFuzzyAccountNodes() {
+        var query = [
+            "MATCH (account:Account)",
+            "WHERE account.phone ={keyword}",// OR account.nickName={keyword}
+            "RETURN account"
+        ].join("\n");
+        var params = {
+            keyword: keyWord
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "查询失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else {
+                console.log(results.length);
+                var accounts = [];
+                var accountsMap = {};
+                for (var index in results) {
+                    var accountData = results[index].account.data;
+                    if (!accountsMap[accountData.phone]) {
+                        accounts.push(accountData.phone);
+                        var account = {
+                            id: accountData.ID,
+                            sex: accountData.sex,
+                            age: accountData.age,
+                            phone: accountData.phone,
+                            mainBusiness: accountData.mainBusiness,
+                            head: accountData.head,
+                            nickName: accountData.nickName,
+                            userBackground: accountData.userBackground,
+                            lastLoginTime: accountData.lastlogintime,
+                            createTime: accountData.createTime,
+                            longitude: accountData.longitude || 0,
+                            latitude: accountData.latitude || 0
+                        };
+                        accountsMap[accountData.phone] = account;
+                    }
+                    //continue;
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "查询成功",
+                    accounts: accounts,
+                    accountsMap: accountsMap
+                }), response);
+            }
+        });
+    }
+
+
 }
 module.exports = relationManage;
