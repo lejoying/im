@@ -2478,6 +2478,50 @@ relationManage.canclefollow = function (data, response) {
                 console.error(error);
             } else if (results.length > 0) {
                 //TODO event
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_updatefollow",
+                    content: JSON.stringify({
+                        type: "relation_updatefollow",
+                        phone: phone,
+                        phoneTo: phoneTo,
+                        eid: eid,
+                        time: time,
+                        status: "success",
+                        content: ""
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
+                var event2 = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_updatefans",
+                    content: JSON.stringify({
+                        type: "relation_updatefans",
+                        phone: phone,
+                        phoneTo: phoneTo,
+                        eid: eid,
+                        time: time,
+                        status: "success",
+                        content: ""
+                    })
+                });
+                client.rpush(phoneTo, event2, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phoneTo, accessKey, "*", event2);
                 ResponseData(JSON.stringify({
                     "提示信息": "取消关注成功"
                 }), response);
