@@ -229,13 +229,18 @@ accountManage.verifyphone = function (data, response) {
         var message = "验证码：" + code + "，10分钟内有效，请勿泄漏，欢迎您使用【微型社区】";
         console.log(message);
         if (sms_power == true) {
-            push.smsSend(account.phone, message, function (data) {
-                if (JSON.parse(data).information == "notify success") {
-                    next();
-                } else {
-                    responseFailMessage(response, promptMessage + "失败", "服务器异常");
-                }
-            });
+            if (account.phone.length == 11 && account.phone.substr(0, 1) == "1") {
+                push.smsSend(account.phone, message, function (data) {
+                    if (JSON.parse(data).information == "notify success") {
+                        next();
+                    } else {
+                        responseFailMessage(response, promptMessage + "失败", "服务器异常");
+                    }
+                });
+            } else {
+                console.log("不足11位的测试帐号,验证码:" + code);
+            }
+
             /*sms.sendMsg(account.phone, message, function (data) {
              var smsObj = JSON.parse(data);
              if (smsObj.statusCode == "000000") {
