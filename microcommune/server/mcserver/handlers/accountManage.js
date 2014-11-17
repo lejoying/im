@@ -2,6 +2,7 @@
 var accountManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
+var contactDB = new neo4j.GraphDatabase("http://182.92.1.150:7474/");
 var ajax = require("./../lib/ajax.js");
 var sms = require("./../lib/SMS.js");
 var sha1 = require("./../tools/sha1.js");
@@ -48,35 +49,79 @@ IDclient.get("ID", function (err, reply) {
  ***************************************/
 accountManage.verifyphone = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var usage = data.usage;
     var arr = [phone, usage];
     var account;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
-        var time = new Date().getTime();
-        account = {
-            phone: phone,
-            code: (time.toString()).substr((time.toString()).length - 6),
-            status: "init",
-            time: time,
-            head: "",
-            nickName: getNickName(),
-            mainBusiness: "",
-            age: time % 40,
-            byPhone: "checked",
-            byScan: "checked",
-            byScanNearBy: "allowed",
-            sex: time / 2 == 0 ? "男" : "女",
-            userBackground: "userBackground.jpg"
-        };
         if (usage == "register") {
-            checkPhone(phone);
+            checkContactAccount(phone);
         } else if (usage == "login") {
             getLoginCode(phone);
         } else {
             responseFailMessage(response, "手机号验证失败", "数据不完整");
         }
     }
+
+    function checkContactAccount(phone) {
+        var query = [
+            "MATCH (account:Account)<-[r:HAS_CONTACT]-(other:Account)",
+            "WHERE account.phone={phone}",
+            "RETURN r"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        contactDB.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                next(getNickName());
+            } else if (results.length > 0) {
+                var nickNames = {};
+                for (var index in results) {
+                    var rData = results[index].r.data;
+                    if (nickNames[rData.nickName]) {
+                        nickNames[rData.nickName]++;
+                    } else {
+                        nickNames[rData.nickName] = 1;
+                    }
+                }
+                var index0 = -1;
+                var nickName
+                for (var index in nickNames) {
+                    var i = nickNames[index];
+                    if (i > index0) {
+                        index0 = i;
+                        nickName = index;
+                    }
+                }
+                next(nickName);
+            } else {
+                next(getNickName());
+            }
+        });
+        function next(nickName) {
+            var time = new Date().getTime();
+            account = {
+                phone: phone,
+                code: (time + "").substr((time + "").length - 6),
+                status: "init",
+                time: time,
+                head: getHead(),
+                nickName: nickName,
+                mainBusiness: "",
+                age: time % 40,
+                byPhone: "checked",
+                byScan: "checked",
+                byScanNearBy: "allowed",
+                sex: time / 2 == 0 ? "男" : "女",
+                userBackground: "userBackground.jpg"
+            };
+            checkPhone(phone);
+        }
+    }
+
     function checkPhone(phone) {
         var query = [
             'MATCH (account:Account)',
@@ -211,6 +256,13 @@ accountManage.verifyphone = function (data, response) {
             response.end();
         }
     }
+}
+function getHead() {
+    var time = new Date().getTime();
+    var heads = [
+        "4a8fe36ad954e4b092846f312f3ff8ab176d0064.png", "719309CD7281C54AE2E671816F1060F74DBE392F.osp", "0BD297A73EB1E1C9F20F05B14E18457926755E49.osp", "2ED3F5E22DCE3505F7C590BCB6BC74932A1736DF.osp", "009A3379FCF1A85F02BBA7B31C806472C19B9D91.osp", "23A48EAC968FB7E2F268D9C2E6934C828739C8BE.osj", "36BE4B035D8114E6C13542DCB9503348D6894174.osp", "119F605941E84A11442962DD5240DC7A17332DAC.osp", "99F0C05088333A0C7654439C3160206BD696F6E8.osj", "73EFEA36C07F5B0C681B81D94DA6F0613D4B9FDF.osj", "63F939E3B845A2340E9BBB0FF0D6C8EEB6AB55D9.osj", "63EEF70757B78876DF704446D09FAE8693BBA6B4.osj", "299242B303D0FBE03B5C82AF7A9637F893CD25A6.osp", "857030E7310E15331C51E94B08ED84983D120D85.osj", "04509474d195a9dcc409323e592d79745d81235b.png", "B4809CB82093D6E87F9B2EDDBE15E7031994C9D3.osj", "E3650FC0F11C99400CAC05859FE833AA7A01C9C2.osp", "C76DF1FDAB83FB9C14FBB081677E390921C072C2.osp", "D3A8C52F32DF01CF0947238DFEA79C3B1AE0F82C.osp", "59BA1A6746F37FC4209F0F2C93DAE7882AA5DAC2.osp"
+    ];
+    return heads[time % 20];
 }
 /***************************************
  *     URL：/api2/account/verifycode
@@ -1007,5 +1059,4 @@ function getNickName() {
     return nickNames[number];
     //console.log(nickNames.length);
 }
-
 module.exports = accountManage;
