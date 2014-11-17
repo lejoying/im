@@ -670,7 +670,7 @@ public class SquareSubView {
 
 		this.squareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
 		this.squareMessageListBody.setChildrenPosition();
-		
+
 		thisController.scanUserCard(gson.toJson(notFriends));
 	}
 
@@ -949,6 +949,10 @@ public class SquareSubView {
 	public void setSquaresDialogContent() {
 		data = parser.check();
 
+		if (data.relationship.groupsMap == null || data.localStatus.localData == null) {
+			log.e("return shareMap or localData");
+			return;
+		}
 		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
 		if (group0 != null) {
 			this.squareTopMenuSquareName.setText(group0.name);

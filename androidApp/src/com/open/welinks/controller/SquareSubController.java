@@ -495,6 +495,7 @@ public class SquareSubController {
 			}
 		}
 		final String currentSid = gid;
+		parser.check();
 		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid) && !data.localStatus.localData.currentSelectedSquare.equals("")) {
 			Alert.createDialog(thisActivity).setTitle("您已进入微型社区" + groups.get(currentSid).description + "站,是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
 

@@ -1,7 +1,6 @@
 package com.open.welinks.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.open.lib.MyLog;
 
@@ -19,7 +18,15 @@ public class MyGson {
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
 			log.e(e.toString());
-			t = null;
+			try {
+				t = classOfT.newInstance();
+			} catch (InstantiationException e1) {
+				e1.printStackTrace();
+				t = null;
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+				t = null;
+			}
 		}
 		return t;
 	}
@@ -31,7 +38,7 @@ public class MyGson {
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.e(e.toString());
-			result = null;
+			result = "";
 		}
 		return result;
 	}

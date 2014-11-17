@@ -14,7 +14,6 @@ import java.util.Set;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Event;
 import com.open.welinks.model.Data.LocalStatus.LocalData;
@@ -22,6 +21,7 @@ import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Shares;
 import com.open.welinks.model.Data.UserInformation;
+import com.open.welinks.utils.MyGson;
 import com.open.welinks.utils.StreamParser;
 
 public class Parser {
@@ -41,19 +41,19 @@ public class Parser {
 	}
 
 	public Context context;
-	public Gson gson;
+	public MyGson gson;
 
 	public void initialize(Context context) {
 		this.context = context;
 		if (gson == null) {
-			this.gson = new Gson();
+			this.gson = new MyGson();
 		}
 	}
 
 	public Data parse() {
 		Data data = Data.getInstance();
 		if (gson == null) {
-			this.gson = new Gson();
+			this.gson = new MyGson();
 		}
 		try {
 			String localDataStr = getFromAssets("localData.js");
@@ -192,7 +192,7 @@ public class Parser {
 	public Data check() {
 		Data data = Data.getInstance();
 		if (gson == null) {
-			this.gson = new Gson();
+			this.gson = new MyGson();
 		}
 		String phone = "none";
 		try {
@@ -217,9 +217,14 @@ public class Parser {
 				if (data.localStatus.localData == null) {
 					String localDataStr = getFromUserForder(phone, "localData.js");
 					data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
+					if (data.localStatus.localData == null) {
+						data.localStatus.localData = data.localStatus.new LocalData();
+					}
 				}
 			} catch (Exception e) {
+				log.e(ExceptionHandler.printStackTrace(context, e));
 				deleteFile(phone, "localData.js");
+				data.localStatus.localData = data.localStatus.new LocalData();
 			}
 			try {
 				if (data.relationship == null) {
@@ -233,7 +238,7 @@ public class Parser {
 					data.relationship.squares = checkKeyValue(data.relationship.squares, data.relationship.groupsMap);
 				}
 			} catch (Exception e) {
-				log.e(e.toString());
+				log.e(ExceptionHandler.printStackTrace(context, e));
 				data.relationship = data.new Relationship();
 				deleteFile(phone, "relationship.js");
 			}

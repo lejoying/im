@@ -236,7 +236,10 @@ public class ShareSubView {
 		data = parser.check();
 
 		showGroupMembers();
-
+		if (data.relationship.groups == null || data.localStatus.localData == null) {
+			log.e("return groups or localData");
+			return;
+		}
 		boolean flag0 = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		if (!flag0) {
 			if (data.relationship.groups.size() == 0) {
@@ -745,6 +748,10 @@ public class ShareSubView {
 
 	public void setGroupsDialogContent() {
 		data = parser.check();
+		if (data.relationship.groups == null || data.localStatus.localData == null) {
+			log.e("return groups or localData");
+			return;
+		}
 		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		if (!flag) {
 			if (data.relationship.groups.size() == 0) {

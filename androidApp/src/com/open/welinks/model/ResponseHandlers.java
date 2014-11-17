@@ -1063,6 +1063,7 @@ public class ResponseHandlers {
 			try {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群组成员成功")) {
+					parser.check();
 					data.relationship.groups = response.relationship.groups;
 					data.relationship.groupsMap.putAll(response.relationship.groupsMap);
 
