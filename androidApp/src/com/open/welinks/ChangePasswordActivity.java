@@ -1,5 +1,6 @@
 package com.open.welinks;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -92,7 +93,7 @@ public class ChangePasswordActivity extends Activity {
 	public void initializeListeners() {
 		mOnClickListener = new OnClickListener() {
 
-			@Override
+			@SuppressLint("DefaultLocale") @Override
 			public void onClick(View view) {
 				if (view.equals(backView)) {
 					finish();
@@ -135,31 +136,4 @@ public class ChangePasswordActivity extends Activity {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, responseHandlers.account_modify);
 	}
-
-	// public void modifyPassword(final String oldPassword, final String newPassword) {
-	// app.networkHandler.connection(new CommonNetConnection() {
-	//
-	// @Override
-	// protected void settings(Settings settings) {
-	// settings.url = API.DOMAIN + API.ACCOUNT_MODIFY;
-	// Map<String, String> params = new HashMap<String, String>();
-	// params.put("phone", app.data.user.phone);
-	// params.put("accessKey", app.data.user.accessKey);
-	// params.put("oldpassword", oldPassword);
-	// JSONObject account = new JSONObject();
-	// try {
-	// account.put("password", newPassword);
-	// } catch (JSONException e) {
-	// e.printStackTrace();
-	// }
-	// params.put("account", account.toString());
-	// settings.params = params;
-	// }
-	//
-	// @Override
-	// public void success(JSONObject jData) {
-	// mMainModeManager.back();
-	// }
-	// });
-	// }
 }

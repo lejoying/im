@@ -22,7 +22,6 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
-import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.controller.FriendsSubController.Circle2;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
@@ -702,7 +701,7 @@ public class ResponseHandlers {
 
 				} else if (!response.exists) {
 					log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
-					Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
+					// Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
 				}
 			} else {
 				log.e(response.失败原因);

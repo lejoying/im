@@ -90,27 +90,6 @@ public class BusinessCardController {
 		key = thisActivity.getIntent().getStringExtra("key");
 		type = thisActivity.getIntent().getStringExtra("type");
 		checkCardTypeAndRelation(type, key);
-		// isTemp = thisActivity.getIntent().getBooleanExtra("isTemp", false);
-		// if ("point".equals(type)) {
-		// if (key.equals(data.userInformation.currentUser.phone)) {
-		// thisView.status = Status.SELF;
-		// } else {
-		// if (isTemp) {
-		// thisView.status = Status.TEMPFRIEND;
-		// } else {
-		// thisView.status = Status.FRIEND;
-		// }
-		// }
-		// } else if ("group".equals(type)) {
-		// if (isTemp) {
-		// thisView.status = Status.NOTJOINGROUP;
-		// } else {
-		// thisView.status = Status.JOINEDGROUP;
-		// }
-		// } else if ("square".equals(type)) {
-		// thisView.status = Status.SQUARE;
-		// }
-		// handler = new Handler();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
@@ -499,7 +478,7 @@ public class BusinessCardController {
 			ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 			httpUtils.send(HttpMethod.POST, API.GROUP_ADDMEMBERS, params, responseHandlers.group_addmembers);
 		} else {
-			Alert.showMessage("已申请加入改群组");
+			Alert.showMessage("已申请加入该房间");
 		}
 	}
 

@@ -213,7 +213,7 @@ public class GroupInfoController {
 						}
 					}).show();
 				} else if (view.equals(thisView.exit2DeleteGroup)) {
-					Alert.createDialog(thisActivity).setTitle("您确定要删除并退出该群组？").setOnConfirmClickListener(new OnDialogClickListener() {
+					Alert.createDialog(thisActivity).setTitle("您确定要删除并退出该房间？").setOnConfirmClickListener(new OnDialogClickListener() {
 
 						@Override
 						public void onClick(AlertInputDialog dialog) {
@@ -244,10 +244,10 @@ public class GroupInfoController {
 		String title = "";
 		String text = "";
 		if ("nickName".equals(type)) {
-			title = "请输入群组名称";
+			title = "请输入房间名称";
 			text = currentGroup.name;
 		} else if ("business".equals(type)) {
-			title = "请输入群组描述";
+			title = "请输入房间描述";
 			text = currentGroup.description;
 		}
 		Alert.createInputDialog(context).setTitle(title).setInputText(text).setOnConfirmClickListener(new OnDialogClickListener() {
@@ -308,7 +308,7 @@ public class GroupInfoController {
 			data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
 			viewManage.shareSubView.shareTopMenuGroupName.setText(data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).name);
 		} else {
-			viewManage.shareSubView.shareTopMenuGroupName.setText("暂无群组");
+			viewManage.shareSubView.shareTopMenuGroupName.setText("暂无房间");
 		}
 		viewManage.shareSubView.shareMessageListBody.y = 0;
 		data.relationship.isModified = true;

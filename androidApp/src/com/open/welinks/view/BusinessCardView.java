@@ -307,20 +307,6 @@ public class BusinessCardView {
 				buttonTwo.setVisibility(View.GONE);
 				buttonThree.setVisibility(View.GONE);
 				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, square.gid + ""));
-				// rightTopButton.setText("修改资料");
-				// businessCard.id = Integer.valueOf(thisController.key);
-				// businessCard.icon = "";
-				// businessCard.distance = "0";
-				// businessCard.nickname = "";
-				// businessCard.mainBusiness = "暂无描述";
-				// businessCard.lable = "暂无标签";
-				// businessCard.creattime = "0";
-				// businessCard.button_one = "";
-				// businessCard.button_two = "";
-				// businessCard.button_three = "";
-				// buttonOne.setVisibility(View.GONE);
-				// buttonTwo.setVisibility(View.GONE);
-				// buttonThree.setVisibility(View.GONE);
 			}
 		}
 		if (businessCard.icon.equals("Head") || "".equals(businessCard.icon)) {

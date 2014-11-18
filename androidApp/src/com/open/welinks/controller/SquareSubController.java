@@ -53,7 +53,6 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.SquareSubView;
 import com.open.welinks.view.SquareSubView.GroupDialogItem;
-import com.open.welinks.view.SquareSubView.SharesMessageBody;
 import com.open.welinks.view.SquareSubView.SharesMessageBody1;
 
 public class SquareSubController {
@@ -597,9 +596,9 @@ public class SquareSubController {
 			if (thisView.squareMessageListBody != null) {
 				if (thisView.squareMessageListBody.listItemsSequence.size() > 0) {
 					if (currentScanMessageKey != null) {
-						SharesMessageBody body = (SharesMessageBody) thisView.squareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
+						SharesMessageBody1 body = (SharesMessageBody1) thisView.squareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
 						if (body != null) {
-							body.setContent(body.message, body.fileName);
+							body.setContent(body.message, body.fileName, body.shareContent, body.textContent, body.imageContent, body.flag);
 						}
 					}
 				}

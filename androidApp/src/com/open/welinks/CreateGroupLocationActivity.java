@@ -251,22 +251,18 @@ public class CreateGroupLocationActivity extends Activity {
 
 			@Override
 			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-
 			}
 
 			@Override
 			public void onProviderEnabled(String arg0) {
-
 			}
 
 			@Override
 			public void onProviderDisabled(String arg0) {
-
 			}
 
 			@Override
 			public void onLocationChanged(Location arg0) {
-
 			}
 
 			@Override

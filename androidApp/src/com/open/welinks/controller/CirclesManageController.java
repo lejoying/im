@@ -41,10 +41,10 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.utils.ViewUtil;
 import com.open.welinks.view.CirclesManageView;
 import com.open.welinks.view.CirclesManageView.CircleBody;
 import com.open.welinks.view.CirclesManageView.FriendBody;
+import com.open.welinks.view.ViewManage;
 
 public class CirclesManageController {
 
@@ -89,7 +89,7 @@ public class CirclesManageController {
 
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 
-		log.e(ViewUtil.getStatusBarHeight(thisActivity) + "----height");
+		log.e(ViewManage.getStatusBarHeight(thisActivity) + "----height");
 	}
 
 	public void initializeListeners() {

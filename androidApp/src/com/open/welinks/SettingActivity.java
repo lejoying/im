@@ -9,9 +9,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AbsListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.open.lib.MyLog;
@@ -159,14 +157,6 @@ public class SettingActivity extends Activity implements OnClickListener {
 	}
 
 	public View touchView;
-
-	private boolean isTouchOnAbsListView() {
-		return touchView instanceof AbsListView ? true : false;
-	}
-
-	private boolean isTouchOnScrollView() {
-		return touchView instanceof ScrollView ? true : false;
-	}
 
 	@SuppressLint("Recycle")
 	private void createVelocityTracker(MotionEvent event) {

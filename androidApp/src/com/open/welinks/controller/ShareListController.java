@@ -120,14 +120,6 @@ public class ShareListController {
 					if (totalItemCount > 1) {
 						if (loadfinish) {
 							loadfinish = false;
-							// thisView.fileHandlers.handler.post(new Runnable() {
-							//
-							// @Override
-							// public void run() {
-							// thisView.listView.addFooterView(thisView.footerView);
-							// }
-							// });
-
 							getUserShares();
 						}
 					}

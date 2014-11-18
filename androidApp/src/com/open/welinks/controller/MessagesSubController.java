@@ -86,11 +86,6 @@ public class MessagesSubController {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				// Message message = null;
-				// if ((message = (Message) view.getTag(R.id.tag_first)) != null) {
-				// thisconController.message = message;
-				// log.e("-----" + gson.toJson(message));
-				// }
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
 					if (isTouchDown) {
@@ -160,27 +155,6 @@ public class MessagesSubController {
 			onTouchDownView = null;
 		}
 		isTouchDown = false;
-
-		// Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
-		// if (message == null) {
-		// return;
-		// }
-		// String sendType = message.sendType;
-		// if ("point".equals(sendType)) {
-		// String phone = "";
-		// if (message.phone.equals(data.userInformation.currentUser.phone)) {
-		// phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
-		// } else {
-		// phone = message.phone;
-		// }
-		// intent.putExtra("id", phone);
-		// data.relationship.friendsMap.get(phone).notReadMessagesCount = 0;
-		// } else if ("group".equals(sendType)) {
-		// intent.putExtra("id", message.gid);
-		// data.relationship.groupsMap.get(message.gid).notReadMessagesCount = 0;
-		// }
-		// intent.putExtra("type", sendType);
-		// thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
 	}
 
 	public void onScroll() {

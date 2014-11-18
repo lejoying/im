@@ -159,10 +159,10 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.debug1_1) {
 			Log.d(tag, "debug1.1");
-			startActivity(new Intent(MainActivity.this, Debug1Activity.class));
+			// startActivity(new Intent(MainActivity.this, Debug1Activity.class));
 		} else if (item.getItemId() == R.id.debug1_0) {
 			Log.d(tag, "debug1.1");
-			startActivity(new Intent(MainActivity.this, Debug1Activity.class));
+			// startActivity(new Intent(MainActivity.this, Debug1Activity.class));
 		}
 		return true;
 	}
@@ -270,8 +270,6 @@ public class MainActivity extends Activity {
 			thisView.mainPagerBody.flipTo(2);
 			thisView.messages_friends_me_PagerBody.flipTo(0);
 		}
-		// Log.e(tag, thisView.shareSubView.groupCoverView.getHeight() + ":height");
-		// Log.e(tag, thisView.shareSubView.groupCoverView.getWidth() + ":width");
 		NotificationUtils.cancelNotification(MainActivity.this);
 		super.onWindowFocusChanged(hasFocus);
 	}

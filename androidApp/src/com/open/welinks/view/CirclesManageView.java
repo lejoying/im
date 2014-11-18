@@ -37,7 +37,6 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.utils.ViewUtil;
 
 public class CirclesManageView {
 
@@ -166,7 +165,7 @@ public class CirclesManageView {
 			log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);
 		}
 
-		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewUtil.getStatusBarHeight(context) - displayMetrics.density * 48);
+		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewManage.getStatusBarHeight(context) - displayMetrics.density * 48);
 		if (this.friendListBody.height < this.friendListBody.containerHeight) {
 			this.friendListBody.y = 0;
 		}

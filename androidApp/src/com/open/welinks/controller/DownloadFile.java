@@ -16,7 +16,6 @@ import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data.TempData.ImageBean;
-import com.open.welinks.view.DownloadOssFileView.TransportingList.TransportingItem;
 
 public class DownloadFile {
 
@@ -42,8 +41,6 @@ public class DownloadFile {
 	public static int DOWNLOAD_FAILED = 0x05;
 
 	public int isDownloadStatus;
-
-	public TransportingItem transportingItem;
 
 	public ImageBean imageBean;
 

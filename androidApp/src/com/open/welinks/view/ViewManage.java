@@ -1,5 +1,8 @@
 package com.open.welinks.view;
 
+import java.lang.reflect.Field;
+
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -12,7 +15,6 @@ public class ViewManage {
 
 	public String tag = "ViewManage";
 
-	public Debug1View debug1View = null;
 	public LoginView loginView = null;
 	public MainView mainView = null;
 	public MeSubView meSubView = null;
@@ -29,8 +31,6 @@ public class ViewManage {
 	public GroupListActivity groupListActivity = null;
 	public SearchFriendActivity searchFriendActivity = null;
 	public ChangePasswordActivity changePasswordActivity = null;
-
-	public DownloadOssFileView downloadOssFileView = null;
 
 	public Handler handler = new Handler();
 
@@ -114,5 +114,21 @@ public class ViewManage {
 				}
 			}
 		}
+	}
+	public static int getStatusBarHeight(Context context) {
+		Class<?> c = null;
+		Object obj = null;
+		Field field = null;
+		int x = 0, statusBarHeight = 0;
+		try {
+			c = Class.forName("com.android.internal.R$dimen");
+			obj = c.newInstance();
+			field = c.getField("status_bar_height");
+			x = Integer.parseInt(field.get(obj).toString());
+			statusBarHeight = context.getResources().getDimensionPixelSize(x);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		return statusBarHeight;
 	}
 }

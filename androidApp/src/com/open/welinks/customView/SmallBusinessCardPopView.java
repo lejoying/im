@@ -40,7 +40,6 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.ViewUtil;
 import com.open.welinks.view.ViewManage;
 
 public class SmallBusinessCardPopView {
@@ -307,7 +306,7 @@ public class SmallBusinessCardPopView {
 			distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);
 			lastLoginTimeView = (TextView) userCardMainView.findViewById(R.id.lastLoginTime);
 			userBusinessContainer = (RelativeLayout) userCardMainView.findViewById(R.id.userBusinessView);
-			int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + ViewUtil.getStatusBarHeight(thisActivity);
+			int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + ViewManage.getStatusBarHeight(thisActivity);
 			userBusinessContainer.getLayoutParams().height = height;
 			goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
 			goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);

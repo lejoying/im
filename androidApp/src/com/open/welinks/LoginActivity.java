@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.open.welinks.controller.LoginController;
-import com.open.welinks.controller.TestMultipartUpload;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;
 import com.open.welinks.view.LoginView.Status;
@@ -74,22 +73,22 @@ public class LoginActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.debug1_1) {
 			Log.d(tag, "debug1.1");
-			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
+			// startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
 		} else if (item.getItemId() == R.id.debug1_0) {
 			Log.d(tag, "debug1.1");
-			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
+			// startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
 		} else if (item.getItemId() == R.id.csubmenu2_1) {
 			Log.d(tag, "csubmenu2_1");
 			startActivity(new Intent(LoginActivity.this, ImagesDirectoryActivity.class));
 		} else if (item.getItemId() == R.id.csubmenu2_2) {
 			Log.d(tag, "csubmenu2_2");
-			startActivity(new Intent(LoginActivity.this, TestMultipartUpload.class));
+			// startActivity(new Intent(LoginActivity.this, TestMultipartUpload.class));
 		} else if (item.getItemId() == R.id.csubmenu2_3) {
 			Log.d(tag, "csubmenu2_3");
 			// startActivity(new Intent(LoginActivity.this, TestHttpLongPull.class));
 		} else if (item.getItemId() == R.id.csubmenu2_4) {
 			Log.d(tag, "csubmenu2_4");
-			startActivity(new Intent(LoginActivity.this, DownloadOssFileActivity.class));
+			// startActivity(new Intent(LoginActivity.this, DownloadOssFileActivity.class));
 		} else if (item.getItemId() == R.id.debug1_2) {
 			thisView.showCircleSettingDialog();
 		} else if (item.getItemId() == R.id.debug1_4) {

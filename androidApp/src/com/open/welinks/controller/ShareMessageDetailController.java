@@ -45,7 +45,6 @@ import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
-import com.open.welinks.customView.InnerScrollView.OnScrollChangedListener;
 import com.open.welinks.customView.ShareView.onWeChatClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
@@ -91,7 +90,6 @@ public class ShareMessageDetailController {
 	public String imageContent;
 
 	public OnClickListener mOnClickListener;
-	public OnScrollChangedListener mOnScrollChangedListener;
 	public OnTouchListener mOnTouchListener;
 	public OnDownloadListener downloadListener;
 	public TextWatcher textWatcher;
@@ -303,15 +301,6 @@ public class ShareMessageDetailController {
 					}
 				}
 				return false;
-			}
-		};
-		mOnScrollChangedListener = new OnScrollChangedListener() {
-
-			@Override
-			public void onScrollChangedListener(int l, int t, int oldl, int oldt) {
-				if (thisView.commentInputView.getVisibility() == View.VISIBLE) {
-					thisView.commentInputView.setVisibility(View.GONE);
-				}
 			}
 		};
 		mOnClickListener = new OnClickListener() {

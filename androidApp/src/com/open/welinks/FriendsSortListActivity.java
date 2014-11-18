@@ -231,16 +231,6 @@ public class FriendsSortListActivity extends Activity {
 			}
 		});
 
-		// sortListView.setOnItemClickListener(new OnItemClickListener() {
-		//
-		// @Override
-		// public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		// Toast.makeText(getApplication(), ((SortModel) adapter.getItem(position)).getName(), Toast.LENGTH_SHORT).show();
-		// }
-		// });
-
-		// SourceDateList = filledData(getResources().getStringArray(R.array.date));
-
 		Collections.sort(SourceDateList, pinyinComparator);
 		adapter = new SortAdapter(this, SourceDateList);
 		sortListView.setAdapter(adapter);
@@ -388,10 +378,6 @@ public class FriendsSortListActivity extends Activity {
 
 							@Override
 							public void run() {
-								// if (invitaFriends.size() == 1) {
-								// FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
-								// layoutParams.bottomMargin = (int) (50 * displayMetrics.density);
-								// }
 								showAlreayList();
 							}
 						});
@@ -403,10 +389,6 @@ public class FriendsSortListActivity extends Activity {
 
 							@Override
 							public void run() {
-								// if (invitaFriends.size() == 0) {
-								// FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
-								// layoutParams.bottomMargin = 0;
-								// }
 								showAlreayList();
 							}
 						});

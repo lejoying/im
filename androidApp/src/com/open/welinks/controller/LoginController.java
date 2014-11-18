@@ -739,22 +739,6 @@ public class LoginController {
 		}
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_VERIFYPHONE, params, responseHandlers.account_verifyphone);
-		// FileHandlers fileHandlers = FileHandlers.getInstance();
-		// fileHandlers.handler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// if (remainLogin-- <= 0) {
-		// // thisView.rightBottomTextButton.setText("");
-		// thisView.rightBottomTextButton.setText("重新发送");
-		// } else {
-		// if (thisView.status == Status.verifyPhoneForLogin) {
-		// thisView.rightBottomTextButton.setText("重新发送(" + remainLogin + ")");
-		// }
-		// handler.postDelayed(this, 1000);
-		// }
-		// }
-		// });
 	}
 
 	public void requestUserVerifyCodeCallBack() {

@@ -413,15 +413,35 @@ public class ChatView {
 				}
 				if (position != 0) {
 					Message beforeMessage = messages.get(position - 1);
-					String beroreTime = DateUtil.getChatMessageListTime(Long.valueOf(beforeMessage.time));
-					String currentTime = DateUtil.getChatMessageListTime(Long.valueOf(message.time));
-					if (!beroreTime.equals(currentTime)) {
-						chatHolder.time.setText(currentTime);
+					String beforeTime = "";
+					if ("event".equals(beforeMessage.sendType)) {
+						beforeTime = thisController.gson.fromJson(beforeMessage.content, EventMessage.class).time;
 					} else {
-						chatHolder.time.setText("");
+						beforeTime = beforeMessage.time;
+					}
+					String time = "";
+					if ("event".equals(message.sendType)) {
+						time = thisController.gson.fromJson(beforeMessage.content, EventMessage.class).time;
+					} else {
+						time = message.time;
+					}
+					if (beforeTime != null && time != null) {
+						String beroreTime = DateUtil.getChatMessageListTime(Long.valueOf(beforeTime));
+						String currentTime = DateUtil.getChatMessageListTime(Long.valueOf(time));
+						if (!beroreTime.equals(currentTime)) {
+							chatHolder.time.setText(currentTime);
+						} else {
+							chatHolder.time.setText("");
+						}
 					}
 				} else {
-					chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+					String time = "";
+					if ("event".equals(message.sendType)) {
+						time = thisController.gson.fromJson(message.content, EventMessage.class).time;
+					} else {
+						time = message.time;
+					}
+					chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(time)));
 				}
 				String fileName = "";
 				String phone = "";

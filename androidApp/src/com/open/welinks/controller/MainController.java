@@ -70,8 +70,8 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
-import com.open.welinks.utils.ViewUtil;
 import com.open.welinks.view.MainView;
+import com.open.welinks.view.ViewManage;
 
 public class MainController {
 
@@ -153,7 +153,7 @@ public class MainController {
 		thisView.shareSubView.showShareMessages();
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 
-		data.tempData.statusBarHeight = ViewUtil.getStatusBarHeight(thisActivity);
+		data.tempData.statusBarHeight = ViewManage.getStatusBarHeight(thisActivity);
 
 		DataHandlers.getUserInfomation();
 		DataHandlers.getUserCurrentAllGroup();
@@ -398,21 +398,6 @@ public class MainController {
 		thisView.squareMenuView.setOnClickListener(mOnClickListener);
 		thisView.shareMenuView.setOnClickListener(mOnClickListener);
 		thisView.messages_friends_me_menuView.setOnClickListener(mOnClickListener);
-
-		// thisView.friendsSubView.friendsView.setOnTouchListener(listOnTouchListener);
-
-		// List<String> listItemsSqquece =
-		// thisView.shareSubView.shareMessageListBody.listItemsSequence;
-		// for (int i = 0; i < listItemsSqquece.size(); i++) {
-		// String key = listItemsSqquece.get(i);
-		// SharesMessageBody sharesMessageBody = (SharesMessageBody)
-		// thisView.shareSubView.shareMessageListBody.listItemBodiesMap.get(key);
-		// if (sharesMessageBody.downloadFile != null) {
-		// sharesMessageBody.downloadFile.setDownloadFileListener(downloadListener);
-		// }
-		// }
-
-		// thisView.me_setting_view.setOnClickListener(mOnClickListener);
 
 		this.thisController.squareSubController.bindEvent();
 		this.thisController.shareSubController.bindEvent();

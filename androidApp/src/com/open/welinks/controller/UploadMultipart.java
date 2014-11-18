@@ -36,7 +36,6 @@ import org.xmlpull.v1.XmlSerializer;
 
 import android.view.View;
 
-import com.aliyun.android.oss.Base64;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -52,9 +51,9 @@ import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.utils.Base64;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
-import com.open.welinks.view.Debug1View.TransportingList.TransportingItem;
 
 public class UploadMultipart {
 
@@ -114,8 +113,6 @@ public class UploadMultipart {
 	public CompleteMultipartUploadResult completeMultipartUploadResult;
 
 	public HttpHandler<String> httpHandler;
-
-	public TransportingItem transportingItem;
 
 	public int currentUploadType = 0;
 

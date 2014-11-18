@@ -32,6 +32,7 @@ import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -74,8 +75,6 @@ public class GroupListActivity extends Activity {
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public DisplayImageOptions options;
 
-	// public Bitmap bitmap;
-
 	public ViewManage viewManage = ViewManage.getInstance();
 
 	public Status status;
@@ -111,8 +110,8 @@ public class GroupListActivity extends Activity {
 			for (String circles : data.relationship.circles) {
 				friends.addAll(data.relationship.circlesMap.get(circles).friends);
 			}
-			if (data.relationship.circlesMap.get("8888888") != null) {
-				friends.addAll(data.relationship.circlesMap.get("8888888").friends);
+			if (data.relationship.circlesMap.get(Constant.DEFAULTCIRCLEID + "") != null) {
+				friends.addAll(data.relationship.circlesMap.get(Constant.DEFAULTCIRCLEID + "").friends);
 			}
 			this.friends = friends.toArray(this.friends);
 		} else {
@@ -135,10 +134,6 @@ public class GroupListActivity extends Activity {
 		mInflater = this.getLayoutInflater();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
 
-		// Resources resources = getResources();
-		// bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		// bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
-
 		setContentView(R.layout.activity_group_list);
 		this.backView = (RelativeLayout) findViewById(R.id.backView);
 		this.backTitileView = (TextView) findViewById(R.id.backTitleView);
@@ -151,13 +146,13 @@ public class GroupListActivity extends Activity {
 		this.threeChoicesView.setTwoChoice();
 
 		if (status == Status.list_group) {
-			this.backTitileView.setText("群组列表");
+			this.backTitileView.setText("房间列表");
 			int dp_5 = (int) (5 * displayMetrics.density);
 			this.createGroupButton.setGravity(Gravity.CENTER);
 			this.createGroupButton.setTextColor(Color.WHITE);
 			this.createGroupButton.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
 			this.createGroupButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-			this.createGroupButton.setText("创建群组");
+			this.createGroupButton.setText("创建房间");
 			this.createGroupButton.setBackgroundResource(R.drawable.textview_bg);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
@@ -170,8 +165,8 @@ public class GroupListActivity extends Activity {
 				this.threeChoicesView.setButtonOneText("全部好友");
 				this.threeChoicesView.setButtonThreeText("群组");
 			} else if (status == Status.square) {
-				this.threeChoicesView.setButtonOneText("广场");
-				this.threeChoicesView.setButtonThreeText("群组");
+				this.threeChoicesView.setButtonOneText("社区");
+				this.threeChoicesView.setButtonThreeText("房间");
 			}
 			this.rightContainer.addView(this.threeChoicesView, layoutParams);
 		}
@@ -260,11 +255,11 @@ public class GroupListActivity extends Activity {
 		if (status == Status.friend) {
 			title += "给好友：【" + friendsMap.get(friends[position]).nickName + "】?";
 		} else if (status == Status.message_group) {
-			title += "给群组：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "给房间：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.square) {
-			title += "到广场：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "到社区：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.share_group) {
-			title += "到群组：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "到房间：【" + groupsMap.get(groups.get(position)).name + "】?";
 		}
 		return title;
 	}

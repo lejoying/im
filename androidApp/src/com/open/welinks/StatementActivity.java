@@ -26,7 +26,7 @@ public class StatementActivity extends Activity implements OnClickListener {
 		if ("disclaimer".equals(type)) {
 			title.setText("免责条款");
 		} else if ("about".equals(type)) {
-			title.setText("关于“微型公社”");
+			title.setText("关于“微型社区”");
 		}
 		getFromAssets(type + ".txt");
 	}

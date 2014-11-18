@@ -41,18 +41,6 @@ public class GroupInfoActivity extends Activity {
 	}
 
 	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
-		// this.thisController.onBackPressed();
-	}
-
-	@Override
-	protected void onResume() {
-		// this.thisController.onResume();
-		super.onResume();
-	}
-
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		this.thisController.onActivityResult(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);

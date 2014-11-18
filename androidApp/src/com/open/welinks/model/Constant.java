@@ -19,4 +19,8 @@ public class Constant {
 	 * defaultCircleId = 8888888
 	 */
 	public static long DEFAULTCIRCLEID = 8888888;
+	/**
+	 * defaultContactId = 9999999
+	 */
+	public static long defaultContactId = 9999999;
 }

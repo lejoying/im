@@ -1,4 +1,4 @@
-package com.aliyun.android.oss;
+package com.open.welinks.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

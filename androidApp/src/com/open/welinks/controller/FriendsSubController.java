@@ -30,6 +30,7 @@ import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -307,9 +308,9 @@ public class FriendsSubController {
 	}
 
 	public void deleteCircle(final String rid) {
-		if (!rid.equals("8888888") && !rid.equals("9999999")) {
+		if (!rid.equals(Constant.DEFAULTCIRCLEID + "") && !rid.equals(Constant.defaultContactId + "")) {
 			data = parser.check();
-			final Circle defaultCircle = data.relationship.circlesMap.get("8888888");
+			final Circle defaultCircle = data.relationship.circlesMap.get(Constant.DEFAULTCIRCLEID + "");
 			final Circle deleteCircle = data.relationship.circlesMap.get(rid);
 			if (deleteCircle == null) {
 				Toast.makeText(mainController.thisActivity, "该分组不存在.", Toast.LENGTH_SHORT).show();
