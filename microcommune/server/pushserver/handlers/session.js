@@ -1,5 +1,5 @@
 var session = {};
-var RSA = require('../../alipayserver/tools/RSA');
+var RSA = require('../../mcserver/tools/RSA');
 RSA.setMaxDigits(38);
 var pbkeyStr0 = RSA.RSAKeyStr("5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841",
     "5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841",

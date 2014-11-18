@@ -68,39 +68,6 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
         accountManage.modifypassword(data, response, setOauthAccessKey);
     }
 }
-var communityManage = require("./handlers/communityManage.js");
-requestHandlers.communityManage = function (request, response, pathObject, data) {
-    if (data == null) {
-        return;
-    }
-    var operation = pathObject["operation"];
-    if (operation == "add") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            communityManage.add(data, response);
-        });
-    }
-    else if (operation == "find") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            communityManage.find(data, response);
-        });
-    }
-    else if (operation == "join") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            communityManage.join(data, response);
-        });
-    }
-    else if (operation == "unjoin") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            communityManage.unjoin(data, response);
-        });
-    }
-    else if (operation == "getcommunities") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            communityManage.getcommunities(data, response);
-        });
-    }
-}
-
 
 var relationManage = require("./handlers/relationManage.js");
 requestHandlers.relationManage = function (request, response, pathObject, data) {

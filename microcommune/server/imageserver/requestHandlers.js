@@ -16,57 +16,7 @@ requestHandlers.imagesManage = function (request, response, pathObject, data) {
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "upload") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.upload(data, response);
-        });
-    }
-    else if (operation == "check") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.check(data, response);
-        });
-    }
-    else if (operation == "get") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.get(data, response);
-        });
-    }
-    else if (operation == "show") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.show(data, response);
-        });
-    }
-    else if (operation == "checkfile") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.checkfile(data, response);
-        });
-    }
-    else if (operation == "uploadimagename") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.uploadimagename(data, response);
-        });
-    }
-    else if (operation == "uploadimagesname") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.uploadimagesname(data, response);
-        });
-    }
-    else if (operation == "checkfile2") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.checkfile2(data, response);
-        });
-    }
-    else if (operation == "checkfile3") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.checkfile3(data, response);
-        });
-    }
-    else if (operation == "checkfile4") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            imagesManage.checkfile4(data, response);
-        });
-    }
-    else if (operation == "checkfileexist") {
+    if (operation == "checkfileexist") {
         oauth6(data.phone, data.accessKey, response, function () {
             imagesManage.checkfileexist(data, response);
         });

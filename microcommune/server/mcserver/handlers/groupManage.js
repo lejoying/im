@@ -1178,7 +1178,7 @@ groupManage.get = function (data, response) {
         });
     }
 }
-var ajax = require('../../lbsserver/lib/ajax.js');
+var ajax = require('../../mcserver/lib/ajax.js');
 /***************************************
  *     URL：/api2/group/getgroupsandmembers
  ***************************************/
