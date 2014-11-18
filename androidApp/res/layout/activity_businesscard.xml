@@ -44,6 +44,7 @@
                         android:id="@+id/head"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
+                        android:contentDescription="@string/ImageView"
                         android:src="@drawable/face_man" />
 
                     <TextView
@@ -53,7 +54,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
                         android:singleLine="true"
-                        android:text="李伟"
+                        android:text=""
                         android:textColor="#fff"
                         android:textSize="25sp" />
                 </LinearLayout>
@@ -67,7 +68,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ID:  "
+                        android:text="@string/business_l_ID"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -90,7 +91,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="年龄："
+                        android:text="@string/business_l_age"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -114,7 +115,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="性别："
+                        android:text="@string/business_l_sex"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -137,7 +138,7 @@
                         android:id="@+id/business_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="主要业务:"
+                        android:text="@string/business_l_main_business"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -160,7 +161,7 @@
                         android:id="@+id/lable_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="标签:  "
+                        android:text="@string/business_l_label"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -168,7 +169,7 @@
                         android:id="@+id/lable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="IT"
+                        android:text=""
                         android:textColor="#fff"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -183,7 +184,7 @@
                         android:id="@+id/creattime_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="创建时间:  "
+                        android:text="@string/business_l_regist_time"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -191,7 +192,7 @@
                         android:id="@+id/creattime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2014年07月25日"
+                        android:text=""
                         android:textColor="#fff"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -203,10 +204,9 @@
                     android:padding="5dp" >
 
                     <TextView
-                        android:id="@+id/creattime_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="距离:  "
+                        android:text="@string/business_l_distance"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -214,7 +214,7 @@
                         android:id="@+id/distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.0km"
+                        android:text=""
                         android:textColor="#fff"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -232,7 +232,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
-                        android:text="我的分享"
+                        android:text="@string/business_my_share"
                         android:textColor="#ffffff"
                         android:textSize="16sp" />
 
@@ -240,6 +240,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
+                        android:contentDescription="@string/ImageView"
                         android:padding="15dp"
                         android:src="@drawable/into" />
                 </RelativeLayout>
@@ -265,7 +266,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:text="二维码"
+                    android:text="@string/business_l_qrcode"
                     android:textColor="#fff"
                     android:textSize="18sp" />
 
@@ -273,7 +274,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="28dp"
-                    android:background="#9fff" />
+                    android:background="#9fff"
+                    android:contentDescription="@string/ImageView" />
 
                 <ImageView
                     android:id="@+id/tdcode"
@@ -283,6 +285,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="10dp"
+                    android:contentDescription="@string/ImageView"
                     android:src="@drawable/qrcode" />
             </RelativeLayout>
 

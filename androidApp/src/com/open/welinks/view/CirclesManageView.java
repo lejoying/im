@@ -99,7 +99,7 @@ public class CirclesManageView {
 		View title_control_progress_container = thisActivity.findViewById(R.id.title_control_progress_container);
 		title_control_progress_container.setVisibility(View.GONE);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
-		this.backTitleView.setText("好友分组管理");
+		this.backTitleView.setText(thisActivity.getString(R.string.circleManage_group_manage));
 
 		friendListBody = new ListBody1();
 		friendListBody.initialize(displayMetrics, friendsView);

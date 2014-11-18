@@ -16,7 +16,7 @@
     <string name="groupName_text">群组名称</string>
     <string name="groupPosition_text">群组位置</string>
     <string name="ok_text">完成</string>
-    <string name="createGroupOk_text">恭喜您, 您的群组已经创建成功, 赶快邀请更多的小伙伴来加入您的群组吧   !</string>
+    <string name="createGroupOk_text">恭喜您, 您的房间已经创建成功, 赶快邀请更多的小伙伴来加入您的房间吧   !</string>
     <string name="invitaMailFriend_text">邀请通讯录好友</string>
     <string name="invitaLocalFriend_text">邀请本地好友</string>
     <string name="searchNearFriend_text">搜索附近好友</string>
@@ -40,5 +40,48 @@
     <string name="hint_verify">请输入验证消息</string>
     <!-- common textview -->
     <string name="text_verify">对方启用了朋友验证</string>
+    <string name="ImageView">ImageView</string>
+
+    <!-- BusinessCard -->
+    <string name="business_modify_card">修改名片</string>
+    <string name="business_not_label">暂无标签</string>
+    <string name="business_modify_mycard">修改我的名片</string>
+    <string name="business_initiate_chat">发起聊天</string>
+    <string name="business_modify_remarks">修改备注</string>
+    <string name="business_relieve_relation">解除好友关系</string>
+    <string name="business_blacklist_remove">从黑名单移除</string>
+    <string name="business_add_to_blacklist">添加到黑名单</string>
+    <string name="business_add_as_friend">加为好友</string>
+    <string name="business_chat_room">聊天室</string>
+    <string name="business_input_room_info">请输入房间描述信息</string>
+    <string name="business_room_not_business">此房间暂无业务</string>
+    <string name="business_modify_room_card">修改房间名片</string>
+    <string name="business_add_to_room">加入房间</string>
+    <string name="business_go_community">进入社区</string>
+    <string name="business_my_info">我的详情</string>
+    <string name="business_personal_statement">个人宣言：</string>
+    <string name="business_hobbies">爱好：</string>
+    <string name="business_regist_time">注册时间：</string>
+    <string name="business_personal_info">个人详情</string>
+    <string name="business_room_info">房间详情</string>
+    <string name="business_room_name">名称：</string>
+    <string name="business_label">标签：</string>
+    <string name="business_community_info">社区详情</string>
+    <string name="business_male">男</string>
+    <string name="business_female">女</string>
+    <string name="business_he_share">他的分享</string>
+    <string name="business_she_share">她的分享</string>
+    <string name="business_my_share">我的分享</string>
+    <string name="business_l_ID">ID:  </string>
+    <string name="business_l_age">年龄：</string>
+    <string name="business_l_sex">性别：</string>
+    <string name="business_l_main_business">主要业务:</string>
+    <string name="business_l_label">标签:  </string>
+    <string name="business_l_regist_time">创建时间:  </string>
+    <string name="business_l_distance">距离:  </string>
+    <string name="business_l_qrcode">二维码</string>
+
+    <!-- CircleManage -->
+    <string name="circleManage_group_manage">好友分组管理</string>
 
 </resources>
