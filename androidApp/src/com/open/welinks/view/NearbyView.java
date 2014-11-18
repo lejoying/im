@@ -18,6 +18,7 @@ import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
@@ -37,9 +38,9 @@ public class NearbyView {
 
 	public NearbyAdapter nearbyAdapter;
 
-	// public Bitmap bitmap;
-
 	public int NearbyLayoutID;
+
+	public View maxView;
 
 	public DisplayImageOptions headOptions;
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
@@ -48,6 +49,8 @@ public class NearbyView {
 		thisView = this;
 		this.thisActivity = thisActivity;
 	}
+
+	public SmallBusinessCardPopView businessCardPopView;
 
 	public void initView() {
 
@@ -62,10 +65,11 @@ public class NearbyView {
 		threeChoicesView = new ThreeChoicesView(thisActivity, 0);
 		rightContainer.addView(threeChoicesView);
 
+		maxView = thisActivity.findViewById(R.id.maxView);
+
 		titleContent.setText("附近");
 
-		// bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
-		// bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
 	}
 
 	public void fillData() {
@@ -202,4 +206,7 @@ public class NearbyView {
 		}
 	}
 
+	public void onResume() {
+		businessCardPopView.dismissUserCardDialogView();
+	}
 }

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_background_1"
+    android:id="@+id/maxView"
     tools:context=".NearbyActivity" >
 
     <include layout="@layout/view_back_view" />

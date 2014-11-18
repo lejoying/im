@@ -611,7 +611,8 @@ public class ShareSubController {
 					if (currentScanMessageKey != null) {
 						SharesMessageBody body = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
 						if (body != null) {
-							body.setContent(body.message, body.fileName, null, null);
+							log.e(body.textContent);
+							body.setContent(body.message, body.fileName, body.imageContent, body.textContent, body.totalHeight);
 						}
 					}
 				}

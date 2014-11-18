@@ -5,5 +5,6 @@
 	currentSelectedSquare : "",
 	shareReleaseSequece : [],
 	shareReleaseSequeceMap : {},
-	newMessagePowerMap : {}
+	newMessagePowerMap : {},
+	addFriendMessage : ""
 }

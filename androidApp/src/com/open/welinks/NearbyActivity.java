@@ -27,4 +27,9 @@ public class NearbyActivity extends Activity {
 		thisView.fillData();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		thisView.onResume();
+	}
 }

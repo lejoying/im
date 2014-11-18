@@ -259,7 +259,11 @@ public class BusinessCardView {
 			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText(thisActivity.getString(R.string.business_add_to_room));
 			if (data.tempData.tempGroup == null) {
-				thisController.getGroupCard(thisController.key, "group");
+				if (!isGetData)
+					thisController.getGroupCard(thisController.key, "group");
+			} else {
+				if (!isGetData)
+					thisController.getGroupCard(thisController.key, "group");
 			}
 			if (data.relationship.groupsMap.get(thisController.key) != null) {
 				data.tempData.tempGroup = data.relationship.groupsMap.get(thisController.key);

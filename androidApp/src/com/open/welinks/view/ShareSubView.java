@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -266,7 +265,7 @@ public class ShareSubView {
 				sharesMessageBody0.initialize(-1);
 				sharesMessageBody0.itemHeight = (280 - 48) * displayMetrics.density;
 			}
-			sharesMessageBody0.setContent(null, "", "", "");
+			sharesMessageBody0.setContent(null, "", "", "", 0);
 			this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
 			this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
 			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (250 * displayMetrics.density));
@@ -322,7 +321,7 @@ public class ShareSubView {
 			if (!nowTime.equals(lastTime)) {
 				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
 				sharesMessageBody0.initialize(-2);
-				sharesMessageBody0.setContent(shareMessage, "", "", "");
+				sharesMessageBody0.setContent(shareMessage, "", "", "", 0);
 				this.shareMessageListBody.listItemsSequence.add("message#" + "timeBar" + shareMessage.time);
 				this.shareMessageListBody.listItemBodiesMap.put("message#" + "timeBar" + shareMessage.time, sharesMessageBody0);
 				RelativeLayout.LayoutParams layoutParams_2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (40 * displayMetrics.density));
@@ -360,78 +359,94 @@ public class ShareSubView {
 			if (friend != null) {
 				fileName = friend.head;
 			}
-
-			ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
-			String textContent = "";
-			String imageContent = "";
-			List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
-			B: for (int j = 0; j < shareContentItems.size(); j++) {
-				ShareContentItem shareContentItem = shareContentItems.get(j);
-				if (shareContentItem.type.equals("image")) {
-					imageContent = shareContentItem.detail;
-					if (!"".equals(textContent))
-						break B;
-				} else if (shareContentItem.type.equals("text")) {
-					textContent = shareContentItem.detail;
-					if (!"".equals(imageContent))
-						break B;
-				}
-			}
-
-			int totalHeight = (int) (360 * displayMetrics.density + 0.5f);
 			int height10dp = (int) (10 * displayMetrics.density + 0.5f);
-			TextView textView = new TextView(thisController.thisActivity);
-			textView.setWidth((int) (displayMetrics.widthPixels - 40 * displayMetrics.density));
-			textView.setText(textContent);
-			textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-			int widthMeasureSpec = 0, heightMeasureSpec = 0;
-			textView.measure(widthMeasureSpec, heightMeasureSpec);
+			int totalHeight = 0;
+			if (!isExists) {
+				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+				String textContent = "";
+				String imageContent = "";
+				List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+				B: for (int j = 0; j < shareContentItems.size(); j++) {
+					ShareContentItem shareContentItem = shareContentItems.get(j);
+					if (shareContentItem.type.equals("image")) {
+						imageContent = shareContentItem.detail;
+						if (!"".equals(textContent))
+							break B;
+					} else if (shareContentItem.type.equals("text")) {
+						textContent = shareContentItem.detail;
+						if (!"".equals(imageContent))
+							break B;
+					}
+				}
 
-			float textSize = textView.getTextSize();
-			int lineTextCount = (int) ((displayMetrics.widthPixels - 40 * displayMetrics.density) / textSize);
-			int lineCount = textView.getLineCount();
-			// String content = textContent;
-			if (lineCount > 4) {
-				lineCount = 4;
-				String firstContent = textContent.substring(0, 4 * lineTextCount);
-				String[] n = firstContent.split("\n");
-				int subPosition = 4 * lineTextCount;
-				// for (String str : n) {
-				// if (str.length() % lineTextCount != 0) {
-				// subPosition -= (lineTextCount - (str.length() % lineTextCount));
-				// // subPosition += 2;
-				// }
-				// }
-				// log.e(n.length + "--");
-				String endContent = textContent.substring(subPosition);
-				int indexN = endContent.indexOf("\n");
-				int indexRN = endContent.indexOf("\r\n");
-				if (indexN != -1 && indexRN != -1) {
-					if (indexN > indexRN) {
-						indexRN++;
+				totalHeight = (int) (360 * displayMetrics.density + 0.5f);
+				sharesMessageBody.shareTextContentView.setText(textContent);
+				int widthMeasureSpec = 0, heightMeasureSpec = 0;
+				sharesMessageBody.shareTextContentView.measure(widthMeasureSpec, heightMeasureSpec);
+
+				float textSize = sharesMessageBody.shareTextContentView.getTextSize();
+				int lineTextCount = (int) ((displayMetrics.widthPixels - 40 * displayMetrics.density) / textSize);
+				int lineCount = sharesMessageBody.shareTextContentView.getLineCount();
+				// String content = textContent;
+				if (lineCount >= 5) {
+					lineCount = 4;
+					String firstContent = textContent.substring(0, 4 * lineTextCount);
+					String[] n = firstContent.getBytes().toString().split("\n");
+					int subPosition = 4 * lineTextCount;
+					for (String str : n) {
+						if (str.length() % lineTextCount != 0) {
+							subPosition -= (lineTextCount - (str.length() % lineTextCount));
+							subPosition += 2;
+						} else {
+							if (str.length() == 0) {
+								subPosition -= lineTextCount;
+							}
+							subPosition += 2;
+						}
+					}
+					// log.e(n.length + "--");
+					String endContent = textContent.substring(subPosition);
+					if (textContent.indexOf("1、") == 0) {
+						log.e(textContent.substring(0, subPosition));
+					}
+					int indexN = endContent.indexOf("\n");
+					int indexRN = endContent.indexOf("\r\n");
+					if (indexN != -1 && indexRN != -1) {
+						if (indexN > indexRN) {
+							textContent = textContent.substring(0, subPosition) + endContent.substring(0, indexRN);
+							lineCount += ((indexRN % lineTextCount) == 0 ? (indexRN / lineTextCount) : (indexRN / lineTextCount) + 1);
+						} else {
+							textContent = textContent.substring(0, subPosition) + endContent.substring(0, indexN);
+							lineCount += ((indexN % lineTextCount) == 0 ? (indexN / lineTextCount) : (indexN / lineTextCount) + 1);
+						}
+					} else if (indexN != -1) {
+						textContent = textContent.substring(0, subPosition) + endContent.substring(0, indexN);
+						lineCount += ((indexN % lineTextCount) == 0 ? (indexN / lineTextCount) : (indexN / lineTextCount) + 1);
+					} else if (indexRN != -1) {
+						textContent = textContent.substring(0, subPosition) + endContent.substring(0, indexRN);
 						lineCount += ((indexRN % lineTextCount) == 0 ? (indexRN / lineTextCount) : (indexRN / lineTextCount) + 1);
 					} else {
-						indexN++;
-						lineCount += ((indexN % lineTextCount) == 0 ? (indexN / lineTextCount) : (indexN / lineTextCount) + 1);
+						lineCount = sharesMessageBody.shareTextContentView.getLineCount();
 					}
-				} else if (indexN != -1) {
-					indexN++;
-					lineCount += ((indexN % lineTextCount) == 0 ? (indexN / lineTextCount) : (indexN / lineTextCount) + 1);
-				} else if (indexRN != -1) {
-					indexRN++;
-					lineCount += ((indexRN % lineTextCount) == 0 ? (indexRN / lineTextCount) : (indexRN / lineTextCount) + 1);
-				} else {
-					lineCount = textView.getLineCount();
+					if (indexRN != -1 || indexN != -1) {
+						sharesMessageBody.shareTextContentView.setText(textContent);
+						sharesMessageBody.shareTextContentView.measure(widthMeasureSpec, heightMeasureSpec);
+						lineCount = sharesMessageBody.shareTextContentView.getLineCount();
+					}
 				}
-			}
-			if ("".equals(imageContent)) {
-				totalHeight = (int) (65 * displayMetrics.density + 0.5f) + lineCount * textView.getLineHeight();
-			} else if ("".equals(textContent)) {
-				totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
+				int lineHeight = sharesMessageBody.shareTextContentView.getLineHeight();
+				if ("".equals(imageContent)) {
+					totalHeight = (int) (70 * displayMetrics.density + 0.5f) + lineCount * lineHeight;
+				} else if ("".equals(textContent)) {
+					totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
+				} else {
+					totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + lineCount * lineHeight;
+				}
+				sharesMessageBody.setContent(shareMessage, fileName, imageContent, textContent, totalHeight);
 			} else {
-				totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + lineCount * textView.getLineHeight();
+				sharesMessageBody.setContent(sharesMessageBody.message, sharesMessageBody.fileName, sharesMessageBody.imageContent, sharesMessageBody.textContent, sharesMessageBody.totalHeight);
+				totalHeight = sharesMessageBody.totalHeight;
 			}
-			sharesMessageBody.setContent(shareMessage, fileName, imageContent, textContent);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) (displayMetrics.widthPixels - height10dp * 2), totalHeight);
 			sharesMessageBody.y = this.shareMessageListBody.height;
@@ -496,6 +511,10 @@ public class ShareSubView {
 
 		public String fileName;
 
+		public int totalHeight;
+		public String imageContent;
+		public String textContent;
+
 		public int i;
 
 		public ControlProgress controlProgress;
@@ -533,12 +552,15 @@ public class ShareSubView {
 				this.controlProgressView = this.cardView.findViewById(R.id.list_item_progress_container);
 
 				this.shareTextContentView.setTextColor(Color.parseColor("#99000000"));
+
+				int textWidth = (int) (displayMetrics.widthPixels - 40 * displayMetrics.density);
+				this.shareTextContentView.setWidth(textWidth);
 			}
 			super.initialize(cardView);
 			return cardView;
 		}
 
-		public void setContent(ShareMessage shareMessage, String fileName, String imageContent, String textContent) {
+		public void setContent(ShareMessage shareMessage, String fileName, String imageContent, String textContent, int totalHeight) {
 			data = parser.check();
 			if (i == -1) {
 				// showGroupMembers(groupMembersListContentView);
@@ -567,6 +589,10 @@ public class ShareSubView {
 				}
 				this.message = shareMessage;
 				this.fileName = fileName;
+				this.totalHeight = totalHeight;
+				this.imageContent = imageContent;
+				this.textContent = textContent;
+
 				if (shareMessage.status != null) {
 					if ("sending".equals(shareMessage.status)) {
 						shareStatusView.setText("发送中...");
@@ -607,64 +633,28 @@ public class ShareSubView {
 				}
 
 				this.shareTextContentView.setText(textContent);
-				int totalHeight = (int) (360 * displayMetrics.density + 0.5f);
-				// this.shareTextContentView.setLines(5);
-				int textWidth = (int) (displayMetrics.widthPixels - 40 * displayMetrics.density);
-				this.shareTextContentView.setWidth(textWidth);
-
-				int widthMeasureSpec = 0, heightMeasureSpec = 0;
-				this.shareTextContentView.measure(widthMeasureSpec, heightMeasureSpec);
-
-				float textSize = this.shareTextContentView.getTextSize();
-				int lineTextCount = (int) (textWidth / textSize);
-
-				int lineCount = this.shareTextContentView.getLineCount();
-				String content = textContent;
-				int rLength = 0;
-				if (lineCount > 4) {
-					lineCount = 4;
-					rLength = textContent.substring(0, 4 * lineTextCount).split("\r").length;
-					String endContent = textContent.substring(4 * lineTextCount);
-					int indexN = endContent.indexOf("\n");
-					int indexRN = endContent.indexOf("\r\n");
-					if (indexN != -1 && indexRN != -1) {
-						if (indexN > indexRN) {
-							content = textContent.substring(0, 4 * lineTextCount) + endContent.substring(0, indexRN);
-							lineCount += ((indexRN % lineTextCount) == 0 ? (indexRN / lineTextCount) : (indexRN / lineTextCount) + 1);
-						} else {
-							content = textContent.substring(0, 4 * lineTextCount) + endContent.substring(0, indexN);
-							lineCount += ((indexN % lineTextCount) == 0 ? (indexN / lineTextCount) : (indexN / lineTextCount) + 1);
-						}
-					} else if (indexN != -1) {
-						content = textContent.substring(0, 4 * lineTextCount) + endContent.substring(0, indexN);
-						lineCount += ((indexN % lineTextCount) == 0 ? (indexN / lineTextCount) : (indexN / lineTextCount) + 1);
-					} else if (indexRN != -1) {
-						content = textContent.substring(0, 4 * lineTextCount) + endContent.substring(0, indexRN);
-						lineCount += ((indexRN % lineTextCount) == 0 ? (indexRN / lineTextCount) : (indexRN / lineTextCount) + 1);
-					} else {
-						lineCount = this.shareTextContentView.getLineCount();
-					}
-					// log.e(lineCount + "-:" + rLength + ":" + content.substring(0, 10));
-				}
 
 				if ("".equals(imageContent)) {
-					totalHeight = (int) (65 * displayMetrics.density + 0.5f) + lineCount * this.shareTextContentView.getLineHeight();
+					// totalHeight = (int) (65 * displayMetrics.density + 0.5f) + lineCount * this.shareTextContentView.getLineHeight();
 					RelativeLayout.LayoutParams params2 = (android.widget.RelativeLayout.LayoutParams) shareTextContentView.getLayoutParams();
 					params2.topMargin = (int) (1 * displayMetrics.density + 0.5f);
 					// this.shareTextContentView.setLines(5);
 				} else if ("".equals(textContent)) {
 					// this.shareTextContentView.setLines(4);
-					totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
+					// totalHeight = (int) (60 * displayMetrics.density + 0.5f + shareImageHeight);
 				} else {
-					totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + lineCount * this.shareTextContentView.getLineHeight();
+					// totalHeight = (int) (75 * displayMetrics.density + 0.5f + shareImageHeight) + lineCount * this.shareTextContentView.getLineHeight();
 				}
 
 				// shareImageContentView.setBackgroundResource(R.drawable.account_pop_black_background);
 
 				FrameLayout.LayoutParams params = (LayoutParams) background_share_item.getLayoutParams();
 				params.height = totalHeight;
-				this.shareTextContentView.setLines(lineCount);
-				this.shareTextContentView.setText(content);
+				// this.shareTextContentView.setLines(lineCount);
+				// this.shareTextContentView.setText(content);
+				// if (content.indexOf("合伙人") == 0) {
+				// log.e(this.shareTextContentView.getLineCount() + "----lines:" + lineCount);
+				// }
 
 				// File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
 				final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);

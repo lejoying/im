@@ -6,11 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
@@ -36,7 +34,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
-import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -151,15 +148,21 @@ public class NearbyController {
 			@Override
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
-					boolean isTemp = judgeTempRelation((Map<String, Object>) view.getTag(R.id.tag_third));
 					String type = (String) view.getTag(R.id.tag_first);
 					String key = (String) view.getTag(R.id.tag_second);
-					Log.e("hahha", "phone:::" + key);
-					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
-					intent.putExtra("type", type);
-					intent.putExtra("key", key);
-					intent.putExtra("isTemp", isTemp);
-					thisActivity.startActivity(intent);
+					if ("square".equals(type)) {
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_SQUARE, key);
+						thisView.businessCardPopView.cardView.setMenu(false);
+						thisView.businessCardPopView.showUserCardDialogView();
+					} else if ("group".equals(type)) {
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, key);
+						thisView.businessCardPopView.cardView.setMenu(false);
+						thisView.businessCardPopView.showUserCardDialogView();
+					} else if ("point".equals(type)) {
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, key);
+						thisView.businessCardPopView.cardView.setMenu(false);
+						thisView.businessCardPopView.showUserCardDialogView();
+					}
 				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				}

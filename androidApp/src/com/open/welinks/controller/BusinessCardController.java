@@ -29,6 +29,7 @@ import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
+import com.open.welinks.R;
 import com.open.welinks.ShareListActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
@@ -466,9 +467,12 @@ public class BusinessCardController {
 	public void joinGroup() {
 		if (!data.relationship.groups.contains(key)) {
 			Group group = data.relationship.new Group();
+			data.relationship.groups.add(key);
 			data.relationship.groupsMap.put(key, group);
+			data.relationship.isModified = true;
 			thisView.status = Status.JOINEDGROUP;
-			thisView.fillData();
+			// thisView.fillData();
+			thisView.rightTopButton.setText(thisActivity.getString(R.string.business_chat_room));
 			HttpUtils httpUtils = new HttpUtils();
 			RequestParams params = new RequestParams();
 			params.addBodyParameter("phone", data.userInformation.currentUser.phone);
