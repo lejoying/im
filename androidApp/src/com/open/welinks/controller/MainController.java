@@ -691,6 +691,9 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				listBody = thisView.shareSubView.shareMessageListBody;
 				// listBody = thisView.shareSubView.shareMessageListBody;
+				if (thisView.shareSubView.isShowGroupDialog) {
+					listBody = thisView.shareSubView.groupListBody;
+				}
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				listBody = thisView.squareSubView.squareMessageListBody;
 			}
