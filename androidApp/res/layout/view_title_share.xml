@@ -33,8 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:translationX="20dp"
-            android:background="@drawable/backview_background" >
+            android:background="@drawable/backview_background"
+            android:translationX="20dp" >
 
             <TextView
                 android:id="@+id/shareTopMenuGroupName"
@@ -50,12 +50,12 @@
                 android:textSize="18sp" />
 
             <ImageView
+                android:id="@+id/botton"
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:layout_alignRight="@+id/shareTopMenuGroupName"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginLeft="65dp"
                 android:src="@drawable/subscript_triangle"
                 android:tint="@color/icon_color" />
         </RelativeLayout>

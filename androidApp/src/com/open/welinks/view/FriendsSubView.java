@@ -275,8 +275,8 @@ public class FriendsSubView {
 
 		public void setData(Friend friend) {
 			if (this.flag) {
-				this.headImageView.setImageResource(R.drawable.button_addmembers);
-				this.headImageView.setColorFilter(Color.parseColor("#0099cd"));
+				this.headImageView.setImageResource(R.drawable.chatgroupmore);
+				this.headImageView.setColorFilter(Color.parseColor("#99cdcdcd"));
 				this.nickNameView.setText("添加好友");
 				this.friendView.setTag(R.id.tag_class, "addfriend_view");
 			} else {

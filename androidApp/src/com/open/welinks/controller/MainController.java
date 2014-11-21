@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.amap.api.cloud.model.AMapCloudException;
@@ -147,6 +149,7 @@ public class MainController {
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 		mListGesture = new GestureDetector(thisActivity, new GestureListener());
 		parser.check();
+
 		thisView.friendsSubView.showCircles();
 		thisView.messagesSubView.showMessagesSequence();
 
@@ -169,8 +172,6 @@ public class MainController {
 	public void onResume() {
 		data.localStatus.thisActivityName = "MainActivity";
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
-		data = parser.check();
-		thisView.userTopbarNameView.setText(data.userInformation.currentUser.nickName);
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
 		thisView.squareSubView.businessCardPopView.dismissUserCardDialogView();
@@ -178,6 +179,13 @@ public class MainController {
 		thisView.shareSubView.businessCardPopView.dismissUserCardDialogView();
 		// thisView.shareSubView.onResume();
 		// thisView.messagesSubView.onResume();
+
+		data = thisController.parser.check();
+		thisView.userTopbarNameView.setText(data.userInformation.currentUser.nickName);
+		int length = data.userInformation.currentUser.nickName.length();
+		int left = (int) (thisView.textSize * length);
+		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) thisView.botton.getLayoutParams();
+		params.leftMargin = left;
 	}
 
 	public void onPause() {
@@ -199,7 +207,7 @@ public class MainController {
 	}
 
 	public void getIntimatefriends() {
-		Log.e(tag, "刷新好友分组getIntimatefriends");
+		log.e(tag, "刷新好友分组getIntimatefriends");
 		RequestParams params = new RequestParams();
 		data = parser.check();
 		User user = data.userInformation.currentUser;
@@ -245,29 +253,17 @@ public class MainController {
 				}
 
 				else if (view.equals(thisView.squareMenuView)) {
-					// if (thisView.shareSubView.isShowGroupDialog) {
-					// thisView.shareSubView.dismissGroupDialog();
-					// } else {
 					thisView.mainPagerBody.active();
 					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(0);
-					// }
 				} else if (view.equals(thisView.shareMenuView)) {
-					// if (thisView.shareSubView.isShowGroupDialog) {
-					// thisView.shareSubView.dismissGroupDialog();
-					// } else {
 					thisView.mainPagerBody.active();
 					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(1);
-					// }
 				} else if (view.equals(thisView.messages_friends_me_menuView)) {
-					// if (thisView.shareSubView.isShowGroupDialog) {
-					// thisView.shareSubView.dismissGroupDialog();
-					// } else {
 					thisView.mainPagerBody.active();
 					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(2);
-					// }
 				}
 
 				else if (view.equals(thisView.friendsSubView.modifyCircleNameView)) {
@@ -361,7 +357,7 @@ public class MainController {
 								map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
 								Iterator<?> iter = item.getCustomfield().entrySet().iterator();
 								while (iter.hasNext()) {
-									Map.Entry entry = (Map.Entry) iter.next();
+									Entry<?, ?> entry = (Entry<?, ?>) iter.next();
 									map.put(entry.getKey().toString(), entry.getValue());
 								}
 								addSquare(map);
@@ -694,9 +690,9 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				listBody = thisView.shareSubView.shareMessageListBody;
 				// listBody = thisView.shareSubView.shareMessageListBody;
-				if (thisView.shareSubView.isShowGroupDialog) {
-					listBody = thisView.shareSubView.groupListBody;
-				}
+				// if (thisView.shareSubView.isShowGroupDialog) {
+				// listBody = thisView.shareSubView.groupListBody;
+				// }
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				listBody = thisView.squareSubView.squareMessageListBody;
 			}

@@ -27,9 +27,9 @@
         <RelativeLayout
             android:id="@+id/rl_chatMessagesList"
             android:layout_width="110dp"
-            android:layout_height="match_parent"
+            android:layout_height="32dp"
+            android:translationY="2dp"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
             android:background="@drawable/backview_background" >
 
             <TextView
@@ -46,8 +46,9 @@
         <RelativeLayout
             android:id="@+id/rl_intimatefriends"
             android:layout_width="110dp"
-            android:layout_height="match_parent"
+            android:layout_height="32dp"
             android:layout_centerHorizontal="true"
+            android:translationY="2dp"
             android:background="@drawable/backview_background" >
 
             <TextView
@@ -64,8 +65,9 @@
         <RelativeLayout
             android:id="@+id/rl_userInfomation"
             android:layout_width="110dp"
-            android:layout_height="match_parent"
+            android:layout_height="32dp"
             android:layout_alignParentRight="true"
+            android:translationY="2dp"
             android:background="@drawable/backview_background" >
 
             <TextView

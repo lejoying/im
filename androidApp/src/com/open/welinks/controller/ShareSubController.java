@@ -335,10 +335,12 @@ public class ShareSubController {
 					thisView.groupDialogView.isIntercept = false;
 					thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.groupHeadView) || view.equals(thisView.groupCoverView)) {
-					parser.check();
-					// Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, data.localStatus.localData.currentSelectedGroup);
-					thisView.businessCardPopView.showUserCardDialogView();
+					if (data.localStatus.localData != null && data.localStatus.localData.currentSelectedGroup != null && !data.localStatus.localData.currentSelectedGroup.equals("")) {
+						parser.check();
+						// Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, data.localStatus.localData.currentSelectedGroup);
+						thisView.businessCardPopView.showUserCardDialogView();
+					}
 				} else if (view.equals(thisView.releaseShareView)) {
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };

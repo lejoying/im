@@ -44,16 +44,16 @@
                 android:gravity="center_vertical"
                 android:maxEms="7"
                 android:singleLine="true"
-                android:text="用户ABC"
+                android:text="nickName"
                 android:textColor="@color/icon_color"
                 android:textSize="18sp" />
 
             <ImageView
+                android:id="@+id/botton"
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:layout_alignRight="@+id/userTopbarName"
+                android:layout_marginLeft="80dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"
                 android:src="@drawable/subscript_triangle"
                 android:tint="@color/icon_color" />

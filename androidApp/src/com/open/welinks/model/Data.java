@@ -64,7 +64,7 @@ public class Data {
 
 		public String debugMode = "NONE";// NONE
 
-		public String sendBug = "NONE";// "NONE"
+		public String sendBug = "TRUE";// "NONE"
 
 		public LocalData localData;
 

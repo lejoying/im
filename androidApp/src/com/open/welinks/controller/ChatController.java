@@ -87,7 +87,7 @@ public class ChatController {
 
 	public String type, key;
 
-	public User currentUser = data.userInformation.currentUser;
+	public User currentUser;
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -98,6 +98,8 @@ public class ChatController {
 	}
 
 	public void onCreate() {
+		parser.check();
+		currentUser = data.userInformation.currentUser;
 		String key = thisActivity.getIntent().getStringExtra("id");
 		if (key != null && !"".equals(key)) {
 			this.key = key;
@@ -394,7 +396,10 @@ public class ChatController {
 		thisView.chat_bottom_bar.startAnimation(inAnimation);
 	}
 
+	long startTime = 0;
+
 	public void addImagesToMessage() {
+		startTime = new Date().getTime();
 		new Thread(new Runnable() {
 
 			@Override
@@ -423,10 +428,13 @@ public class ChatController {
 					content.add((String) map.get("fileName"));
 					UploadMultipart multipart = uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
 					multiparts.add(multipart);
+					multipart.i = i;
 					try {
 						Thread.sleep(100);
 						System.gc();
 						Thread.sleep(100);
+						long currentTime = new Date().getTime();
+						log.e(i + ":" + (currentTime - startTime) / 1000 + " s");
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -435,6 +443,8 @@ public class ChatController {
 				map0.put("content", messageContent);
 				sendMessageToLocal(gson.toJson(content), "image", time);
 				uploadMultipartList.addMultipart(multiparts);
+				long currentTime = new Date().getTime();
+				log.e("total:" + (currentTime - startTime) / 1000 + " s");
 			}
 		}).start();
 	}

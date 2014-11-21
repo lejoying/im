@@ -79,6 +79,7 @@ public class UploadMultipart {
 	public UploadMultipart instance;
 
 	public View view;
+	public int i;
 
 	public String path; // example:"/sdcard/test/test001.jpg"
 	public String contentType = null;// example: "image/jpg" "image/png"
@@ -221,7 +222,7 @@ public class UploadMultipart {
 					if (uploadLoadingListener != null) {
 						uploadLoadingListener.onSuccess(instance, 0);
 					}
-					log.e("上传成功**********************服务器已经存在");
+					log.e("上传成功**********************服务器已经存在,i:" + i);
 					bytes = null;
 					System.gc();
 				} else {
@@ -236,11 +237,13 @@ public class UploadMultipart {
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			isUploadStatus = UPLOAD_INITFAILED;
 			uploadLoadingListener.onLoading(instance, 0, 0, UPLOAD_FAILED);
+			log.e("上传失败**********************服务器异常");
 			initiateMultipartupload();
 		};
 	};
 
 	public void initiateMultipartupload() {
+		log.e("i" + i);
 		isUploadStatus = UPLOAD_INIT;
 		long expires = (new Date().getTime() / 1000) + addExpires;
 		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploads";
@@ -465,7 +468,7 @@ public class UploadMultipart {
 			uploadLoadingListener.onSuccess(instance, (int) (time.received - time.start));
 			bytes = null;
 			System.gc();
-			log.e("上传成功**********************");
+			log.e("上传成功**********************,i:" + i);
 			uploadFileName();
 			// log.e(completeMultipartUploadResult.location + "---" +
 			// completeMultipartUploadResult.bucket + "---" +

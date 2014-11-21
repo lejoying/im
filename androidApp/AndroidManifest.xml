@@ -36,8 +36,10 @@
     <application
         android:name="com.open.welinks.model.MainApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:largeHeap="true" >
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="32b48639b260edd1916960614151eec3" />

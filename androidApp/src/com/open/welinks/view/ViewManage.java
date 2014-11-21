@@ -138,7 +138,7 @@ public class ViewManage {
 				messagesSubView.showMessagesSequence();
 			}
 		} else if (viewName.equals("ChatMessage")) {
-			if (messagesSubView != null) {
+			if (chatView != null) {
 				chatView.mChatAdapter.notifyDataSetChanged();
 			}
 		} else if (viewName.equals("CirclesManageView")) {

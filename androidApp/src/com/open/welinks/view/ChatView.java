@@ -350,7 +350,19 @@ public class ChatView {
 					chatHolder.image.setVisibility(View.VISIBLE);
 					chatHolder.voice.setVisibility(View.GONE);
 					chatHolder.share.setVisibility(View.GONE);
-					List<String> images = thisController.getImageFromJson(message.content);
+					List<String> images = null;
+					try {
+						images = thisController.getImageFromJson(message.content);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (images == null) {
+						chatHolder.character.setVisibility(View.VISIBLE);
+						chatHolder.character.setText("数据结构错误");
+						chatHolder.images_layout.setVisibility(View.GONE);
+						chatHolder.image.setVisibility(View.GONE);
+						return convertView;
+					}
 					String image = images.get(0);
 					// log.e(image);
 					if (images.size() == 1) {

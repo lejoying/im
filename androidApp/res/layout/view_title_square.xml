@@ -50,12 +50,12 @@
                 android:textSize="18sp" />
 
             <ImageView
+                android:id="@+id/botton"
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:layout_alignRight="@+id/shareTopMenuSquareName"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginLeft="35dp"
                 android:src="@drawable/subscript_triangle"
                 android:tint="@color/icon_color" />
         </RelativeLayout>

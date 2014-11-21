@@ -307,8 +307,10 @@ public class GroupInfoController {
 		if (data.relationship.groups.size() != 0) {
 			data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
 			viewManage.shareSubView.shareTopMenuGroupName.setText(data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).name);
+			viewManage.shareSubView.setMenuNameBotton(data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).name);
 		} else {
 			viewManage.shareSubView.shareTopMenuGroupName.setText("暂无房间");
+			viewManage.shareSubView.setMenuNameBotton("暂无房间");
 		}
 		viewManage.shareSubView.shareMessageListBody.y = 0;
 		data.relationship.isModified = true;

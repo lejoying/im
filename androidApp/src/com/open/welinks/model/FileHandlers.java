@@ -299,8 +299,15 @@ public class FileHandlers {
 		downloadFileList.addDownloadFile(downloadFile);
 	}
 
+	long startTime = 0;
+
 	// TODO file deal with
 	public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// long time = new Date().getTime();
+		// log.e("Time:  " + (time - startTime) / 1000 + "s");
+		// Runtime runtime = Runtime.getRuntime();
+		// log.e("freeMemory:" + runtime.freeMemory() + ",TotalMomery:" + runtime.totalMemory() + ",MaxMomery:" + runtime.maxMemory());
+
 		// Raw height and width of image
 		final int height = options.outHeight;
 		final int width = options.outWidth;
@@ -309,31 +316,19 @@ public class FileHandlers {
 		float area = 0;
 		do {
 			inSampleSize++;
-			area = height * width / inSampleSize;
-		} while (area > 4000000);
-
-		// if (height > reqHeight || width > reqWidth) {
-		// if (width > height) {
-		// int wScale = reqHeight / height;
-		// int hScale = reqWidth / width;
-		// if (wScale > hScale) {
-		// inSampleSize = wScale;
-		// } else {
-		// inSampleSize = hScale;
-		// }
-		// // inSampleSize = Math.round((float) height / (float) reqHeight);
-		// } else {
-		// // inSampleSize = Math.round((float) width / (float) reqWidth);
-		// }
-		// }
+			area = height * width / (inSampleSize * inSampleSize);
+		} while (area > 1000000);
+		log.e("SampleSize1  ：" + inSampleSize + ",  height:" + height + ",  width:" + width + ",  area:" + area);
 		return inSampleSize;
 	}
 
 	public ByteArrayOutputStream decodeSampledBitmapFromFileInputStream(File file, int reqWidth, int reqHeight) throws FileNotFoundException {
 		FileInputStream fileInputStream = new FileInputStream(file);
 
-		final BitmapFactory.Options options = new BitmapFactory.Options();
+		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
+		// options.inPurgeable = true;
+		// options.inInputShareable = true;
 		BitmapFactory.decodeStream(fileInputStream, null, options);
 		try {
 			fileInputStream.close();
@@ -341,17 +336,22 @@ public class FileHandlers {
 			e1.printStackTrace();
 		}
 
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		options.inJustDecodeBounds = false;
+		BitmapFactory.Options options2 = new BitmapFactory.Options();
+		options2.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		options2.inJustDecodeBounds = false;
 		FileInputStream fileInputStream1 = new FileInputStream(file);
 		Bitmap bitmap = null;
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		try {
-			bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
+			// options.inPreferredConfig = Config.RGB_565;
+			bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options2);
+			log.e("SampleSize2  ：" + options2.inSampleSize + ",  height:" + options2.outHeight + ",  width:" + options2.outWidth);
 			byteArrayOutputStream = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
 			bitmap.recycle();
+			System.gc();
+		} catch (OutOfMemoryError oome) {
+			log.e("*************OutOfMemoryError*************");
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -400,7 +400,6 @@ public class FileHandlers {
 	// public byte[] bytes;
 
 	public byte[] getImageFileBytes(File fromFile, int width, int height) {
-
 		long fileLength = fromFile.length();
 		try {
 			byte[] bytes;

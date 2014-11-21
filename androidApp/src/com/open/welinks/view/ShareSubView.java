@@ -175,6 +175,9 @@ public class ShareSubView {
 		groupHeadView = (ImageView) this.groupMembersView.findViewById(R.id.group_head);
 		groupHeadView.setTag(R.id.tag_class, "group_head");
 
+		textSize = displayMetrics.scaledDensity * 18 + 0.5f;
+		botton = (ImageView) shareView.findViewById(R.id.botton);
+
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		// myScrollImageBody = new MyScrollImageBody();
 		// myScrollImageBody.initialize(groupMembersListContentView);
@@ -197,6 +200,16 @@ public class ShareSubView {
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 
 		showReleaseChannel();
+	}
+
+	public float textSize;
+	public ImageView botton;
+
+	public void setMenuNameBotton(String name) {
+		int length = name.length();
+		int left = (int) (textSize * length);
+		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) botton.getLayoutParams();
+		params.leftMargin = left;
 	}
 
 	public void getCurrentGroupShareMessages() {
@@ -502,9 +515,9 @@ public class ShareSubView {
 					}
 					// log.e(n.length + "--");
 					String endContent = textContent.substring(subPosition);
-					if (textContent.indexOf("1、") == 0) {
-						log.e(textContent.substring(0, subPosition));
-					}
+					// if (textContent.indexOf("1、") == 0) {
+					// log.e(textContent.substring(0, subPosition));
+					// }
 					int indexN = endContent.indexOf("\n");
 					int indexRN = endContent.indexOf("\r\n");
 					if (indexN != -1 && indexRN != -1) {
@@ -921,13 +934,16 @@ public class ShareSubView {
 				data.relationship.isModified = true;
 			} else {
 				data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
+				getCurrentGroupShareMessages();
 			}
 		}
 		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group0 != null) {
 			this.shareTopMenuGroupName.setText(group0.name);
+			this.setMenuNameBotton(group0.name);
 		} else {
 			this.shareTopMenuGroupName.setText("暂无房间");
+			this.setMenuNameBotton("暂无房间");
 		}
 
 		List<String> groups = data.relationship.groups;
@@ -1054,8 +1070,10 @@ public class ShareSubView {
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group != null) {
 			shareTopMenuGroupName.setText(group.name);
+			this.setMenuNameBotton(group.name);
 		} else {
 			shareTopMenuGroupName.setText("暂无房间");
+			this.setMenuNameBotton("暂无房间");
 			return;
 		}
 

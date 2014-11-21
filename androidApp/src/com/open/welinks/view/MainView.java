@@ -22,6 +22,7 @@ import com.open.lib.viewbody.PagerBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.MainController;
+import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;
 
 public class MainView {
@@ -86,6 +87,11 @@ public class MainView {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
+	public ControlProgress controlProgress;
+	public View controlProgressView;
+
+	public float textSize;
+
 	public class ActivityStatus {
 		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
 		public float subState = MESSAGES;
@@ -101,6 +107,8 @@ public class MainView {
 
 	}
 
+	public ImageView botton;
+
 	public void initViews() {
 		viewManage.initialize(thisActivity);
 		mInflater = thisActivity.getLayoutInflater();
@@ -109,6 +117,7 @@ public class MainView {
 		MyBodyCallback myBodyCallback = new MyBodyCallback();
 
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		textSize = displayMetrics.scaledDensity * 18 + 0.5f;
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 
@@ -125,6 +134,8 @@ public class MainView {
 		scannerCodeView = (ImageView) title_messages_friends_me.findViewById(R.id.scanner_code);
 		userTopbarNameView = (TextView) title_messages_friends_me.findViewById(R.id.userTopbarName);
 		userTopbarNameParentView = (RelativeLayout) title_messages_friends_me.findViewById(R.id.userTopbarNameParent);
+
+		botton = (ImageView) title_messages_friends_me.findViewById(R.id.botton);
 
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);
 		int main_pager_indicator_trip = (int) (48 * displayMetrics.density);
@@ -171,6 +182,24 @@ public class MainView {
 		params2.height = (int) (32 * displayMetrics.density);
 		params2.width = messages_friends_me_pager_indicator_trip;
 		messages_friends_me_pager_indicator.setLayoutParams(params2);
+
+		ViewGroup.LayoutParams friendsMenuViewParams = friendsMenuView.getLayoutParams();
+		friendsMenuViewParams.height = (int) (32 * displayMetrics.density);
+		friendsMenuViewParams.width = messages_friends_me_pager_indicator_trip;
+
+		ViewGroup.LayoutParams messagesMenuViewParams = messagesMenuView.getLayoutParams();
+		messagesMenuViewParams.height = (int) (32 * displayMetrics.density);
+		messagesMenuViewParams.width = messages_friends_me_pager_indicator_trip;
+
+		ViewGroup.LayoutParams meMenuViewParams = meMenuView.getLayoutParams();
+		meMenuViewParams.height = (int) (32 * displayMetrics.density);
+		meMenuViewParams.width = messages_friends_me_pager_indicator_trip;
+
+		// progress
+		this.controlProgressView = squareView.findViewById(R.id.title_control_progress_container);
+		this.controlProgress = new ControlProgress();
+		this.controlProgress.initialize(this.controlProgressView, displayMetrics);
+		this.controlProgress.moveTo(0);
 
 		messages_friends_me_PagerBody = new PagerBody();
 		messages_friends_me_PagerBody.tag = "messages_friends_me_PagerBody";

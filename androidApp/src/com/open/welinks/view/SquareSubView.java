@@ -41,7 +41,6 @@ import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.customListener.ThumbleListener;
-import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -136,9 +135,10 @@ public class SquareSubView {
 	TextView titleName;
 	public SmallBusinessCardPopView businessCardPopView;
 
-	public ControlProgress controlProgress;
-	public View controlProgressView;
 	public TextView roomTextView;
+
+	public float textSize;
+	public ImageView botton;
 
 	public void initViews() {
 
@@ -163,13 +163,15 @@ public class SquareSubView {
 		leftImageButton = (ImageView) squareView.findViewById(R.id.leftImageButton);
 		squareTopMenuGroupNameParent = (RelativeLayout) squareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		squareTopMenuSquareName = (TextView) squareView.findViewById(R.id.shareTopMenuSquareName);
-
+		botton = (ImageView) squareView.findViewById(R.id.botton);
 		data = parser.check();
+		textSize = displayMetrics.scaledDensity * 18 + 0.5f;
 
 		try {
 			currentSquare = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
 			if (currentSquare != null) {
 				this.squareTopMenuSquareName.setText(currentSquare.name);
+				setMenuNameBotton(currentSquare.name);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -191,12 +193,6 @@ public class SquareSubView {
 		roomTextView = (TextView) this.groupMembersView.findViewById(R.id.roomTime);
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 
-		// progress
-		this.controlProgressView = squareView.findViewById(R.id.title_control_progress_container);
-		this.controlProgress = new ControlProgress();
-		this.controlProgress.initialize(this.controlProgressView, displayMetrics);
-		this.controlProgress.moveTo(0);
-
 		openLooper = new OpenLooper();
 		openLooper.createOpenLooper();
 		loopCallback = new ListLoopCallback(openLooper);
@@ -206,6 +202,14 @@ public class SquareSubView {
 		showSquareMessages(true);
 		initReleaseShareDialogView();
 		initializationSquaresDialog();
+	}
+
+	public void setMenuNameBotton(String name) {
+		int length = name.length();
+		// log.e(name + ":" + textSize * length);
+		int left = (int) (textSize * length);
+		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) botton.getLayoutParams();
+		params.leftMargin = left;
 	}
 
 	public void showRoomTime() {
@@ -304,15 +308,15 @@ public class SquareSubView {
 		@Override
 		public void loop(double delta) {
 			float distance = (float) (delta * orderSpeed);
-			float o_x = controlProgress.progress_line1.getX();
+			float o_x = mainView.controlProgress.progress_line1.getX();
 			float next_x = distance + o_x;
-			float max_x = parcel / 100.0f * controlProgress.width;
-			if (next_x <= controlProgress.width && next_x <= max_x) {
-				controlProgress.progress_line1.setX(next_x);
-			} else if (next_x <= controlProgress.width && next_x > max_x) {
+			float max_x = parcel / 100.0f * mainView.controlProgress.width;
+			if (next_x <= mainView.controlProgress.width && next_x <= max_x) {
+				mainView.controlProgress.progress_line1.setX(next_x);
+			} else if (next_x <= mainView.controlProgress.width && next_x > max_x) {
 				// controlProgress.progress_line1.setX(next_x);
 			} else {
-				controlProgress.progress_line1.setX(controlProgress.width);
+				mainView.controlProgress.progress_line1.setX(mainView.controlProgress.width);
 				openLooper.stop();
 			}
 		}
@@ -382,8 +386,8 @@ public class SquareSubView {
 		total = sharesOrder.size() * 2 + 1;
 		// if (controlProgress.progress_line1.getX() == controlProgress.width) {
 		currentPosition = 0;
-		if (controlProgress.progress_line1.getX() == 0 || controlProgress.width == controlProgress.progress_line1.getX()) {
-			this.controlProgress.setTo(0);
+		if (mainView.controlProgress.progress_line1.getX() == 0 || mainView.controlProgress.width == mainView.controlProgress.progress_line1.getX()) {
+			mainView.controlProgress.setTo(0);
 		}
 		openLooper.start();
 		// }
@@ -783,6 +787,7 @@ public class SquareSubView {
 		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
 		if (group0 != null) {
 			this.squareTopMenuSquareName.setText(group0.name);
+			this.setMenuNameBotton(group0.name);
 		}
 
 		List<String> squares = data.relationship.squares;

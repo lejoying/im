@@ -335,6 +335,7 @@ public class SquareSubController {
 								data.localStatus.localData.currentSelectedSquare = content;
 								// modify UI
 								Group group = data.relationship.groupsMap.get(content);
+								// TODO shareTopMenuGroupName
 								TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
 								data.localStatus.localData.currentSelectedSquare = group.gid + "";
 								String name = group.name;
@@ -342,6 +343,7 @@ public class SquareSubController {
 									name = name.substring(0, 8);
 								}
 								shareTopMenuGroupName.setText(name);
+								thisView.setMenuNameBotton(name);
 								thisView.modifyCurrentShowGroup();
 								// display local data
 								nowpage = 0;

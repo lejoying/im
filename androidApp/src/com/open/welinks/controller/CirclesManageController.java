@@ -680,7 +680,8 @@ public class CirclesManageController {
 							x = circleBody.cx + friendBody.x;
 							y = circleBody.cy + friendBody.y - 35 * thisView.displayMetrics.density;
 							if (circleBody.friendsSequence.size() > 0) {
-								circleBody.friendsSequence.remove(friendBody.index);
+								if (friendBody.index < circleBody.friendsSequence.size())
+									circleBody.friendsSequence.remove(friendBody.index);
 							}
 							dragView.setTranslationX(x);
 							dragView.setTranslationY(y);
