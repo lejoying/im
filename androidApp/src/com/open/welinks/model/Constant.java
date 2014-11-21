@@ -13,7 +13,7 @@ public class Constant {
 	public static String LBS_SAVE_KSY = "0cd819a62c50d40b75a73f66cb14aa06";
 
 	// wechat id
-	public static String WECHAT_ADDID = "wxbbf27e2f87ef9083";
+	public static String WECHAT_ADDID = "wx801364850e8a09dc";// "wxbbf27e2f87ef9083";
 
 	/**
 	 * defaultCircleId = 8888888

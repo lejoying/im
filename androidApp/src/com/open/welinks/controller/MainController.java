@@ -610,6 +610,7 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
 				thisView.shareSubView.groupListBody.onTouchDown(event);
+				thisView.shareSubView.releaseChannelListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				thisView.squareSubView.squareMessageListBody.onTouchDown(event);
 				thisView.squareSubView.squaresListBody.onTouchDown(event);
@@ -626,6 +627,7 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
 				thisView.shareSubView.groupListBody.onTouchMove(event);
+				thisView.shareSubView.releaseChannelListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				thisView.squareSubView.squareMessageListBody.onTouchMove(event);
 				thisView.squareSubView.squaresListBody.onTouchMove(event);
@@ -644,6 +646,7 @@ public class MainController {
 				shareSubController.onSingleTapUp(event);
 				thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 				thisView.shareSubView.groupListBody.onTouchUp(event);
+				thisView.shareSubView.releaseChannelListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				squareSubController.onSingleTapUp(event);
 				thisView.squareSubView.squareMessageListBody.onTouchUp(event);

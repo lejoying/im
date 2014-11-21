@@ -84,6 +84,8 @@ public class MainView {
 
 	public RelativeLayout userTopbarNameParentView;
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public class ActivityStatus {
 		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
 		public float subState = MESSAGES;
@@ -100,7 +102,7 @@ public class MainView {
 	}
 
 	public void initViews() {
-
+		viewManage.initialize(thisActivity);
 		mInflater = thisActivity.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
 

@@ -25,13 +25,11 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.welinks.customView.Alert;
-import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -73,7 +71,6 @@ public class GroupListActivity extends Activity {
 	public GroupListAdapter groupListAdapter;
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public DisplayImageOptions options;
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -132,7 +129,6 @@ public class GroupListActivity extends Activity {
 		this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 		mInflater = this.getLayoutInflater();
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
 
 		setContentView(R.layout.activity_group_list);
 		this.backView = (RelativeLayout) findViewById(R.id.backView);
@@ -324,7 +320,7 @@ public class GroupListActivity extends Activity {
 			if (status == Status.friend) {
 				Friend friend = friendsMap.get(friends[position]);
 				// holder.headView.setImageBitmap(bitmap);
-				fileHandlers.getHeadImage(friend.head, holder.headView, options);
+				fileHandlers.getHeadImage(friend.head, holder.headView, viewManage.options50);
 				if (friend.alias.equals("")) {
 					holder.nameView.setText(friend.nickName);
 				} else {
@@ -334,7 +330,7 @@ public class GroupListActivity extends Activity {
 			} else {
 				Group group = groupsMap.get(groups.get(position));
 				// holder.headView.setImageBitmap(bitmap);
-				fileHandlers.getHeadImage(group.icon, holder.headView, options);
+				fileHandlers.getHeadImage(group.icon, holder.headView, viewManage.options50);
 				holder.nameView.setText(group.name);
 				holder.descriptionView.setText(group.description);
 			}

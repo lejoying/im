@@ -29,10 +29,10 @@ import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
+import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
@@ -41,6 +41,8 @@ import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.customView.ControlProgress;
+import com.open.welinks.customView.ScrollListBody;
+import com.open.welinks.customView.ScrollListBody.ScrollListItemBody;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -137,6 +139,11 @@ public class ShareSubView {
 
 	public SmallBusinessCardPopView businessCardPopView;
 
+	public View releaseChannelContainer;
+	public View releaseChannelView;
+
+	public TextView roomTextView;
+
 	public void initViews() {
 		this.shareView = mainView.shareView;
 		this.displayMetrics = mainView.displayMetrics;
@@ -161,16 +168,19 @@ public class ShareSubView {
 		releaseShareView = (TouchImageView) this.groupMembersView.findViewById(R.id.releaseShare);
 		releaseShareView.setTag(R.id.tag_class, "share_release");
 
+		roomTextView = (TextView) this.groupMembersView.findViewById(R.id.roomTime);
+
 		groupCoverView = (TouchImageView) this.groupMembersView.findViewById(R.id.groupCover);
 		groupCoverView.setTag(R.id.tag_class, "group_head");
 		groupHeadView = (ImageView) this.groupMembersView.findViewById(R.id.group_head);
 		groupHeadView.setTag(R.id.tag_class, "group_head");
 
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
-		bigHeadOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(56)).build();
 		// myScrollImageBody = new MyScrollImageBody();
 		// myScrollImageBody.initialize(groupMembersListContentView);
+
+		releaseChannelView = mainView.mInflater.inflate(R.layout.view_release_channels, null);
+		releaseChannelContainer = releaseChannelView.findViewById(R.id.releaseChannelContainer);
 
 		mImageFile = fileHandlers.sdcardHeadImageFolder;
 		if (!mImageFile.exists())
@@ -185,6 +195,8 @@ public class ShareSubView {
 		initializationGroupsDialog();
 
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
+
+		showReleaseChannel();
 	}
 
 	public void getCurrentGroupShareMessages() {
@@ -230,6 +242,88 @@ public class ShareSubView {
 		downloadFile.view = groupCoverView;
 		downloadFile.setDownloadFileListener(thisController.downloadListener);
 		downloadFileList.addDownloadFile(downloadFile);
+	}
+
+	public Group currentGroup;
+
+	public void showRoomTime() {
+		if (thisController.reflashStatus.state == thisController.reflashStatus.Reflashing) {
+			roomTextView.setText("正在获取数据");
+		} else if (thisController.reflashStatus.state == thisController.reflashStatus.Failed) {
+			roomTextView.setText("刷新数据失败");
+		} else {
+			if (currentGroup != null) {
+				parser.check();
+				Share share = data.shares.shareMap.get(currentGroup.gid + "");
+				if (share != null) {
+					roomTextView.setText("上次刷新:" + DateUtil.getChatMessageListTime(share.updateTime));
+				} else {
+					roomTextView.setText("");
+				}
+			} else {
+				roomTextView.setText("");
+			}
+		}
+	}
+
+	public ScrollListBody releaseChannelListBody;
+	public boolean isShowChannel = true;
+
+	public void showReleaseChannel() {
+		// init
+		releaseChannelListBody = new ScrollListBody();
+		releaseChannelListBody.initialize(displayMetrics, releaseChannelContainer);
+		// make
+		String[] options = new String[] { "文本", "相册", "图文", "投票", "海报", "活动" };
+		for (int i = 0; i < options.length; i++) {
+			String key = options[i];
+			// TODO
+			ChannelBody body = new ChannelBody(releaseChannelListBody);
+			body.initialize();
+			body.setContent(key);
+
+			int width = (int) (displayMetrics.density * 120);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
+			body.itemHeight = width;
+
+			this.releaseChannelListBody.containerView.addView(body.cardView, layoutParams);
+			body.x = releaseChannelListBody.height;
+			body.cardView.setX(body.x);
+			body.cardView.setY(0);
+
+			releaseChannelListBody.height = releaseChannelListBody.height + width;
+		}
+		this.releaseChannelListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewManage.getStatusBarHeight(mainView.thisActivity));
+		// FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(displayMetrics.widthPixels, displayMetrics.heightPixels);
+		// this.mainView.main_container.addView(releaseChannelView, params);
+	}
+
+	public class ChannelBody extends ScrollListItemBody {
+
+		ChannelBody(ScrollListBody listBody) {
+			listBody.super();
+		}
+
+		public View cardView;
+		public TouchImageView imageView;
+		public TouchTextView textView;
+
+		public View initialize() {
+			this.cardView = mainView.mInflater.inflate(R.layout.view_release_channel, null);
+			this.imageView = (TouchImageView) cardView.findViewById(R.id.image);
+			this.textView = (TouchTextView) cardView.findViewById(R.id.text);
+			this.itemHeight = displayMetrics.density * 120;
+			this.itemWidth = displayMetrics.density * 120;
+			return this.cardView;
+		}
+
+		public void setContent(String text) {
+			this.textView.setText(text);
+			int backGround = R.drawable.reloption_bk_nor;
+			int icon = R.drawable.comm_ico_menu_basic;
+			this.imageView.setBackgroundResource(backGround);
+			this.imageView.setImageResource(icon);
+		}
 	}
 
 	public void showShareMessages() {
@@ -287,13 +381,15 @@ public class ShareSubView {
 		}
 		// set conver
 		// TODO conver setting
-		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
-		if (group.conver != null && !group.conver.equals("")) {
+		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		fileHandlers.getHeadImage(currentGroup.icon, this.groupHeadView, viewManage.options56);
+		if (currentGroup.conver != null && !currentGroup.conver.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
+
+		showRoomTime();
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
@@ -602,7 +698,7 @@ public class ShareSubView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
+				fileHandlers.getHeadImage(fileName, this.headView, viewManage.headOptions40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
@@ -665,7 +761,7 @@ public class ShareSubView {
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP);
+				fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;
@@ -924,7 +1020,7 @@ public class ShareSubView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, headOptions);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
@@ -948,8 +1044,6 @@ public class ShareSubView {
 	// public MyScrollImageBody myScrollImageBody;
 	public int width;
 	public File mImageFile;
-	public DisplayImageOptions headOptions;
-	public DisplayImageOptions bigHeadOptions;
 
 	public void showGroupMembers() {
 		data = parser.check();

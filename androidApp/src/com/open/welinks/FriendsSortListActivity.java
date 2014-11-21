@@ -34,8 +34,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.customView.ClearEditText;
 import com.open.welinks.customView.SideBar;
 import com.open.welinks.customView.SideBar.OnTouchingLetterChangedListener;
@@ -44,6 +42,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.CharacterParser;
+import com.open.welinks.view.ViewManage;
 
 @SuppressLint("DefaultLocale")
 public class FriendsSortListActivity extends Activity {
@@ -70,8 +69,6 @@ public class FriendsSortListActivity extends Activity {
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
-	public DisplayImageOptions options;
-
 	public List<String> friends = new ArrayList<String>();
 
 	public ArrayList<String> invitaFriends = new ArrayList<String>();
@@ -83,6 +80,8 @@ public class FriendsSortListActivity extends Activity {
 
 	public TextView backTitleView;
 	public Handler handler = new Handler();
+
+	public ViewManage viewManage = ViewManage.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +180,7 @@ public class FriendsSortListActivity extends Activity {
 			imageView.setTag(R.id.tag_first, friend.phone);
 			imageView.setOnClickListener(mOnClickListener);
 			alreadyListContainer.addView(imageView, layoutParams);
-			fileHandlers.getHeadImage(friend.head, imageView, options);
+			fileHandlers.getHeadImage(friend.head, imageView, viewManage.headOptions40);
 		}
 	}
 
@@ -216,8 +215,6 @@ public class FriendsSortListActivity extends Activity {
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainerView.addView(mConfirm, layoutParams);
-
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		sideBar.setOnTouchingLetterChangedListener(new OnTouchingLetterChangedListener() {
 
@@ -348,7 +345,7 @@ public class FriendsSortListActivity extends Activity {
 			if (!"".equals(friend.alias)) {
 				name = friend.alias;
 			}
-			fileHandlers.getHeadImage(friend.head, viewHolder.headView, options);
+			fileHandlers.getHeadImage(friend.head, viewHolder.headView, viewManage.headOptions40);
 			int section = getSectionForPosition(position);
 
 			if (position == getPositionForSection(section)) {

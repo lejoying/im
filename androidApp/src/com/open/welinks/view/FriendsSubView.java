@@ -23,8 +23,6 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
@@ -61,8 +59,6 @@ public class FriendsSubView {
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
-	public DisplayImageOptions options;
-
 	public ViewManage viewManage = ViewManage.getInstance();
 
 	public FriendsSubView(MainView mainView) {
@@ -84,7 +80,6 @@ public class FriendsSubView {
 		friendsView = (TouchView) mainView.friendsView.findViewById(R.id.friendsContainer);
 		friendListBody = new ListBody1();
 		friendListBody.initialize(displayMetrics, friendsView);
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 	}
@@ -285,7 +280,7 @@ public class FriendsSubView {
 				this.nickNameView.setText("添加好友");
 				this.friendView.setTag(R.id.tag_class, "addfriend_view");
 			} else {
-				fileHandlers.getHeadImage(friend.head, this.headImageView, options);
+				fileHandlers.getHeadImage(friend.head, this.headImageView, viewManage.options52);
 				if (friend.alias != null && !"".equals(friend.alias)) {
 					this.nickNameView.setText(friend.alias);
 				} else {

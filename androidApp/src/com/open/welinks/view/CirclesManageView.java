@@ -24,8 +24,6 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
@@ -65,8 +63,6 @@ public class CirclesManageView {
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
 
-	public DisplayImageOptions options;
-
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public ViewManage viewManage = ViewManage.getInstance();
@@ -104,7 +100,6 @@ public class CirclesManageView {
 		friendListBody = new ListBody1();
 		friendListBody.initialize(displayMetrics, friendsView);
 		friendListBody.active();
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
 		initCircleSettingDialog();
 		showCircles();
@@ -346,7 +341,7 @@ public class CirclesManageView {
 		}
 
 		public void setData(Friend friend) {
-			fileHandlers.getHeadImage(friend.head, this.headImageView, options);
+			fileHandlers.getHeadImage(friend.head, this.headImageView, viewManage.options52);
 			if (friend.alias != null && !"".equals(friend.alias)) {
 				this.nickNameView.setText(friend.alias);
 			} else {

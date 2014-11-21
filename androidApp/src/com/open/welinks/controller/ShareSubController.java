@@ -103,6 +103,13 @@ public class ShareSubController {
 
 	public OnTouchListener onTouchListener2;
 
+	public class ReflashStatus {
+		public int Normal = 1, Reflashing = 2, Failed = 3;
+		public int state = Normal;
+	}
+
+	public ReflashStatus reflashStatus = new ReflashStatus();
+
 	public void initializeListeners() {
 		onTouchListener2 = new OnTouchListener() {
 			GestureDetector mGesture = new GestureDetector(thisActivity, new GestureListener());
@@ -145,12 +152,16 @@ public class ShareSubController {
 			@Override
 			public void onRefresh(int direction) {
 				super.onRefresh(direction);
-				if (direction == 1) {
-					nowpage = 0;
-					getCurrentGroupShareMessages();
-				} else if (direction == -1) {
-					nowpage++;
-					getCurrentGroupShareMessages();
+				if (reflashStatus.state != reflashStatus.Reflashing) {
+					reflashStatus.state = reflashStatus.Reflashing;
+					if (direction == 1) {
+						nowpage = 0;
+						getCurrentGroupShareMessages();
+					} else if (direction == -1) {
+						nowpage++;
+						getCurrentGroupShareMessages();
+					}
+					thisView.showRoomTime();
 				}
 			}
 		};
@@ -169,7 +180,7 @@ public class ShareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.headOptions;
+							options = thisView.viewManage.headOptions40;
 						} else if ("conver".equals(tag)) {
 							flag = false;
 						}

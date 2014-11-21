@@ -239,6 +239,8 @@ public class Data {
 
 		public class Share {
 
+			public long updateTime;
+
 			public List<String> shareMessagesOrder = new ArrayList<String>();
 
 			public Map<String, ShareMessage> shareMessagesMap = new HashMap<String, ShareMessage>();

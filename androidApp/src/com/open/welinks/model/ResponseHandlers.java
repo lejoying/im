@@ -1,6 +1,7 @@
 package com.open.welinks.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1565,16 +1566,22 @@ public class ResponseHandlers {
 					if (data.relationship.groups.contains(gid)) {
 						if (responsesShare.shareMessagesOrder.size() == 0) {
 							viewManage.shareSubView.thisController.nowpage--;
+
 						}
-						viewManage.mainView.shareSubView.showShareMessages();
+						share.updateTime = new Date().getTime();
+						viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Normal;
+
+						viewManage.shareSubView.showShareMessages();
 					} else {
 						if (responsesShare.shareMessagesOrder.size() == 0) {
 							viewManage.squareSubView.thisController.nowpage--;
 						}
+						share.updateTime = new Date().getTime();
+						viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Normal;
 						if (response.nowpage == 0) {
-							viewManage.mainView.squareSubView.showSquareMessages(true);
+							viewManage.squareSubView.showSquareMessages(true);
 						} else {
-							viewManage.mainView.squareSubView.showSquareMessages(false);
+							viewManage.squareSubView.showSquareMessages(false);
 						}
 					}
 				} else {
@@ -1583,6 +1590,13 @@ public class ResponseHandlers {
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
 			}
+		};
+
+		public void onFailure(HttpException error, String msg) {
+			viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Failed;
+			viewManage.shareSubView.showRoomTime();
+			viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Failed;
+			viewManage.squareSubView.showRoomTime();
 		};
 	};
 	public ResponseHandler<String> share_modifyPraiseusersCallBack = httpClient.new ResponseHandler<String>() {

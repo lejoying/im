@@ -360,7 +360,7 @@ public class GroupInfoController {
 			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), thisView.fileHandlers.sdcardHeadImageFolder);
 			String headFileName = (String) map.get("fileName");
 			currentGroup.icon = headFileName;
-			thisView.fileHandlers.getHeadImage(headFileName, thisView.headIvView, thisView.options);
+			thisView.fileHandlers.getHeadImage(headFileName, thisView.headIvView, viewManage.options70);
 			System.out.println((String) map.get("fileName"));
 			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"), UploadMultipart.UPLOAD_TYPE_HEAD);
 		} else if (requestCode == CONVER_SET && resultCode == Activity.RESULT_OK) {

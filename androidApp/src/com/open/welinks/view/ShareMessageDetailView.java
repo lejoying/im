@@ -41,7 +41,6 @@ import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.ShareMessageDetailController;
@@ -129,8 +128,6 @@ public class ShareMessageDetailView {
 	public ImageView deleteImageOptionView;
 	public TextView deleteTextOptionView;
 
-	public DisplayImageOptions headOptions;
-
 	public View controlProgressView;
 	public ControlProgress controlProgress;
 
@@ -148,7 +145,6 @@ public class ShareMessageDetailView {
 
 	public void initView() {
 		initData();
-		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		displayMetrics = new DisplayMetrics();
 
@@ -282,7 +278,7 @@ public class ShareMessageDetailView {
 		}
 		String content = thisController.shareMessage.content;
 		if (thisController.shareMessage.type != "imagetext") {
-			
+
 		}
 		ShareContent shareContent = gson.fromJson("{shareContentItems:" + content + "}", ShareContent.class);
 		if (shareContent == null) {
@@ -440,7 +436,7 @@ public class ShareMessageDetailView {
 			if (user.phone.equals(key)) {
 				fileName = user.head;
 			}
-			fileHandlers.getHeadImage(fileName, view, headOptions);
+			fileHandlers.getHeadImage(fileName, view, viewManage.headOptions40);
 			// view.setBackgroundColor(Color.GREEN);
 			praiseUserContentView.addView(view);
 			if (i == 5) {
@@ -481,7 +477,7 @@ public class ShareMessageDetailView {
 				reply.setVisibility(View.GONE);
 				received.setVisibility(View.GONE);
 			}
-			fileHandlers.getHeadImage(comment.head, head, headOptions);
+			fileHandlers.getHeadImage(comment.head, head, viewManage.headOptions40);
 			view.setTag("ShareComment#" + comment.phone);
 			view.setTag(R.id.commentEditTextView, comment);
 

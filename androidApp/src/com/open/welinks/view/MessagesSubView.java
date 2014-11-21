@@ -15,8 +15,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
@@ -60,7 +58,6 @@ public class MessagesSubView {
 	public boolean inited = false;
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public DisplayImageOptions options;
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -79,8 +76,6 @@ public class MessagesSubView {
 		// messagesKeepOnlyOne = new ArrayList<String>();
 
 		noMessagesStatusView = (TouchView) messagesView.findViewById(R.id.NoMessagesStatus);
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
-
 	}
 
 	public void onResume() {
@@ -396,7 +391,7 @@ public class MessagesSubView {
 				lastChatMessageView.setText(content);
 			} else {
 				if ("event".equals(message.sendType)) {
-					fileHandlers.getHeadImage(fileName, headView, options);
+					fileHandlers.getHeadImage(fileName, headView, viewManage.options50);
 					EventMessage message2 = gson.fromJson(message.content, EventMessage.class);
 					String content = DataHandlers.switchChatMessageEvent(message2);
 					lastChatMessageView.setText(content);
@@ -420,7 +415,7 @@ public class MessagesSubView {
 					}
 				} else {
 					data = parser.check();
-					fileHandlers.getHeadImage(fileName, headView, options);
+					fileHandlers.getHeadImage(fileName, headView, viewManage.options50);
 					String leftText = "";
 					Pattern pattern = Pattern.compile("[0-9]*");
 					if (pattern.matcher(message.time).matches()) {

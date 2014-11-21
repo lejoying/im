@@ -25,8 +25,6 @@ import com.google.gson.JsonSyntaxException;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.customView.SmallBusinessCardPopView;
@@ -80,7 +78,6 @@ public class DynamicListActivity extends Activity {
 	public int selectType = 3;
 	public ThreeChoicesView threeChoicesView;
 
-	public DisplayImageOptions headOptions;
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
 	public DisplayMetrics displayMetrics;
@@ -178,8 +175,6 @@ public class DynamicListActivity extends Activity {
 		mInflater = this.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		setContentView(R.layout.activity_dynamiclist);
 		maxView = findViewById(R.id.maxView);
@@ -353,11 +348,11 @@ public class DynamicListActivity extends Activity {
 			}
 			holder.eventContentView.setText(content);
 			if (flag) {
-				fileHandlers.getHeadImage(headFileName, holder.headView, headOptions);
+				fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.headOptions40);
 				convertView.setTag(R.id.tag_first, event.gid);
 				convertView.setTag(R.id.tag_second, "group");
 			} else {
-				fileHandlers.getHeadImage(data.userInformation.currentUser.head, holder.headView, headOptions);
+				fileHandlers.getHeadImage(data.userInformation.currentUser.head, holder.headView, viewManage.headOptions40);
 				convertView.setTag(R.id.tag_first, data.userInformation.currentUser.phone);
 				convertView.setTag(R.id.tag_second, "user");
 			}
@@ -575,7 +570,7 @@ public class DynamicListActivity extends Activity {
 				e.printStackTrace();
 			}
 			// holder.headView.setImageBitmap(bitmap);
-			fileHandlers.getHeadImage(headFileName, holder.headView, headOptions);
+			fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.headOptions40);
 			return convertView;
 		}
 	}

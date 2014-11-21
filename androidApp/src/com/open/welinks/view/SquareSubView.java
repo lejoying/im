@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
+import com.open.lib.OpenLooper;
+import com.open.lib.OpenLooper.LoopCallback;
 import com.open.lib.TouchImageView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
@@ -39,6 +40,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
+import com.open.welinks.customListener.ThumbleListener;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
@@ -103,7 +105,6 @@ public class SquareSubView {
 	public int panelWidth;
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DisplayImageOptions options;
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public Gson gson = new Gson();
 	public Parser parser = Parser.getInstance();
@@ -137,6 +138,7 @@ public class SquareSubView {
 
 	public ControlProgress controlProgress;
 	public View controlProgressView;
+	public TextView roomTextView;
 
 	public void initViews() {
 
@@ -162,9 +164,6 @@ public class SquareSubView {
 		squareTopMenuGroupNameParent = (RelativeLayout) squareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		squareTopMenuSquareName = (TextView) squareView.findViewById(R.id.shareTopMenuSquareName);
 
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
-
 		data = parser.check();
 
 		try {
@@ -177,7 +176,7 @@ public class SquareSubView {
 		}
 		// square cover layout
 		this.groupMembersView = mainView.mInflater.inflate(R.layout.share_group_members_show, null);
-		titleName = (TextView) this.groupMembersView.findViewById(R.id.share_praise);
+		titleName = (TextView) this.groupMembersView.findViewById(R.id.room);
 		titleName.setText("微型社区广播");
 		groupMembersListContentView = (ViewGroup) this.groupMembersView.findViewById(R.id.groupMembersListContent);
 		groupMembersListContentView.setTag(R.id.tag_class, "group_members");
@@ -188,8 +187,8 @@ public class SquareSubView {
 		groupCoverView.setTag(R.id.tag_class, "group_head");
 		groupHeadView = (ImageView) this.groupMembersView.findViewById(R.id.group_head);
 		groupHeadView.setTag(R.id.tag_class, "group_head");
-		bigHeadOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(56)).build();
 
+		roomTextView = (TextView) this.groupMembersView.findViewById(R.id.roomTime);
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
 
 		// progress
@@ -198,10 +197,35 @@ public class SquareSubView {
 		this.controlProgress.initialize(this.controlProgressView, displayMetrics);
 		this.controlProgress.moveTo(0);
 
+		openLooper = new OpenLooper();
+		openLooper.createOpenLooper();
+		loopCallback = new ListLoopCallback(openLooper);
+		openLooper.loopCallback = loopCallback;
+
 		initData();
 		showSquareMessages(true);
 		initReleaseShareDialogView();
 		initializationSquaresDialog();
+	}
+
+	public void showRoomTime() {
+		if (thisController.reflashStatus.state == thisController.reflashStatus.Reflashing) {
+			roomTextView.setText("正在获取数据");
+		} else if (thisController.reflashStatus.state == thisController.reflashStatus.Failed) {
+			roomTextView.setText("刷新数据失败");
+		} else {
+			if (currentSquare != null) {
+				parser.check();
+				Share share = data.shares.shareMap.get(currentSquare.gid + "");
+				if (share != null) {
+					roomTextView.setText("上次刷新:" + DateUtil.getChatMessageListTime(share.updateTime));
+				} else {
+					roomTextView.setText("");
+				}
+			} else {
+				roomTextView.setText("");
+			}
+		}
 	}
 
 	int screenHeight;
@@ -257,15 +281,45 @@ public class SquareSubView {
 		downloadFileList.addDownloadFile(downloadFile);
 	}
 
-	public DisplayImageOptions bigHeadOptions;
-
 	public void showSquareMessages(boolean flag) {
 		showSquareMessages2(flag);
 	}
 
 	ArrayList<String> notFriends = new ArrayList<String>();
 
+	public float total;
+	public int currentPosition = 0;
+
+	public long time;
+
+	public OpenLooper openLooper;
+	public ListLoopCallback loopCallback;
+	float orderSpeed = 0.3f;
+
+	public class ListLoopCallback extends LoopCallback {
+		public ListLoopCallback(OpenLooper openLooper) {
+			openLooper.super();
+		}
+
+		@Override
+		public void loop(double delta) {
+			float distance = (float) (delta * orderSpeed);
+			float o_x = controlProgress.progress_line1.getX();
+			float next_x = distance + o_x;
+			float max_x = parcel / 100.0f * controlProgress.width;
+			if (next_x <= controlProgress.width && next_x <= max_x) {
+				controlProgress.progress_line1.setX(next_x);
+			} else if (next_x <= controlProgress.width && next_x > max_x) {
+				// controlProgress.progress_line1.setX(next_x);
+			} else {
+				controlProgress.progress_line1.setX(controlProgress.width);
+				openLooper.stop();
+			}
+		}
+	}
+
 	public void showSquareMessages2(boolean flag) {
+
 		notFriends.clear();
 		// flag = true;
 		// this.squareMessageListBody.listItemsSequence.clear();
@@ -320,13 +374,21 @@ public class SquareSubView {
 		}
 
 		titleName.setText(group.name);
-		fileHandlers.getHeadImage(group.icon, this.groupHeadView, bigHeadOptions);
+		fileHandlers.getHeadImage(group.icon, this.groupHeadView, viewManage.options56);
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
-		// float total = sharesOrder.size() + 1;
-		// this.controlProgress.setTo(0);
-		// this.controlProgress.moveTo((int) ((1 / total) * 100));
+		time = new Date().getTime();
+		total = sharesOrder.size() * 2 + 1;
+		// if (controlProgress.progress_line1.getX() == controlProgress.width) {
+		currentPosition = 0;
+		if (controlProgress.progress_line1.getX() == 0 || controlProgress.width == controlProgress.progress_line1.getX()) {
+			this.controlProgress.setTo(0);
+		}
+		openLooper.start();
+		// }
+		moveProgress();
+		showRoomTime();
 		A: for (int i = 0; i < sharesOrder.size(); i++) {// sharesOrder.size()
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
@@ -380,9 +442,11 @@ public class SquareSubView {
 			} else {
 				sharesMessageBody.setContent(shareMessage, fileName, shareContent, textContent, imageContent, isNew);
 			}
+			moveProgress();
 
 			if (!isExistsImage) {
 				cHeight = 0;
+				moveProgress();
 			}
 
 			int textHeigth1 = (int) (displayMetrics.density * 90 + 0.5);
@@ -406,14 +470,27 @@ public class SquareSubView {
 			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
 			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
-			// this.controlProgress.moveTo((int) (((1 + i + 1) / total) * 100));
-			// log.e((int) (((1 + i + 1) / total) * 100) + "-----progress");
 		}
 
 		this.squareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
 		this.squareMessageListBody.setChildrenPosition();
 
-		thisController.scanUserCard(gson.toJson(notFriends));
+		if (notFriends.size() > 0) {
+			thisController.scanUserCard(gson.toJson(notFriends));
+		}
+	}
+
+	float parcel;
+
+	public void moveProgress() {
+		// if (false)
+		// return;
+		currentPosition++;
+		parcel = ((currentPosition / total) * 100);
+		if (parcel <= 100) {
+			// this.controlProgress.moveTo(parcel);
+		}
+		// log.e(parcel + "-----progress" + time + "--" + currentPosition + "--" + total);
 	}
 
 	public class SharesMessageBody1 extends MyListItemBody {
@@ -525,7 +602,7 @@ public class SquareSubView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
+				fileHandlers.getHeadImage(fileName, this.headView, viewManage.headOptions40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					notFriends.add(shareMessage.phone);
 					if (shareMessage.nickName != null) {
@@ -586,7 +663,21 @@ public class SquareSubView {
 					}
 					buttonbarpParams.height = (int) (displayMetrics.density * 40 + 0.5f);
 
-					fileHandlers.getThumbleImage(imageContent, shareImageContentView, width1 / 2, imageHeight / 2, options, fileHandlers.THUMBLE_TYEP_SQUARE);
+					if (!imageContent.equals("")) {
+						ThumbleListener thumbleListener = new ThumbleListener() {
+
+							@Override
+							public void onResult() {
+								super.onResult();
+								if (this.time == thisController.thisView.time) {
+									moveProgress();
+								}
+							}
+						};
+						thumbleListener.time = thisController.thisView.time;
+						fileHandlers.getThumbleImage(imageContent, shareImageContentView, width1 / 2, imageHeight / 2, viewManage.options, fileHandlers.THUMBLE_TYEP_SQUARE, thumbleListener);
+
+					}
 
 					String userPhone = data.userInformation.currentUser.phone;
 					if (shareMessage.praiseusers.contains(userPhone)) {
@@ -602,6 +693,10 @@ public class SquareSubView {
 							// this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
 							break;
 						}
+					}
+				} else {
+					if (!imageContent.equals("")) {
+						moveProgress();
 					}
 				}
 			}
@@ -778,7 +873,7 @@ public class SquareSubView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, headOptions);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
@@ -800,7 +895,6 @@ public class SquareSubView {
 	}
 
 	public int width;
-	public DisplayImageOptions headOptions;
 
 	public View shareMessageRootView;
 

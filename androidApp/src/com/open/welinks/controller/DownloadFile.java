@@ -15,6 +15,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customListener.ThumbleListener;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class DownloadFile {
@@ -46,6 +47,8 @@ public class DownloadFile {
 
 	public View view;
 	public DisplayImageOptions options;
+
+	public ThumbleListener thumbleListener;
 
 	public int type;
 	public static int TYPE_HEAD_IMAGE = 0x01;

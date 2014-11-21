@@ -31,8 +31,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
@@ -87,7 +85,6 @@ public class ChatView {
 
 	public View maxView;
 
-	public DisplayImageOptions headOptions;
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public ChatView(Activity thisActivity) {
@@ -110,8 +107,6 @@ public class ChatView {
 		thisActivity.setContentView(R.layout.activity_chat);
 
 		maxView = thisActivity.findViewById(R.id.maxView);
-
-		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		backNameView = (TextView) thisActivity.findViewById(R.id.backTitleView);
@@ -163,7 +158,7 @@ public class ChatView {
 			Friend friend = data.relationship.friendsMap.get(key);
 			if (friend != null) {
 				friend.notReadMessagesCount = 0;
-				fileHandlers.getHeadImage(friend.head, infomation, headOptions);
+				fileHandlers.getHeadImage(friend.head, infomation, viewManage.headOptions40);
 				if ("".equals(friend.alias)) {
 					backNameView.setText(friend.nickName);
 				} else {
@@ -171,7 +166,7 @@ public class ChatView {
 				}
 			} else {
 				backNameView.setText("Name");
-				fileHandlers.getHeadImage("", infomation, headOptions);
+				fileHandlers.getHeadImage("", infomation, viewManage.headOptions40);
 			}
 		}
 		data.relationship.isModified = true;
@@ -179,6 +174,8 @@ public class ChatView {
 		chatContentListView.setAdapter(mChatAdapter);
 		chatContentListView.setSelection(mChatAdapter.getCount());
 	}
+
+	ViewManage viewManage = ViewManage.getInstance();
 
 	public class ChatAdapter extends BaseAdapter {
 
@@ -365,7 +362,7 @@ public class ChatView {
 						RelativeLayout.LayoutParams params = (LayoutParams) chatHolder.image.getLayoutParams();
 						params.height = imageHeight;
 						params.width = imageWidth;
-						fileHandlers.getThumbleImage(image, chatHolder.image, (int) imageWidth / 2, (int) imageHeight / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						fileHandlers.getThumbleImage(image, chatHolder.image, (int) imageWidth / 2, (int) imageHeight / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT, null);
 						chatHolder.image.setOnClickListener(thisController.mOnClickListener);
 					} else {
 						chatHolder.image.setVisibility(View.GONE);
@@ -376,7 +373,7 @@ public class ChatView {
 						FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) chatHolder.images.getLayoutParams();
 						params.height = (int) (imageHeight + 40 * displayMetrics.density + 0.5f);
 						params.width = imageWidth;
-						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (params.height) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (params.height) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT, null);
 						chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
 					}
 				} else if ("voice".equals(contentType)) {
@@ -393,7 +390,7 @@ public class ChatView {
 					chatHolder.voice_icon.setImageBitmap(bitmap);
 					chatHolder.voicetime.setText("");
 				} else if ("share".equals(contentType)) {
-					chatHolder.message_status.setVisibility(View.GONE);
+					// chatHolder.message_status.setVisibility(View.GONE);
 					chatHolder.character.setVisibility(View.GONE);
 					chatHolder.image.setVisibility(View.GONE);
 					chatHolder.share.setVisibility(View.VISIBLE);
@@ -402,7 +399,7 @@ public class ChatView {
 					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
 					chatHolder.share_text.setText(messageContent.text);
 					if (messageContent.image != null && !"".equals(messageContent.image)) {
-						fileHandlers.getThumbleImage(messageContent.image, chatHolder.share_image, (int) (50 * displayMetrics.density + 0.5f) / 2, (int) (50 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT);
+						fileHandlers.getThumbleImage(messageContent.image, chatHolder.share_image, (int) (50 * displayMetrics.density + 0.5f) / 2, (int) (50 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT, null);
 						// thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
 					} else {
 						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, chatHolder.share_image, thisController.options);
@@ -455,7 +452,7 @@ public class ChatView {
 						phone = friend.phone;
 					}
 				}
-				fileHandlers.getHeadImage(fileName, chatHolder.head, headOptions);
+				fileHandlers.getHeadImage(fileName, chatHolder.head, viewManage.headOptions40);
 
 				chatHolder.head.setTag(R.id.tag_class, "head_click");
 				chatHolder.head.setTag(R.id.tag_first, phone);

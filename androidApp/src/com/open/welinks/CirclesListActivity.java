@@ -24,8 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
@@ -35,6 +33,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.view.ViewManage;
 
 public class CirclesListActivity extends Activity {
 
@@ -54,8 +53,6 @@ public class CirclesListActivity extends Activity {
 	public Parser parser = Parser.getInstance();
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public DisplayImageOptions options;
 
 	public LayoutInflater mInflater;
 
@@ -159,7 +156,6 @@ public class CirclesListActivity extends Activity {
 		friendListBody = new ListBody1();
 		friendListBody.initialize(displayMetrics, friendsView);
 		friendListBody.active();
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 	}
 
 	public void showCircles() {
@@ -309,7 +305,7 @@ public class CirclesListActivity extends Activity {
 
 		public void setData(Friend friend) {
 
-			fileHandlers.getHeadImage(friend.head, this.headImageView, options);
+			fileHandlers.getHeadImage(friend.head, this.headImageView, ViewManage.getInstance().options52);
 			// this.headImageView.setImageBitmap(bitmap);
 
 			this.nickNameView.setText(friend.nickName);

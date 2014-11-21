@@ -44,7 +44,7 @@
             android:translationY="162dp" />
 
         <com.open.lib.TouchTextView
-            android:id="@+id/share_praise"
+            android:id="@+id/room"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -57,6 +57,21 @@
             android:textSize="18sp"
             android:translationX="80dp"
             android:translationY="162dp" />
+
+        <com.open.lib.TouchTextView
+            android:id="@+id/roomTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:shadowColor="@color/TransparentGrey"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="0.01"
+            android:text=""
+            android:textColor="#eeffffff"
+            android:textSize="12sp"
+            android:translationX="155dp"
+            android:translationY="167dp" />
 
         <com.open.lib.TouchImageView
             android:id="@+id/releaseShare"

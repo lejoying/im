@@ -507,7 +507,9 @@ public class ShareReleaseImageTextController {
 				uploadFileNameMap.put(key, fileName);
 				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
 				bytes = null;
+				Thread.sleep(100);
 				System.gc();
+				Thread.sleep(100);
 				multipart.path = key;
 				uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);

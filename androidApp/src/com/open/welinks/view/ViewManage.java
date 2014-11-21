@@ -2,13 +2,19 @@ package com.open.welinks.view;
 
 import java.lang.reflect.Field;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.ChangePasswordActivity;
 import com.open.welinks.DynamicListActivity;
 import com.open.welinks.GroupListActivity;
+import com.open.welinks.R;
 import com.open.welinks.SearchFriendActivity;
 
 public class ViewManage {
@@ -32,6 +38,9 @@ public class ViewManage {
 	public SearchFriendActivity searchFriendActivity = null;
 	public ChangePasswordActivity changePasswordActivity = null;
 
+	public Activity thisActivity;
+	public DisplayMetrics displayMetrics;
+
 	public Handler handler = new Handler();
 
 	public static ViewManage viewManager;
@@ -41,6 +50,31 @@ public class ViewManage {
 			viewManager = new ViewManage();
 		}
 		return viewManager;
+	}
+
+	public DisplayImageOptions options;
+	public DisplayImageOptions headOptions40;
+	public DisplayImageOptions options52;
+	public DisplayImageOptions options50;
+	public DisplayImageOptions options45;
+	public DisplayImageOptions options70;
+	public DisplayImageOptions options60;
+	public DisplayImageOptions options56;
+
+	void initialize(Activity thisActivity) {
+		this.thisActivity = thisActivity;
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		float density = displayMetrics.density / 1.5f;
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		headOptions40 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer((int) (40 * density))).build();
+		options52 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer((int) (52 * density))).build();
+		options50 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer((int) (50 * density))).build();
+		options45 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (45 * density))).build();
+		options70 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (70 * density))).build();
+		options60 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (60 * density))).build();
+		options56 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (56 * density))).build();
+
 	}
 
 	public void postNotifyView(final String viewName) {
@@ -115,6 +149,7 @@ public class ViewManage {
 			}
 		}
 	}
+
 	public static int getStatusBarHeight(Context context) {
 		Class<?> c = null;
 		Object obj = null;

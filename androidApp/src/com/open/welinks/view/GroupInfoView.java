@@ -13,10 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
@@ -67,8 +65,6 @@ public class GroupInfoView {
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
-	public DisplayImageOptions options;
-
 	public GroupInfoView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisView = this;
@@ -78,7 +74,6 @@ public class GroupInfoView {
 	DisplayMetrics displayMetrics;
 
 	public void initView() {
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.face_man).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(70)).build();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
@@ -110,8 +105,6 @@ public class GroupInfoView {
 		this.converImageView = (ImageView) thisActivity.findViewById(R.id.converImage);
 	}
 
-	public DisplayImageOptions options0 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.face_man).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(70)).build();
-
 	public void setMembersList() {
 
 		int size = thisController.currentGroup.members.size();
@@ -126,14 +119,16 @@ public class GroupInfoView {
 			ImageView imageView = new ImageView(thisActivity);
 
 			Friend friend = data.relationship.friendsMap.get(thisController.currentGroup.members.get(i));
-			fileHandlers.getHeadImage(friend.head, imageView, options0);
+			fileHandlers.getHeadImage(friend.head, imageView, viewManage.options70);
 			this.memberListView.addView(imageView, params);
 		}
 	}
 
+	ViewManage viewManage = ViewManage.getInstance();
+
 	public void setData() {
 		this.nickNameView.setText(thisController.currentGroup.name);
-		this.fileHandlers.getHeadImage(thisController.currentGroup.icon, this.headIvView, options);
+		this.fileHandlers.getHeadImage(thisController.currentGroup.icon, this.headIvView, viewManage.options70);
 		this.businessView.setText(thisController.currentGroup.description);
 		boolean isNotice = false;
 		if (data.localStatus.localData != null) {

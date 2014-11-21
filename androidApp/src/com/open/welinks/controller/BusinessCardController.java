@@ -6,7 +6,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -20,9 +19,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.AddFriendActivity;
@@ -63,7 +60,6 @@ public class BusinessCardController {
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public DownloadFile downloadFile;
-	public DisplayImageOptions options;
 
 	public String key, type;
 	// public boolean isTemp;
@@ -93,7 +89,6 @@ public class BusinessCardController {
 		checkCardTypeAndRelation(type, key);
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 	}
 
 	public void checkCardTypeAndRelation(String type, String key) {
@@ -218,7 +213,7 @@ public class BusinessCardController {
 
 			@Override
 			public void onSuccess(DownloadFile instance, int status) {
-				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
+				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, viewManage.headOptions40);
 			}
 
 			@Override

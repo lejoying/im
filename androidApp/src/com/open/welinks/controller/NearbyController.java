@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
@@ -30,9 +29,7 @@ import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps2d.AMapUtils;
 import com.amap.api.maps2d.model.LatLng;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
@@ -70,7 +67,6 @@ public class NearbyController {
 	public OnScrollListener mOnScrollListener;
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DisplayImageOptions options;
 
 	public String mTableId;
 	public ArrayList<Map<String, Object>> mInfomations;
@@ -107,7 +103,6 @@ public class NearbyController {
 		}
 
 		mInfomations = new ArrayList<Map<String, Object>>();
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 		mCloudSearch = new CloudSearch(thisActivity);
 
 		initializeListeners();

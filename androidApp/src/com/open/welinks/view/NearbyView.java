@@ -12,8 +12,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
@@ -42,7 +40,6 @@ public class NearbyView {
 
 	public View maxView;
 
-	public DisplayImageOptions headOptions;
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public NearbyView(NearbyActivity thisActivity) {
@@ -53,8 +50,6 @@ public class NearbyView {
 	public SmallBusinessCardPopView businessCardPopView;
 
 	public void initView() {
-
-		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(45)).build();
 
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_nearby);
@@ -76,6 +71,8 @@ public class NearbyView {
 		nearbyAdapter = new NearbyAdapter(thisController.mInfomations);
 		nearbyListView.setAdapter(nearbyAdapter);
 	}
+
+	ViewManage viewManage = ViewManage.getInstance();
 
 	public class NearbyAdapter extends BaseAdapter {
 		ArrayList<Map<String, Object>> mInfomations;
@@ -123,7 +120,7 @@ public class NearbyView {
 
 			if (thisController.status == Status.account) {
 				String head = (String) infomation.get("head");
-				fileHandlers.getHeadImage(head, holder.head, headOptions);
+				fileHandlers.getHeadImage(head, holder.head, viewManage.options45);
 				// if ("".equals(head) || "Head".equals(head)) {
 				// holder.head.setImageBitmap(bitmap);
 				// } else {
@@ -167,7 +164,7 @@ public class NearbyView {
 				convertView.setTag(R.id.tag_third, infomation);
 			} else {
 				String icon = (String) infomation.get("icon");
-				fileHandlers.getHeadImage(icon, holder.head, headOptions);
+				fileHandlers.getHeadImage(icon, holder.head, viewManage.options45);
 				// if ("".equals(icon)) {
 				// holder.head.setImageBitmap(bitmap);
 				// } else {

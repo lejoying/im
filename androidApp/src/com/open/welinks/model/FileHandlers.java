@@ -27,6 +27,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customListener.ThumbleListener;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ViewManage;
 
@@ -151,6 +152,9 @@ public class FileHandlers {
 						}
 					});
 				}
+				if (instance.thumbleListener != null) {
+					instance.thumbleListener.onResult();
+				}
 				// log.e("200----download:     " + instance.url + "-" + instance.path + "-path");
 			}
 
@@ -163,6 +167,9 @@ public class FileHandlers {
 					log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
 				} else if (instance.type == DownloadFile.TYPE_IMAGE) {
 					log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
+				}
+				if (instance.thumbleListener != null) {
+					instance.thumbleListener.onResult();
 				}
 			}
 		};
@@ -183,7 +190,7 @@ public class FileHandlers {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE);
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
 					}
 
 					@Override
@@ -197,7 +204,7 @@ public class FileHandlers {
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE);
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
 			}
 		}
 	}
@@ -216,7 +223,7 @@ public class FileHandlers {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE);
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE, null);
 					}
 
 					@Override
@@ -224,7 +231,7 @@ public class FileHandlers {
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE);
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE, null);
 			}
 		}
 	}
@@ -233,7 +240,7 @@ public class FileHandlers {
 	public int THUMBLE_TYEP_GROUP = 0x02;
 	public int THUMBLE_TYEP_CHAT = 0x03;
 
-	public void getThumbleImage(String fileName, final ImageView imageView, int width, int height, final DisplayImageOptions options, int thumbleType) {
+	public void getThumbleImage(String fileName, final ImageView imageView, int width, int height, final DisplayImageOptions options, int thumbleType, final ThumbleListener thumbleListener) {
 		// type : square or group
 		if (fileName == null || "".equals(fileName)) {
 			if (thumbleType == THUMBLE_TYEP_SQUARE) {
@@ -265,25 +272,29 @@ public class FileHandlers {
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 						imageView.setBackgroundColor(Color.parseColor("#990099cd"));
-						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE);
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE, thumbleListener);
 					}
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 						// log.e(path+"-complete");
+						if (thumbleListener != null) {
+							thumbleListener.onResult();
+						}
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE);
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE, thumbleListener);
 			}
 		}
 	}
 
-	private void downloadImageFile(String url, String path, ImageView imageView, DisplayImageOptions options, int downloadType) {
+	private void downloadImageFile(String url, String path, ImageView imageView, DisplayImageOptions options, int downloadType, ThumbleListener thumbleListener) {
 		DownloadFile downloadFile = new DownloadFile(url, path);
 		downloadFile.view = imageView;
 		downloadFile.options = options;
 		downloadFile.type = downloadType;
+		downloadFile.thumbleListener = thumbleListener;
 		downloadFile.setDownloadFileListener(onDownloadListener);
 		downloadFileList.addDownloadFile(downloadFile);
 	}
@@ -293,15 +304,28 @@ public class FileHandlers {
 		// Raw height and width of image
 		final int height = options.outHeight;
 		final int width = options.outWidth;
-		int inSampleSize = 1;
+		int inSampleSize = 0;
 
-		if (height > reqHeight || width > reqWidth) {
-			if (width > height) {
-				inSampleSize = Math.round((float) height / (float) reqHeight);
-			} else {
-				inSampleSize = Math.round((float) width / (float) reqWidth);
-			}
-		}
+		float area = 0;
+		do {
+			inSampleSize++;
+			area = height * width / inSampleSize;
+		} while (area > 4000000);
+
+		// if (height > reqHeight || width > reqWidth) {
+		// if (width > height) {
+		// int wScale = reqHeight / height;
+		// int hScale = reqWidth / width;
+		// if (wScale > hScale) {
+		// inSampleSize = wScale;
+		// } else {
+		// inSampleSize = hScale;
+		// }
+		// // inSampleSize = Math.round((float) height / (float) reqHeight);
+		// } else {
+		// // inSampleSize = Math.round((float) width / (float) reqWidth);
+		// }
+		// }
 		return inSampleSize;
 	}
 
@@ -326,7 +350,7 @@ public class FileHandlers {
 		try {
 			bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
 			byteArrayOutputStream = new ByteArrayOutputStream();
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
 			bitmap.recycle();
 		} catch (Exception e1) {
 			e1.printStackTrace();

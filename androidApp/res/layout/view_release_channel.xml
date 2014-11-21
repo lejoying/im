@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="120dp"
+    android:layout_height="120dp"
+    android:gravity="center_vertical" >
+
+    <com.open.lib.TouchImageView
+        android:id="@+id/image"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:background="@drawable/reloption_bk_nor"
+        android:contentDescription="@string/ImageView"
+        android:src="@drawable/comm_ico_menu_basic"
+        android:translationY="-10dp" >
+    </com.open.lib.TouchImageView>
+
+    <com.open.lib.TouchTextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:text="文本"
+        android:textColor="#99000000"
+        android:textSize="16sp"
+        android:translationY="34dp" />
+
+</com.open.lib.TouchView>

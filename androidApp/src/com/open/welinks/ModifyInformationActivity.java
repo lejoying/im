@@ -6,7 +6,6 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,9 +27,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.UploadMultipart;
@@ -44,6 +41,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.view.ViewManage;
 
 public class ModifyInformationActivity extends Activity implements OnClickListener {
 	public Data data = Data.getInstance();
@@ -60,7 +58,6 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public DownloadFile downloadFile;
-	public DisplayImageOptions options;
 
 	public onDataChanged mOnDataChanged;
 	public OnUploadLoadingListener uploadLoadingListener;
@@ -86,12 +83,12 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		key = getIntent().getStringExtra("key");
 		type = getIntent().getStringExtra("type");
 		inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(45)).build();
 		initView();
 		initializeListeners();
 	}
 
 	FileHandlers fileHandlers = FileHandlers.getInstance();
+	ViewManage viewManage = ViewManage.getInstance();
 
 	@Override
 	public void onBackPressed() {
@@ -118,7 +115,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		} else if (requestCode == REQUESTCODE_CAT && resultCode == Activity.RESULT_OK) {
 			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), fileHandlers.sdcardHeadImageFolder);
 			headFileName = (String) map.get("fileName");
-			fileHandlers.getHeadImage(headFileName, head, options);
+			fileHandlers.getHeadImage(headFileName, head, viewManage.options45);
 			System.out.println((String) map.get("fileName"));
 			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"));
 			pic_layout.setVisibility(View.GONE);
@@ -218,9 +215,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			business.setText(user.mainBusiness);
 			lable.setText("");
 			if (user.head.equals("Head") || "".equals(user.head)) {
-				fileHandlers.getHeadImage(headFileName, head, options);
+				fileHandlers.getHeadImage(headFileName, head, viewManage.options45);
 			} else {
-				fileHandlers.getHeadImage(user.head, head, options);
+				fileHandlers.getHeadImage(user.head, head, viewManage.options45);
 			}
 		} else if ("group".equals(type)) {
 			group = data.relationship.groupsMap.get(key);
@@ -235,9 +232,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			business.setText(group.description);
 			lable.setText("");
 			if ("".equals(group.icon)) {
-				fileHandlers.getHeadImage(headFileName, head, options);
+				fileHandlers.getHeadImage(headFileName, head, viewManage.options45);
 			} else {
-				fileHandlers.getHeadImage(group.icon, head, options);
+				fileHandlers.getHeadImage(group.icon, head, viewManage.options45);
 			}
 		}
 	}

@@ -8,8 +8,6 @@ import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TouchView;
 import com.open.welinks.R;
 import com.open.welinks.controller.MeSubController;
@@ -46,7 +44,6 @@ public class MeSubView {
 	public ViewManage viewManage = ViewManage.getInstance();
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public DisplayImageOptions options;
 
 	public MeSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -67,8 +64,6 @@ public class MeSubView {
 
 		mAppIconToNameView = (ImageView) mainView.meView.findViewById(R.id.appIconToName);
 		mRootView = mAppIconToNameView;
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
-
 		setUserData();
 	}
 
@@ -76,7 +71,7 @@ public class MeSubView {
 		parser.check();
 		User user = data.userInformation.currentUser;
 		if (user != null) {
-			fileHandlers.getHeadImage(user.head, this.userHeadImageView, options);
+			fileHandlers.getHeadImage(user.head, this.userHeadImageView, viewManage.options60);
 			this.userNickNameView.setText(user.nickName);
 			this.userBusinessView.setText(user.mainBusiness);
 			if (data.event.userNotReadMessage || data.event.groupNotReadMessage) {

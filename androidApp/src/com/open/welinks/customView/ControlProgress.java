@@ -16,7 +16,7 @@ public class ControlProgress {
 	public ImageView progress_line2;
 	public TranslateAnimation move_progress_line1;
 
-	public int percentage = 0;
+	public float percentage = 0;
 	public int width = 0;
 
 	public void initialize(View container, DisplayMetrics displayMetrics) {
@@ -29,7 +29,7 @@ public class ControlProgress {
 		width = displayMetrics.widthPixels;
 	}
 
-	public void moveTo(int targetPercentage) {
+	public void moveTo(float targetPercentage) {
 		float position = targetPercentage / 100.0f * this.width;
 		move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
 		// TODO old animation becomes memory fragment

@@ -16,8 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.GroupMemberManageController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
@@ -55,8 +53,6 @@ public class GroupMemberManageView {
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
-	public DisplayImageOptions options;
-
 	public DisplayMetrics displayMetrics;
 
 	public LinearLayout alreadyListContainer;
@@ -86,7 +82,6 @@ public class GroupMemberManageView {
 		groupMemberGridView = (GridView) thisActivity.findViewById(R.id.gridView_groupmembers);
 
 		mInflater = thisActivity.getLayoutInflater();
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
 	}
@@ -110,9 +105,11 @@ public class GroupMemberManageView {
 			imageView.setTag(R.id.tag_first, friend.phone);
 			imageView.setOnClickListener(thisController.mOnClickListener);
 			alreadyListContainer.addView(imageView, layoutParams);
-			fileHandlers.getHeadImage(friend.head, imageView, options);
+			fileHandlers.getHeadImage(friend.head, imageView, viewManage.options60);
 		}
 	}
+
+	ViewManage viewManage = ViewManage.getInstance();
 
 	public List<String> subtractMembers = new ArrayList<String>();
 
@@ -185,7 +182,7 @@ public class GroupMemberManageView {
 					nickName = friend.nickName;
 				}
 				imageHolder.nickNameView.setText(nickName);
-				fileHandlers.getHeadImage(friend.head, imageHolder0.imageContent, options);
+				fileHandlers.getHeadImage(friend.head, imageHolder0.imageContent, viewManage.options60);
 
 				convertView.setTag(R.id.iv_image, "subtractonclick#" + friend.phone);
 				convertView.setOnClickListener(thisController.mOnClickListener);

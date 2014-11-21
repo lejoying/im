@@ -29,7 +29,7 @@ public class ListBody1 {
 		loopCallback = new ListLoopCallback(openLooper);
 		openLooper.loopCallback = loopCallback;
 
-		refreshBaseHeight = displayMetrics.heightPixels / 8;
+		refreshBaseHeight = displayMetrics.heightPixels / 16;
 
 		return containerView;
 
@@ -483,9 +483,9 @@ public class ListBody1 {
 			} else {
 				this.setDeltaXY(0, delta * this.orderSpeed * this.boundarySpeedRatio);
 				this.bondary_offset = this.bondary_offset + delta * this.orderSpeed * this.boundarySpeedRatio;
-				if (bondary_offset < -refreshBaseHeight) {
-					isRefresh = true;
-				}
+				// if (bondary_offset < -refreshBaseHeight) {
+				isRefresh = true;
+				// }
 				// Log.e(tag, bondary_offset + "---" + -refreshBaseHeight);
 			}
 		}

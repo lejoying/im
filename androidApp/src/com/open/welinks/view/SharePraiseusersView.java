@@ -14,8 +14,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.SharePraiseusersController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
@@ -44,8 +42,6 @@ public class SharePraiseusersView {
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
-	public DisplayImageOptions options;
-
 	public View maxView;
 
 	public SharePraiseusersView(Activity thisActivity) {
@@ -66,8 +62,6 @@ public class SharePraiseusersView {
 		backTitleView.setText("称赞者");
 
 		listView = (ListView) thisActivity.findViewById(R.id.praiseusersContent);
-
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
 		DisplayMetrics dm = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -142,7 +136,7 @@ public class SharePraiseusersView {
 			if (friend != null) {
 				fileName = friend.head;
 			}
-			fileHandlers.getHeadImage(fileName, holder.head, options);
+			fileHandlers.getHeadImage(fileName, holder.head, ViewManage.getInstance().options52);
 			String nickName = thisController.praiseusersList.get(position);
 			if (friend != null) {
 				nickName = friend.nickName;

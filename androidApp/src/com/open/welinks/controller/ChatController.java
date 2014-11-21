@@ -32,7 +32,6 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
@@ -79,7 +78,7 @@ public class ChatController {
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public Gson gson = new Gson();
 
-	public DisplayImageOptions options, headOptions;
+	public DisplayImageOptions options;
 	public InputMethodManager inputMethodManager;
 
 	public Handler handler = new Handler();
@@ -109,7 +108,6 @@ public class ChatController {
 		}
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.defaultimage).showImageForEmptyUri(R.drawable.defaultimage).showImageOnFail(R.drawable.defaultimage).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.face_man).showImageOnFail(R.drawable.face_man).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 		unsendMessageInfo = new HashMap<String, Map<String, String>>();
 		thisView.showChatViews();
 
@@ -425,6 +423,13 @@ public class ChatController {
 					content.add((String) map.get("fileName"));
 					UploadMultipart multipart = uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
 					multiparts.add(multipart);
+					try {
+						Thread.sleep(100);
+						System.gc();
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				String messageContent = gson.toJson(content);
 				map0.put("content", messageContent);
