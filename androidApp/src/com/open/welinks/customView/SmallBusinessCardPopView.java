@@ -31,6 +31,7 @@ import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.R;
+import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -95,6 +96,7 @@ public class SmallBusinessCardPopView {
 		public TextView distanceView;
 		public TextView lastLoginTimeView;
 		public LinearLayout optionTwoView;
+		public LinearLayout optionTwoView2;
 		public TextView singleButtonView;
 		public TextView cardStatusView;
 		public TextView vLineView;
@@ -266,6 +268,7 @@ public class SmallBusinessCardPopView {
 				singleButtonView.setVisibility(View.VISIBLE);
 			}
 			if (type.equals(TYPE_POINT)) {
+				this.optionTwoView2.setVisibility(View.GONE);
 				if (user.phone.equals(key)) {
 					singleButtonView.setText("个人资料");
 				} else if (data.relationship.friends.contains(key)) {
@@ -305,6 +308,9 @@ public class SmallBusinessCardPopView {
 			}
 		}
 
+		public TextView hotView;
+		public TextView sectionsView;
+
 		@SuppressWarnings("deprecation")
 		private void initView() {
 			displayMetrics = new DisplayMetrics();
@@ -312,18 +318,21 @@ public class SmallBusinessCardPopView {
 
 			userCardMainView = LayoutInflater.from(context).inflate(R.layout.view_dialog_small_businesscard, this);
 			optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
+			optionTwoView2 = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo2);
 			userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
 			userAgeView = (TextView) userCardMainView.findViewById(R.id.userAge);
 			distanceView = (TextView) userCardMainView.findViewById(R.id.userDistance);
 			lastLoginTimeView = (TextView) userCardMainView.findViewById(R.id.lastLoginTime);
 			userBusinessContainer = (RelativeLayout) userCardMainView.findViewById(R.id.userBusinessView);
-			int height = (int) (displayMetrics.heightPixels * 0.5f - 50 * displayMetrics.density) + ViewManage.getStatusBarHeight(thisActivity);
+			int height = (int) (displayMetrics.heightPixels * 0.50f - 50 * displayMetrics.density) + ViewManage.getStatusBarHeight(thisActivity);
 			userBusinessContainer.getLayoutParams().height = height;
 			goInfomationView = (TextView) userCardMainView.findViewById(R.id.goInfomation);
 			goChatView = (TextView) userCardMainView.findViewById(R.id.goChat);
 			singleButtonView = (TextView) userCardMainView.findViewById(R.id.singleButton);
 			cardStatusView = (TextView) userCardMainView.findViewById(R.id.cardStatus);
 			vLineView = (TextView) userCardMainView.findViewById(R.id.vLine);
+			hotView = (TextView) userCardMainView.findViewById(R.id.hot);
+			sectionsView = (TextView) userCardMainView.findViewById(R.id.sections);
 			// singleButtonView.setVisibility(View.GONE);
 			userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
 			userHeadView.getLayoutParams().height = height;
@@ -337,6 +346,8 @@ public class SmallBusinessCardPopView {
 			this.goInfomationView.setOnClickListener(mOnClickListener);
 			this.singleButtonView.setOnClickListener(mOnClickListener);
 			this.goChatView.setOnClickListener(mOnClickListener);
+			this.hotView.setOnClickListener(mOnClickListener);
+			this.sectionsView.setOnClickListener(mOnClickListener);
 		}
 
 		public void initializeListeners() {
@@ -384,6 +395,14 @@ public class SmallBusinessCardPopView {
 						intent.putExtra("id", key);
 						intent.putExtra("type", type);
 						thisActivity.startActivityForResult(intent, R.id.tag_second);
+					} else if (view.equals(hotView)) {
+						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+						intent.putExtra("", "");
+						thisActivity.startActivity(intent);
+					} else if (view.equals(sectionsView)) {
+						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+						intent.putExtra("", "");
+						thisActivity.startActivity(intent);
 					}
 				}
 			};

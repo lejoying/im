@@ -180,6 +180,46 @@
                 android:textColor="@color/text_color_black"
                 android:textSize="16sp"
                 android:visibility="visible" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/text_color_black_2" />
+
+            <LinearLayout
+                android:id="@+id/optionTwo2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/account_info_pop"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hot"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0"
+                    android:background="@drawable/button_white"
+                    android:gravity="center"
+                    android:text="Hot+"
+                    android:textColor="@color/text_color_black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/text_color_black_2" />
+
+                <TextView
+                    android:id="@+id/sections"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0"
+                    android:background="@drawable/button_white"
+                    android:gravity="center"
+                    android:text="更多版块"
+                    android:textColor="@color/text_color_black"
+                    android:textSize="16sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <ImageView

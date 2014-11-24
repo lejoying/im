@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/maxView"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <include layout="@layout/view_back_view" >
+    </include>
+
+    <com.open.lib.TouchView
+        android:id="@+id/groupShareMessageContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#75c2b8"
+        android:translationY="48dp"
+        android:visibility="visible" >
+    </com.open.lib.TouchView>
+
+    <LinearLayout
+        android:id="@+id/selectMenu"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="48dp"
+        android:background="#51000000"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/card_color3"
+            android:gravity="center"
+            android:text="主版"
+            android:textColor="#99ffffff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="0.5dp"
+            android:background="@color/card_color3"
+            android:gravity="center"
+            android:text="宠物玩具"
+            android:textColor="#99ffffff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="0.5dp"
+            android:background="@color/card_color3"
+            android:gravity="center"
+            android:text="宠物食品"
+            android:textColor="#99ffffff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="0.5dp"
+            android:background="@color/card_color3"
+            android:gravity="center"
+            android:text="+新增版块"
+            android:textColor="#99ffffff"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>
