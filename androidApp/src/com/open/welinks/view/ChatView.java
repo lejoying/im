@@ -402,7 +402,9 @@ public class ChatView {
 					chatHolder.voice_icon.setImageBitmap(bitmap);
 					chatHolder.voicetime.setText("");
 				} else if ("share".equals(contentType)) {
-					// chatHolder.message_status.setVisibility(View.GONE);
+					if (chatHolder.message_status != null) {
+						chatHolder.message_status.setVisibility(View.GONE);
+					}
 					chatHolder.character.setVisibility(View.GONE);
 					chatHolder.image.setVisibility(View.GONE);
 					chatHolder.share.setVisibility(View.VISIBLE);

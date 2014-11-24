@@ -336,7 +336,7 @@ public class BusinessCardView {
 			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
 		} else if (status.equals(Status.JOINEDGROUP) || status.equals(Status.NOTJOINGROUP)) {
 			backTitleView.setText(thisActivity.getString(R.string.business_room_info));
-			businessTitle.setText(thisActivity.getString(R.string.business_room_name));
+			businessTitle.setText(thisActivity.getString(R.string.business_room_description));
 			lableTitle.setText(thisActivity.getString(R.string.business_label));
 			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
 			buttonTwo.setVisibility(View.GONE);

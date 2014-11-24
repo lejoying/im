@@ -65,6 +65,7 @@
     <string name="business_personal_info">个人详情</string>
     <string name="business_room_info">房间详情</string>
     <string name="business_room_name">名称：</string>
+    <string name="business_room_description">描述：</string>
     <string name="business_label">标签：</string>
     <string name="business_community_info">社区详情</string>
     <string name="business_male">男</string>

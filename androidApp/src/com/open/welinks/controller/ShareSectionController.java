@@ -123,10 +123,8 @@ public class ShareSectionController {
 				} else if (view.equals(thisView.groupHeadView) || view.equals(thisView.groupCoverView)) {
 					if (data.localStatus.localData != null && data.localStatus.localData.currentSelectedGroup != null && !data.localStatus.localData.currentSelectedGroup.equals("")) {
 						parser.check();
-						Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
-						long[] pattern = { 30, 100, 30 };
-						vibrator.vibrate(pattern, -1);
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, data.localStatus.localData.currentSelectedGroup);
+						thisView.businessCardPopView.cardView.setHot(false);
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (view.equals(thisView.releaseShareDialogView)) {
@@ -308,7 +306,7 @@ public class ShareSectionController {
 
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 			onTouchDownView = null;
-			if(thisView.selectMenuView.getVisibility() == View.VISIBLE){
+			if (thisView.selectMenuView.getVisibility() == View.VISIBLE) {
 				thisView.selectMenuView.setVisibility(View.GONE);
 			}
 			return false;

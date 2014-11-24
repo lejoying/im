@@ -24,47 +24,47 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:layout_marginTop="48dp"
-        android:background="#51000000"
+        android:background="#9975c2b8"
         android:orientation="vertical"
         android:visibility="gone" >
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/card_color3"
+            android:background="@color/text_color_black"
             android:gravity="center"
             android:text="主版"
-            android:textColor="#99ffffff"
+            android:textColor="#ffffff"
             android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="0.5dp"
-            android:background="@color/card_color3"
+            android:background="@color/text_color_black"
             android:gravity="center"
             android:text="宠物玩具"
-            android:textColor="#99ffffff"
+            android:textColor="#ffffff"
             android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="0.5dp"
-            android:background="@color/card_color3"
+            android:background="@color/text_color_black"
             android:gravity="center"
             android:text="宠物食品"
-            android:textColor="#99ffffff"
+            android:textColor="#ffffff"
             android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="0.5dp"
-            android:background="@color/card_color3"
+            android:background="@color/text_color_black"
             android:gravity="center"
             android:text="+新增版块"
-            android:textColor="#99ffffff"
+            android:textColor="#ffffff"
             android:textSize="16sp" />
     </LinearLayout>
 

@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -108,6 +109,8 @@ public class ShareSectionView {
 
 	public View selectMenuView;
 
+	public TextView sectionNameTextView;
+
 	public void initView() {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -120,11 +123,7 @@ public class ShareSectionView {
 		this.backView = thisActivity.findViewById(R.id.backView);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		if (currentGroup != null) {
-			this.backTitleView.setText(currentGroup.name);
-		} else {
-			this.backTitleView.setText("返回");
-		}
+		this.backTitleView.setText("返回");
 
 		this.selectMenuView = thisActivity.findViewById(R.id.selectMenu);
 
@@ -149,15 +148,28 @@ public class ShareSectionView {
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+
+		LinearLayout linearLayout = new LinearLayout(context);
+		linearLayout.setPadding((int) (10 * displayMetrics.density), 0, (int) (10 * displayMetrics.density), 0);
+		LinearLayout.LayoutParams lineParams = new LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, (int) (48 * displayMetrics.density));
+		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 		RelativeLayout.LayoutParams rightParams = (android.widget.RelativeLayout.LayoutParams) rightContainer.getLayoutParams();
 		rightParams.rightMargin = 0;
 		moreView = new ImageView(thisActivity);
-		moreView.setImageResource(R.drawable.chat_more);
-		RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (48 * displayMetrics.density), (int) (48 * displayMetrics.density));
-		infomationParams.addRule(RelativeLayout.CENTER_VERTICAL);
-		int padding = (int) (10 * displayMetrics.density);
-		moreView.setPadding(padding, padding, padding, padding);
-		rightContainer.addView(moreView, infomationParams);
+		moreView.setTranslationY((int) (30 * displayMetrics.density));
+		moreView.setImageResource(R.drawable.subscript_triangle);
+		moreView.setColorFilter(Color.parseColor("#0099cd"));
+		RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (7 * displayMetrics.density), (int) (7 * displayMetrics.density));
+
+		sectionNameTextView = new TextView(thisActivity);
+		sectionNameTextView.setSingleLine();
+		sectionNameTextView.setTextColor(Color.WHITE);
+		sectionNameTextView.setText("主版");
+		RelativeLayout.LayoutParams textViewParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, (int) (48 * displayMetrics.density));
+		linearLayout.addView(sectionNameTextView, textViewParams);
+		sectionNameTextView.setGravity(Gravity.CENTER_VERTICAL);
+		linearLayout.addView(moreView, infomationParams);
+		rightContainer.addView(linearLayout, lineParams);
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, this.maxView);
 		initReleaseShareDialogView();

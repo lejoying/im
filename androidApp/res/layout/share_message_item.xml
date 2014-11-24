@@ -128,7 +128,6 @@
             android:id="@+id/share_imageContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/account_pop_black_background"
             android:scaleType="centerCrop" />
 
         <TextView

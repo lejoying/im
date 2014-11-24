@@ -238,6 +238,14 @@ public class SmallBusinessCardPopView {
 			}
 		}
 
+		public void setHot(boolean flag) {
+			if (flag) {
+				optionTwoView2.setVisibility(View.VISIBLE);
+			} else {
+				optionTwoView2.setVisibility(View.GONE);
+			}
+		}
+
 		public FileHandlers fileHandlers = FileHandlers.getInstance();
 		public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
 		boolean isGetData = false;
@@ -295,6 +303,7 @@ public class SmallBusinessCardPopView {
 					scanGroupCard(key);
 				}
 			} else if (type.equals(TYPE_SQUARE)) {
+				this.optionTwoView2.setVisibility(View.GONE);
 				goInfomationView.setText("社区资料");
 				userAgeView.setVisibility(View.GONE);
 				lastLoginTimeView.setText("");
