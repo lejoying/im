@@ -863,22 +863,388 @@ shareManage.getusershares = function (data, response) {
 
 shareManage.sendboardshare = function (data, response) {
     response.asynchronous = 1;
-
+    var sid = data.sid;
+    var phone = data.phone;
+    var nickName = data.nickName;
+    var message = data.message;
+    var gid = data.gid; //unused
+    var ogsid = data.ogsid;
+    if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, message, ogsid, nickName], response)) {
+        try {
+            message = JSON.parse(message);
+            if (message.type == "imagetext") {
+                createShare(message);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "发布群分享失败",
+                    "失败原因": "数据格式不正确",
+                    ogsid: ogsid,
+                    sid: sid,
+                    gid: gid
+                }), response);
+            }
+        } catch (e) {
+            console.error(e);
+            ResponseData(JSON.stringify({
+                "提示信息": "发布群分享失败",
+                "失败原因": "数据格式不正确",
+                ogsid: ogsid,
+                sid: sid,
+                gid: gid
+            }), response);
+        }
+    }
+    function createShare(message) {
+        var query = [
+            'MATCH (shares:Shares)',
+            'WHERE shares.sid={sid}',
+            'CREATE UNIQUE shares-[r1:HAS_SHARE]->(share:Share{share})',
+            'SET share.gsid=ID(share)',
+            'RETURN share'
+        ].join("\n");
+        var params = {
+            sid: parseInt(sid),
+            share: {
+                phone: phone,
+                nickName: nickName,
+                praises: "[]",
+                comments: "[]",
+                type: message.type,
+                nodeType: "Share",
+                content: message.content,
+                time: new Date().getTime()
+            }
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "发布群分享失败",
+                    "失败原因": "数据异常",
+                    ogsid: ogsid,
+                    gid: gid
+                }), response);
+                console.error(error);
+            } else if (results.length == 0) {
+                console.log("发布群分享失败");
+                ResponseData(JSON.stringify({
+                    "提示信息": "发布群分享失败",
+                    "失败原因": "数据异常",
+                    ogsid: ogsid,
+                    gid: gid
+                }), response);
+            } else {
+                var shareData = results.pop().share.data;
+                console.log("发布群分享成功");
+                ResponseData(JSON.stringify({
+                    "提示信息": "发布群分享成功",
+                    time: shareData.time,
+                    ogsid: ogsid,
+                    gsid: shareData.gsid,
+                    gid: gid
+                }), response);
+            }
+        });
+    }
 }
 shareManage.getboardshare = function (data, response) {
     response.asynchronous = 1;
+    var gid = data.gid;
+    var sid = data.sid;
+    var nowpage = data.nowpage;
+    var pagesize = data.pagesize;
+    if (verifyEmpty.verifyEmpty(data, [gid, sid, nowpage, pagesize], response)) {
+        getShareNodes();
+    }
+    function getShareNodes() {
+        var query = [
+            "MATCH (shares:Shares)-[r:HAS_SHARE]->(share:Share)",
+            "WHERE shares.sid={sid}",
+            "RETURN share",
+            "ORDER BY share.time DESC",
+            "SKIP {start}",
+            "LIMIT {pagesize}"
+        ].join("\n");
+        var params = {
+            sid: parseInt(sid),
+            start: parseInt(nowpage) * parseInt(pagesize),
+            pagesize: parseInt(pagesize)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群分享失败",
+                    "失败原因": "数据异常"
+                }), response);
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群分享成功",
+                    gid: gid,
+                    nowpage: nowpage,
+                    shares: []
+                }), response);
+            } else {
+                var shares = [];
+                for (var index in results) {
+                    var result = results[index];
+                    var shareData = result.share.data;
+                    shares.push(shareData);
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群分享成功",
+                    gid: gid,
+                    nowpage: nowpage,
+                    shares: shares
+                }), response);
+            }
+        });
+    }
 }
 shareManage.addboard = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var gid = data.gid;
+    var name = data.name;
+    var osid = data.osid;
+    if (verifyEmpty.verifyEmpty(data, [gid, name, osid], response)) {
+        addBoardNode();
+    }
+    function addBoardNode() {
+        var query = [
+            "MATCH (group:Group)",
+            "WHERE group.gid={gid}",
+            "CREATE UNIQUE group-[r:SHARE]->(shares:Shares{shares})",
+            "SET shares.sid=ID(shares)",
+            "RETURN group,shares"
+        ].join("\n");
+        var params = {
+            gid: parseInt(gid),
+            shares: {
+                name: name,
+                gid: parseInt(gid),
+                nodeType: "Shares",
+                status: "active",
+                type: "Sub",
+                createTime: new Date().getTime()
+            }
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                ResponseData(JSON.stringify({
+                    "提示信息": "创建版块失败",
+                    "失败原因": "数据异常",
+                    osid: osid
+                }), response);
+            } else if (results.length > 0) {
+                var sharesData = results.pop().shares.data;
+                var groupData = results.pop().group.data;
+                ResponseData(JSON.stringify({
+                    "提示信息": "创建版块成功",
+                    "失败原因": "数据异常",
+                    sid: sharesData.sid,
+                    gid: groupData.gid,
+                    osid: osid
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "创建版块失败",
+                    "失败原因": "数据异常",
+                    osid: osid
+                }), response);
+            }
+        });
+    }
 }
 shareManage.modifyboard = function (data, response) {
     response.asynchronous = 1;
+    var sid = data.sid;
+    var name = data.name;
+    var description = data.description;
+    var head = data.head;
+    var cover = data.cover;
+    var status = data.status;
+    if (verifyEmpty.verifyEmpty(data, [sid], response)) {
+        modifyBoardNode();
+    }
+    function modifyBoardNode() {
+        var query = [
+            "MATCH (shares:Shares)",
+            "WHERE shares.sid={sid}",
+            "RETURN shares"
+        ].join("\n");
+        var params = {
+            sid: parseInt(sid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改版块失败",
+                    "失败原因": "数据异常",
+                    sid: sid
+                }), response);
+            } else if (results.length > 0) {
+                var sharesNode = results.pop().shares;
+                var sharesData = sharesNode.data;
+                if (name != undefined && name != null && name != "") {
+                    sharesData.name = name;
+                }
+                if (head != undefined && head != null && head != "") {
+                    sharesData.head = head;
+                }
+                if (description != undefined && description != null && description != "") {
+                    sharesData.description = description;
+                }
+                if (cover != undefined && cover != null && cover != "") {
+                    sharesData.cover = cover;
+                }
+                if (status != undefined && status != null && status != "") {
+                    sharesData.status = status;
+                }
+                sharesNode.save(function (err, node) {
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改版块成功",
+                    board: sharesData
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改版块失败",
+                    "失败原因": "版块不存在",
+                    sid: sid
+                }), response);
+            }
+        });
+    }
 }
-//shareManage.deletesection = function (data, response) {
-//    response.asynchronous = 1;
-//}
+shareManage.getboards = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    if (verifyEmpty.verifyEmpty(data, [phone], response)) {
+        try {
+            getBoardNodes();
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "获取版块失败",
+                "失败原因": "数据格式不正确"
+            }), response);
+        }
+    }
+    function getBoardNodes() {
+        var query = [
+            "MATCH (account:Account)<-[r:HAS_MEMBER]-(group:Group)-[r2:SHARE]->(board:Shares)",
+            "WHERE account.phone={phone}",
+            "RETURN group,board"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块失败",
+                    "失败原因": "数据异常"
+                }), response);
+            } else if (results.length > 0) {
+                var groupBoard = {};
+                var saveBoard = {};
+                var boardsMap = {};
+                for (var index in results) {
+                    var groupData = results[index].group.data;
+                    var boardData = results[index].board.data;
+                    boardsMap[boardData.sid] = boardData;
+                    if (groupData.boardSequenceString && groupBoard[groupData.gid] == null) {
+                        if (saveBoard[groupData.gid]) {
+                            saveBoard[groupData.gid].order.push(boardData.sid);
+                        } else {
+                            try {
+                                groupBoard[groupData.gid] = JSON.parse(groupData.boardSequenceString);
+                            } catch (e) {
+                                saveBoard[groupData.gid] = {
+                                    groupNode: results[index].group,
+                                    order: [boardData.sid]
+                                }
+                            }
+                        }
+                    } else {
+                        if (saveBoard[groupData.gid]) {
+                            saveBoard[groupData.gid].order.push(boardData.sid);
+                        } else {
+                            saveBoard[groupData.gid] = {
+                                groupNode: results[index].group,
+                                order: [boardData.sid]
+                            }
+                        }
+                    }
+                }
+                for (var index in saveBoard) {
+                    var groupNode = saveBoard[index].groupNode;
+                    var groupData = groupNode.data;
+                    var order = saveBoard[index].order;
+                    groupBoard[groupData.gid] = order;
+                    groupData.boardSequenceString = JSON.stringify(order);
+                    groupNode.save(function (err, node) {
+                    });
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块成功",
+                    groupBoard: groupBoard,
+                    boardsMap: boardsMap
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块成功",
+                    groupBoard: {},
+                    boardsMap: {}
+                }), response);
+            }
+        });
+    }
+}
 shareManage.modifysquence = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var gid = data.gid;
+    var boardSequence = data.boardsequence;
+    if (verifyEmpty.verifyEmpty(data, [gid, boardSequence]), response) {
+        modifyBoardSequence();
+    }
+    function modifyBoardSequence() {
+        var query = [
+            "MATCH (group:Group)",
+            "WHERE group.gid={gid}",
+            "RETURN group"
+        ].join("\n");
+        var params = {
+            gid: parseInt(gid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.log(error);
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改版块顺序失败",
+                    "失败原因": "群组不存在"
+                }), response);
+            } else if (results.length > 0) {
+                var groupNode = results.pop().group;
+                var groupData = groupNode.data;
+                groupData.boardSequenceString = boardSequence;
+                groupNode.save(function (err, node) {
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改版块顺序成功",
+                    group: groupData
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改版块顺序失败",
+                    "失败原因": "群组不存在"
+                }), response);
+            }
+        });
+    }
 }
 //处理数据库数据
 //getGroups();
@@ -904,6 +1270,7 @@ function getGroups() {
         }
     });
 }
+
 function getGroupShares(groups) {
     var query = [
         "MATCH (group:Group)-->(Shares:Shares)",
@@ -931,6 +1298,7 @@ function getGroupShares(groups) {
         }
     });
 }
+
 function createGroupShares(groups) {
     var query = [
         "MATCH (group:Group)",
@@ -971,4 +1339,5 @@ function ResponseData(responseContent, response) {
     response.write(responseContent);
     response.end();
 }
+
 module.exports = shareManage;

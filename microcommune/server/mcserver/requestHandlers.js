@@ -350,7 +350,31 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.getusershares(data, response);
         });
     }
-
+    else if (operation == "sendboardshare") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.sendboardshare(data, response);
+        });
+    } else if (operation == "getboardshare") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.getboardshare(data, response);
+        });
+    } else if (operation == "addboard") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.addboard(data, response);
+        });
+    } else if (operation == "modifyboard") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.modifyboard(data, response);
+        });
+    } else if (operation == "getboards") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.getboards(data, response);
+        });
+    } else if (operation == "modifysquence") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.modifysquence(data, response);
+        });
+    }
 }
 function setOauthAccessKey(phone, accessKey, next) {
     client.rpush(phone + "_accessKey", accessKey, function (err, reply) {
