@@ -150,6 +150,7 @@ groupManage.create = function (data, response) {
             shares: {
                 name: "主版",
                 gid: parseInt(gid),
+                nodeType:"Shares",
                 createTime: new Date().getTime(),
             }
         };
