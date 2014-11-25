@@ -93,6 +93,9 @@ public class Data {
 			public Map<String, Boolean> newMessagePowerMap = new HashMap<String, Boolean>();
 
 			public String addFriendMessage = "";
+			
+			public List userIntentQueue = new ArrayList();
+			
 		}
 	}
 

@@ -125,6 +125,8 @@ public class BusinessCardView {
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		RelativeLayout.LayoutParams rightContainerParams = (LayoutParams) rightContainer.getLayoutParams();
+		rightContainerParams.rightMargin = dp_5;
 		this.rightContainer.addView(rightTopButton, layoutParams);
 		isGetData = false;
 		fillData();

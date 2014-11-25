@@ -290,6 +290,7 @@ public class SmallBusinessCardPopView {
 					scanUserCard(key);
 				}
 			} else if (type.equals(TYPE_GROUP)) {
+				this.optionTwoView2.setVisibility(View.VISIBLE);
 				if (data.relationship.groups.contains(key)) {
 					goInfomationView.setText("房间信息");
 					goChatView.setText("聊天室");

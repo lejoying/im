@@ -1522,68 +1522,13 @@ public class ResponseHandlers {
 
 	};
 	public ResponseHandler<String> share_getSharesCallBack = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-			public String gid;
-			public int nowpage;
-			public Share shares;
-		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			// log.e(tag, responseInfo.result);
 			try {
-				Response response = gson.fromJson(responseInfo.result, Response.class);
+				GetShareResponse response = gson.fromJson(responseInfo.result, GetShareResponse.class);
 				if (response.提示信息.equals("获取群分享成功")) {
-					Share responsesShare = response.shares;
-					parser.check();
-					String gid = response.gid;
-					Share share = data.shares.shareMap.get(gid);
-					if (share == null) {
-						share = data.shares.new Share();
-						data.shares.shareMap.put(gid, share);
-					}
-					List<String> sharesOrder = responsesShare.shareMessagesOrder;
-					if (response.nowpage == 0) {
-						for (int i = sharesOrder.size() - 1; i >= 0; i--) {
-							String key = sharesOrder.get(i);
-							if (!share.shareMessagesOrder.contains(key)) {
-								share.shareMessagesOrder.add(0, key);
-							}
-						}
-					} else {
-						for (int i = 0; i < sharesOrder.size(); i++) {
-							String key = sharesOrder.get(i);
-							if (!share.shareMessagesOrder.contains(key)) {
-								share.shareMessagesOrder.add(key);
-							}
-						}
-					}
-
-					share.shareMessagesMap.putAll(responsesShare.shareMessagesMap);
-					data.shares.isModified = true;
-					if (data.relationship.groups.contains(gid)) {
-						if (responsesShare.shareMessagesOrder.size() == 0) {
-							viewManage.shareSubView.thisController.nowpage--;
-
-						}
-						share.updateTime = new Date().getTime();
-						viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Normal;
-
-						viewManage.shareSubView.showShareMessages();
-					} else {
-						if (responsesShare.shareMessagesOrder.size() == 0) {
-							viewManage.squareSubView.thisController.nowpage--;
-						}
-						share.updateTime = new Date().getTime();
-						viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Normal;
-						if (response.nowpage == 0) {
-							viewManage.squareSubView.showSquareMessages(true);
-						} else {
-							viewManage.squareSubView.showSquareMessages(false);
-						}
-					}
+					dataProcessing(response, "Main");
 				} else {
 					log.e(response.失败原因);
 				}
@@ -1593,12 +1538,113 @@ public class ResponseHandlers {
 		};
 
 		public void onFailure(HttpException error, String msg) {
-			viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Failed;
-			viewManage.shareSubView.showRoomTime();
-			viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Failed;
-			viewManage.squareSubView.showRoomTime();
+			if (viewManage.mainView.activityStatus.state == viewManage.mainView.activityStatus.SHARE) {
+				viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Failed;
+				viewManage.shareSubView.showRoomTime();
+			} else if (viewManage.mainView.activityStatus.state == viewManage.mainView.activityStatus.SQUARE) {
+				viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Failed;
+				viewManage.squareSubView.showRoomTime();
+			}
 		};
 	};
+
+	public ResponseHandler<String> share_getSharesCallBack2 = httpClient.new ResponseHandler<String>() {
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			try {
+				GetShareResponse response = gson.fromJson(responseInfo.result, GetShareResponse.class);
+				if (response.提示信息.equals("获取群分享成功")) {
+					dataProcessing(response, "SectionPage");
+				} else {
+					log.e(response.失败原因);
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+		};
+
+		public void onFailure(HttpException error, String msg) {
+			if (viewManage.shareSectionView != null) {
+				viewManage.shareSectionView.thisController.reflashStatus.state = viewManage.shareSectionView.thisController.reflashStatus.Failed;
+				viewManage.shareSectionView.showRoomTime();
+			}
+		};
+	};
+
+	class GetShareResponse {
+		public String 提示信息;
+		public String 失败原因;
+		public String gid;
+		public int nowpage;
+		public Share shares;
+	}
+
+	public void dataProcessing(GetShareResponse response, String type) {
+		Share responsesShare = response.shares;
+		parser.check();
+		String gid = response.gid;
+		Share share = data.shares.shareMap.get(gid);
+		if (share == null) {
+			share = data.shares.new Share();
+			data.shares.shareMap.put(gid, share);
+		}
+		List<String> sharesOrder = responsesShare.shareMessagesOrder;
+		if (response.nowpage == 0) {
+			for (int i = sharesOrder.size() - 1; i >= 0; i--) {
+				String key = sharesOrder.get(i);
+				if (!share.shareMessagesOrder.contains(key)) {
+					share.shareMessagesOrder.add(0, key);
+				}
+			}
+		} else {
+			for (int i = 0; i < sharesOrder.size(); i++) {
+				String key = sharesOrder.get(i);
+				if (!share.shareMessagesOrder.contains(key)) {
+					share.shareMessagesOrder.add(key);
+				}
+			}
+		}
+
+		share.shareMessagesMap.putAll(responsesShare.shareMessagesMap);
+		data.shares.isModified = true;
+		if (data.relationship.groups.contains(gid)) {
+			share.updateTime = new Date().getTime();
+			if ("Main".equals(type)) {
+				if (responsesShare.shareMessagesOrder.size() == 0) {
+					viewManage.shareSubView.thisController.nowpage--;
+				}
+				viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Normal;
+				viewManage.postNotifyView("ShareSubViewMessage");
+			} else if ("SectionPage".equals(type)) {
+				if (responsesShare.shareMessagesOrder.size() == 0) {
+					viewManage.shareSectionView.thisController.nowpage--;
+				}
+				viewManage.shareSectionView.thisController.reflashStatus.state = viewManage.shareSectionView.thisController.reflashStatus.Normal;
+				viewManage.postNotifyView("ShareSectionNotifyShares");
+			}
+		} else {
+			share.updateTime = new Date().getTime();
+			if ("Main".equals(type)) {
+				if (responsesShare.shareMessagesOrder.size() == 0) {
+					viewManage.squareSubView.thisController.nowpage--;
+				}
+				viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Normal;
+				if (response.nowpage == 0) {
+					viewManage.squareSubView.showSquareMessages(true);
+				} else {
+					viewManage.squareSubView.showSquareMessages(false);
+				}
+			} else if ("SectionPage".equals(type)) {
+				if (responsesShare.shareMessagesOrder.size() == 0) {
+					viewManage.shareSectionView.thisController.nowpage--;
+				}
+				viewManage.shareSectionView.thisController.reflashStatus.state = viewManage.shareSectionView.thisController.reflashStatus.Normal;
+				viewManage.postNotifyView("ShareSectionNotifyShares");
+			}
+		}
+	}
+
 	public ResponseHandler<String> share_modifyPraiseusersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;

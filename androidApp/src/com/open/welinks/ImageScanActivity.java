@@ -17,11 +17,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +73,8 @@ public class ImageScanActivity extends FragmentActivity {
 	public OnClickListener mOnClickListener;
 	public OnPageChangeListener mOnPageChangeListener;
 
+	public View backMaxView;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,6 +91,7 @@ public class ImageScanActivity extends FragmentActivity {
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
 		setContentView(R.layout.image_detail_pager);
+		backMaxView = findViewById(R.id.backMaxView);
 		menuOptionsView = (RelativeLayout) findViewById(R.id.menuOptions);
 		saveOptionsView = (RelativeLayout) findViewById(R.id.saveOption);
 		shareOptionsView = (RelativeLayout) findViewById(R.id.shareOption);
@@ -100,6 +105,9 @@ public class ImageScanActivity extends FragmentActivity {
 		// titleView.setText("浏览");
 		deleteButtonView = new ImageView(this);
 		int padding = (int) (10 * displaymetrics.density);
+
+		RelativeLayout.LayoutParams layoutParams = (LayoutParams) rightContainer.getLayoutParams();
+		layoutParams.rightMargin = 0;
 
 		deleteButtonView.setBackgroundResource(R.drawable.backview_background);
 		rightContainer.addView(deleteButtonView);
@@ -238,6 +246,18 @@ public class ImageScanActivity extends FragmentActivity {
 		this.mPager.setOnPageChangeListener(mOnPageChangeListener);
 		this.saveOptionsView.setOnClickListener(mOnClickListener);
 		this.shareOptionsView.setOnClickListener(mOnClickListener);
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			if (backMaxView.getVisibility() == View.VISIBLE) {
+				backMaxView.setVisibility(View.GONE);
+			} else {
+				backMaxView.setVisibility(View.VISIBLE);
+			}
+		}
+		return super.onTouchEvent(event);
 	}
 
 	@Override

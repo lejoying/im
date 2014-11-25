@@ -624,7 +624,7 @@ public class SquareSubView {
 
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
-
+				this.releaseTimeView.setText(DateUtil.formatTime(shareMessage.time));
 				if (flag) {
 					this.headView.setTag("ShareMessage#" + shareMessage.phone);
 					this.headView.setTag(R.id.tag_class, "share_head");
@@ -638,7 +638,6 @@ public class SquareSubView {
 					this.praiseAreaView.setOnClickListener(thisController.mOnClickListener);
 					this.praiseAreaView.setOnTouchListener(thisController.mOnTouchListener);
 
-					this.releaseTimeView.setText(DateUtil.formatTime(shareMessage.time));
 					int cHeight = imageHeight;
 
 					this.shareTextContentView.setText(Html.fromHtml(textContent));

@@ -111,10 +111,13 @@ public class ChatView {
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		backNameView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		RelativeLayout.LayoutParams layoutParams = (LayoutParams) infomation_layout.getLayoutParams();
+		layoutParams.rightMargin = 0;
 		// infomation = (ImageView) thisActivity.findViewById(R.id.infomation);
 		infomation = new ImageView(context);
+		infomation.setPadding((int) (10 * displayMetrics.density), 0, (int) (10 * displayMetrics.density), 0);
 		infomation.setImageResource(R.drawable.share_to_group_icon);
-		RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (40 * displayMetrics.density), (int) (40 * displayMetrics.density));
+		RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (60 * displayMetrics.density), (int) (40 * displayMetrics.density));
 		infomationParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		infomation_layout.addView(infomation, infomationParams);
 

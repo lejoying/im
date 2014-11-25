@@ -55,4 +55,10 @@ public class ShareSectionActivity extends Activity {
 		super.onTouchEvent(event);
 		return thisController.onTouchEvent(event);
 	}
+
+	@Override
+	public void finish() {
+		super.finish();
+		thisController.finish();
+	}
 }

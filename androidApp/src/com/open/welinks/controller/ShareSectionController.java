@@ -27,6 +27,7 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
@@ -53,6 +54,14 @@ public class ShareSectionController {
 
 	public View onTouchDownView;
 
+	public int SCAN_MESSAGEDETAIL = 0x01;
+	public String currentScanMessageKey;
+
+	public BodyCallback shareBodyCallback;
+
+	public int nowpage = 0;
+	public int pagesize = 10;
+
 	public ShareSectionController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -70,13 +79,6 @@ public class ShareSectionController {
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 	}
 
-	public int SCAN_MESSAGEDETAIL = 0x01;
-	public String currentScanMessageKey;
-
-	public BodyCallback shareBodyCallback;
-
-	public int nowpage = 0;
-
 	public void initializeListeners() {
 		shareBodyCallback = new BodyCallback() {
 			@Override
@@ -85,11 +87,11 @@ public class ShareSectionController {
 				if (reflashStatus.state != reflashStatus.Reflashing) {
 					reflashStatus.state = reflashStatus.Reflashing;
 					if (direction == 1) {
-						// nowpage = 0;
-						// getCurrentGroupShareMessages();
+						nowpage = 0;
+						getCurrentGroupShareMessages();
 					} else if (direction == -1) {
-						// nowpage++;
-						// getCurrentGroupShareMessages();
+						nowpage++;
+						getCurrentGroupShareMessages();
 					}
 					thisView.showRoomTime();
 				}
@@ -105,15 +107,26 @@ public class ShareSectionController {
 
 			@Override
 			public void onClickEffective(View view) {
+				isTouchDown = false;
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.rightContainer)) {
-					if (thisView.selectMenuView.getVisibility() == View.VISIBLE) {
-						thisView.selectMenuView.setVisibility(View.GONE);
+					// if (thisView.selectMenuView.getVisibility() == View.VISIBLE) {
+					// thisView.selectMenuView.setVisibility(View.GONE);
+					// } else {
+					// thisView.selectMenuView.setVisibility(View.VISIBLE);
+					// }
+					if (thisView.isShowGroupDialog) {
+						thisView.dismissGroupBoardsDialog();
 					} else {
-						thisView.selectMenuView.setVisibility(View.VISIBLE);
+						thisView.showGroupBoardsDialog();
 					}
 					view.setTag(R.id.time, null);
+				} else if (view.equals(thisView.pop_out_background1) || view.equals(thisView.pop_out_background2)) {
+					thisView.dismissGroupBoardsDialog();
+				} else if (view.equals(thisView.groupDialogView)) {
+					thisView.groupDialogView.isIntercept = false;
+					thisView.dismissGroupBoardsDialog();
 				} else if (view.equals(thisView.releaseShareView)) {
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };
@@ -210,23 +223,41 @@ public class ShareSectionController {
 			public boolean onTouch(View view, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
+					if (isTouchDown) {
+						return false;
+					}
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("group_head")) {
 						onTouchDownView = view;
-						// isTouchDown = true;
+						isTouchDown = true;
 					} else if (view_class.equals("share_release")) {
 						onTouchDownView = view;
-						// isTouchDown = true;
+						isTouchDown = true;
 					} else if (view_class.equals("share_head")) {
 						onTouchDownView = view;
-						// isTouchDown = true;
+						isTouchDown = true;
 					} else if (view_class.equals("share_praise")) {
 						onTouchDownView = view;
-						// isTouchDown = true;
+						isTouchDown = true;
 					} else if (view_class.equals("share_view")) {
 						onTouchDownView = view;
 						// onLongPressView = view;
-						// isTouchDown = true;
+						isTouchDown = true;
+					} else if (view_class.equals("group_view")) {
+						// log.e("---------------ondow view_class");
+						// group dialog item onTouch
+						onTouchDownView = view;
+						isTouchDown = true;
+						Object viewTag = view.getTag(R.id.tag_first);
+						if (Group.class.isInstance(viewTag) == true) {
+							Group group = (Group) viewTag;
+							Log.d(tag, "onTouch: gid:" + group.gid + "name" + group.name);
+
+							// onTouchDownGroup = group;
+						} else {
+							thisView.dismissGroupBoardsDialog();
+							Log.d(tag, "onTouch: " + (String) viewTag);
+						}
 					}
 				}
 				return false;
@@ -234,9 +265,16 @@ public class ShareSectionController {
 		};
 	}
 
+	public boolean isTouchDown = false;
+
 	public void bindEvent() {
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.rightContainer.setOnClickListener(mOnClickListener);
+		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
+		thisView.pop_out_background1.setOnClickListener(mOnClickListener);
+		thisView.pop_out_background2.setOnClickListener(mOnClickListener);
+		thisView.groupDialogView.setOnClickListener(mOnClickListener);
+		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
@@ -269,6 +307,7 @@ public class ShareSectionController {
 			}
 			onTouchDownView = null;
 		}
+		isTouchDown = false;
 	}
 
 	class GestureListener extends SimpleOnGestureListener {
@@ -318,7 +357,19 @@ public class ShareSectionController {
 		thisView.dismissReleaseShareDialogView();
 	}
 
-	ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+	public void getCurrentGroupShareMessages() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("nowpage", nowpage + "");
+		params.addBodyParameter("pagesize", pagesize + "");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack2);
+	}
 
 	public void modifyPraiseusersToMessage(boolean option, String gid, String gsid) {
 		RequestParams params = new RequestParams();
@@ -330,5 +381,11 @@ public class ShareSectionController {
 		params.addBodyParameter("option", option + "");
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
+	}
+
+	public void finish() {
+		thisView.dismissGroupBoardsDialog();
+		thisView.viewManage.shareSectionView = null;
+		thisView.viewManage.postNotifyView("ShareSubViewMessage");
 	}
 }

@@ -217,13 +217,6 @@ public class ShareSubController {
 				if (instance.view.getTag() != null) {
 					if ("image".equals(instance.view.getTag().toString())) {
 						Log.e(tag, "---------------failure:" + instance.view.getTag().toString());
-						// ImageView imageView = ((ImageView) (instance.view));
-						// imageView.setImageResource(R.drawable.ic_error);
-						// RelativeLayout.LayoutParams params = (LayoutParams)
-						// imageView.getLayoutParams();
-						// params.height = 10;
-						// imageView.setLayoutParams(params);
-						// imageView.setBackgroundColor(Color.RED);
 					}
 				}
 			}
@@ -337,6 +330,7 @@ public class ShareSubController {
 				} else if (view.equals(thisView.groupHeadView) || view.equals(thisView.groupCoverView)) {
 					if (data.localStatus.localData != null && data.localStatus.localData.currentSelectedGroup != null && !data.localStatus.localData.currentSelectedGroup.equals("")) {
 						parser.check();
+						log.e("gid:" + data.localStatus.localData.currentSelectedGroup);
 						// Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, data.localStatus.localData.currentSelectedGroup);
 						thisView.businessCardPopView.showUserCardDialogView();
@@ -391,6 +385,7 @@ public class ShareSubController {
 					int index = tagContent.lastIndexOf("#");
 					String type = tagContent.substring(0, index);
 					String content = tagContent.substring(index + 1);
+					log.e(tagContent);
 					if ("GroupDialogContentItem".equals(type)) {
 						parser.check();
 						// modify data
@@ -424,7 +419,7 @@ public class ShareSubController {
 						// thisActivity.overridePendingTransition(R.anim.zoomin,
 						// R.anim.zoomout);
 					} else if ("ShareMessage".equals(type)) {
-						thisView.businessCardPopView.cardView.setSmallBusinessCardContent("point", content);
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, content);
 						thisView.businessCardPopView.showUserCardDialogView();
 					} else if ("SharePraise".equals(type)) {
 						parser.check();
@@ -462,6 +457,8 @@ public class ShareSubController {
 						view.setTag(R.id.time, null);
 					}
 				}
+				onTouchDownView = null;
+				isTouchDown = false;
 			}
 		};
 		bodyCallback = new BodyCallback() {
@@ -557,6 +554,7 @@ public class ShareSubController {
 
 	public void onScroll() {
 		onTouchDownView = null;
+		// isTouchDown = false;
 	}
 
 	public void onLongPress(MotionEvent event) {
@@ -595,6 +593,7 @@ public class ShareSubController {
 		}
 		if (onTouchDownView != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			log.e(view_class + "---view_class");
 			if (view_class.equals("share_view")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_view")) {

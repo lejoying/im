@@ -101,11 +101,12 @@ public class ShareSectionView {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 		this.thisView = this;
+		this.viewManage.shareSectionView = this;
 	}
 
 	public SmallBusinessCardPopView businessCardPopView;
 
-	public View maxView;
+	public RelativeLayout maxView;
 
 	public View selectMenuView;
 
@@ -118,7 +119,7 @@ public class ShareSectionView {
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_share_section);
 
-		this.maxView = thisActivity.findViewById(R.id.maxView);
+		this.maxView = (RelativeLayout) thisActivity.findViewById(R.id.maxView);
 
 		this.backView = thisActivity.findViewById(R.id.backView);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
@@ -173,6 +174,7 @@ public class ShareSectionView {
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, this.maxView);
 		initReleaseShareDialogView();
+		initializationGroupBoardsDialog();
 		showShareMessages();
 	}
 
@@ -740,4 +742,138 @@ public class ShareSectionView {
 			releaseSharePopWindow.dismiss();
 		}
 	}
+
+	public ViewGroup pop_out_background1;
+	public ViewGroup pop_out_background2;
+	public TouchView groupDialogView;
+
+	public TouchView groupsDialogContent;
+
+	public ListBody1 groupListBody;
+
+	// share top Bar child view
+
+	public View groupManageView;
+	public View groupsManageButtons;
+	public View groupListButtonView;
+	public View createGroupButtonView;
+	public View findMoreGroupButtonView;
+	public int panelHeight;
+	public int panelWidth;
+
+	public void initializationGroupBoardsDialog() {
+		groupDialogView = (TouchView) mInflater.inflate(R.layout.share_group_select_dialog, null, false);
+
+		groupDialogView.setTag(R.id.tag_class, "group_view");
+
+		pop_out_background1 = (ViewGroup) groupDialogView.findViewById(R.id.pop_out_background1);
+		pop_out_background2 = (ViewGroup) groupDialogView.findViewById(R.id.pop_out_background2);
+
+		groupManageView = groupDialogView.findViewById(R.id.groups_manage);
+		groupManageView.setTag(R.id.tag_class, "group_setting");
+		groupListButtonView = groupDialogView.findViewById(R.id.groupListButton);
+		createGroupButtonView = groupDialogView.findViewById(R.id.createGroupButton);
+		findMoreGroupButtonView = groupDialogView.findViewById(R.id.findMoreButton);
+		groupsManageButtons = groupDialogView.findViewById(R.id.groups_manage_buttons);
+
+		TouchView mainContentView = (TouchView) groupDialogView;
+		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
+
+		panelWidth = (int) (displayMetrics.widthPixels * 0.7578125f);
+		panelHeight = (int) (displayMetrics.heightPixels * 0.7578125f);
+
+		TouchView.LayoutParams mainContentParams = new TouchView.LayoutParams(panelWidth, panelHeight);
+
+		mainContentView.setLayoutParams(mainContentParams);
+		groupListBody = new ListBody1();
+		groupListBody.initialize(displayMetrics, groupsDialogContent);
+		showGroupBoards();
+	}
+
+	public void showGroupBoards() {
+
+	}
+
+	public boolean isShowGroupDialog = false;
+
+	public void showGroupBoardsDialog() {
+		if (!isShowGroupDialog) {
+			if (data.relationship.groups.size() == 0) {
+				if (groupsManageButtons.getVisibility() == View.GONE) {
+					groupsManageButtons.setVisibility(View.VISIBLE);
+				}
+			} else {
+				if (groupsManageButtons.getVisibility() == View.VISIBLE) {
+					groupsManageButtons.setVisibility(View.GONE);
+				}
+			}
+			groupListBody.active();
+			shareMessageListBody.inActive();
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+			maxView.addView(this.groupDialogView, layoutParams);
+			isShowGroupDialog = true;
+		}
+	}
+
+	public void dismissGroupBoardsDialog() {
+		if (isShowGroupDialog) {
+			groupListBody.inActive();
+			shareMessageListBody.active();
+			maxView.removeView(this.groupDialogView);
+			isShowGroupDialog = false;
+		}
+	}
+
+	public class GroupDialogItem extends MyListItemBody {
+		GroupDialogItem(ListBody1 listBody) {
+			listBody.super();
+		}
+
+		public View cardView;
+
+		public ImageView groupIconView;
+		public TextView groupNameView;
+		public ImageView groupSelectedStatusView;
+
+		public ImageView gripCardBackground;
+
+		public Group group;
+
+		public View initialize() {
+			this.cardView = mInflater.inflate(R.layout.share_group_select_dialog_item, null);
+			this.groupIconView = (ImageView) this.cardView.findViewById(R.id.groupIcon);
+			this.groupNameView = (TextView) this.cardView.findViewById(R.id.groupName);
+			this.groupSelectedStatusView = (ImageView) this.cardView.findViewById(R.id.groupSelectedStatus);
+
+			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
+
+			super.initialize(cardView);
+			return cardView;
+		}
+
+		public void setContent(Group group) {
+			data = parser.check();
+			this.group = group;
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
+			this.groupNameView.setText(group.name);
+			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
+				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
+			} else {
+				this.groupSelectedStatusView.setVisibility(View.GONE);
+			}
+			this.itemHeight = 60 * displayMetrics.density;
+		}
+
+		public void setViewLayout() {
+			data = parser.check();
+			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
+				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
+				this.groupNameView.setText(group.name);
+			} else {
+				this.groupSelectedStatusView.setVisibility(View.GONE);
+			}
+		}
+	}
+
 }

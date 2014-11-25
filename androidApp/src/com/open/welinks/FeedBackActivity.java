@@ -59,10 +59,13 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 		send = new ImageView(this);
 		send.setImageResource(R.drawable.mark_stone);
-		send.setPadding((int) (20 * dm.density), (int) (13 * dm.density), (int) (20 * dm.density), (int) (13 * dm.density));
+		send.setPadding((int) (10 * dm.density), (int) (5 * dm.density), (int) (10 * dm.density), (int) (5 * dm.density));
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+
 		rightContainer.addView(send, layoutParams);
+		RelativeLayout.LayoutParams rightContainerParams = (LayoutParams) rightContainer.getLayoutParams();
+		rightContainerParams.rightMargin = 0;
 
 		num = (TextView) findViewById(R.id.num);
 		opinion = (EditText) findViewById(R.id.opinion);

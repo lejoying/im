@@ -330,7 +330,7 @@ public class ShareMessageDetailView {
 			// SpannableString spannableString = new SpannableString(thisController.textContent);
 
 			textView.setText(thisController.textContent);
-			textView.setAutoLinkMask(Linkify.ALL);
+			textView.setAutoLinkMask(Linkify.WEB_URLS);
 			textView.setMovementMethod(LinkMovementMethod.getInstance());
 			shareMessageDetailContentView.addView(textView);
 			URLSpan[] urls = textView.getUrls();
