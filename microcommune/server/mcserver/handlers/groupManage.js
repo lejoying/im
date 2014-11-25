@@ -91,6 +91,7 @@ groupManage.create = function (data, response) {
             name: name,
             icon: "978b3e6986071e464fd6632e1fd864652c42ca27.png",
             gtype: data.gtype,
+            createTime: new Date().getTime(),
             nodeType: "Group"
         }
         group.description = data.description || "请输入群组描述信息";
@@ -124,8 +125,47 @@ groupManage.create = function (data, response) {
             } else if (results.length > 0) {
                 var group = results.pop().group.data;
 //                createGroupLocation(group);
+                createShares(group.gid);
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "创建群组失败",
+                    "失败原因": "用户不存在",
+                    tempGid: tempGid
+                }));
+                response.end();
+            }
+        });
+    }
+
+    function createShares(gid) {
+        var query = [
+            "MATCH (group:Group)",
+            "WHERE group.gid={gid}",
+            "CREATE UNIQUE group-[r:SHARE]->(shares:Shares{shares})",
+            "SET shares.sid=ID(shares)",
+            "RETURN group,shares"
+        ].join("\n");
+        var params = {
+            gid: parseInt(gid),
+            shares: {
+                name: "主版",
+                gid: parseInt(gid),
+                createTime: new Date().getTime(),
+            }
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                response.write(JSON.stringify({
+                    "提示信息": "创建群组失败",
+                    "失败原因": "数据异常",
+                    tempGid: tempGid
+                }));
+                response.end();
+            } else if (results.length > 0) {
+                var group = results.pop().group.data;
                 if (members.length > 0) {
-                    addMembersToGroup(group, members);
+                    addMembersToGroup(parseInt(gid), members);
                     console.log("开始初始化群组第一批用户个数:" + members.length);
                 } else {
                     console.log("未初始化群组第一批用户");
@@ -134,7 +174,7 @@ groupManage.create = function (data, response) {
                         group: group,
                         tempGid: tempGid,
                         address: address
-                    }))
+                    }));
                     response.end();
                     var event = JSON.stringify({
                         sendType: "event",
@@ -162,7 +202,7 @@ groupManage.create = function (data, response) {
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组失败",
-                    "失败原因": "用户不存在",
+                    "失败原因": "数据异常",
                     tempGid: tempGid
                 }));
                 response.end();
@@ -170,16 +210,16 @@ groupManage.create = function (data, response) {
         });
     }
 
-    function addMembersToGroup(group, members) {
+    function addMembersToGroup(gid, members) {
         var query = [
             'START group=node({gid})',
             'MATCH (account:Account)',
             'WHERE account.phone IN {members}',
             'CREATE UNIQUE group-[r:HAS_MEMBER]->account',
-            'RETURN r'
+            'RETURN r,group'
         ].join('\n');
         var params = {
-            gid: group.gid,
+            gid: parseInt(gid),
             members: members
         };
         db.query(query, params, function (error, results) {
@@ -194,6 +234,7 @@ groupManage.create = function (data, response) {
                 return;
             } else {
                 console.log("初始化的群组好友成功的个数:" + results.length);
+                var group = results[0].group.data;
                 response.write(JSON.stringify({
                     "提示信息": "创建群组成功",
                     group: group,

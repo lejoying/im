@@ -80,7 +80,6 @@ shareManage.sendshare = function (data, response) {
         var params = {
             gid: parseInt(gid),
             shares: {
-                sgid: gid,
                 nodeType: "Shares"
             }
         };
@@ -861,6 +860,109 @@ shareManage.getusershares = function (data, response) {
         });
     }
 }
+
+shareManage.sendboardshare = function (data, response) {
+    response.asynchronous = 1;
+
+}
+shareManage.getboardshare = function (data, response) {
+    response.asynchronous = 1;
+}
+shareManage.addboard = function (data, response) {
+    response.asynchronous = 1;
+}
+shareManage.modifyboard = function (data, response) {
+    response.asynchronous = 1;
+}
+//shareManage.deletesection = function (data, response) {
+//    response.asynchronous = 1;
+//}
+shareManage.modifysquence = function (data, response) {
+    response.asynchronous = 1;
+}
+//处理数据库数据
+//getGroups();
+function getGroups() {
+    var query = [
+        "MATCH (group:Group)",
+        "RETURN group"
+    ].join("\n");
+    var params = {};
+    db.query(query, params, function (error, results) {
+        if (error) {
+            console.log(error);
+        } else {
+            var groupsMap = {};
+            var i = 0;
+            for (var index in results) {
+                i++;
+                var groupData = results[index].group.data;
+                groupsMap[groupData.gid] = 1;
+            }
+            console.log("共有群组:" + i);
+            getGroupShares(groupsMap);
+        }
+    });
+}
+function getGroupShares(groups) {
+    var query = [
+        "MATCH (group:Group)-->(Shares:Shares)",
+        "RETURN group"
+    ].join("\n");
+    var params = {};
+    db.query(query, params, function (error, results) {
+        if (error) {
+            console.log(error);
+        } else {
+            var i = 0;
+            for (var index in results) {
+                i++;
+                var groupData = results[index].group.data;
+                groups[groupData.gid] = 0;
+            }
+            console.log("已创建分享:" + i);
+            var repares = [];
+            for (var index in groups) {
+                if (groups[index] == 1) {
+                    repares.push(parseInt(index));
+                }
+            }
+            createGroupShares(repares);
+        }
+    });
+}
+function createGroupShares(groups) {
+    var query = [
+        "MATCH (group:Group)",
+        "WHERE group.gid IN {groups}",
+        "CREATE UNIQUE group-[r:SHARE]->(shares:Shares{shares})",
+        "RETURN shares"
+    ].join("\n");
+    var params = {
+        groups: groups,
+        shares: {
+            nodeType: "Shares"
+        }
+    };
+    console.log("A:" + typeof groups[0]);
+    console.log("需要创建:" + groups);
+    console.log("需要创建个数:" + groups.length);
+    db.query(query, params, function (error, results) {
+        if (error) {
+            console.log(error);
+        } else {
+            var res = [];
+            for (var index in results) {
+                var sharesData = results[index].shares.data;
+                res.push(sharesData.gid);
+            }
+            console.log("刚创建:" + res);
+            console.log("刚创建个数:" + res.length);
+        }
+    });
+}
+
+
 function ResponseData(responseContent, response) {
     response.writeHead(200, {
         "Content-Type": "application/json; charset=UTF-8",
