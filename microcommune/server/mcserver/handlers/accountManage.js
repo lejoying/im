@@ -112,6 +112,7 @@ accountManage.verifyphone = function (data, response) {
                 nickName: nickName,
                 mainBusiness: "",
                 age: time % 40,
+                nodeType: "Account",
                 byPhone: "checked",
                 byScan: "checked",
                 byScanNearBy: "allowed",

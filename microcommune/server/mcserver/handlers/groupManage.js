@@ -90,7 +90,8 @@ groupManage.create = function (data, response) {
         var group = {
             name: name,
             icon: "978b3e6986071e464fd6632e1fd864652c42ca27.png",
-            gtype: data.gtype
+            gtype: data.gtype,
+            nodeType: "Group"
         }
         group.description = data.description || "请输入群组描述信息";
         if (location) {

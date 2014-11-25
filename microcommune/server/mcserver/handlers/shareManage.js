@@ -79,7 +79,10 @@ shareManage.sendshare = function (data, response) {
         ].join("\n");
         var params = {
             gid: parseInt(gid),
-            shares: {}
+            shares: {
+                sgid: gid,
+                nodeType: "Shares"
+            }
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -123,6 +126,7 @@ shareManage.sendshare = function (data, response) {
                 praises: JSON.stringify([]),
                 comments: JSON.stringify([]),
                 type: message.type,
+                nodeType: "Share",
                 content: message.content,
                 time: new Date().getTime()
             }
