@@ -77,7 +77,9 @@ public class Data {
 			public Map<String, ShareDraft> shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
 
 			public String currentSelectedGroup = "";
+			public String currentSelectedGroupBoard = "";
 			public String currentSelectedSquare = "";
+			public String currentSelectedSquareBoard = "";
 
 			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
 			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();
@@ -93,9 +95,6 @@ public class Data {
 			public Map<String, Boolean> newMessagePowerMap = new HashMap<String, Boolean>();
 
 			public String addFriendMessage = "";
-			
-			public List userIntentQueue = new ArrayList();
-			
 		}
 	}
 
