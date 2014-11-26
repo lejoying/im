@@ -22,10 +22,12 @@ import com.open.welinks.controller.MeSubController;
 import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.UpdateManager;
 import com.open.welinks.service.PushService;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
@@ -60,7 +62,8 @@ public class MainActivity extends Activity {
 		// Context context = instance.instance.context;
 		instance = this;
 		initImageLoader(getApplicationContext());
-
+		BaseDataUtils.initBaseData(this);
+		Constant.init();
 		startPushService();
 
 		thisActivity.setContentView(R.layout.activity_welinks);

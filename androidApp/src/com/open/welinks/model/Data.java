@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.util.DisplayMetrics;
+
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
@@ -56,6 +58,20 @@ public class Data {
 		}
 	}
 
+	public BaseData baseData = new BaseData();
+
+	public class BaseData {
+		public boolean notification;
+
+		public DisplayMetrics metrics;
+		public float screenWidth;
+		public float screenHeight;
+		public float appHeight;
+		public float stateBar;
+		public float density;
+
+	}
+
 	public LocalStatus localStatus = new LocalStatus();
 
 	public class LocalStatus {
@@ -64,7 +80,7 @@ public class Data {
 
 		public String debugMode = "NONE";// NONE
 
-		public String sendBug = "TRUE";// "NONE"
+		public String sendBug = "NONE";// "NONE"
 
 		public LocalData localData;
 
@@ -93,9 +109,9 @@ public class Data {
 			public Map<String, Boolean> newMessagePowerMap = new HashMap<String, Boolean>();
 
 			public String addFriendMessage = "";
-			
+
 			public List userIntentQueue = new ArrayList();
-			
+
 		}
 	}
 
@@ -131,6 +147,7 @@ public class Data {
 			public String circlesOrderString;
 
 			public List<String> blackList;
+			public List<String> faceList;
 		}
 
 		public LocalConfig localConfig;

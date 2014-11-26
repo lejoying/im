@@ -396,7 +396,7 @@ public class ChatView {
 					chatHolder.image.setVisibility(View.GONE);
 					chatHolder.share.setVisibility(View.GONE);
 					chatHolder.voice.setVisibility(View.VISIBLE);
-					Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_item_voice);
+					Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_receive_item_voice);
 					if (type == TYPE_SELF) {
 						Matrix mMatrix = new Matrix();
 						mMatrix.setRotate(180);

@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,6 +39,7 @@ public class FileHandlers {
 	public MyLog log = new MyLog(tag, true);
 
 	public static FileHandlers fileHandlers;
+	public static AudioHandlers audioHandlers;
 
 	public File sdcard;
 	public File sdcardFolder;
@@ -48,6 +51,7 @@ public class FileHandlers {
 	public File sdcardSquareThumbnailFolder;
 	public File sdcardSaveImageFolder;
 	public File sdcardCacheImageFolder;
+	public File sdcardGifImageFolder;
 
 	public Handler handler = new Handler();
 
@@ -61,9 +65,12 @@ public class FileHandlers {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
+	public DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.defaultimage).showImageForEmptyUri(R.drawable.defaultimage).showImageOnFail(R.drawable.defaultimage).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+
 	public static FileHandlers getInstance() {
 		if (fileHandlers == null) {
 			fileHandlers = new FileHandlers();
+			audioHandlers = AudioHandlers.getInstance();
 		}
 		return fileHandlers;
 	}
@@ -124,7 +131,10 @@ public class FileHandlers {
 		if (!sdcardCacheImageFolder.exists()) {
 			sdcardCacheImageFolder.mkdirs();
 		}
-
+		sdcardGifImageFolder = new File(sdcardFolder, "gifs");
+		if (!sdcardGifImageFolder.exists()) {
+			sdcardGifImageFolder.mkdirs();
+		}
 		initListener();
 	}
 
@@ -175,13 +185,23 @@ public class FileHandlers {
 		};
 	}
 
-	public void getImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
+	public void getImage(String fileName, final ImageView imageView, final int type, final DisplayImageOptions options) {
+		File file = null;
+		String excessivePath = "", excessiveUrl = "";
 		if (fileName == null || "".equals(fileName)) {
 			return;
 		} else {
-			File file = new File(sdcardImageFolder, fileName);
-			final String path = file.getAbsolutePath();
-			final String url = API.DOMAIN_COMMONIMAGE + "images/" + fileName;
+			if (type == DownloadFile.TYPE_IMAGE) {
+				file = new File(sdcardImageFolder, fileName);
+				excessivePath = file.getAbsolutePath();
+				excessiveUrl = API.DOMAIN_COMMONIMAGE + "images/" + fileName;
+			} else if (type == DownloadFile.TYPE_GIF_IMAGE) {
+				file = new File(sdcardGifImageFolder, fileName);
+				excessivePath = file.getAbsolutePath();
+				excessiveUrl = API.DOMAIN_COMMONIMAGE + "gifs/" + fileName;
+			}
+			final String path = excessivePath;
+			final String url = excessiveUrl;
 			if (file.exists()) {
 				imageLoader.displayImage("file://" + path, imageView, options, new SimpleImageLoadingListener() {
 					@Override
@@ -190,7 +210,7 @@ public class FileHandlers {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
+						downloadImageFile(url, path, imageView, options, type, null);
 					}
 
 					@Override
@@ -204,9 +224,14 @@ public class FileHandlers {
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
+				downloadImageFile(url, path, imageView, options, type, null);
 			}
 		}
+
+	}
+
+	public void getImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
+		getImage(fileName, imageView, DownloadFile.TYPE_IMAGE, options);
 	}
 
 	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
@@ -289,6 +314,48 @@ public class FileHandlers {
 		}
 	}
 
+	public void getGifImage(String fileName, GifImageView imageView) {
+		File imageFile = new File(sdcardGifImageFolder, fileName);
+		final String path = imageFile.getAbsolutePath();
+		final String url = API.DOMAIN_COMMONIMAGE + "gifs/" + fileName;
+		if (imageFile.exists()) {
+			GifDrawable gifFromFile = null;
+			try {
+				gifFromFile = new GifDrawable(imageFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			imageView.setImageDrawable(gifFromFile);
+		} else {
+			downloadGifFile(url, path, imageView);
+		}
+	}
+
+	private void downloadGifFile(String url, String path, GifImageView imageView) {
+		DownloadFile downloadFile = new DownloadFile(url, path);
+		downloadFile.path = path;
+		downloadFile.view = imageView;
+		downloadFile.setDownloadFileListener(new OnDownloadListener() {
+			@Override
+			public void onSuccess(DownloadFile instance, int status) {
+				super.onSuccess(instance, status);
+				GifDrawable gifFromFile = null;
+				try {
+					gifFromFile = new GifDrawable("file://" + instance.path);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				((GifImageView) instance.view).setImageDrawable(gifFromFile);
+			}
+
+			@Override
+			public void onFailure(DownloadFile instance, int status) {
+				super.onFailure(instance, status);
+			}
+		});
+		downloadFileList.addDownloadFile(downloadFile);
+	}
+
 	private void downloadImageFile(String url, String path, ImageView imageView, DisplayImageOptions options, int downloadType, ThumbleListener thumbleListener) {
 		DownloadFile downloadFile = new DownloadFile(url, path);
 		downloadFile.view = imageView;
@@ -296,6 +363,25 @@ public class FileHandlers {
 		downloadFile.type = downloadType;
 		downloadFile.thumbleListener = thumbleListener;
 		downloadFile.setDownloadFileListener(onDownloadListener);
+		downloadFileList.addDownloadFile(downloadFile);
+	}
+
+	public void downloadVoiceFile(File file, final String fileName, final boolean play) {
+		DownloadFile downloadFile = new DownloadFile(API.DOMAIN_COMMONIMAGE + "voices/" + fileName, file.getAbsolutePath());
+		downloadFile.setDownloadFileListener(new OnDownloadListener() {
+			@Override
+			public void onSuccess(DownloadFile instance, int status) {
+				super.onSuccess(instance, status);
+				if (play) {
+					audioHandlers.startPlay(fileName);
+				}
+			}
+
+			@Override
+			public void onFailure(DownloadFile instance, int status) {
+				super.onFailure(instance, status);
+			}
+		});
 		downloadFileList.addDownloadFile(downloadFile);
 	}
 

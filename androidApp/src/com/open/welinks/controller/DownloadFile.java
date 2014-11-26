@@ -53,7 +53,8 @@ public class DownloadFile {
 	public int type;
 	public static int TYPE_HEAD_IMAGE = 0x01;
 	public static int TYPE_THUMBLE_IMAGE = 0x02;
-	public static int TYPE_IMAGE = 0x03;
+	public static int TYPE_GIF_IMAGE = 0x03;
+	public static int TYPE_IMAGE = 0x04;
 
 	public TimeLine time = new TimeLine();
 

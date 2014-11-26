@@ -38,3 +38,4 @@ proguard/
 /library/src/com/lidroid/xutils/view
 /library/src/com/lidroid/xutils/bitmap
 /library/src/com/lidroid/xutils/db
+jni

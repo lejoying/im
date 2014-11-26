@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/shape_fragment_friend_off" android:state_selected="true"/>
+    <item android:drawable="@drawable/shape_fragment_friend_off" android:state_pressed="true"/>
+    <item android:drawable="@drawable/shape_fragment_friend_off" android:state_focused="true"/>
+    <item android:drawable="@drawable/shape_fragment_friend_off" android:state_activated="true"/>
+    <item android:drawable="@drawable/shape_chat_face_on"/>
+
+</selector>

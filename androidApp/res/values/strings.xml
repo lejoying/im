@@ -85,4 +85,25 @@
     <!-- CircleManage -->
     <string name="circleManage_group_manage">好友分组管理</string>
 
+    <!-- Chat -->
+    <string name="send">发送</string>
+    <string name="holdOnTape">按住录音</string>
+    <string name="takePhoto">拍照</string>
+    <string name="album">相册</string>
+    <string name="location">位置</string>
+    <string name="seconds">秒</string>
+    <string name="slideFingers">手指上滑，可取消发送</string>
+    <string name="loosenFingers">松开手指，取消发送</string>
+    <string name="groupDetails">群详情</string>
+    <string name="groupAlbum">群相册</string>
+    <string name="groupMembers">群成员</string>
+    <string name="closeNotice">关闭提示</string>
+    <string name="openNotice">打开提示</string>
+    <string name="share">分享</string>
+    <string name="sendCard">发送名片</string>
+    <string name="tureOff">关灯</string>
+    <string name="personalDetails">个人详情</string>
+    <string name="personalAlbum">个人相册</string>
+    <string name="setting">设置</string>
+
 </resources>
