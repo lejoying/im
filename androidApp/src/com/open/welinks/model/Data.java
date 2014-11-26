@@ -203,11 +203,13 @@ public class Data {
 			public String description;
 			public String background;
 			public String createTime;
-			public String conver;
+			public String cover;
 			public String permission;
 
+			public String currentBoard = "";
+
+			public List<String> boards;
 			public List<String> members = new ArrayList<String>();
-			public List<String> boards = new ArrayList<String>();
 		}
 	}
 
@@ -235,7 +237,7 @@ public class Data {
 		}
 	}
 
-	public class Boards{
+	public class Boards {
 		public boolean isModified = false;
 		public Map<String, Board> shareMap = new HashMap<String, Board>();
 
@@ -248,6 +250,7 @@ public class Data {
 			public String gid;
 		}
 	}
+
 	public class Shares {
 		public boolean isModified = false;
 

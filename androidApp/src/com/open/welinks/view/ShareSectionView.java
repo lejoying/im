@@ -235,7 +235,7 @@ public class ShareSectionView {
 		// TODO conver setting
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		fileHandlers.getHeadImage(currentGroup.icon, this.groupHeadView, viewManage.options56);
-		if (currentGroup.conver != null && !currentGroup.conver.equals("")) {
+		if (currentGroup.cover != null && !currentGroup.cover.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
@@ -550,7 +550,7 @@ public class ShareSectionView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, viewManage.headOptions40);
+				fileHandlers.getHeadImage(fileName, this.headView, viewManage.options40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
@@ -641,8 +641,8 @@ public class ShareSectionView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
-		if (group.conver == null || "".equals(group.conver)) {
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
+		if (group.cover == null || "".equals(group.cover)) {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			return;
 		}
@@ -655,7 +655,7 @@ public class ShareSectionView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.conver, path);
+					downloadConver(group.cover, path);
 				}
 
 				@Override
@@ -663,8 +663,8 @@ public class ShareSectionView {
 				}
 			});
 		} else {
-			if (group.conver != null) {
-				downloadConver(group.conver, path);
+			if (group.cover != null) {
+				downloadConver(group.cover, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			}
@@ -856,7 +856,7 @@ public class ShareSectionView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.options40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);

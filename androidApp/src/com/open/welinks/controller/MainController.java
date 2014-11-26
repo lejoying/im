@@ -303,7 +303,6 @@ public class MainController {
 					Log.d(tag, (String) view.getTag());
 				}
 			}
-
 		};
 
 		mAMapLocationListener = new AMapLocationListener() {
@@ -435,10 +434,11 @@ public class MainController {
 		group.description = (String) map.get("description");
 		group.distance = (Integer) map.get("distance");
 		if (map.get("conver") != null) {
-			group.conver = (String) map.get("conver");
+			group.cover = (String) map.get("conver");
 		}
 
 		if (!data.relationship.squares.contains(group.gid + "")) {
+			group.currentBoard = (String) map.get("sid");
 			data.relationship.squares.add(group.gid + "");
 			data.relationship.groupsMap.put(group.gid + "", group);
 		} else {
@@ -447,8 +447,9 @@ public class MainController {
 			group2.icon = (String) map.get("icon");
 			group2.description = (String) map.get("description");
 			group2.distance = (Integer) map.get("distance");
+			group2.currentBoard = (String) map.get("sid");
 			if (map.get("conver") != null) {
-				group2.conver = (String) map.get("conver");
+				group2.cover = (String) map.get("conver");
 				if (data.localStatus.localData.currentSelectedSquare.equals(group2.gid + "")) {
 					thisView.squareSubView.setConver();
 				}

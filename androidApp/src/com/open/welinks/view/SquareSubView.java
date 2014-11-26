@@ -206,6 +206,7 @@ public class SquareSubView {
 
 	public void setMenuNameBotton(String name) {
 		int length = name.length();
+		length = length > 8 ? 8 : length;
 		// log.e(name + ":" + textSize * length);
 		int left = (int) (textSize * length);
 		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) botton.getLayoutParams();
@@ -249,7 +250,7 @@ public class SquareSubView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
 		final String path = file.getAbsolutePath();
 		// log.e(file.exists() + "---exists" + group.conver);
 		if (file.exists()) {
@@ -260,7 +261,7 @@ public class SquareSubView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.conver, path);
+					downloadConver(group.cover, path);
 				}
 
 				@Override
@@ -268,8 +269,8 @@ public class SquareSubView {
 				}
 			});
 		} else {
-			if (group.conver != null) {
-				downloadConver(group.conver, path);
+			if (group.cover != null) {
+				downloadConver(group.cover, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 			}
@@ -335,11 +336,6 @@ public class SquareSubView {
 			log.e("return shareMap or localData");
 			return;
 		}
-		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare);
-		if (share == null) {
-			log.e("return square share");
-			return;
-		}
 
 		SharesMessageBody1 sharesMessageBody0 = null;
 		sharesMessageBody0 = (SharesMessageBody1) squareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
@@ -371,7 +367,7 @@ public class SquareSubView {
 
 		// imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
-		if (group.conver != null && !group.conver.equals("")) {
+		if (group.cover != null && !group.cover.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
@@ -379,6 +375,12 @@ public class SquareSubView {
 
 		titleName.setText(group.name);
 		fileHandlers.getHeadImage(group.icon, this.groupHeadView, viewManage.options56);
+
+		Share share = data.shares.shareMap.get(group.currentBoard);
+		if (share == null) {
+			log.e("return square share");
+			return;
+		}
 
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
@@ -606,7 +608,7 @@ public class SquareSubView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, viewManage.headOptions40);
+				fileHandlers.getHeadImage(fileName, this.headView, viewManage.options40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					notFriends.add(shareMessage.phone);
 					if (shareMessage.nickName != null) {
@@ -877,7 +879,7 @@ public class SquareSubView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.options40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);

@@ -381,7 +381,7 @@ public class GroupInfoController {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			currentGroup.conver = fileName;
+			currentGroup.cover = fileName;
 			viewManage.postNotifyView("ShareSubViewConver");
 			uploadFile(file.getAbsolutePath(), fileName, bytes, UploadMultipart.UPLOAD_TYPE_BACKGROUND);
 		}
