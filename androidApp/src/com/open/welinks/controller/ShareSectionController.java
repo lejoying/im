@@ -215,6 +215,7 @@ public class ShareSectionController {
 						view.setTag(R.id.time, null);
 					}
 				}
+				onTouchDownView = null;
 			}
 		};
 		mOnTouchListener = new OnTouchListener() {

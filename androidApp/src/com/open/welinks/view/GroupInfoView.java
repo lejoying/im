@@ -161,11 +161,11 @@ public class GroupInfoView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		if (group.conver == null || "".equals(group.conver)) {
+		if (group.cover == null || "".equals(group.cover)) {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
 			return;
 		}
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
 		final String path = file.getAbsolutePath();
 		if (file.exists()) {
 			imageLoader.displayImage("file://" + path, converImageView, new SimpleImageLoadingListener() {
@@ -175,7 +175,7 @@ public class GroupInfoView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.conver, path);
+					downloadConver(group.cover, path);
 				}
 
 				@Override
@@ -183,8 +183,8 @@ public class GroupInfoView {
 				}
 			});
 		} else {
-			if (group.conver != null) {
-				downloadConver(group.conver, path);
+			if (group.cover != null) {
+				downloadConver(group.cover, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
 			}

@@ -436,7 +436,7 @@ public class ShareMessageDetailView {
 			if (user.phone.equals(key)) {
 				fileName = user.head;
 			}
-			fileHandlers.getHeadImage(fileName, view, viewManage.headOptions40);
+			fileHandlers.getHeadImage(fileName, view, viewManage.options40);
 			// view.setBackgroundColor(Color.GREEN);
 			praiseUserContentView.addView(view);
 			if (i == 5) {
@@ -477,7 +477,7 @@ public class ShareMessageDetailView {
 				reply.setVisibility(View.GONE);
 				received.setVisibility(View.GONE);
 			}
-			fileHandlers.getHeadImage(comment.head, head, viewManage.headOptions40);
+			fileHandlers.getHeadImage(comment.head, head, viewManage.options40);
 			view.setTag("ShareComment#" + comment.phone);
 			view.setTag(R.id.commentEditTextView, comment);
 

@@ -141,7 +141,7 @@ public class SquareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.viewManage.headOptions40;
+							options = thisView.viewManage.options40;
 						} else if ("conver".equals(tag)) {
 							flag = false;
 						}
@@ -338,6 +338,7 @@ public class SquareSubController {
 								// TODO shareTopMenuGroupName
 								TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
 								data.localStatus.localData.currentSelectedSquare = group.gid + "";
+								thisView.currentSquare = group;
 								String name = group.name;
 								if (name.length() > 8) {
 									name = name.substring(0, 8);
@@ -490,6 +491,9 @@ public class SquareSubController {
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedSquare);
+		parser.check();
+		thisView.currentSquare = data.relationship.groupsMap.get(thisView.currentSquare.gid + "");
+		params.addBodyParameter("sid", thisView.currentSquare.currentBoard);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 

@@ -29,6 +29,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
+import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
@@ -234,7 +235,7 @@ public class ShareSectionView {
 		// TODO conver setting
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		fileHandlers.getHeadImage(currentGroup.icon, this.groupHeadView, viewManage.options56);
-		if (currentGroup.conver != null && !currentGroup.conver.equals("")) {
+		if (currentGroup.cover != null && !currentGroup.cover.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
@@ -448,7 +449,7 @@ public class ShareSectionView {
 		public ImageView shareCommentIconView;
 		public TextView shareStatusView;
 
-		public TextView messageTimeView;
+		public TouchTextView messageTimeView;
 
 		public View background_share_item;
 
@@ -477,7 +478,7 @@ public class ShareSectionView {
 				// this.cardView.findViewById(R.id.releaseShare);
 			} else if (i == -2) {
 				this.cardView = (ViewGroup) mInflater.inflate(R.layout.share_message_item_title, null);
-				this.messageTimeView = (TextView) this.cardView.findViewById(R.id.releaseMessageTime);
+				this.messageTimeView = (TouchTextView) this.cardView.findViewById(R.id.releaseMessageTime);
 			} else {
 				this.cardView = (ViewGroup) mInflater.inflate(R.layout.share_message_item, null);
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
@@ -549,7 +550,7 @@ public class ShareSectionView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, viewManage.headOptions40);
+				fileHandlers.getHeadImage(fileName, this.headView, viewManage.options40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
@@ -640,8 +641,8 @@ public class ShareSectionView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
-		if (group.conver == null || "".equals(group.conver)) {
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
+		if (group.cover == null || "".equals(group.cover)) {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			return;
 		}
@@ -654,7 +655,7 @@ public class ShareSectionView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.conver, path);
+					downloadConver(group.cover, path);
 				}
 
 				@Override
@@ -662,8 +663,8 @@ public class ShareSectionView {
 				}
 			});
 		} else {
-			if (group.conver != null) {
-				downloadConver(group.conver, path);
+			if (group.cover != null) {
+				downloadConver(group.cover, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			}
@@ -855,7 +856,7 @@ public class ShareSectionView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.options40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);

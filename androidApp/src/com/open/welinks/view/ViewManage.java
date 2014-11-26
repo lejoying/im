@@ -55,7 +55,7 @@ public class ViewManage {
 	}
 
 	public DisplayImageOptions options;
-	public DisplayImageOptions headOptions40;
+	public DisplayImageOptions options40;
 	public DisplayImageOptions options52;
 	public DisplayImageOptions options50;
 	public DisplayImageOptions options45;
@@ -68,15 +68,14 @@ public class ViewManage {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		float density = displayMetrics.density / 1.5f;
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-		headOptions40 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer((int) (40 * density))).build();
-		options52 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer((int) (52 * density))).build();
-		options50 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer((int) (50 * density))).build();
-		options45 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (45 * density))).build();
-		options70 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (70 * density))).build();
-		options60 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (60 * density))).build();
-		options56 = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (56 * density))).build();
-
+		options = new DisplayImageOptions.Builder().cacheInMemory(false).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		options40 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) (40 * density))).build();
+		options52 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) (52 * density))).build();
+		options50 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) (50 * density))).build();
+		options45 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (45 * density))).build();
+		options70 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (70 * density))).build();
+		options60 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (60 * density))).build();
+		options56 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (56 * density))).build();
 	}
 
 	public void postNotifyView(final String viewName) {
@@ -154,6 +153,11 @@ public class ViewManage {
 				shareSectionView.showShareMessages();
 			}
 		}
+	}
+
+	public static String getErrorLineNumber() {
+		StackTraceElement ste = new Throwable().getStackTrace()[1];
+		return "line:" + ste.getLineNumber() + ",";
 	}
 
 	public static int getStatusBarHeight(Context context) {

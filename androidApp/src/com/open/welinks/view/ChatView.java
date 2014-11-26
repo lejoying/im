@@ -161,7 +161,7 @@ public class ChatView {
 			Friend friend = data.relationship.friendsMap.get(key);
 			if (friend != null) {
 				friend.notReadMessagesCount = 0;
-				fileHandlers.getHeadImage(friend.head, infomation, viewManage.headOptions40);
+				fileHandlers.getHeadImage(friend.head, infomation, viewManage.options40);
 				if ("".equals(friend.alias)) {
 					backNameView.setText(friend.nickName);
 				} else {
@@ -169,7 +169,7 @@ public class ChatView {
 				}
 			} else {
 				backNameView.setText("Name");
-				fileHandlers.getHeadImage("", infomation, viewManage.headOptions40);
+				fileHandlers.getHeadImage("", infomation, viewManage.options40);
 			}
 		}
 		data.relationship.isModified = true;
@@ -469,7 +469,7 @@ public class ChatView {
 						phone = friend.phone;
 					}
 				}
-				fileHandlers.getHeadImage(fileName, chatHolder.head, viewManage.headOptions40);
+				fileHandlers.getHeadImage(fileName, chatHolder.head, viewManage.options40);
 
 				chatHolder.head.setTag(R.id.tag_class, "head_click");
 				chatHolder.head.setTag(R.id.tag_first, phone);

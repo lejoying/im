@@ -46,6 +46,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -180,7 +181,7 @@ public class ShareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.viewManage.headOptions40;
+							options = thisView.viewManage.options40;
 						} else if ("conver".equals(tag)) {
 							flag = false;
 						}
@@ -402,11 +403,14 @@ public class ShareSubController {
 							}
 							shareTopMenuGroupName.setText(name);
 							thisView.modifyCurrentShowGroup();
+							if (group.boards == null || group.boards.size() == 0) {
+								DataHandlers.getGroupBoards(group.gid + "");
+							}
 							// display local data
 							nowpage = 0;
 							thisView.showShareMessages();
 							getCurrentGroupShareMessages();
-							thisView.showGroupMembers();
+							thisView.showTopMenuRoomName();
 							thisView.shareMessageListBody.y = 0;
 							thisView.shareMessageListBody.setChildrenPosition();
 						}
@@ -537,6 +541,7 @@ public class ShareSubController {
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("sid", thisView.currentGroup.currentBoard);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 

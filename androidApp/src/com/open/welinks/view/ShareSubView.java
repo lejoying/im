@@ -207,6 +207,7 @@ public class ShareSubView {
 
 	public void setMenuNameBotton(String name) {
 		int length = name.length();
+		length = length > 8 ? 8 : length;
 		int left = (int) (textSize * length);
 		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) botton.getLayoutParams();
 		params.leftMargin = left;
@@ -218,8 +219,8 @@ public class ShareSubView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
-		if (group.conver == null || "".equals(group.conver)) {
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
+		if (group.cover == null || "".equals(group.cover)) {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			return;
 		}
@@ -232,7 +233,7 @@ public class ShareSubView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.conver, path);
+					downloadConver(group.cover, path);
 				}
 
 				@Override
@@ -240,8 +241,8 @@ public class ShareSubView {
 				}
 			});
 		} else {
-			if (group.conver != null) {
-				downloadConver(group.conver, path);
+			if (group.cover != null) {
+				downloadConver(group.cover, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			}
@@ -342,7 +343,7 @@ public class ShareSubView {
 	public void showShareMessages() {
 		data = parser.check();
 
-		showGroupMembers();
+		showTopMenuRoomName();
 		if (data.relationship.groups == null || data.localStatus.localData == null) {
 			log.e("return groups or localData");
 			return;
@@ -357,7 +358,6 @@ public class ShareSubView {
 			}
 		}
 
-		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		SharesMessageBody sharesMessageBody0 = null;
 		if (flag) {
@@ -389,21 +389,31 @@ public class ShareSubView {
 			log.e("clear share list body.");
 			return;
 		}
-		if (!flag || share == null) {
+		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		if (!flag || currentGroup == null) {
 			return;
 		}
+		if (currentGroup.currentBoard == null || "".equals(currentGroup.currentBoard)) {
+			if (currentGroup.boards.size() > 0) {
+				currentGroup.currentBoard = currentGroup.boards.get(0);
+			}
+		}
+
 		// set conver
 		// TODO conver setting
-		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		fileHandlers.getHeadImage(currentGroup.icon, this.groupHeadView, viewManage.options56);
-		if (currentGroup.conver != null && !currentGroup.conver.equals("")) {
+		if (currentGroup.cover != null && !currentGroup.cover.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
 
+		Share share = data.shares.shareMap.get(currentGroup.currentBoard);
+		log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + share);
+		if (share == null) {
+			return;
+		}
 		showRoomTime();
-
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
@@ -711,7 +721,7 @@ public class ShareSubView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, viewManage.headOptions40);
+				fileHandlers.getHeadImage(fileName, this.headView, viewManage.options40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
@@ -1036,7 +1046,7 @@ public class ShareSubView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.options40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
@@ -1061,7 +1071,7 @@ public class ShareSubView {
 	public int width;
 	public File mImageFile;
 
-	public void showGroupMembers() {
+	public void showTopMenuRoomName() {
 		data = parser.check();
 		groupMembersListContentView.removeAllViews();
 		if (data.relationship.groupsMap == null || data.localStatus.localData == null) {

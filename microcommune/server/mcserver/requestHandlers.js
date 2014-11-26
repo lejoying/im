@@ -374,6 +374,14 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.modifysquence(data, response);
         });
+    } else if (operation == "getboard") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.getboard(data, response);
+        });
+    } else if (operation == "getgroupboards") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.getgroupboards(data, response);
+        });
     }
 }
 function setOauthAccessKey(phone, accessKey, next) {

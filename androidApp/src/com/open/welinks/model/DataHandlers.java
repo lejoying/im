@@ -134,6 +134,16 @@ public class DataHandlers {
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}
 
+	public static void getGroupBoards(String gid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, responseHandlers.group_getGroupBoards);
+	}
+
 	public static void clearInvalidGroupMessages() {
 		try {
 			parser.check();

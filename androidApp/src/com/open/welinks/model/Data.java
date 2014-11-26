@@ -77,7 +77,9 @@ public class Data {
 			public Map<String, ShareDraft> shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
 
 			public String currentSelectedGroup = "";
+			public String currentSelectedGroupBoard = "";
 			public String currentSelectedSquare = "";
+			public String currentSelectedSquareBoard = "";
 
 			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
 			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();
@@ -93,9 +95,6 @@ public class Data {
 			public Map<String, Boolean> newMessagePowerMap = new HashMap<String, Boolean>();
 
 			public String addFriendMessage = "";
-			
-			public List userIntentQueue = new ArrayList();
-			
 		}
 	}
 
@@ -204,11 +203,13 @@ public class Data {
 			public String description;
 			public String background;
 			public String createTime;
-			public String conver;
+			public String cover;
 			public String permission;
 
+			public String currentBoard = "";
+
+			public List<String> boards;
 			public List<String> members = new ArrayList<String>();
-			public List<String> boards = new ArrayList<String>();
 		}
 	}
 
@@ -236,7 +237,7 @@ public class Data {
 		}
 	}
 
-	public class Boards{
+	public class Boards {
 		public boolean isModified = false;
 		public Map<String, Board> shareMap = new HashMap<String, Board>();
 
@@ -249,6 +250,7 @@ public class Data {
 			public String gid;
 		}
 	}
+
 	public class Shares {
 		public boolean isModified = false;
 
