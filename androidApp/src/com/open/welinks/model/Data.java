@@ -208,6 +208,7 @@ public class Data {
 			public String permission;
 
 			public List<String> members = new ArrayList<String>();
+			public List<String> boards = new ArrayList<String>();
 		}
 	}
 
@@ -235,6 +236,19 @@ public class Data {
 		}
 	}
 
+	public class Boards{
+		public boolean isModified = false;
+		public Map<String, Board> shareMap = new HashMap<String, Board>();
+
+		public class Board {
+			public String sid;
+			public String name;
+			public String cover;
+			public String head;
+			public String description;
+			public String gid;
+		}
+	}
 	public class Shares {
 		public boolean isModified = false;
 
