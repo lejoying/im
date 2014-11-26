@@ -238,7 +238,10 @@ public class SmallBusinessCardPopView {
 			}
 		}
 
+		boolean flag = true;
+
 		public void setHot(boolean flag) {
+			this.flag = flag;
 			if (flag) {
 				optionTwoView2.setVisibility(View.VISIBLE);
 			} else {
@@ -290,7 +293,11 @@ public class SmallBusinessCardPopView {
 					scanUserCard(key);
 				}
 			} else if (type.equals(TYPE_GROUP)) {
-				this.optionTwoView2.setVisibility(View.VISIBLE);
+				if (this.flag) {
+					this.optionTwoView2.setVisibility(View.VISIBLE);
+				} else {
+					this.optionTwoView2.setVisibility(View.GONE);
+				}
 				if (data.relationship.groups.contains(key)) {
 					goInfomationView.setText("房间信息");
 					goChatView.setText("聊天室");

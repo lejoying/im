@@ -29,6 +29,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
+import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
@@ -448,7 +449,7 @@ public class ShareSectionView {
 		public ImageView shareCommentIconView;
 		public TextView shareStatusView;
 
-		public TextView messageTimeView;
+		public TouchTextView messageTimeView;
 
 		public View background_share_item;
 
@@ -477,7 +478,7 @@ public class ShareSectionView {
 				// this.cardView.findViewById(R.id.releaseShare);
 			} else if (i == -2) {
 				this.cardView = (ViewGroup) mInflater.inflate(R.layout.share_message_item_title, null);
-				this.messageTimeView = (TextView) this.cardView.findViewById(R.id.releaseMessageTime);
+				this.messageTimeView = (TouchTextView) this.cardView.findViewById(R.id.releaseMessageTime);
 			} else {
 				this.cardView = (ViewGroup) mInflater.inflate(R.layout.share_message_item, null);
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
