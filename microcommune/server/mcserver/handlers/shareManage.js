@@ -913,6 +913,7 @@ shareManage.sendboardshare = function (data, response) {
                 comments: "[]",
                 type: message.type,
                 nodeType: "Share",
+                sid: sid,
                 content: message.content,
                 time: new Date().getTime()
             }
@@ -923,6 +924,7 @@ shareManage.sendboardshare = function (data, response) {
                     "提示信息": "发布群分享失败",
                     "失败原因": "数据异常",
                     ogsid: ogsid,
+                    sid: sid,
                     gid: gid
                 }), response);
                 console.error(error);
@@ -932,6 +934,7 @@ shareManage.sendboardshare = function (data, response) {
                     "提示信息": "发布群分享失败",
                     "失败原因": "数据异常",
                     ogsid: ogsid,
+                    sid: sid,
                     gid: gid
                 }), response);
             } else {
@@ -941,9 +944,11 @@ shareManage.sendboardshare = function (data, response) {
                     "提示信息": "发布群分享成功",
                     time: shareData.time,
                     ogsid: ogsid,
+                    sid: sid,
                     gsid: shareData.gsid,
                     gid: gid
                 }), response);
+                console.log("发布群分享成功");
             }
         });
     }

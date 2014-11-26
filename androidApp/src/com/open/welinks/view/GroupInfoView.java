@@ -46,7 +46,7 @@ public class GroupInfoView {
 	public TextView nickNameView;
 	public View businessOptionView;
 	public TextView businessView;
-	public View converOptionView;
+	public View coverOptionView;
 	public View addressOptionView;
 	public TextView addressView;
 	public View newMessageSettingOptionView;
@@ -87,7 +87,7 @@ public class GroupInfoView {
 		this.nickNameView = (TextView) thisActivity.findViewById(R.id.nickNameTx);
 		this.businessOptionView = thisActivity.findViewById(R.id.businessOption);
 		this.businessView = (TextView) thisActivity.findViewById(R.id.businessTx);
-		this.converOptionView = thisActivity.findViewById(R.id.converOption);
+		this.coverOptionView = thisActivity.findViewById(R.id.converOption);
 		this.addressOptionView = thisActivity.findViewById(R.id.addressOption);
 		this.addressView = (TextView) thisActivity.findViewById(R.id.addressTx);
 		this.newMessageSettingOptionView = thisActivity.findViewById(R.id.newMessageSettingOption);

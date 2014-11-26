@@ -39,9 +39,9 @@ import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
@@ -89,6 +89,7 @@ public class ShareReleaseImageTextController {
 	public Map<String, String> uploadFileNameMap = new HashMap<String, String>();
 
 	public String currentSelectedGroup = "";
+	public String sid = "";
 	public User currentUser = data.userInformation.currentUser;
 
 	public Gson gson = new Gson();
@@ -108,6 +109,7 @@ public class ShareReleaseImageTextController {
 		gtype = thisActivity.getIntent().getStringExtra("gtype");
 		type = thisActivity.getIntent().getStringExtra("type");
 		gid = thisActivity.getIntent().getStringExtra("gid");
+		sid = thisActivity.getIntent().getStringExtra("sid");
 		currentSelectedGroup = gid;
 		// Initialize the image directory
 		sdcardImageFolder = fileHandlers.sdcardImageFolder;
@@ -355,6 +357,7 @@ public class ShareReleaseImageTextController {
 				parser.check();
 				ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
 				shareDraft.gid = gid;
+				shareDraft.sid = sid;
 				shareDraft.gsid = currentUser.phone + "_" + time;
 				shareDraft.gtype = gtype;
 				shareDraft.content = thisView.mEditTextView.getText().toString();
@@ -376,18 +379,19 @@ public class ShareReleaseImageTextController {
 				data.localStatus.localData.shareReleaseSequece.add(shareDraft.gsid);
 				data.localStatus.localData.shareReleaseSequeceMap.put(shareDraft.gsid, shareDraft);
 
-				if (data.shares == null) {
-					data.shares = data.new Shares();
+				if (data.boards == null) {
+					data.boards = data.new Boards();
 				}
-				if (data.shares.shareMap.get(currentSelectedGroup) == null) {
-					Share share = data.shares.new Share();
-					data.shares.shareMap.put(currentSelectedGroup, share);
+				if (data.boards.boardsMap.get(sid) == null) {
+					Board board = data.boards.new Board();
+					data.boards.boardsMap.put(sid, board);
 				}
-				Share share = data.shares.shareMap.get(currentSelectedGroup);
-				shareMessage = share.new ShareMessage();
+				Board board = data.boards.boardsMap.get(sid);
+				shareMessage = data.boards.new ShareMessage();
 				shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 				shareMessage.gsid = currentUser.phone + "_" + time;
 				shareMessage.type = "imagetext";
+				shareMessage.sid = sid;
 				shareMessage.phone = currentUser.phone;
 				shareMessage.nickName = currentUser.nickName;
 				shareMessage.time = time;
@@ -417,9 +421,9 @@ public class ShareReleaseImageTextController {
 				shareMessage.content = content;
 
 				// To add data to the data
-				share.shareMessagesOrder.add(0, shareMessage.gsid);
-				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
-				data.shares.isModified = true;
+				board.shareMessagesOrder.add(0, shareMessage.gsid);
+				data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+				data.boards.isModified = true;
 
 				// Local data diaplay in MainHandler
 				if ("square".equals(gtype)) {
@@ -452,10 +456,12 @@ public class ShareReleaseImageTextController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentSelectedGroup);
 		params.addBodyParameter("ogsid", gsid);
+		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		responseHandlers.share_sendShareCallBack.gid = currentSelectedGroup;
+		responseHandlers.share_sendShareCallBack.sid = sid;
 		responseHandlers.share_sendShareCallBack.ogsid = gsid;
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);

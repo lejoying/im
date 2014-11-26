@@ -30,8 +30,8 @@ import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -101,6 +101,7 @@ public class ShareListController {
 					ShareMessage message = sharesMap.get(shares.get(position - 1));
 					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 					intent.putExtra("gid", message.gid);
+					intent.putExtra("sid", message.sid);
 					intent.putExtra("gsid", message.gsid);
 					thisActivity.startActivityForResult(intent, resultCodeDetail);
 					// }

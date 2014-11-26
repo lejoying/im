@@ -249,7 +249,7 @@ groupManage.create = function (data, response) {
                     latitude: location.latitude || 0,
                     description: groupData.description,
                     background: groupData.background,
-                    conver: groupData.conver || "",
+                    cover: groupData.cover || "",
                     permission: groupData.permission || ""
                 };
                 if (groupData.boardSequenceString) {
@@ -746,7 +746,7 @@ groupManage.getallmembers = function (data, response) {
                     createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || "",
-                    conver: groupData.conver || "",
+                    cover: groupData.cover || "",
                     permission: groupData.permission || ""
                 };
                 if (groupData.boardSequenceString) {
@@ -845,7 +845,10 @@ groupManage.modify = function (data, response) {
     var description = data.description;
     var address = data.address;
     var location = data.location;
-    var conver = data.conver;
+    var cover = data.cover;
+    if (!cover) {
+        cover = data.conver;
+    }
     var permission = data.permission;
     var time = new Date().getTime();
     var eid = phone + "" + time;
@@ -953,8 +956,8 @@ groupManage.modify = function (data, response) {
                     background0 = background;
                     groupData.background = background0;
                 }
-                if (conver) {
-                    groupData.conver = conver;
+                if (cover) {
+                    groupData.cover = cover;
                 }
                 if (permission) {
                     groupData.permission = permission;
@@ -979,7 +982,7 @@ groupManage.modify = function (data, response) {
                     latitude: location.latitude || 0,
                     description: groupData.description,
                     background: groupData.background,
-                    conver: groupData.conver || "",
+                    cover: groupData.cover || "",
                     permission: groupData.permission || ""
                 };
                 if (groupData.boardSequenceString) {
@@ -1260,7 +1263,7 @@ groupManage.get = function (data, response) {
                     createTime: groupData.createTime || 0,
                     description: groupData.description || "",
                     background: groupData.background || "",
-                    conver: groupData.conver || "",
+                    cover: groupData.cover || "",
                     permission: groupData.permission || ""
                 };
                 if (groupData.boardSequenceString) {
@@ -1571,7 +1574,7 @@ groupManage.getgroupmembers = function (data, response) {
                             latitude: location.latitude || 0,
                             description: groupData.description,
                             background: groupData.background,
-                            conver: groupData.conver || "",
+                            cover: groupData.cover || "",
                             permission: groupData.permission || ""
                         };
                         if (groupData.boardSequenceString) {

@@ -80,9 +80,9 @@ public class API {
 
 	// share
 	/**
-	 * http://www.we-links.com/api2/share/sendshare
+	 * http://www.we-links.com/api2/share/sendboardshare
 	 */
-	public static String SHARE_SENDSHARE = API_DOMAIN + "api2/share/sendshare";
+	public static String SHARE_SENDSHARE = API_DOMAIN + "api2/share/sendboardshare";
 	/**
 	 * http://www.we-links.com/api2/share/getboardshare
 	 */

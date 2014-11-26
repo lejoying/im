@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Data {
@@ -86,6 +86,7 @@ public class Data {
 
 			public class ShareDraft {
 				public String gid;// not must
+				public String sid;
 				public String gsid;// not must
 				public String gtype;
 				public String content;
@@ -100,8 +101,8 @@ public class Data {
 
 	public UserInformation userInformation;
 	public Relationship relationship;
+	public Boards boards;
 	public Messages messages;
-	public Shares shares;
 	public Event event;
 
 	public class UserInformation {
@@ -239,7 +240,9 @@ public class Data {
 
 	public class Boards {
 		public boolean isModified = false;
-		public Map<String, Board> shareMap = new HashMap<String, Board>();
+
+		public Map<String, Board> boardsMap = new HashMap<String, Board>();
+		public Map<String, ShareMessage> shareMessagesMap = new HashMap<String, ShareMessage>();
 
 		public class Board {
 			public String sid;
@@ -248,53 +251,42 @@ public class Data {
 			public String head;
 			public String description;
 			public String gid;
-		}
-	}
-
-	public class Shares {
-		public boolean isModified = false;
-
-		public Map<String, Share> shareMap = new HashMap<String, Share>();
-
-		public class Share {
 
 			public long updateTime;
-
 			public List<String> shareMessagesOrder = new ArrayList<String>();
+		}
 
-			public Map<String, ShareMessage> shareMessagesMap = new HashMap<String, ShareMessage>();
+		public class ShareMessage {
+			public int MAXTYPE_COUNT = 3;
+			public int MESSAGE_TYPE_IMAGETEXT = 0x01;
+			public int MESSAGE_TYPE_VOICETEXT = 0x02;
+			public int MESSAGE_TYPE_VOTE = 0x03;
 
-			public class ShareMessage {
-				public int MAXTYPE_COUNT = 3;
-				public int MESSAGE_TYPE_IMAGETEXT = 0x01;
-				public int MESSAGE_TYPE_VOICETEXT = 0x02;
-				public int MESSAGE_TYPE_VOTE = 0x03;
+			public int mType;// MESSAGE_TYPE
+			public String gid;// only sharelist In the use of
+			public String gsid;
+			public String sid;
+			public String type;// imagetext voicetext vote
+			public String phone;
+			public String nickName;
+			public String head;
+			public long time;
+			public ArrayList<String> praiseusers = new ArrayList<String>();
+			public List<Comment> comments = new ArrayList<Comment>();
+			public String content;
+			public String status;// sending sent failed
+		}
 
-				public int mType;// MESSAGE_TYPE
-				public String gid;// only sharelist In the use of
-				public String gsid;
-				public String type;// imagetext voicetext vote
-				public String phone;
-				public String nickName;
-				public String head;
-				public long time;
-				public ArrayList<String> praiseusers = new ArrayList<String>();
-				public List<Comment> comments = new ArrayList<Comment>();
-				public String content;
-				public String status;// sending sent failed
-			}
-
-			public class Comment {
-				public String phone;
-				public String nickName;
-				public String head;
-				public String phoneTo;
-				public String nickNameTo;
-				public String headTo;
-				public String contentType;// "text"
-				public String content;
-				public long time;
-			}
+		public class Comment {
+			public String phone;
+			public String nickName;
+			public String head;
+			public String phoneTo;
+			public String nickNameTo;
+			public String headTo;
+			public String contentType;// "text"
+			public String content;
+			public long time;
 		}
 	}
 

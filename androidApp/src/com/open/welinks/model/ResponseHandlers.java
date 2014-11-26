@@ -25,13 +25,12 @@ import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.FriendsSubController.Circle2;
 import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
 import com.open.welinks.view.ViewManage;
@@ -650,7 +649,7 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("更新通讯录成功")) {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------更新通讯录成功");
 			} else {
-				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "更新通讯录---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -1477,6 +1476,7 @@ public class ResponseHandlers {
 	public class ResponseHandler2<T> extends ResponseHandler<T> {
 
 		public String gid;
+		public String sid;
 		public String ogsid;
 
 		ResponseHandler2(HttpClient httpClient) {
@@ -1490,6 +1490,7 @@ public class ResponseHandlers {
 			public String 失败原因;
 			public long time;
 			public String gid;
+			public String sid;
 			public String gsid;
 			public String ogsid;
 		}
@@ -1500,23 +1501,24 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("发布群分享成功")) {
 				parser.check();
 				String gid = response.gid;
+				String sid = response.sid;
 				String gsid = response.gsid;
 				String ogsid = response.ogsid;
-				Share share = data.shares.shareMap.get(gid);
-				ShareMessage shareMessage = share.shareMessagesMap.get(ogsid);
+				Board board = data.boards.boardsMap.get(sid);
+				ShareMessage shareMessage = data.boards.shareMessagesMap.get(ogsid);
 				if (shareMessage != null) {
 					shareMessage.gsid = response.gsid;
 					shareMessage.time = response.time;
 					shareMessage.status = "sent";
 				}
-				int index = share.shareMessagesOrder.indexOf(ogsid);
+				int index = board.shareMessagesOrder.indexOf(ogsid);
 				if (index != -1 && shareMessage != null) {
-					share.shareMessagesOrder.remove(index);
-					share.shareMessagesOrder.add(index, gsid);
-					share.shareMessagesMap.remove(ogsid);
-					share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+					board.shareMessagesOrder.remove(index);
+					board.shareMessagesOrder.add(index, gsid);
+					data.boards.shareMessagesMap.remove(ogsid);
+					data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				}
-				data.shares.isModified = true;
+				data.boards.isModified = true;
 				if (data.localStatus.localData.shareReleaseSequece != null) {
 					data.localStatus.localData.shareReleaseSequece.remove(ogsid);
 				}
@@ -1538,11 +1540,12 @@ public class ResponseHandlers {
 			} else if (response.失败原因.equals("发布群分享失败")) {
 				parser.check();
 				String gid = response.gid;
+				String sid = response.sid;
 				String ogsid = response.ogsid;
-				Share share = data.shares.shareMap.get(gid);
+				Board board = data.boards.boardsMap.get(sid);
 				ShareMessage shareMessage = null;
-				if (share != null) {
-					shareMessage = share.shareMessagesMap.get(ogsid);
+				if (board != null) {
+					shareMessage = data.boards.shareMessagesMap.get(ogsid);
 				}
 				if (shareMessage != null) {
 					shareMessage.status = "failed";
@@ -1565,10 +1568,10 @@ public class ResponseHandlers {
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			parser.check();
-			Share share = data.shares.shareMap.get(gid);
+			Board board = data.boards.boardsMap.get(sid);
 			ShareMessage shareMessage = null;
-			if (share != null) {
-				shareMessage = share.shareMessagesMap.get(ogsid);
+			if (board != null) {
+				shareMessage = data.boards.shareMessagesMap.get(ogsid);
 			}
 			if (shareMessage != null) {
 				shareMessage.status = "failed";
@@ -1671,40 +1674,45 @@ public class ResponseHandlers {
 		public String gid;
 		public String sid;
 		public int nowpage;
-		public Share shares;
+		public SubBoard shares;
+	}
+
+	class SubBoard {
+		public List<String> shareMessagesOrder;
+		public Map<String, ShareMessage> shareMessagesMap;
 	}
 
 	public void dataProcessing(GetShareResponse response, String type) {
-		Share responsesShare = response.shares;
+		SubBoard responsesShare = response.shares;
 		parser.check();
 		String gid = response.gid;
 		String sid = response.sid;
-		Share share = data.shares.shareMap.get(sid);
-		if (share == null) {
-			share = data.shares.new Share();
-			data.shares.shareMap.put(sid, share);
+		Board board = data.boards.boardsMap.get(sid);
+		if (board == null) {
+			board = data.boards.new Board();
+			data.boards.boardsMap.put(sid, board);
 		}
 		List<String> sharesOrder = responsesShare.shareMessagesOrder;
 		if (response.nowpage == 0) {
 			for (int i = sharesOrder.size() - 1; i >= 0; i--) {
 				String key = sharesOrder.get(i);
-				if (!share.shareMessagesOrder.contains(key)) {
-					share.shareMessagesOrder.add(0, key);
+				if (!board.shareMessagesOrder.contains(key)) {
+					board.shareMessagesOrder.add(0, key);
 				}
 			}
 		} else {
 			for (int i = 0; i < sharesOrder.size(); i++) {
 				String key = sharesOrder.get(i);
-				if (!share.shareMessagesOrder.contains(key)) {
-					share.shareMessagesOrder.add(key);
+				if (!board.shareMessagesOrder.contains(key)) {
+					board.shareMessagesOrder.add(key);
 				}
 			}
 		}
 
-		share.shareMessagesMap.putAll(responsesShare.shareMessagesMap);
-		data.shares.isModified = true;
+		data.boards.shareMessagesMap.putAll(responsesShare.shareMessagesMap);
+		data.boards.isModified = true;
 		if (data.relationship.groups.contains(gid)) {
-			share.updateTime = new Date().getTime();
+			board.updateTime = new Date().getTime();
 			if ("Main".equals(type)) {
 				if (responsesShare.shareMessagesOrder.size() == 0) {
 					viewManage.shareSubView.thisController.nowpage--;
@@ -1719,7 +1727,7 @@ public class ResponseHandlers {
 				viewManage.postNotifyView("ShareSectionNotifyShares");
 			}
 		} else {
-			share.updateTime = new Date().getTime();
+			board.updateTime = new Date().getTime();
 			if ("Main".equals(type)) {
 				if (responsesShare.shareMessagesOrder.size() == 0) {
 					viewManage.squareSubView.thisController.nowpage--;
