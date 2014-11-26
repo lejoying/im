@@ -860,7 +860,9 @@ shareManage.getusershares = function (data, response) {
         });
     }
 }
-
+var push = require('../lib/push.js');
+var redis = require("redis");
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 shareManage.sendboardshare = function (data, response) {
     response.asynchronous = 1;
     var sid = data.sid;
@@ -1007,8 +1009,18 @@ shareManage.addboard = function (data, response) {
     var gid = data.gid;
     var name = data.name;
     var osid = data.osid;
-    if (verifyEmpty.verifyEmpty(data, [gid, name, osid], response)) {
-        addBoardNode();
+    var targetPhones = data.targetphones;
+    if (verifyEmpty.verifyEmpty(data, [gid, name, osid, targetPhones], response)) {
+        try {
+            targetPhones = JSON.parse(targetPhones);
+            addBoardNode();
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "创建版块失败",
+                "失败原因": "数据格式不正确",
+                osid: osid
+            }), response);
+        }
     }
     function addBoardNode() {
         var query = [
@@ -1039,7 +1051,25 @@ shareManage.addboard = function (data, response) {
                 }), response);
             } else if (results.length > 0) {
                 var sharesData = results.pop().shares.data;
-                var groupData = results.pop().group.data;
+                var groupNode = results.pop().group;
+                var groupData = groupNode.data;
+                if (groupData.boardSequenceString) {
+                    try {
+                        var boardOrder = JSON.parse(groupData.boardSequenceString);
+                        boardOrder.push(sharesData.sid);
+                        groupData.boardSequenceString = JSON.stringify(boardOrder);
+                        groupNode.save(function (err, node) {
+                        });
+                    } catch (e) {
+                        groupData.boardSequenceString = null;
+                        groupNode.save(function (err, node) {
+                        });
+                    }
+                } else {
+                    groupData.boardSequenceString = null;
+                    groupNode.save(function (err, node) {
+                    });
+                }
                 ResponseData(JSON.stringify({
                     "提示信息": "创建版块成功",
                     "失败原因": "数据异常",
@@ -1047,6 +1077,32 @@ shareManage.addboard = function (data, response) {
                     gid: groupData.gid,
                     osid: osid
                 }), response);
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                for (var index in targetPhones) {
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_newboard",
+                        content: JSON.stringify({
+                            type: "group_newboard",
+                            phone: phone,
+                            phoneTo: index,
+                            gid: groupData.gid,
+                            eid: eid,
+                            time: time,
+                            status: "success",
+                            content: name
+                        })
+                    });
+                    client.rpush(index, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, index, accessKey, "*", event);
+                }
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "创建版块失败",
@@ -1059,14 +1115,26 @@ shareManage.addboard = function (data, response) {
 }
 shareManage.modifyboard = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var sid = data.sid;
     var name = data.name;
     var description = data.description;
     var head = data.head;
     var cover = data.cover;
     var status = data.status;
-    if (verifyEmpty.verifyEmpty(data, [sid], response)) {
-        modifyBoardNode();
+    var targetPhones = data.targetphones;
+    if (verifyEmpty.verifyEmpty(data, [sid, targetPhones], response)) {
+        try {
+            targetPhones = JSON.parse(targetPhones);
+            modifyBoardNode();
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "修改版块失败",
+                "失败原因": "数据格式不正确",
+                sid: sid
+            }), response);
+        }
     }
     function modifyBoardNode() {
         var query = [
@@ -1108,6 +1176,32 @@ shareManage.modifyboard = function (data, response) {
                     "提示信息": "修改版块成功",
                     board: sharesData
                 }), response);
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                for (var index in targetPhones) {
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_updateboard",
+                        content: JSON.stringify({
+                            type: "group_updateboard",
+                            phone: phone,
+                            phoneTo: index,
+                            sid: sid,
+                            eid: eid,
+                            time: time,
+                            status: "success",
+                            content: JSON.stringify(sharesData)
+                        })
+                    });
+                    client.rpush(index, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, index, accessKey, "*", event);
+                }
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改版块失败",
@@ -1206,10 +1300,20 @@ shareManage.getboards = function (data, response) {
 shareManage.modifysquence = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var gid = data.gid;
     var boardSequence = data.boardsequence;
-    if (verifyEmpty.verifyEmpty(data, [gid, boardSequence]), response) {
-        modifyBoardSequence();
+    var targetPhones = data.targetphones;
+    if (verifyEmpty.verifyEmpty(data, [gid, boardSequence, targetPhones]), response) {
+        try {
+            targetPhones = JSON.parse(targetPhones);
+            modifyBoardSequence();
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "修改版块顺序失败",
+                "失败原因": "数据格式不正确"
+            }), response);
+        }
     }
     function modifyBoardSequence() {
         var query = [
@@ -1237,6 +1341,32 @@ shareManage.modifysquence = function (data, response) {
                     "提示信息": "修改版块顺序成功",
                     group: groupData
                 }), response);
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                for (var index in targetPhones) {
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_updateboardsequence",
+                        content: JSON.stringify({
+                            type: "group_updateboardsequence",
+                            phone: phone,
+                            phoneTo: index,
+                            gid: gid,
+                            eid: eid,
+                            time: time,
+                            status: "success",
+                            content: data.boardsequence
+                        })
+                    });
+                    client.rpush(index, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, index, accessKey, "*", event);
+                }
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改版块顺序失败",
