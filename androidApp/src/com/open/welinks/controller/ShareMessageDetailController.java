@@ -49,11 +49,11 @@ import com.open.welinks.customView.ShareView.onWeChatClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.Comment;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.Comment;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
@@ -84,7 +84,7 @@ public class ShareMessageDetailController {
 
 	public String gsid = "";
 	public ShareMessage shareMessage;
-	public Share share;
+	public Board board;
 
 	public String textContent;
 	public String imageContent;
@@ -110,6 +110,7 @@ public class ShareMessageDetailController {
 	public int initialHeight;
 
 	public String gid;
+	public String sid;
 
 	public Bitmap WeChatBitmap;
 
@@ -125,22 +126,30 @@ public class ShareMessageDetailController {
 
 	public void initData() {
 		parser.check();
+		// TODO gid to sid
+
 		gid = thisActivity.getIntent().getStringExtra("gid");
+		sid = thisActivity.getIntent().getStringExtra("sid");
+
+		if (sid == null || "".equals(sid)) {
+			log.e(ViewManage.getErrorLineNumber() + "少传参数了");
+			return;
+		}
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
 			this.gsid = gsid;
-			if (data.shares.shareMap.containsKey(gid)) {
-				share = data.shares.shareMap.get(gid);
-				shareMessage = share.shareMessagesMap.get(gsid);
+			if (data.boards.boardsMap.containsKey(sid)) {
+				board = data.boards.boardsMap.get(sid);
+				shareMessage = data.boards.shareMessagesMap.get(gsid);
 				getShareMessageDetail();
 				log.e("1");
 			} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
-				share = data.shares.new Share();
+				board = data.boards.new Board();
 				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
 				getShareMessageDetail();
 				log.e("2");
 			} else {
-				share = data.shares.new Share();
+				board = data.boards.new Board();
 				// getShareFromServer(gid, gsid);
 				getShareMessageDetail();
 				log.e("3");
@@ -369,7 +378,7 @@ public class ShareMessageDetailController {
 					if (thisView.inputMethodManager.isActive()) {
 						thisView.inputMethodManager.hideSoftInputFromWindow(thisView.commentInputView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					}
-					Comment comment = share.new Comment();
+					Comment comment = data.boards.new Comment();
 					comment.phone = currentUser.phone;
 					comment.nickName = currentUser.nickName;
 					comment.head = currentUser.head;
@@ -466,12 +475,12 @@ public class ShareMessageDetailController {
 						params.addBodyParameter("gsid", gsid);
 
 						data = parser.check();
-						Share share = data.shares.shareMap.get(gid);
-						if (share != null && share.shareMessagesOrder != null) {
-							share.shareMessagesOrder.remove(gsid);
+						Board board = data.boards.boardsMap.get(sid);
+						if (board != null && board.shareMessagesOrder != null) {
+							board.shareMessagesOrder.remove(gsid);
 						}
 						// share.shareMessagesMap.remove(gsid);
-						data.shares.isModified = true;
+						data.boards.isModified = true;
 						if (data.relationship.squares.contains(gid)) {
 							viewManage.postNotifyView("SquareSubViewMessage");
 						} else {
@@ -558,30 +567,32 @@ public class ShareMessageDetailController {
 
 	public void shareToGroup(String key) {
 		parser.check();
-		if (data.shares == null) {
-			data.shares = data.new Shares();
+		if (data.boards == null) {
+			data.boards = data.new Boards();
 		}
-		if (data.shares.shareMap.get(key) == null) {
-			Share share = data.shares.new Share();
-			data.shares.shareMap.put(key, share);
+		if (data.boards.boardsMap.get(key) == null) {
+			Board board = data.boards.new Board();
+			data.boards.boardsMap.put(key, board);
 		}
 		long time = new Date().getTime();
-		Share share = data.shares.shareMap.get(key);
+		Board board = data.boards.boardsMap.get(key);
 
-		ShareMessage shareMessage = share.new ShareMessage();
+		ShareMessage shareMessage = data.boards.new ShareMessage();
 		shareMessage.content = this.shareMessage.content;
 		shareMessage.type = this.shareMessage.type;
 		shareMessage.nickName = currentUser.nickName;
 		shareMessage.head = currentUser.head;
+		shareMessage.gid = gid;
+		shareMessage.sid = sid;
 		shareMessage.phone = currentUser.phone;
 		shareMessage.gsid = currentUser.phone + "_" + time;
 		shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 		shareMessage.time = time;
 		shareMessage.status = "sending";
 
-		share.shareMessagesOrder.add(0, shareMessage.gsid);
-		share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
-		data.shares.isModified = true;
+		board.shareMessagesOrder.add(0, shareMessage.gsid);
+		data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+		data.boards.isModified = true;
 
 		if (data.relationship.squares.contains(key)) {
 			viewManage.mainView.squareSubView.showSquareMessages(true);
@@ -604,6 +615,8 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", key);
 		params.addBodyParameter("ogsid", gsid);
+		params.addBodyParameter("sid", sid);
+		params.addBodyParameter("nickName", currentUser.nickName);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -638,6 +651,7 @@ public class ShareMessageDetailController {
 		Message message = data.messages.new Message();
 		MessageShareContent messageContent = subData.new MessageShareContent();
 		messageContent.gid = gid;
+		messageContent.sid = sid;
 		messageContent.gsid = shareMessage.gsid;
 		messageContent.image = imageContent;
 		messageContent.text = textContent;
@@ -742,9 +756,9 @@ public class ShareMessageDetailController {
 					ShareMessage shareMessage = response.shares.get(0);
 					boolean flag = false;
 					try {
-						flag = data.shares.shareMap.get(gid).shareMessagesMap.containsKey(shareMessage.gsid);
-						data.shares.shareMap.get(gid).shareMessagesMap.put(shareMessage.gsid, shareMessage);
-						data.shares.isModified = true;
+						flag = data.boards.shareMessagesMap.containsKey(shareMessage.gsid);
+						data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+						data.boards.isModified = true;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

@@ -41,11 +41,11 @@ import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.Comment;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.Comment;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
@@ -196,7 +196,6 @@ public class ShareSectionView {
 			}
 		}
 
-		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		SharesMessageBody sharesMessageBody0 = null;
 		if (flag) {
@@ -228,23 +227,24 @@ public class ShareSectionView {
 			log.e("clear share list body.");
 			return;
 		}
-		if (!flag || share == null) {
-			return;
-		}
+
 		// set conver
 		// TODO conver setting
-		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		fileHandlers.getHeadImage(currentGroup.icon, this.groupHeadView, viewManage.options56);
 		if (currentGroup.cover != null && !currentGroup.cover.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
-
+		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		Board board = data.boards.boardsMap.get(currentGroup.currentBoard);
+		if (!flag || board == null) {
+			return;
+		}
 		showRoomTime();
 
-		List<String> sharesOrder = share.shareMessagesOrder;
-		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
+		List<String> sharesOrder = board.shareMessagesOrder;
+		Map<String, ShareMessage> sharesMap = data.boards.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
 		// int timeBarCount = 0;
 		for (int i = 0; i < sharesOrder.size(); i++) {
@@ -688,9 +688,9 @@ public class ShareSectionView {
 		} else {
 			if (currentGroup != null) {
 				parser.check();
-				Share share = data.shares.shareMap.get(currentGroup.gid + "");
-				if (share != null) {
-					roomTextView.setText("上次刷新:" + DateUtil.getChatMessageListTime(share.updateTime));
+				Board board = data.boards.boardsMap.get(currentGroup.currentBoard + "");
+				if (board != null) {
+					roomTextView.setText("上次刷新:" + DateUtil.getChatMessageListTime(board.updateTime));
 				} else {
 					roomTextView.setText("");
 				}

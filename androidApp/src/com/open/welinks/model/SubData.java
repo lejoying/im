@@ -15,6 +15,7 @@ public class SubData {
 
 	public class MessageShareContent {
 		public String gid;
+		public String sid;
 		public String gsid;
 		public String image;
 		public String text;

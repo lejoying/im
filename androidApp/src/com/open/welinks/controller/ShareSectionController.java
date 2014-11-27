@@ -27,8 +27,8 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -146,6 +146,7 @@ public class ShareSectionController {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "text");
+					intent.putExtra("sid", thisView.currentGroup.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivity(intent);
 					// thisView.dismissReleaseShareDialogView();
@@ -153,6 +154,7 @@ public class ShareSectionController {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "album");
+					intent.putExtra("sid", thisView.currentGroup.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivity(intent);
 					// thisView.dismissReleaseShareDialogView();
@@ -160,6 +162,7 @@ public class ShareSectionController {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "imagetext");
+					intent.putExtra("sid", thisView.currentGroup.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivity(intent);
 					// thisView.dismissReleaseShareDialogView();
@@ -171,6 +174,7 @@ public class ShareSectionController {
 					if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 						intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
+						intent.putExtra("sid", thisView.currentGroup.currentBoard);
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
@@ -182,7 +186,7 @@ public class ShareSectionController {
 					} else if ("SharePraise".equals(type)) {
 						parser.check();
 						User currentUser = data.userInformation.currentUser;
-						ShareMessage shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup).shareMessagesMap.get(content);
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
 						boolean option = false;
 						if (!shareMessage.praiseusers.contains(currentUser.phone)) {
 							option = true;
@@ -366,6 +370,7 @@ public class ShareSectionController {
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("sid", thisView.currentGroup.currentBoard);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 

@@ -1,0 +1,5 @@
+{
+	isModified : false,
+	boardsMap : {},
+	shareMessagesMap : {}
+}
