@@ -80,7 +80,12 @@ shareManage.sendshare = function (data, response) {
         var params = {
             gid: parseInt(gid),
             shares: {
-                nodeType: "Shares"
+                name: "主版",
+                nodeType: "Shares",
+                type: "Main",
+                gid: gid,
+                status: "active",
+                createTime: new Date().getTime(),
             }
         };
         db.query(query, params, function (error, results) {
@@ -112,7 +117,7 @@ shareManage.sendshare = function (data, response) {
     function saveShareNode(message) {
         var query = [
             'MATCH (group:Group)-[r:SHARE]->(shares:Shares)',
-            'WHERE group.gid={gid}',
+            'WHERE group.gid={gid} AND shares.type="Main"',
             'CREATE shares-[r1:HAS_SHARE]->(share:Share{share})',
             'SET share.gsid=ID(share)',
             'RETURN group,share'
@@ -181,7 +186,7 @@ shareManage.getshares = function (data, response) {
     function getSharesNodes() {
         var query = [
             "MATCH (group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid}",
+            "WHERE group.gid={gid} AND shares.type='Main'",
             "RETURN share",
             "ORDER BY share.time DESC",
             "SKIP {start}",
@@ -269,7 +274,7 @@ shareManage.addpraise = function (data, response) {
     function modifySharePraise() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -360,7 +365,7 @@ shareManage.addcomment = function (data, response) {
     function modifyShareComments() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -444,7 +449,7 @@ shareManage.delete = function (data, response) {
     function deleteShareNode() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "DELETE r1,share",
             "RETURN group"
         ].join("\n");
@@ -493,7 +498,7 @@ shareManage.deletecomment = function (data, response) {
     function deleteComment() {
         var query = [
             "MACTH (group:Group)-[r:HAS_SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -563,7 +568,7 @@ shareManage.getshare = function (data, response) {
         try {
             var query = [
                 "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-                "WHERE group.gid={gid} AND share.gsid={gsid}",
+                "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
                 "RETURN share"
             ].join("\n");
             var params = {
@@ -638,7 +643,7 @@ shareManage.modifyvote = function (data, response) {
     function modifyShareVote() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -726,7 +731,7 @@ shareManage.getgroupshares = function (data, response) {
     function getSharesNodes() {
         var query = [
             "MATCH (group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid}",
+            "WHERE group.gid={gid} AND shares.type='Main'",
             "RETURN share",
             "ORDER BY share.time DESC",
             "SKIP {start}",
@@ -800,7 +805,7 @@ shareManage.getusershares = function (data, response) {
     function getUserShares() {
         var query = [
             "MATCH (group:Group)-->(shares:Shares)-->(share:Share)",
-            "WHERE  share.phone={phone}",
+            "WHERE  share.phone={phone} AND shares.type='Main'",
             "RETURN group,share",
             "ORDER BY share.time DESC",
             "SKIP {start}",
