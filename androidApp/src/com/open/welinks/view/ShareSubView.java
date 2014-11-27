@@ -51,6 +51,7 @@ import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
@@ -394,8 +395,10 @@ public class ShareSubView {
 			return;
 		}
 		if (currentGroup.currentBoard == null || "".equals(currentGroup.currentBoard)) {
-			if (currentGroup.boards.size() > 0) {
+			if (currentGroup.boards != null && currentGroup.boards.size() > 0) {
 				currentGroup.currentBoard = currentGroup.boards.get(0);
+			} else {
+				DataHandlers.getGroupBoards(currentGroup.gid + "");
 			}
 		}
 
@@ -564,7 +567,7 @@ public class ShareSubView {
 				}
 				sharesMessageBody.setContent(shareMessage, fileName, imageContent, textContent, totalHeight);
 			} else {
-				sharesMessageBody.setContent(sharesMessageBody.message, sharesMessageBody.fileName, sharesMessageBody.imageContent, sharesMessageBody.textContent, sharesMessageBody.totalHeight);
+				sharesMessageBody.setContent(shareMessage, sharesMessageBody.fileName, sharesMessageBody.imageContent, sharesMessageBody.textContent, sharesMessageBody.totalHeight);
 				totalHeight = sharesMessageBody.totalHeight;
 			}
 

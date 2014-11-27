@@ -1,11 +1,19 @@
 package com.open.welinks.model;
 
-import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import android.os.Handler;
 import android.os.SystemClock;
 
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.open.lib.MyLog;
+import com.open.lib.ResponseHandler;
+
 public class TaskManager {
+	
+	public String tag = "TaskManager";
+	public MyLog log = new MyLog(tag, true);
 
 	public static TaskManager instance;
 
@@ -15,13 +23,13 @@ public class TaskManager {
 		}
 		return instance;
 	}
-	
-	public void startLoop(){
+
+	public void startLoop() {
 		new TaskThread().start();
-		mHandler.post(mTaskRunnable);
+		postHandler();
 	}
 
-	public Queue<Task> taskQueue;
+	public LinkedBlockingQueue<Task> taskQueue = new LinkedBlockingQueue<Task>();
 
 	public void pushTask(Task task) {
 		long currentTime = SystemClock.uptimeMillis();
@@ -30,28 +38,102 @@ public class TaskManager {
 		task.status.state = task.status.DataModified;
 		task.modifyView();
 		task.status.state = task.status.ViewModified;
+
+		taskQueue.offer(task);
+		requestQueue.offer(task);
 	}
-	
+
+	public LinkedBlockingQueue<Task> requestQueue = new LinkedBlockingQueue<Task>();
+	HttpUtils httpUtils = new HttpUtils();
+
 	class TaskThread extends Thread {
 		@Override
 		public void run() {
 			while (true) {
-				
-				
-				
+				try {
+					Task task = requestQueue.take();
+					if (task.myFileList != null) {
+						task.resolveLocalFiles();
+						task.status.state = task.status.localFilesResolved;
+						task.uploadFiles();
+						task.status.state = task.status.FilesUploading;
+						task.status.state = task.status.FilesUploaded;
+					} else {
+						task.status.state = task.status.FilesUploaded;
+					}
+					if (task.status.state == task.status.FilesUploaded) {
+						MyResponseHandler responseHandler = new MyResponseHandler();
+						responseHandler.task = task;
+						task.sendRequest();
+						httpUtils.send(task.mHttpMethod, task.API, task.params, responseHandler);
+						task.status.state = task.status.RequestSending;
+
+					}
+				} catch (Exception e) {
+					StackTraceElement ste = new Throwable().getStackTrace()[1];
+				}
 			}
 		}
 	}
-	
-	public Handler mHandler;
+
+	public class MyResponseHandler extends ResponseHandler<String> {
+		public Task task;
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			if (task != null) {
+				task.status.state = task.status.ResponseReceiving;
+				boolean needResolveResponse = task.onResponseReceived(responseInfo);
+				task.status.state = task.status.ResponseReceived;
+				if (needResolveResponse) {
+					responseQueue.offer(task);
+					postHandler();
+				} else {
+					logTask(task);
+					task.status.state = task.status.Done;
+				}
+			}
+		};
+	};
+
+	public LinkedBlockingQueue<Task> responseQueue = new LinkedBlockingQueue<Task>();
+	public Handler mHandler = new Handler();
+	public boolean handlerIsRunning = false;
+
+	public void postHandler() {
+		if (handlerIsRunning == false) {
+			mHandler.post(mTaskRunnable);
+		}
+	}
+
 	public Runnable mTaskRunnable = new Runnable() {
 		@Override
 		public void run() {
-			
-			
-			
-			mHandler.post(mTaskRunnable);
+			Task task;
+			try {
+				task = responseQueue.poll();
+				if (task != null) {
+					handlerIsRunning = true;
+					task.updateData();
+					task.status.state = task.status.DataUpdated;
+					task.updateView();
+					task.status.state = task.status.ViewUpdated;
+					logTask(task);
+					task.status.state = task.status.Done;
+
+					mHandler.post(mTaskRunnable);
+				} else {
+					handlerIsRunning = false;
+				}
+
+			} catch (Exception e) {
+				StackTraceElement ste = new Throwable().getStackTrace()[1];
+			}
+
 		}
 	};
 
+	void logTask(Task task) {
+
+	}
 }
