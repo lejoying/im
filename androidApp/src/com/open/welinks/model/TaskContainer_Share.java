@@ -209,20 +209,21 @@ public class TaskContainer_Share {
 			}
 		}
 	}
-	public class PostTask extends Task{
-		
+
+	public class PostTask extends Task {
+
 		public String gid;
 		public String gtype;
 		public String sid;
 		public String chatTextContent;
-		
+
 		public String imageListString = "";
-		
+
 		ShareMessage shareMessage;
-		ShareContent shareContent ;
-		
-		
+		ShareContent shareContent;
+
 		public List<ShareContentItem> contentItems;
+
 		@Override
 		public void modifyData() {
 			contentItems = new ArrayList<SubData.ShareContent.ShareContentItem>();
@@ -230,21 +231,21 @@ public class TaskContainer_Share {
 			User currentUser = data.userInformation.currentUser;
 			long time = new Date().getTime();
 			parser.check();
-//			ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
-//			shareDraft.gid = gid;
-//			shareDraft.sid = sid;
-//			shareDraft.gsid = currentUser.phone + "_" + time;
-//			shareDraft.gtype = gtype;
-//			shareDraft.content = chatTextContent;
-//			shareDraft.imagesContent = imageListString;
-//			if (data.localStatus.localData.shareReleaseSequece == null) {
-//				data.localStatus.localData.shareReleaseSequece = new ArrayList<String>();
-//			}
-//			if (data.localStatus.localData.shareReleaseSequeceMap == null) {
-//				data.localStatus.localData.shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
-//			}
-//			data.localStatus.localData.shareReleaseSequece.add(shareDraft.gsid);
-//			data.localStatus.localData.shareReleaseSequeceMap.put(shareDraft.gsid, shareDraft);
+			// ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
+			// shareDraft.gid = gid;
+			// shareDraft.sid = sid;
+			// shareDraft.gsid = currentUser.phone + "_" + time;
+			// shareDraft.gtype = gtype;
+			// shareDraft.content = chatTextContent;
+			// shareDraft.imagesContent = imageListString;
+			// if (data.localStatus.localData.shareReleaseSequece == null) {
+			// data.localStatus.localData.shareReleaseSequece = new ArrayList<String>();
+			// }
+			// if (data.localStatus.localData.shareReleaseSequeceMap == null) {
+			// data.localStatus.localData.shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
+			// }
+			// data.localStatus.localData.shareReleaseSequece.add(shareDraft.gsid);
+			// data.localStatus.localData.shareReleaseSequeceMap.put(shareDraft.gsid, shareDraft);
 
 			if (data.boards == null) {
 				data.boards = data.new Boards();
@@ -255,7 +256,7 @@ public class TaskContainer_Share {
 			}
 			Board board = data.boards.boardsMap.get(sid);
 			shareMessage = data.boards.new ShareMessage();
-//			shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
+			// shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 			shareMessage.gsid = currentUser.phone + "_" + time;
 			shareMessage.type = "imagetext";
 			shareMessage.sid = sid;
@@ -264,38 +265,39 @@ public class TaskContainer_Share {
 			shareMessage.nickName = currentUser.nickName;
 			shareMessage.time = time;
 			shareMessage.status = "sending";
-			
+
 			shareContent = SubData.getInstance().new ShareContent();
 			ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 			shareContentItem.type = "text";
 			shareContentItem.detail = chatTextContent;
 			contentItems.add(shareContentItem);
 
-			//remove
-//			board.shareMessagesOrder.remove(shareMessage.gsid);
-			//add
+			// remove
+			// board.shareMessagesOrder.remove(shareMessage.gsid);
+			// add
 			board.shareMessagesOrder.add(0, shareMessage.gsid);
 			data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 			data.boards.isModified = true;
 		}
+
 		@Override
 		public void modifyView() {
-				if(this.myFileList!=null && this.myFileList.size()>0 ){
-					MyFile myFile = this.myFileList.get(0);
-					copyFileToSprecifiedDirecytory(myFile, true);
-					ShareContentItem contentItem = shareContent.new ShareContentItem();
-					contentItem.type = "image";
-					contentItem.detail = myFile.fileName;
-					contentItems.add(contentItem);
-					shareMessage.content = gson.toJson(contentItems);
-					viewManage.postNotifyView("ShareSectionNotifyShares");
-				}
+			if (this.myFileList != null && this.myFileList.size() > 0) {
+				MyFile myFile = this.myFileList.get(0);
+				copyFileToSprecifiedDirecytory(myFile, true);
+				ShareContentItem contentItem = shareContent.new ShareContentItem();
+				contentItem.type = "image";
+				contentItem.detail = myFile.fileName;
+				contentItems.add(contentItem);
+				shareMessage.content = gson.toJson(contentItems);
+				viewManage.postNotifyView("ShareSectionNotifyShares");
+			}
 		}
+
 		@Override
-		public void resolveLocalFiles() {
-			for(int i=1;i<this.myFileList.size();i++){
+		public void onLocalFilesResolved() {
+			for (int i = 1; i < this.myFileList.size(); i++) {
 				MyFile myFile = this.myFileList.get(i);
-				copyFileToSprecifiedDirecytory(myFile, false);
 				ShareContentItem contentItem = shareContent.new ShareContentItem();
 				contentItem.type = "image";
 				contentItem.detail = myFile.fileName;
@@ -303,9 +305,10 @@ public class TaskContainer_Share {
 			}
 			shareMessage.content = gson.toJson(contentItems);
 		}
+
 		@Override
 		public void uploadFiles() {
-			
+
 		}
 
 		@Override
@@ -320,6 +323,7 @@ public class TaskContainer_Share {
 			params.addBodyParameter("type", "imagetext");
 			params.addBodyParameter("content", shareMessage.content);
 		}
+
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
@@ -329,7 +333,7 @@ public class TaskContainer_Share {
 			public String gsid;
 			public String ogsid;
 		}
-		
+
 		public Response response;
 
 		@Override
@@ -337,12 +341,13 @@ public class TaskContainer_Share {
 			response = gson.fromJson(responseInfo.result, Response.class);
 			return true;
 		}
+
 		@Override
 		public void updateData() {
-			//id time state
+			// id time state
 			if (response.提示信息.equals("发布群分享成功")) {
 				parser.check();
-//				String gid = response.gid;
+				// String gid = response.gid;
 				String sid = response.sid;
 				String gsid = response.gsid;
 				String ogsid = response.ogsid;
@@ -361,12 +366,11 @@ public class TaskContainer_Share {
 					data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				}
 				data.boards.isModified = true;
-				
-				
+
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送成功");
 			} else if (response.失败原因.equals("发布群分享失败")) {
 				parser.check();
-//				String gid = response.gid;
+				// String gid = response.gid;
 				String sid = response.sid;
 				String ogsid = response.ogsid;
 				Board board = data.boards.boardsMap.get(sid);
@@ -382,51 +386,53 @@ public class TaskContainer_Share {
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			}
 		}
+
 		@Override
 		public void updateView() {
 			viewManage.postNotifyView("ShareSectionNotifyShares");
 		}
-		public void copyFileToSprecifiedDirecytory(MyFile myFile,boolean isCompression) {
-			String key = myFile.path;
-				String suffixName = key.substring(key.lastIndexOf("."));
-				suffixName = suffixName.toLowerCase(Locale.getDefault());
-				if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
-					suffixName = ".osj";
-				} else if (suffixName.equals(".png")) {
-					suffixName = ".osp";
-				}
-				try {
-					String fileName = "";
-					File fromFile = new File(key);
-					byte[] bytes = null;
-					bytes = fileHandlers.getImageFileBytes(fromFile, viewManage.screenWidth, viewManage.screenHeight);
-					int fileLength = bytes.length;
-					myFile.length = fileLength;
-					String sha1FileName = sha1.getDigestOfString(bytes);
-					fileName = sha1FileName + suffixName;
-					myFile.fileName = fileName;
-					File toFile = new File(fileHandlers.sdcardImageFolder, fileName);
-					FileOutputStream fileOutputStream = new FileOutputStream(toFile);
-					StreamParser.parseToFile(bytes, fileOutputStream);
 
-//					if (isThumbnail) {
-//						int showImageWidth = (int) (viewManage.screenWidth- 20 * viewManage.displayMetrics.density - 0.5f);
-//						File toSnapFile = new File(fileHandlers.sdcardThumbnailFolder, fileName);
-//						fileHandlers.makeImageThumbnail(fromFile, showImageWidth, viewManage.screenHeight, toSnapFile, fileName);
-//					}
-					bytes = null;
-					Thread.sleep(100);
-					System.gc();
-					Thread.sleep(100);
-//					UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
-					
-//					multipart.path = key;
-//					uploadMultipartList.addMultipart(multipart);
-//					multipart.setUploadLoadingListener(uploadLoadingListener);
-				} catch (Exception e) {
-					e.printStackTrace();
-					log.e(e.toString());
-				}
+		public void copyFileToSprecifiedDirecytory(MyFile myFile, boolean isCompression) {
+			String key = myFile.path;
+			String suffixName = key.substring(key.lastIndexOf("."));
+			suffixName = suffixName.toLowerCase(Locale.getDefault());
+			if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
+				suffixName = ".osj";
+			} else if (suffixName.equals(".png")) {
+				suffixName = ".osp";
+			}
+			try {
+				String fileName = "";
+				File fromFile = new File(key);
+				byte[] bytes = null;
+				bytes = fileHandlers.getImageFileBytes(fromFile, viewManage.screenWidth, viewManage.screenHeight);
+				int fileLength = bytes.length;
+				myFile.length = fileLength;
+				String sha1FileName = sha1.getDigestOfString(bytes);
+				fileName = sha1FileName + suffixName;
+				myFile.fileName = fileName;
+				File toFile = new File(fileHandlers.sdcardImageFolder, fileName);
+				FileOutputStream fileOutputStream = new FileOutputStream(toFile);
+				StreamParser.parseToFile(bytes, fileOutputStream);
+
+				// if (isThumbnail) {
+				// int showImageWidth = (int) (viewManage.screenWidth- 20 * viewManage.displayMetrics.density - 0.5f);
+				// File toSnapFile = new File(fileHandlers.sdcardThumbnailFolder, fileName);
+				// fileHandlers.makeImageThumbnail(fromFile, showImageWidth, viewManage.screenHeight, toSnapFile, fileName);
+				// }
+				bytes = null;
+				Thread.sleep(100);
+				System.gc();
+				Thread.sleep(100);
+				// UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
+
+				// multipart.path = key;
+				// uploadMultipartList.addMultipart(multipart);
+				// multipart.setUploadLoadingListener(uploadLoadingListener);
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.e(e.toString());
+			}
 		}
 	}
 }

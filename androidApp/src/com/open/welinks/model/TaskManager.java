@@ -11,12 +11,13 @@ import com.open.lib.MyLog;
 import com.open.lib.ResponseHandler;
 
 public class TaskManager {
-	
+
 	public String tag = "TaskManager";
 	public MyLog log = new MyLog(tag, true);
 
-	public static TaskManager instance;
+	public FileHandler fileHandlers;
 
+	public static TaskManager instance;
 	public static TaskManager getInstance() {
 		if (instance == null) {
 			instance = new TaskManager();
@@ -25,8 +26,10 @@ public class TaskManager {
 	}
 
 	public void startLoop() {
+		fileHandlers = FileHandler.getInstance();
 		new TaskThread().start();
 		postHandler();
+
 	}
 
 	public LinkedBlockingQueue<Task> taskQueue = new LinkedBlockingQueue<Task>();
@@ -44,7 +47,7 @@ public class TaskManager {
 	}
 
 	public LinkedBlockingQueue<Task> requestQueue = new LinkedBlockingQueue<Task>();
-	HttpUtils httpUtils = new HttpUtils();
+
 
 	class TaskThread extends Thread {
 		@Override
@@ -52,19 +55,28 @@ public class TaskManager {
 			while (true) {
 				try {
 					Task task = requestQueue.take();
-					if (task.myFileList != null) {
-						task.resolveLocalFiles();
-						task.status.state = task.status.localFilesResolved;
-						task.uploadFiles();
-						task.status.state = task.status.FilesUploading;
-						task.status.state = task.status.FilesUploaded;
-					} else {
-						task.status.state = task.status.FilesUploaded;
+					if (task.status.state == task.status.ViewModified) {
+						if (task.myFileList != null) {
+							for (MyFile myFile : task.myFileList) {
+								myFile.task = task;
+								fileHandlers.pushMyFile(myFile);
+							}
+							task.status.state = task.status.FilesUploading;
+							// task.resolveLocalFiles();
+							// task.status.state = task.status.localFilesResolved;
+							// task.uploadFiles();
+
+							// task.status.state = task.status.FilesUploaded;
+						} else {
+							task.status.state = task.status.FilesUploaded;
+						}
 					}
+
 					if (task.status.state == task.status.FilesUploaded) {
 						MyResponseHandler responseHandler = new MyResponseHandler();
 						responseHandler.task = task;
 						task.sendRequest();
+						HttpUtils httpUtils = new HttpUtils();
 						httpUtils.send(task.mHttpMethod, task.API, task.params, responseHandler);
 						task.status.state = task.status.RequestSending;
 
@@ -73,6 +85,30 @@ public class TaskManager {
 					StackTraceElement ste = new Throwable().getStackTrace()[1];
 				}
 			}
+		}
+	}
+
+	void onMyFileUploaded(MyFile uploadedMyFile) {
+		Task task = uploadedMyFile.task;
+		if (task.myFileList == null) {
+			return;
+		}
+		task.uploadeFileCount++;
+		boolean isUploaded = true;
+		if (task.uploadeFileCount >= task.myFileList.size()) {
+			for (MyFile myFile : task.myFileList) {
+				if (myFile.status.state != myFile.status.Uploaded) {
+					isUploaded=false;
+					break;
+				}
+			}
+		}else{
+			isUploaded=false;
+		}
+		
+		if(isUploaded){
+			task.status.state = task.status.FilesUploaded;
+			requestQueue.offer(task);
 		}
 	}
 

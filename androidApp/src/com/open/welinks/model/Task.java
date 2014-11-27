@@ -17,45 +17,46 @@ public abstract class Task {
 		public int state = Created;
 	}
 
-	public long startTime;	
+	public long startTime;
 	public long endTime;
-	public float progress=0;//0~100
-	public void onProgress(){
-		
-	}
+	public float progress = 0;// 0~100
 
-	public void modifyData() {//主UI线程
+	public void onProgress() {
 
 	}
 
-	public void modifyView() {//主UI线程
+	public void modifyData() {// 主UI线程
+
+	}
+
+	public void modifyView() {// 主UI线程
 
 	}
 
 	public List<MyFile> myFileList;
-	public void resolveLocalFiles() {//子线程
+	public int uploadeFileCount = 0;
 
-	}	
+	public void onLocalFilesResolved() {// 子线程
 
-	public void uploadFiles(){//子线程
-		
 	}
-	
+
+	public void uploadFiles() {// 子线程
+
+	}
+
 	public String API;
 	public RequestParams params = new RequestParams();
-	public HttpMethod mHttpMethod=HttpMethod.POST;
-	
-	abstract public void sendRequest(); //子线程
+	public HttpMethod mHttpMethod = HttpMethod.POST;
 
+	abstract public void sendRequest(); // 子线程
 
-	abstract public boolean onResponseReceived(ResponseInfo<String> responseInfo);//主UI线程
+	abstract public boolean onResponseReceived(ResponseInfo<String> responseInfo);// 主UI线程
 
-
-	public void updateData() {//主UI线程
+	public void updateData() {// 主UI线程
 
 	}
 
-	public void updateView() {//主UI线程
+	public void updateView() {// 主UI线程
 	}
 
 }
