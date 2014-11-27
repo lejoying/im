@@ -161,7 +161,7 @@ public class GroupInfoController {
 					modifyGroupData(params);
 				} else if (instance.path.indexOf("backgrounds") != -1) {
 					RequestParams params = new RequestParams();
-					params.addBodyParameter("conver", instance.fileName.substring(instance.fileName.indexOf("/") + 1));
+					params.addBodyParameter("cover", instance.fileName.substring(instance.fileName.indexOf("/") + 1));
 					modifyGroupData(params);
 				}
 			}
@@ -178,7 +178,7 @@ public class GroupInfoController {
 					displayDialog("nickName");
 				} else if (view.equals(thisView.businessOptionView)) {
 					displayDialog("business");
-				} else if (view.equals(thisView.converOptionView)) {
+				} else if (view.equals(thisView.coverOptionView)) {
 					selectPicture(CONVER_SET);
 				} else if (view.equals(thisView.addressOptionView)) {
 					Intent intent = new Intent(thisActivity, CreateGroupLocationActivity.class);
@@ -338,7 +338,7 @@ public class GroupInfoController {
 		thisView.headOptionView.setOnClickListener(mOnClickListener);
 		thisView.nickNameOptionView.setOnClickListener(mOnClickListener);
 		thisView.businessOptionView.setOnClickListener(mOnClickListener);
-		thisView.converOptionView.setOnClickListener(mOnClickListener);
+		thisView.coverOptionView.setOnClickListener(mOnClickListener);
 		thisView.addressOptionView.setOnClickListener(mOnClickListener);
 		thisView.permissionOptionView.setOnClickListener(mOnClickListener);
 		thisView.exit2DeleteGroup.setOnClickListener(mOnClickListener);
@@ -381,7 +381,7 @@ public class GroupInfoController {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			currentGroup.conver = fileName;
+			currentGroup.cover = fileName;
 			viewManage.postNotifyView("ShareSubViewConver");
 			uploadFile(file.getAbsolutePath(), fileName, bytes, UploadMultipart.UPLOAD_TYPE_BACKGROUND);
 		}

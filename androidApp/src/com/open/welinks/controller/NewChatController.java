@@ -308,8 +308,22 @@ public class NewChatController {
 		uploadLoadingListener = new OnUploadLoadingListener() {
 			@Override
 			public void onSuccess(UploadMultipart instance, int time) {
-				String fileName = (String) instance.view.getTag();
-				Message message = messageMap.remove(fileName);
+				Message message = null;
+				String fileName = "";
+				if (instance.view.getTag(R.id.tag_third) != null) {
+					int current = 0, total = 0;
+					fileName = (String) instance.view.getTag(R.id.tag_first);
+					total = (Integer) instance.view.getTag(R.id.tag_second);
+					current = (Integer) instance.view.getTag(R.id.tag_third);
+					if (total == ++current) {
+						message = messageMap.remove(fileName);
+					} else {
+						instance.view.setTag(R.id.tag_third, current);
+					}
+				} else {
+					fileName = (String) instance.view.getTag();
+					message = messageMap.remove(fileName);
+				}
 				if (message != null) {
 					sendMessage(message);
 				}
@@ -444,34 +458,44 @@ public class NewChatController {
 		sendMessage(message);
 	}
 
-	private void createImageMessage(String filePath) {
+	private void createImageMessage(ArrayList<String> selectedImageList) {
 		long time = new Date().getTime();
 		View view = new View(thisActivity);
-		Map<String, Object> map = processImagesInformation(filePath);
-		String fileName = (String) map.get("fileName");
-		view.setTag(fileName);
+		ArrayList<String> messageContent = new ArrayList<String>();
+		view.setTag(R.id.tag_first, String.valueOf(time));
+		view.setTag(R.id.tag_second, selectedImageList.size());
+		view.setTag(R.id.tag_third, 0);
 		Message message = data.messages.new Message();
-		message.content = fileName;
 		message.contentType = "image";
 		message.phone = user.phone;
 		message.nickName = user.nickName;
 		message.time = String.valueOf(time);
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;
-		messageMap.put(fileName, message);
-		UploadMultipart multipart = uploadFile(filePath, fileName, (byte[]) map.get("bytes"), view, UploadMultipart.UPLOAD_TYPE_IMAGE);
-		uploadMultipartList.addMultipart(multipart);
+		for (String filePath : selectedImageList) {
+			Map<String, Object> map = processImagesInformation(filePath);
+			String fileName = (String) map.get("fileName");
+			messageContent.add(fileName);
+			UploadMultipart multipart = uploadFile(filePath, fileName, (byte[]) map.get("bytes"), view, UploadMultipart.UPLOAD_TYPE_IMAGE);
+			uploadMultipartList.addMultipart(multipart);
+		}
+		message.content = gson.toJson(messageContent);
+		messageMap.put(String.valueOf(time), message);
 		addMessageToLocation(message);
 	}
 
 	private void createVoiceMessage(String filePath) {
 		long time = new Date().getTime();
 		View view = new View(thisActivity);
+		String voiceTime = "";
+		String[] infomation = filePath.split("@");
+		filePath = infomation[0];
+		voiceTime = infomation[1];
 		Map<String, Object> map = processVoiceInformation(filePath);
 		String fileName = (String) map.get("fileName");
 		view.setTag(fileName);
 		Message message = data.messages.new Message();
-		message.content = fileName;
+		message.content = fileName + "@" + voiceTime;
 		message.contentType = "voice";
 		message.phone = user.phone;
 		message.nickName = user.nickName;
@@ -638,9 +662,7 @@ public class NewChatController {
 				return;
 			}
 			data.tempData.selectedImageList = null;
-			for (String filePath : selectedImageList) {
-				createImageMessage(filePath);
-			}
+			createImageMessage(selectedImageList);
 		}
 
 	}

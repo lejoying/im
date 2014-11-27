@@ -237,7 +237,30 @@ groupManage.create = function (data, response) {
                 return;
             } else {
                 console.log("初始化的群组好友成功的个数:" + results.length);
-                var group = results[0].group.data;
+                var groupData = results[0].group.data;
+                var group = {
+                    gid: groupData.gid,
+                    icon: groupData.icon,
+                    name: groupData.name,
+                    notReadMessagesCount: 0,
+                    distance: 0,
+                    createTime: groupData.createTime,
+                    longitude: location.longitude || 0,
+                    latitude: location.latitude || 0,
+                    description: groupData.description,
+                    background: groupData.background,
+                    cover: groupData.cover || "",
+                    permission: groupData.permission || ""
+                };
+                if (groupData.boardSequenceString) {
+                    try {
+                        group.boards = JSON.parse(groupData.boardSequenceString);
+                    } catch (e) {
+                        group.boards = [];
+                    }
+                } else {
+                    group.boards = [];
+                }
                 response.write(JSON.stringify({
                     "提示信息": "创建群组成功",
                     group: group,
@@ -723,9 +746,18 @@ groupManage.getallmembers = function (data, response) {
                     createTime: groupData.createTime,
                     description: groupData.description || "",
                     background: groupData.background || "",
-                    conver: groupData.conver || "",
+                    cover: groupData.cover || "",
                     permission: groupData.permission || ""
                 };
+                if (groupData.boardSequenceString) {
+                    try {
+                        group.boards = JSON.parse(groupData.boardSequenceString);
+                    } catch (e) {
+                        group.boards = [];
+                    }
+                } else {
+                    group.boards = [];
+                }
                 getGroupMembers(gid, group);
             } else {
                 response.write(JSON.stringify({
@@ -813,7 +845,10 @@ groupManage.modify = function (data, response) {
     var description = data.description;
     var address = data.address;
     var location = data.location;
-    var conver = data.conver;
+    var cover = data.cover;
+    if (!cover) {
+        cover = data.conver;
+    }
     var permission = data.permission;
     var time = new Date().getTime();
     var eid = phone + "" + time;
@@ -921,8 +956,8 @@ groupManage.modify = function (data, response) {
                     background0 = background;
                     groupData.background = background0;
                 }
-                if (conver) {
-                    groupData.conver = conver;
+                if (cover) {
+                    groupData.cover = cover;
                 }
                 if (permission) {
                     groupData.permission = permission;
@@ -936,9 +971,32 @@ groupManage.modify = function (data, response) {
                 }
                 groupNode.save(function (error) {
                 });
+                var group = {
+                    gid: groupData.gid,
+                    icon: groupData.icon,
+                    name: groupData.name,
+                    notReadMessagesCount: 0,
+                    distance: 0,
+                    createTime: groupData.createTime,
+                    longitude: location.longitude || 0,
+                    latitude: location.latitude || 0,
+                    description: groupData.description,
+                    background: groupData.background,
+                    cover: groupData.cover || "",
+                    permission: groupData.permission || ""
+                };
+                if (groupData.boardSequenceString) {
+                    try {
+                        group.boards = JSON.parse(groupData.boardSequenceString);
+                    } catch (e) {
+                        group.boards = [];
+                    }
+                } else {
+                    group.boards = [];
+                }
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息成功",
-                    group: groupData
+                    group: group
                 }));
                 response.end();
                 var event = JSON.stringify({
@@ -1205,9 +1263,18 @@ groupManage.get = function (data, response) {
                     createTime: groupData.createTime || 0,
                     description: groupData.description || "",
                     background: groupData.background || "",
-                    conver: groupData.conver || "",
+                    cover: groupData.cover || "",
                     permission: groupData.permission || ""
                 };
+                if (groupData.boardSequenceString) {
+                    try {
+                        group.boards = JSON.parse(groupData.boardSequenceString);
+                    } catch (e) {
+                        group.boards = [];
+                    }
+                } else {
+                    group.boards = [];
+                }
                 response.write(JSON.stringify({
                     "提示信息": "获取群组信息成功",
                     group: group
@@ -1488,19 +1555,14 @@ groupManage.getgroupmembers = function (data, response) {
                         addMessage: "",
                         friendStatus: "",
                         alias: "",
-//                        flag: "none",
-//                        accessKey: "",
                         distance: 0,
                         createTime: accountData.createTime,
                         lastLoginTime: accountData.lastlogintime,
-//                        notReadMessagesCount: 0,
                         longitude: accountData.longitude || 0,
                         latitude: accountData.latitude || 0
                     };
-//                    console.log(account.longitude + "---" + account.latitude + ":" + index);
                     friendsMap[account.phone] = account;
                     if (!groupsMap[groupData.gid + ""]) {
-//                        groups.push(groupData.gid + "");
                         var group = {
                             gid: groupData.gid,
                             icon: groupData.icon,
@@ -1512,9 +1574,19 @@ groupManage.getgroupmembers = function (data, response) {
                             latitude: location.latitude || 0,
                             description: groupData.description,
                             background: groupData.background,
-                            conver: groupData.conver || "",
+                            cover: groupData.cover || "",
                             permission: groupData.permission || ""
                         };
+                        if (groupData.boardSequenceString) {
+                            try {
+                                group.boards = JSON.parse(groupData.boardSequenceString);
+                                //group.boards = groupData.boardSequenceString;
+                            } catch (e) {
+                                group.boards = [];
+                            }
+                        } else {
+                            group.boards = [];
+                        }
                         var members = [];
                         members.push(account.phone);
                         group.members = members;

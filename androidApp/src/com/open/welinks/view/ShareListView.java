@@ -28,10 +28,10 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareListController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.DateUtil;
 
 public class ShareListView {

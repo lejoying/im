@@ -44,11 +44,11 @@ import com.open.welinks.customListener.ThumbleListener;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.Comment;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.Comment;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
@@ -206,6 +206,7 @@ public class SquareSubView {
 
 	public void setMenuNameBotton(String name) {
 		int length = name.length();
+		length = length > 8 ? 8 : length;
 		// log.e(name + ":" + textSize * length);
 		int left = (int) (textSize * length);
 		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) botton.getLayoutParams();
@@ -220,9 +221,9 @@ public class SquareSubView {
 		} else {
 			if (currentSquare != null) {
 				parser.check();
-				Share share = data.shares.shareMap.get(currentSquare.gid + "");
-				if (share != null) {
-					roomTextView.setText("上次刷新:" + DateUtil.getChatMessageListTime(share.updateTime));
+				Board board = data.boards.boardsMap.get(currentSquare.currentBoard + "");
+				if (board != null) {
+					roomTextView.setText("上次刷新:" + DateUtil.getChatMessageListTime(board.updateTime));
 				} else {
 					roomTextView.setText("");
 				}
@@ -249,7 +250,7 @@ public class SquareSubView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
 		final String path = file.getAbsolutePath();
 		// log.e(file.exists() + "---exists" + group.conver);
 		if (file.exists()) {
@@ -260,7 +261,7 @@ public class SquareSubView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.conver, path);
+					downloadConver(group.cover, path);
 				}
 
 				@Override
@@ -268,8 +269,8 @@ public class SquareSubView {
 				}
 			});
 		} else {
-			if (group.conver != null) {
-				downloadConver(group.conver, path);
+			if (group.cover != null) {
+				downloadConver(group.cover, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 			}
@@ -331,13 +332,8 @@ public class SquareSubView {
 		// this.squareMessageListBody.height = 10 * displayMetrics.density;
 
 		data = parser.check();
-		if (data.shares.shareMap == null || data.localStatus.localData == null) {
+		if (data.boards.boardsMap == null || data.localStatus.localData == null) {
 			log.e("return shareMap or localData");
-			return;
-		}
-		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare);
-		if (share == null) {
-			log.e("return square share");
 			return;
 		}
 
@@ -370,18 +366,25 @@ public class SquareSubView {
 		this.squareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 
 		// imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
-		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
-		if (group.conver != null && !group.conver.equals("")) {
+		currentSquare = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+		if(currentSquare==null)return;
+		if (currentSquare.cover != null && !currentSquare.cover.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		}
 
-		titleName.setText(group.name);
-		fileHandlers.getHeadImage(group.icon, this.groupHeadView, viewManage.options56);
+		titleName.setText(currentSquare.name);
+		fileHandlers.getHeadImage(currentSquare.icon, this.groupHeadView, viewManage.options56);
 
-		List<String> sharesOrder = share.shareMessagesOrder;
-		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
+		Board board = data.boards.boardsMap.get(currentSquare.currentBoard);
+		if (board == null) {
+			log.e("return square share");
+			return;
+		}
+
+		List<String> sharesOrder = board.shareMessagesOrder;
+		Map<String, ShareMessage> sharesMap = data.boards.shareMessagesMap;
 		time = new Date().getTime();
 		total = sharesOrder.size() * 2 + 1;
 		// if (controlProgress.progress_line1.getX() == controlProgress.width) {
@@ -606,7 +609,7 @@ public class SquareSubView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, viewManage.headOptions40);
+				fileHandlers.getHeadImage(fileName, this.headView, viewManage.options40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					notFriends.add(shareMessage.phone);
 					if (shareMessage.nickName != null) {
@@ -877,7 +880,7 @@ public class SquareSubView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.options40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);

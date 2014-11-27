@@ -87,8 +87,7 @@
                     android:id="@+id/voiceGif"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/chat_receive_voice" />
+                    android:layout_margin="5dp" />
 
                 <TextView
                     android:id="@+id/voicetime"

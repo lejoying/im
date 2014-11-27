@@ -913,6 +913,7 @@ shareManage.sendboardshare = function (data, response) {
                 comments: "[]",
                 type: message.type,
                 nodeType: "Share",
+                sid: sid,
                 content: message.content,
                 time: new Date().getTime()
             }
@@ -923,6 +924,7 @@ shareManage.sendboardshare = function (data, response) {
                     "提示信息": "发布群分享失败",
                     "失败原因": "数据异常",
                     ogsid: ogsid,
+                    sid: sid,
                     gid: gid
                 }), response);
                 console.error(error);
@@ -932,6 +934,7 @@ shareManage.sendboardshare = function (data, response) {
                     "提示信息": "发布群分享失败",
                     "失败原因": "数据异常",
                     ogsid: ogsid,
+                    sid: sid,
                     gid: gid
                 }), response);
             } else {
@@ -941,15 +944,18 @@ shareManage.sendboardshare = function (data, response) {
                     "提示信息": "发布群分享成功",
                     time: shareData.time,
                     ogsid: ogsid,
+                    sid: sid,
                     gsid: shareData.gsid,
                     gid: gid
                 }), response);
+                console.log("发布群分享成功");
             }
         });
     }
 }
 shareManage.getboardshare = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var gid = data.gid;
     var sid = data.sid;
     var nowpage = data.nowpage;
@@ -982,21 +988,41 @@ shareManage.getboardshare = function (data, response) {
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群分享成功",
                     gid: gid,
+                    sid: sid,
                     nowpage: nowpage,
-                    shares: []
+                    shares: {
+                        shareMessagesOrder: [],
+                        shareMessagesMap: {}
+                    }
                 }), response);
             } else {
                 var shares = [];
+                var sharesMap = {};
                 for (var index in results) {
                     var result = results[index];
                     var shareData = result.share.data;
-                    shares.push(shareData);
+                    var share = {
+                        comments: JSON.parse(shareData.comments),
+                        content: shareData.content,
+                        praiseusers: JSON.parse(shareData.praises),
+                        gsid: shareData.gsid,
+                        type: shareData.type,
+                        time: shareData.time,
+                        phone: shareData.phone,
+                        status: "sent"
+                    };
+                    shares.push(share.gsid + "");
+                    sharesMap[share.gsid] = share;
                 }
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群分享成功",
                     gid: gid,
+                    sid: sid,
                     nowpage: nowpage,
-                    shares: shares
+                    shares: {
+                        shareMessagesOrder: shares,
+                        shareMessagesMap: sharesMap
+                    }
                 }), response);
             }
         });
@@ -1207,6 +1233,134 @@ shareManage.modifyboard = function (data, response) {
                     "提示信息": "修改版块失败",
                     "失败原因": "版块不存在",
                     sid: sid
+                }), response);
+            }
+        });
+    }
+}
+shareManage.getboard = function (data, response) {
+    response.asynchronous = 1;
+    var sid = data.sid;
+    if (verifyEmpty.verifyEmpty(data, [sid], response)) {
+        getBoardNode();
+    }
+    function getBoardNode() {
+        var query = [
+            "MATCH (board:Shares)",
+            "WHERE board.sid={sid}",
+            "RETURN board"
+        ].join("\n");
+        var params = {
+            sid: parseInt(sid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块失败",
+                    "失败原因": "数据异常"
+                }), response);
+            } else if (results.length > 0) {
+                var boardData = results.pop().board.data;
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块成功",
+                    board: boardData
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块失败",
+                    "失败原因": "版块不存在"
+                }), response);
+            }
+        });
+    }
+}
+shareManage.getgroupboards = function (data, response) {
+    response.asynchronous = 1;
+    var gid = data.gid;
+    if (verifyEmpty.verifyEmpty(data, [gid], response)) {
+        getGroupBoardNodes();
+    }
+    function getGroupBoardNodes() {
+        var query = [
+            "MATCH (group:Group)-[r:SHARE]->(board:Shares)",
+            "WHERE group.gid={gid}",
+            "RETURN group,board"
+        ].join("\n");
+        var params = {
+            gid: parseInt(gid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块失败",
+                    "失败原因": "数据异常"
+                }), response);
+            } else if (results.length > 0) {
+                var groupNode = results[0].group;
+                var groupData = groupNode.data;
+                var boardsMap = {};
+                var boardsMapT = {};
+                var boarads = [];
+                for (var index in results) {
+                    var boardData = results[index].board.data;
+                    boardsMap[boardData.sid] = boardData;
+                    boardsMapT[boardData.sid] = 1;
+                    boarads.push(boardData.sid);
+                }
+                var boardOrder;
+                if (groupData.boardSequenceString) {
+                    try {
+                        boardOrder = JSON.parse(groupData.boardSequenceString);
+                        var flag = false;
+                        for (var index in boardOrder) {
+                            var sid = boardOrder[index];
+                            if (boardsMapT[sid]) {
+                                boardsMapT[sid] = 0;
+                            } else {
+                                flag = true;
+                                boardOrder = boarads;
+                                groupData.boardSequenceString = JSON.stringify(boarads);
+                                groupNode.save(function (err, node) {
+                                });
+                                break;
+                            }
+                        }
+                        if (!flag) {
+                            for (var index in boardsMapT) {
+                                if (boardsMapT[index] == 1) {
+                                    boardOrder = boarads;
+                                    groupData.boardSequenceString = JSON.stringify(boarads);
+                                    groupNode.save(function (err, node) {
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        boardOrder = boarads;
+                        groupData.boardSequenceString = JSON.stringify(boarads);
+                        groupNode.save(function (err, node) {
+                        });
+                    }
+                } else {
+                    boardOrder = boarads;
+                    groupData.boardSequenceString = JSON.stringify(boarads);
+                    groupNode.save(function (err, node) {
+                    });
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块成功",
+                    gid: gid,
+                    boards: boardOrder,
+                    boardsMap: boardsMap
+                }), response);
+            } else {
+                console.log("length = 0");
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取版块失败",
+                    "失败原因": "数据异常"
                 }), response);
             }
         });

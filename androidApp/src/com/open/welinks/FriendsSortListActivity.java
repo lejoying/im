@@ -180,7 +180,7 @@ public class FriendsSortListActivity extends Activity {
 			imageView.setTag(R.id.tag_first, friend.phone);
 			imageView.setOnClickListener(mOnClickListener);
 			alreadyListContainer.addView(imageView, layoutParams);
-			fileHandlers.getHeadImage(friend.head, imageView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(friend.head, imageView, viewManage.options40);
 		}
 	}
 
@@ -345,7 +345,7 @@ public class FriendsSortListActivity extends Activity {
 			if (!"".equals(friend.alias)) {
 				name = friend.alias;
 			}
-			fileHandlers.getHeadImage(friend.head, viewHolder.headView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(friend.head, viewHolder.headView, viewManage.options40);
 			int section = getSectionForPosition(position);
 
 			if (position == getPositionForSection(section)) {

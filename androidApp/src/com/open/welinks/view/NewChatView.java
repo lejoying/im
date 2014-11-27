@@ -11,6 +11,7 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -436,8 +437,22 @@ public class NewChatView {
 					String[] infomation = message.content.split("@");
 					String time = infomation[1], fileName = infomation[0];
 					holder.voicetime.setText(time + "s");
-
-					// holder.voiceGif.get
+					GifDrawable gifDrawable = null;
+					try {
+						if (type == TYPE_SELF || type == TYPE_SELF_FIRST) {
+							gifDrawable = new GifDrawable(thisActivity.getResources(), R.drawable.chat_send_voice);
+						} else {
+							gifDrawable = new GifDrawable(thisActivity.getResources(), R.drawable.chat_receive_voice);
+						}
+					} catch (NotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					if (gifDrawable != null) {
+						holder.voiceGif.setImageDrawable(gifDrawable);
+						gifDrawable.stop();
+					}
 					thisController.audiohandlers.prepareVoice(fileName);
 					holder.voice.setOnClickListener(thisController.mOnClickListener);
 				} else if (contentType.equals("image")) {
@@ -463,14 +478,14 @@ public class NewChatView {
 						holder.image.setVisibility(View.VISIBLE);
 						holder.image.setTag(R.id.tag_first, images);
 						holder.image.setOnClickListener(thisController.mOnClickListener);
-						thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.fileHandlers.defaultOptions, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+						thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 					} else {
 						holder.image.setVisibility(View.GONE);
 						holder.imagesLayout.setVisibility(View.VISIBLE);
 						holder.imagesCount.setText(String.valueOf(images.size()));
 						holder.imagesLayout.setTag(R.id.tag_first, images);
 						holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
-						thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.fileHandlers.defaultOptions, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+						thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 					}
 				} else if (contentType.equals("gif")) {
 					holder.character.setVisibility(View.GONE);
@@ -491,9 +506,9 @@ public class NewChatView {
 					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
 					holder.shareText.setText(messageContent.text);
 					if (messageContent.image != null && !"".equals(messageContent.image)) {
-						thisController.fileHandlers.getThumbleImage(messageContent.image, holder.shareImage, (int) BaseDataUtils.dpToPx(50), (int) BaseDataUtils.dpToPx(50), thisController.fileHandlers.defaultOptions, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+						thisController.fileHandlers.getThumbleImage(messageContent.image, holder.shareImage, (int) BaseDataUtils.dpToPx(50), (int) BaseDataUtils.dpToPx(50), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 					} else {
-						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, holder.shareImage, thisController.fileHandlers.defaultOptions);
+						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, holder.shareImage, thisController.viewManage.options);
 					}
 					holder.share.setTag(R.id.tag_second, messageContent.gid);
 					holder.share.setTag(R.id.tag_third, messageContent.gsid);

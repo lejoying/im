@@ -43,9 +43,10 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -180,7 +181,7 @@ public class ShareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.viewManage.headOptions40;
+							options = thisView.viewManage.options40;
 						} else if ("conver".equals(tag)) {
 							flag = false;
 						}
@@ -363,6 +364,7 @@ public class ShareSubController {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "text");
+					intent.putExtra("sid", thisView.currentGroup.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
 					// thisView.dismissReleaseShareDialogView();
@@ -370,6 +372,7 @@ public class ShareSubController {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "album");
+					intent.putExtra("sid", thisView.currentGroup.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
 					// thisView.dismissReleaseShareDialogView();
@@ -377,6 +380,7 @@ public class ShareSubController {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "imagetext");
+					intent.putExtra("sid", thisView.currentGroup.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
 					// thisView.dismissReleaseShareDialogView();
@@ -402,17 +406,21 @@ public class ShareSubController {
 							}
 							shareTopMenuGroupName.setText(name);
 							thisView.modifyCurrentShowGroup();
+							if (group.boards == null || group.boards.size() == 0) {
+								DataHandlers.getGroupBoards(group.gid + "");
+							}
 							// display local data
 							nowpage = 0;
 							thisView.showShareMessages();
 							getCurrentGroupShareMessages();
-							thisView.showGroupMembers();
+							thisView.showTopMenuRoomName();
 							thisView.shareMessageListBody.y = 0;
 							thisView.shareMessageListBody.setChildrenPosition();
 						}
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 						intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
+						intent.putExtra("sid", thisView.currentGroup.currentBoard);
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
@@ -424,7 +432,7 @@ public class ShareSubController {
 					} else if ("SharePraise".equals(type)) {
 						parser.check();
 						User currentUser = data.userInformation.currentUser;
-						ShareMessage shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup).shareMessagesMap.get(content);
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
 						boolean option = false;
 						if (!shareMessage.praiseusers.contains(currentUser.phone)) {
 							option = true;
@@ -537,6 +545,7 @@ public class ShareSubController {
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("sid", thisView.currentGroup.currentBoard);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 

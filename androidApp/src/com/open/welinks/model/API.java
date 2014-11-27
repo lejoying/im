@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://192.168.0.100/";// http://www.we-links.com/
 
 	/**
 	 * http://images2.we-links.com/
@@ -80,13 +80,13 @@ public class API {
 
 	// share
 	/**
-	 * http://www.we-links.com/api2/share/sendshare
+	 * http://www.we-links.com/api2/share/sendboardshare
 	 */
-	public static String SHARE_SENDSHARE = API_DOMAIN + "api2/share/sendshare";
+	public static String SHARE_SENDSHARE = API_DOMAIN + "api2/share/sendboardshare";
 	/**
-	 * http://www.we-links.com/api2/share/getgroupshares
+	 * http://www.we-links.com/api2/share/getboardshare
 	 */
-	public static String SHARE_GETSHARES = API_DOMAIN + "api2/share/getgroupshares";
+	public static String SHARE_GETSHARES = API_DOMAIN + "api2/share/getboardshare";
 	/**
 	 * http://www.we-links.com/api2/share/getusershares
 	 */
@@ -107,6 +107,10 @@ public class API {
 	 * http://www.we-links.com/api2/share/delete
 	 */
 	public static String SHARE_DELETE = API_DOMAIN + "api2/share/delete";
+	/**
+	 * http://www.we-links.com/api2/share/getgroupboards
+	 */
+	public static String SHARE_GETGROUPBOARDS = API_DOMAIN + "api2/share/getgroupboards";
 	// message
 	/**
 	 * http://www.we-links.com/api2/message/send

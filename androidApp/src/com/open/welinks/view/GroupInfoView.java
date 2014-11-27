@@ -46,7 +46,7 @@ public class GroupInfoView {
 	public TextView nickNameView;
 	public View businessOptionView;
 	public TextView businessView;
-	public View converOptionView;
+	public View coverOptionView;
 	public View addressOptionView;
 	public TextView addressView;
 	public View newMessageSettingOptionView;
@@ -87,7 +87,7 @@ public class GroupInfoView {
 		this.nickNameView = (TextView) thisActivity.findViewById(R.id.nickNameTx);
 		this.businessOptionView = thisActivity.findViewById(R.id.businessOption);
 		this.businessView = (TextView) thisActivity.findViewById(R.id.businessTx);
-		this.converOptionView = thisActivity.findViewById(R.id.converOption);
+		this.coverOptionView = thisActivity.findViewById(R.id.converOption);
 		this.addressOptionView = thisActivity.findViewById(R.id.addressOption);
 		this.addressView = (TextView) thisActivity.findViewById(R.id.addressTx);
 		this.newMessageSettingOptionView = thisActivity.findViewById(R.id.newMessageSettingOption);
@@ -161,11 +161,11 @@ public class GroupInfoView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		if (group.conver == null || "".equals(group.conver)) {
+		if (group.cover == null || "".equals(group.cover)) {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
 			return;
 		}
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.conver);
+		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
 		final String path = file.getAbsolutePath();
 		if (file.exists()) {
 			imageLoader.displayImage("file://" + path, converImageView, new SimpleImageLoadingListener() {
@@ -175,7 +175,7 @@ public class GroupInfoView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.conver, path);
+					downloadConver(group.cover, path);
 				}
 
 				@Override
@@ -183,8 +183,8 @@ public class GroupInfoView {
 				}
 			});
 		} else {
-			if (group.conver != null) {
-				downloadConver(group.conver, path);
+			if (group.cover != null) {
+				downloadConver(group.cover, path);
 			} else {
 				imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
 			}

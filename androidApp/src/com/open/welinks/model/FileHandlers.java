@@ -65,8 +65,6 @@ public class FileHandlers {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
-	public DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.defaultimage).showImageForEmptyUri(R.drawable.defaultimage).showImageOnFail(R.drawable.defaultimage).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-
 	public static FileHandlers getInstance() {
 		if (fileHandlers == null) {
 			fileHandlers = new FileHandlers();

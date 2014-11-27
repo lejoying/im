@@ -24,13 +24,13 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.FriendsSubController.Circle2;
+import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
 import com.open.welinks.view.ViewManage;
@@ -115,7 +115,7 @@ public class ResponseHandlers {
 							}
 							if (data.localStatus.debugMode.equals("NONE")) {
 								// viewManage.postNotifyView("UserIntimateView");
-								log.e(tag, "刷新好友分组");
+								log.e(tag, ViewManage.getErrorLineNumber() + "刷新好友分组");
 								viewManage.mainView.friendsSubView.showCircles();
 							}
 						}
@@ -130,7 +130,7 @@ public class ResponseHandlers {
 							}
 							if (data.localStatus.debugMode.equals("NONE")) {
 								// viewManage.postNotifyView("UserIntimateView");
-								log.e(tag, "刷新好友分组");
+								log.e(tag, ViewManage.getErrorLineNumber() + "刷新好友分组");
 								viewManage.mainView.friendsSubView.showCircles();
 							}
 						}
@@ -164,7 +164,7 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("MeSubView");
 				}
 			} else {
-				log.e(response.失败原因);
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			}
 		};
 	};
@@ -183,9 +183,9 @@ public class ResponseHandlers {
 					lbsHandlers.uplodUserLbsData();
 				}
 				viewManage.postNotifyView("ChangePasswordActivitySuccess");
-				log.e(response.提示信息);
+				log.e(ViewManage.getErrorLineNumber() + response.提示信息);
 			} else {
-				log.e(response.失败原因);
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 				viewManage.postNotifyView("ChangePasswordActivityFailed");
 				if (viewManage.loginView != null) {
 					viewManage.loginView.thisController.loginFail(response.失败原因);
@@ -250,7 +250,7 @@ public class ResponseHandlers {
 								}
 							}
 						} else {
-							log.e("获取用户信息失败---" + response.失败原因);
+							log.e(ViewManage.getErrorLineNumber() + "获取用户信息失败---" + response.失败原因);
 						}
 					};
 				});
@@ -270,7 +270,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
-				log.e("修改用户信息成功");
+				log.e(ViewManage.getErrorLineNumber() + "修改用户信息成功");
 				data = parser.check();
 				User user = data.userInformation.currentUser;
 				user.latitude = response.account.latitude;
@@ -279,7 +279,7 @@ public class ResponseHandlers {
 				data.userInformation.isModified = true;
 				viewManage.mainView.thisController.chackLBSAccount();
 			} else {
-				log.e("修改用户信息失败---" + response.失败原因);
+				log.e(ViewManage.getErrorLineNumber() + "修改用户信息失败---" + response.失败原因);
 			}
 		};
 
@@ -474,10 +474,10 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改分组顺序成功")) {
-				log.e(tag, "---------------------修改分组顺序成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------修改分组顺序成功");
 				viewManage.mainView.friendsSubView.showCircles();
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -491,9 +491,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改群组顺序成功")) {
-				log.e(tag, "---------------------修改群组顺序成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------修改群组顺序成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -512,7 +512,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取密友圈成功")) {
-				log.e(tag, "获取密友圈成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "获取密友圈成功");
 				List<String> circles = response.relationship.circles;
 				String defaultCircleName = null;
 				if (data.relationship.circlesMap != null) {
@@ -588,14 +588,14 @@ public class ResponseHandlers {
 					// viewManage.postNotifyView("UserIntimateView");
 					viewManage.postNotifyView("DynamicListActivity");
 					viewManage.postNotifyView("MessagesSubView");
-					log.e(tag, "刷新好友分组");
+					log.e(tag, ViewManage.getErrorLineNumber() + "刷新好友分组");
 					viewManage.mainView.friendsSubView.showCircles();
 					viewManage.postNotifyView("CirclesManageView");
 				}
 				DataHandlers.getMessages(data.userInformation.currentUser.flag);
 				DataHandlers.clearInvalidFriendMessages();
 			} else {
-				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
 			}
 		}
 	};
@@ -613,9 +613,9 @@ public class ResponseHandlers {
 					if (response.accounts.size() > 0) {
 						viewManage.postNotifyView("DynamicListActivity");
 					}
-					log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
+					log.e(tag, ViewManage.getErrorLineNumber() + response.accounts.size() + "---------------------获取好友请求成功");
 				} else {
-					log.e(tag, "---------------------" + response.失败原因);
+					log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
@@ -631,10 +631,10 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("添加成功")) {
-				log.e(tag, "---------------------添加好友成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------添加好友成功");
 				DataHandlers.getIntimateFriends();
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -647,9 +647,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("更新通讯录成功")) {
-				log.e(tag, "---------------------更新通讯录成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------更新通讯录成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "更新通讯录---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -662,9 +662,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改成功")) {
-				log.e(tag, "modifyCircleCallBack---------------------修改好友分组成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "modifyCircleCallBack---------------------修改好友分组成功");
 			} else {
-				log.e(tag, "modifyCircleCallBack---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "modifyCircleCallBack---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -673,10 +673,10 @@ public class ResponseHandlers {
 	public ResponseHandler<String> upload = httpClient.new ResponseHandler<String>() {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			log.e(tag, responseInfo + "-------------");
+			log.e(tag, ViewManage.getErrorLineNumber() + responseInfo + "-------------");
 			Header[] headers = responseInfo.getAllHeaders();
 			for (int i = 0; i < headers.length; i++) {
-				log.e(tag, "reply upload: " + headers[i]);
+				log.e(tag, ViewManage.getErrorLineNumber() + "reply upload: " + headers[i]);
 			}
 		}
 	};
@@ -696,16 +696,16 @@ public class ResponseHandlers {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			log.e(tag, responseInfo.result);
+			log.e(tag, ViewManage.getErrorLineNumber() + responseInfo.result);
 			if (response.提示信息.equals("查找成功")) {
 				if (response.exists) {
 
 				} else if (!response.exists) {
-					log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
+					log.e(tag, ViewManage.getErrorLineNumber() + response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
 					// Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
 				}
 			} else {
-				log.e(response.失败原因);
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			}
 		}
 	};
@@ -718,9 +718,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改备注成功")) {
-				log.e(tag, "---------------------修改备注成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------修改备注成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 
@@ -734,9 +734,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("删除好友成功")) {
-				log.e(tag, "---------------------删除成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------删除成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -749,9 +749,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("更新黑名单成功")) {
-				log.e(tag, "relation_blackList:更新黑名单成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "relation_blackList:更新黑名单成功");
 			} else {
-				log.e(tag, "relation_blackList:" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "relation_blackList:" + response.失败原因);
 			}
 		};
 	};
@@ -764,11 +764,11 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发送请求成功")) {
-				log.e(tag, "---------------------发送请求成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送请求成功");
 			} else if (response.提示信息.equals("添加好友成功")) {
 				DataHandlers.getIntimateFriends();
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -808,14 +808,14 @@ public class ResponseHandlers {
 								}
 							}
 							if (message0 != null) {
-								log.e("修改聊天数据成功point");
+								log.e(ViewManage.getErrorLineNumber() + "修改聊天数据成功point");
 								if (message0.status.equals("sending")) {
 									message0.time = response.time;
 								}
 								message0.status = "sent";
 								viewManage.postNotifyView("ChatMessage");
 							} else {
-								log.e("修改聊天数据失败point");
+								log.e(ViewManage.getErrorLineNumber() + "修改聊天数据失败point");
 							}
 						}
 					} else if ("group".equals(response.sendType)) {
@@ -833,14 +833,14 @@ public class ResponseHandlers {
 								}
 							}
 							if (message0 != null) {
-								log.e("修改发送数据成功group");
+								log.e(ViewManage.getErrorLineNumber() + "修改发送数据成功group");
 								if (message0.status.equals("sending")) {
 									message0.time = response.time;
 								}
 								message0.status = "sent";
 								viewManage.postNotifyView("ChatMessage");
 							} else {
-								log.e("修改发送数据失败group");
+								log.e(ViewManage.getErrorLineNumber() + "修改发送数据失败group");
 							}
 						}
 					}
@@ -863,9 +863,9 @@ public class ResponseHandlers {
 
 					}
 				}
-				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
 			} else {
-				log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -881,21 +881,21 @@ public class ResponseHandlers {
 			try {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取成功")) {
-					log.e(tag, response.提示信息 + "---------------------获取消息成功" + response.flag);
+					log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------获取消息成功" + response.flag);
 					List<String> messages = response.messages;
 					parser.check();
 					User user = data.userInformation.currentUser;
 					user.flag = response.flag;
 					data.userInformation.isModified = true;
 					data.messages.isModified = true;
-					log.e("message size:" + messages.size());
+					log.e(ViewManage.getErrorLineNumber() + "message size:" + messages.size());
 					for (int i = 0; i < messages.size(); i++) {
 						Message message = null;
 						try {
 							message = gson.fromJson(messages.get(i), Message.class);
 						} catch (Exception e) {
 							e.printStackTrace();
-							log.e(tag, "gson message Exception");
+							log.e(tag, ViewManage.getErrorLineNumber() + "gson message Exception");
 							continue;
 						}
 						String sendType = message.sendType;
@@ -984,11 +984,11 @@ public class ResponseHandlers {
 					data.messages.isModified = true;
 					viewManage.messagesSubView.showMessagesSequence();
 				} else {
-					log.e(tag, response.提示信息 + "---------------------" + response.失败原因);
+					log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
-				log.e(tag, e.toString() + "");
+				log.e(tag, ViewManage.getErrorLineNumber() + e.toString() + "");
 			}
 		};
 	};
@@ -1020,8 +1020,9 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
-					currentGroup.conver = group.conver;
+					currentGroup.cover = group.cover;
 					currentGroup.permission = group.permission;
+					currentGroup.boards = group.boards;
 				} else {
 					data.relationship.groups.add(key);
 					currentGroup = null;
@@ -1038,15 +1039,44 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
-					currentGroup.conver = group.conver;
+					currentGroup.cover = group.cover;
 					currentGroup.permission = group.permission;
+					currentGroup.boards = group.boards;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
 				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
 				data.relationship.isModified = true;
 				viewManage.shareSubView.setGroupsDialogContent();
 			} else {
-				log.d("创建群组失败===================" + response.失败原因);
+				log.d(ViewManage.getErrorLineNumber() + "创建群组失败===================" + response.失败原因);
+
+			}
+		};
+	};
+	public RequestCallBack<String> group_getGroupBoards = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String gid;
+			public List<String> boards;
+			public Map<String, Board> boardsMap;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取版块成功")) {
+				data = parser.check();
+				Group group = data.relationship.groupsMap.get(response.gid);
+				if (group != null) {
+					group.boards = response.boards;
+					if (data.relationship.squares.contains(response.gid)) {
+						viewManage.squareSubView.thisController.getCurrentSquareShareMessages();
+					} else {
+						viewManage.shareSubView.getCurrentGroupShareMessages();
+					}
+				}
+			} else {
+				log.d(ViewManage.getErrorLineNumber() + response.失败原因);
 
 			}
 		};
@@ -1065,7 +1095,27 @@ public class ResponseHandlers {
 				if (response.提示信息.equals("获取群组成员成功")) {
 					parser.check();
 					data.relationship.groups = response.relationship.groups;
-					data.relationship.groupsMap.putAll(response.relationship.groupsMap);
+					Map<String, Group> groupsMap = response.relationship.groupsMap;
+					for (Entry<String, Group> entity : groupsMap.entrySet()) {
+						String key = entity.getKey();
+						Group currentGroup = entity.getValue();
+						if (data.relationship.groupsMap.containsKey(key)) {
+							Group group = data.relationship.groupsMap.get(key);
+							group.icon = currentGroup.icon;
+							group.name = currentGroup.name;
+							group.distance = currentGroup.distance;
+							group.longitude = currentGroup.longitude;
+							group.latitude = currentGroup.latitude;
+							group.description = currentGroup.description;
+							group.background = currentGroup.background;
+							group.cover = currentGroup.cover;
+							group.permission = currentGroup.permission;
+							group.members = currentGroup.members;
+							group.boards = currentGroup.boards;
+						} else {
+							data.relationship.groupsMap.put(key, currentGroup);
+						}
+					}
 
 					Map<String, Friend> friendsMap = response.relationship.friendsMap;
 					Iterator<Entry<String, Friend>> iterator = friendsMap.entrySet().iterator();
@@ -1107,22 +1157,58 @@ public class ResponseHandlers {
 					if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
 						if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
 							data.localStatus.localData.currentSelectedGroup = gid;
+							if (response.relationship.groups.size() != 0) {
+								gid = response.relationship.groups.get(0);
+							}
 						}
 					} else {
 						data.localStatus.localData.currentSelectedGroup = gid;
 					}
 					// Set the option group dialog content
-					log.e(tag, data.relationship.groups.toString());
+					log.e(tag, ViewManage.getErrorLineNumber() + data.relationship.groups.toString());
 					if (!gid.equals("")) {
 						viewManage.mainView.shareSubView.showShareMessages();
-						viewManage.mainView.shareSubView.showGroupMembers();
+						viewManage.mainView.shareSubView.showTopMenuRoomName();
 						viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
+					}
+					if (!"".equals(data.localStatus.localData.currentSelectedGroup)) {
+						Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+						if (group != null) {
+							viewManage.mainView.shareSubView.showTopMenuRoomName();
+							boolean flag = false;
+							if (group.currentBoard != null && !"".equals(group.currentBoard)) {
+								if (group.boards == null) {
+									group.boards = new ArrayList<String>();
+								}
+								if (group.boards.contains(group.currentBoard)) {
+									viewManage.shareSubView.showShareMessages();
+									viewManage.shareSubView.getCurrentGroupShareMessages();
+								} else {
+									flag = true;
+								}
+							} else {
+								flag = true;
+							}
+							if (flag) {
+								if (group.boards.size() > 0) {
+									group.currentBoard = group.boards.get(0);
+									viewManage.shareSubView.showShareMessages();
+									viewManage.shareSubView.getCurrentGroupShareMessages();
+								} else {
+									log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
+								}
+							}
+							DataHandlers.getGroupBoards(data.localStatus.localData.currentSelectedGroup);
+						} else {
+							log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
+						}
+						log.e(ViewManage.getErrorLineNumber() + "board:" + group.currentBoard);
 					}
 					viewManage.mainView.shareSubView.setGroupsDialogContent();
 					viewManage.postNotifyView("GroupListActivity");
 					DataHandlers.clearInvalidGroupMessages();
 				} else {
-					log.e(response.失败原因);
+					log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
@@ -1140,7 +1226,7 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("加入群组成功")) {
 				parser.check();
 				DataHandlers.getUserCurrentAllGroup();
-				log.e(tag, "---------------------加入群组成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------加入群组成功");
 			}
 		};
 
@@ -1158,7 +1244,7 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("修改群组信息成功")) {
 				Group group = response.group;
 				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
-				log.e("nullPointException:" + currentGroup);
+				log.e(ViewManage.getErrorLineNumber() + "nullPointException:" + currentGroup);
 				String key = currentGroup.gid + "";
 				currentGroup.icon = group.icon;
 				currentGroup.name = group.name;
@@ -1167,25 +1253,26 @@ public class ResponseHandlers {
 				currentGroup.createTime = group.createTime;
 				currentGroup.description = group.description;
 				currentGroup.background = group.background;
-				if (currentGroup.conver != null && !currentGroup.conver.equals(group.conver)) {
+				currentGroup.boards = group.boards;
+				if (currentGroup.cover != null && !currentGroup.cover.equals(group.cover)) {
 					if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 						viewManage.shareSubView.setConver();
 					}
 				}
-				currentGroup.conver = group.conver;
+				currentGroup.cover = group.cover;
 				currentGroup.permission = group.permission;
 				data.relationship.isModified = true;
 				viewManage.postNotifyView("ShareSubView");
 				viewManage.postNotifyView("GroupListActivity");
-				log.e(tag, "---------------------修改群组信息成功, is square:" + data.relationship.squares.contains(key));
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------修改群组信息成功, is square:" + data.relationship.squares.contains(key));
 				if (data.relationship.squares.contains(key)) {
 					lbsHandlers.uplodSquareLbsData(key);
 				} else if (data.relationship.groups.contains(key)) {
 					lbsHandlers.uplodGroupLbsData(key);
 				}
 			} else {
-				log.e(responseInfo.result);
-				log.e(response.失败原因);
+				log.e(ViewManage.getErrorLineNumber() + responseInfo.result);
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			}
 		};
 	};
@@ -1198,9 +1285,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("加入群组成功")) {
-				log.e(tag, "---------------------加入群组成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------加入群组成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 			DataHandlers.getUserCurrentAllGroup();
 		};
@@ -1216,9 +1303,9 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			DataHandlers.getUserCurrentAllGroup();
 			if (response.提示信息.equals("退出群组成功")) {
-				log.e(tag, "---------------------退出群组成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------退出群组成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -1243,11 +1330,12 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
+					currentGroup.boards = group.boards;
 					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
 					if (flag) {
-						boolean flag2 = group.conver.equals(currentGroup.conver);
+						boolean flag2 = group.cover.equals(currentGroup.cover);
 						if (!flag2) {
-							currentGroup.conver = group.conver;
+							currentGroup.cover = group.cover;
 							viewManage.shareSubView.setConver();
 						}
 					}
@@ -1257,9 +1345,9 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("GroupListActivity");
 				}
 
-				log.e(tag, "---------------------获取群组信息成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------获取群组信息成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -1289,9 +1377,10 @@ public class ResponseHandlers {
 					currentGroup.description = group.description;
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
-					currentGroup.conver = group.conver;
+					currentGroup.cover = group.cover;
 					currentGroup.permission = group.permission;
 					currentGroup.members = members;
+					currentGroup.boards = group.boards;
 				} else {
 					data.relationship.groups.add(key0);
 					data.relationship.groupsMap.put(key0, group);
@@ -1325,9 +1414,9 @@ public class ResponseHandlers {
 				}
 				data.relationship.isModified = true;
 
-				log.e(tag, "---------------------获取群组成员成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------获取群组成员成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -1375,9 +1464,9 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("ShareSubView");
 					viewManage.postNotifyView("GroupListActivity");
 				}
-				log.e(tag, "---------------------获取群组成员成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------获取群组成员成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -1387,6 +1476,7 @@ public class ResponseHandlers {
 	public class ResponseHandler2<T> extends ResponseHandler<T> {
 
 		public String gid;
+		public String sid;
 		public String ogsid;
 
 		ResponseHandler2(HttpClient httpClient) {
@@ -1400,6 +1490,7 @@ public class ResponseHandlers {
 			public String 失败原因;
 			public long time;
 			public String gid;
+			public String sid;
 			public String gsid;
 			public String ogsid;
 		}
@@ -1410,23 +1501,24 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("发布群分享成功")) {
 				parser.check();
 				String gid = response.gid;
+				String sid = response.sid;
 				String gsid = response.gsid;
 				String ogsid = response.ogsid;
-				Share share = data.shares.shareMap.get(gid);
-				ShareMessage shareMessage = share.shareMessagesMap.get(ogsid);
+				Board board = data.boards.boardsMap.get(sid);
+				ShareMessage shareMessage = data.boards.shareMessagesMap.get(ogsid);
 				if (shareMessage != null) {
 					shareMessage.gsid = response.gsid;
 					shareMessage.time = response.time;
 					shareMessage.status = "sent";
 				}
-				int index = share.shareMessagesOrder.indexOf(ogsid);
+				int index = board.shareMessagesOrder.indexOf(ogsid);
 				if (index != -1 && shareMessage != null) {
-					share.shareMessagesOrder.remove(index);
-					share.shareMessagesOrder.add(index, gsid);
-					share.shareMessagesMap.remove(ogsid);
-					share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+					board.shareMessagesOrder.remove(index);
+					board.shareMessagesOrder.add(index, gsid);
+					data.boards.shareMessagesMap.remove(ogsid);
+					data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				}
-				data.shares.isModified = true;
+				data.boards.isModified = true;
 				if (data.localStatus.localData.shareReleaseSequece != null) {
 					data.localStatus.localData.shareReleaseSequece.remove(ogsid);
 				}
@@ -1444,15 +1536,16 @@ public class ResponseHandlers {
 						viewManage.mainView.shareSubView.showShareMessages();
 					}
 				}
-				log.e(tag, "---------------------发送成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送成功");
 			} else if (response.失败原因.equals("发布群分享失败")) {
 				parser.check();
 				String gid = response.gid;
+				String sid = response.sid;
 				String ogsid = response.ogsid;
-				Share share = data.shares.shareMap.get(gid);
+				Board board = data.boards.boardsMap.get(sid);
 				ShareMessage shareMessage = null;
-				if (share != null) {
-					shareMessage = share.shareMessagesMap.get(ogsid);
+				if (board != null) {
+					shareMessage = data.boards.shareMessagesMap.get(ogsid);
 				}
 				if (shareMessage != null) {
 					shareMessage.status = "failed";
@@ -1466,19 +1559,19 @@ public class ResponseHandlers {
 						viewManage.mainView.shareSubView.showShareMessages();
 					}
 				}
-				log.e(response.失败原因);
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			} else {
-				log.e(response.失败原因);
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			}
 		};
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			parser.check();
-			Share share = data.shares.shareMap.get(gid);
+			Board board = data.boards.boardsMap.get(sid);
 			ShareMessage shareMessage = null;
-			if (share != null) {
-				shareMessage = share.shareMessagesMap.get(ogsid);
+			if (board != null) {
+				shareMessage = data.boards.shareMessagesMap.get(ogsid);
 			}
 			if (shareMessage != null) {
 				shareMessage.status = "failed";
@@ -1492,7 +1585,7 @@ public class ResponseHandlers {
 					viewManage.mainView.shareSubView.showShareMessages();
 				}
 			}
-			log.e(msg);
+			log.e(ViewManage.getErrorLineNumber() + msg);
 		};
 	};
 	public ResponseHandler<String> share_get = httpClient.new ResponseHandler<String>() {
@@ -1530,10 +1623,11 @@ public class ResponseHandlers {
 				if (response.提示信息.equals("获取群分享成功")) {
 					dataProcessing(response, "Main");
 				} else {
-					log.e(response.失败原因);
+					log.e(ViewManage.getErrorLineNumber() + response.失败原因 + "--获取群分享失败");
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
+				log.e(ViewManage.getErrorLineNumber() + "失败" + e.toString());
 			}
 		};
 
@@ -1557,13 +1651,15 @@ public class ResponseHandlers {
 				if (response.提示信息.equals("获取群分享成功")) {
 					dataProcessing(response, "SectionPage");
 				} else {
-					log.e(response.失败原因);
+					log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
+				log.e(ViewManage.getErrorLineNumber() + "失败" + e.toString());
 			}
 		};
 
+		@Override
 		public void onFailure(HttpException error, String msg) {
 			if (viewManage.shareSectionView != null) {
 				viewManage.shareSectionView.thisController.reflashStatus.state = viewManage.shareSectionView.thisController.reflashStatus.Failed;
@@ -1576,40 +1672,47 @@ public class ResponseHandlers {
 		public String 提示信息;
 		public String 失败原因;
 		public String gid;
+		public String sid;
 		public int nowpage;
-		public Share shares;
+		public SubBoard shares;
+	}
+
+	class SubBoard {
+		public List<String> shareMessagesOrder;
+		public Map<String, ShareMessage> shareMessagesMap;
 	}
 
 	public void dataProcessing(GetShareResponse response, String type) {
-		Share responsesShare = response.shares;
+		SubBoard responsesShare = response.shares;
 		parser.check();
 		String gid = response.gid;
-		Share share = data.shares.shareMap.get(gid);
-		if (share == null) {
-			share = data.shares.new Share();
-			data.shares.shareMap.put(gid, share);
+		String sid = response.sid;
+		Board board = data.boards.boardsMap.get(sid);
+		if (board == null) {
+			board = data.boards.new Board();
+			data.boards.boardsMap.put(sid, board);
 		}
 		List<String> sharesOrder = responsesShare.shareMessagesOrder;
 		if (response.nowpage == 0) {
 			for (int i = sharesOrder.size() - 1; i >= 0; i--) {
 				String key = sharesOrder.get(i);
-				if (!share.shareMessagesOrder.contains(key)) {
-					share.shareMessagesOrder.add(0, key);
+				if (!board.shareMessagesOrder.contains(key)) {
+					board.shareMessagesOrder.add(0, key);
 				}
 			}
 		} else {
 			for (int i = 0; i < sharesOrder.size(); i++) {
 				String key = sharesOrder.get(i);
-				if (!share.shareMessagesOrder.contains(key)) {
-					share.shareMessagesOrder.add(key);
+				if (!board.shareMessagesOrder.contains(key)) {
+					board.shareMessagesOrder.add(key);
 				}
 			}
 		}
 
-		share.shareMessagesMap.putAll(responsesShare.shareMessagesMap);
-		data.shares.isModified = true;
+		data.boards.shareMessagesMap.putAll(responsesShare.shareMessagesMap);
+		data.boards.isModified = true;
 		if (data.relationship.groups.contains(gid)) {
-			share.updateTime = new Date().getTime();
+			board.updateTime = new Date().getTime();
 			if ("Main".equals(type)) {
 				if (responsesShare.shareMessagesOrder.size() == 0) {
 					viewManage.shareSubView.thisController.nowpage--;
@@ -1624,7 +1727,7 @@ public class ResponseHandlers {
 				viewManage.postNotifyView("ShareSectionNotifyShares");
 			}
 		} else {
-			share.updateTime = new Date().getTime();
+			board.updateTime = new Date().getTime();
 			if ("Main".equals(type)) {
 				if (responsesShare.shareMessagesOrder.size() == 0) {
 					viewManage.squareSubView.thisController.nowpage--;
@@ -1669,7 +1772,7 @@ public class ResponseHandlers {
 				// shareMessage.praiseusers.add(phone);
 				// }
 				// }
-				log.e(tag, "---------------------点赞群分享成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------点赞群分享成功");
 			} else if (response.提示信息.equals("点赞群分享失败")) {
 				// Share share = data.shares.shareMap.get(response.gid);
 				// ShareMessage shareMessage =
@@ -1681,7 +1784,7 @@ public class ResponseHandlers {
 				// shareMessage.praiseusers.add(phone);
 				// }
 				// }
-				log.e(tag, "点赞群分享失败---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "点赞群分享失败---------------------" + response.失败原因);
 			}
 			// data.shares.isModified = true;
 		};
@@ -1698,9 +1801,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("评论群分享成功")) {
-				log.e(tag, response.gid + "---------------------评论群分享成功");
+				log.e(tag, ViewManage.getErrorLineNumber() + response.gid + "---------------------评论群分享成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -1715,9 +1818,9 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("删除群分享成功")) {
-				log.e("---------------------删除群分享成功");
+				log.e(ViewManage.getErrorLineNumber() + "---------------------删除群分享成功");
 			} else {
-				log.e(tag, "---------------------" + response.失败原因);
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
 		};
 	};
@@ -1733,10 +1836,10 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.status == 1) {
-				log.e(tag, "create lbs success");
+				log.e(tag, ViewManage.getErrorLineNumber() + "create lbs success");
 
 			} else {
-				log.e(tag, "create*" + response.info);
+				log.e(tag, ViewManage.getErrorLineNumber() + "create*" + response.info);
 			}
 		};
 	};
@@ -1749,10 +1852,10 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.status == 1) {
-				log.e(tag, "updata lbs success");
+				log.e(tag, ViewManage.getErrorLineNumber() + "updata lbs success");
 
 			} else {
-				log.e(tag, "updata*" + response.info);
+				log.e(tag, ViewManage.getErrorLineNumber() + "updata*" + response.info);
 			}
 		};
 	};
@@ -1798,9 +1901,9 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("修改成功")) {
 				viewManage.postNotifyView("UserIntimateView");
 				viewManage.postNotifyView("CirclesManageView");
-				log.e("修改分组名称成功");
+				log.e(ViewManage.getErrorLineNumber() + "修改分组名称成功");
 			} else {
-				log.d("修改失败===================" + response.失败原因);
+				log.d(ViewManage.getErrorLineNumber() + "修改失败===================" + response.失败原因);
 
 			}
 		};
@@ -1824,7 +1927,7 @@ public class ResponseHandlers {
 				}
 				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(list));
 			} else {
-				log.d("删除失败===================" + response.失败原因);
+				log.d(ViewManage.getErrorLineNumber() + "删除失败===================" + response.失败原因);
 
 			}
 		};
@@ -1853,7 +1956,7 @@ public class ResponseHandlers {
 				// viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
 
 			} else {
-				log.d("添加失败===================" + response.失败原因);
+				log.d(ViewManage.getErrorLineNumber() + "添加失败===================" + response.失败原因);
 
 			}
 		};

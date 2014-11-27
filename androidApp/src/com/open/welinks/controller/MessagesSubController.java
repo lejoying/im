@@ -73,7 +73,7 @@ public class MessagesSubController {
 							} else if ("g".equals(type)) {
 								type = "group";
 							}
-							Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
+							Intent intent = new Intent(thisView.mainView.thisActivity, NewChatActivity.class);
 							intent.putExtra("id", value);
 							intent.putExtra("type", type);
 							thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);

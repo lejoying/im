@@ -44,10 +44,10 @@ import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -141,7 +141,7 @@ public class SquareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.viewManage.headOptions40;
+							options = thisView.viewManage.options40;
 						} else if ("conver".equals(tag)) {
 							flag = false;
 						}
@@ -296,6 +296,7 @@ public class SquareSubController {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "square");
 					intent.putExtra("type", "text");
+					intent.putExtra("sid", thisView.currentSquare.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
@@ -303,6 +304,7 @@ public class SquareSubController {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "square");
 					intent.putExtra("type", "album");
+					intent.putExtra("sid", thisView.currentSquare.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
@@ -310,6 +312,7 @@ public class SquareSubController {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "square");
 					intent.putExtra("type", "imagetext");
+					intent.putExtra("sid", thisView.currentSquare.currentBoard);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
@@ -338,6 +341,7 @@ public class SquareSubController {
 								// TODO shareTopMenuGroupName
 								TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
 								data.localStatus.localData.currentSelectedSquare = group.gid + "";
+								thisView.currentSquare = group;
 								String name = group.name;
 								if (name.length() > 8) {
 									name = name.substring(0, 8);
@@ -358,6 +362,7 @@ public class SquareSubController {
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 						intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
+						intent.putExtra("sid", thisView.currentSquare.currentBoard);
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
@@ -370,10 +375,11 @@ public class SquareSubController {
 						// TODO
 						parser.check();
 						String phone = data.userInformation.currentUser.phone;
-						Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare);
-						if (share != null) {
+						thisView.currentSquare = data.relationship.groupsMap.get(thisView.currentSquare.gid + "");
+						Board board = data.boards.boardsMap.get(thisView.currentSquare.currentBoard);
+						if (board != null) {
 							boolean option = false;
-							ShareMessage shareMessage = share.shareMessagesMap.get(content);
+							ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
 							List<String> praiseUsers = shareMessage.praiseusers;
 							if (praiseUsers.contains(phone)) {
 								option = false;
@@ -391,7 +397,7 @@ public class SquareSubController {
 								option = true;
 								praiseUsers.add(phone);
 							}
-							data.shares.isModified = true;
+							data.boards.isModified = true;
 							reflashMessageContent(content);
 							view.setTag(R.id.time, null);
 							modifyPraiseusersToMessage(option, shareMessage.gsid);
@@ -445,7 +451,7 @@ public class SquareSubController {
 			return;
 		}
 		try {
-			ShareMessage shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare).shareMessagesMap.get(gsid);
+			ShareMessage shareMessage = data.boards.shareMessagesMap.get(gsid);
 			String keyName1 = "message#" + gsid;
 			List<String> listItemsSequence = thisView.squareMessageListBody.listItemsSequence;
 			Map<String, MyListItemBody> listItemBodiesMap = thisView.squareMessageListBody.listItemBodiesMap;
@@ -490,6 +496,9 @@ public class SquareSubController {
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedSquare);
+		parser.check();
+		thisView.currentSquare = data.relationship.groupsMap.get(thisView.currentSquare.gid + "");
+		params.addBodyParameter("sid", thisView.currentSquare.currentBoard);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 

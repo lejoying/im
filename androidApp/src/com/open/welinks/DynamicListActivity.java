@@ -348,11 +348,11 @@ public class DynamicListActivity extends Activity {
 			}
 			holder.eventContentView.setText(content);
 			if (flag) {
-				fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.headOptions40);
+				fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.options40);
 				convertView.setTag(R.id.tag_first, event.gid);
 				convertView.setTag(R.id.tag_second, "group");
 			} else {
-				fileHandlers.getHeadImage(data.userInformation.currentUser.head, holder.headView, viewManage.headOptions40);
+				fileHandlers.getHeadImage(data.userInformation.currentUser.head, holder.headView, viewManage.options40);
 				convertView.setTag(R.id.tag_first, data.userInformation.currentUser.phone);
 				convertView.setTag(R.id.tag_second, "user");
 			}
@@ -570,7 +570,7 @@ public class DynamicListActivity extends Activity {
 				e.printStackTrace();
 			}
 			// holder.headView.setImageBitmap(bitmap);
-			fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.headOptions40);
+			fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.options40);
 			return convertView;
 		}
 	}

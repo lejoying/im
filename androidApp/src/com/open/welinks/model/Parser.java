@@ -15,11 +15,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.open.lib.MyLog;
+import com.open.welinks.model.Data.Boards;
 import com.open.welinks.model.Data.Event;
 import com.open.welinks.model.Data.LocalStatus.LocalData;
 import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
-import com.open.welinks.model.Data.Shares;
 import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.utils.MyGson;
 import com.open.welinks.utils.StreamParser;
@@ -71,8 +71,8 @@ public class Parser {
 			String messageContent = getFromAssets("message.js");
 			data.messages = gson.fromJson(messageContent, Messages.class);
 
-			String shareContent = getFromAssets("share.js");
-			data.shares = gson.fromJson(shareContent, Shares.class);
+			String boardsContent = getFromAssets("boards.js");
+			data.boards = gson.fromJson(boardsContent, Boards.class);
 
 			String eventContent = getFromAssets("event.js");
 			data.event = gson.fromJson(eventContent, Event.class);
@@ -263,12 +263,12 @@ public class Parser {
 				Log.e(tag, e.toString());
 			}
 			try {
-				if (data.shares == null) {
-					String shareContent = getFromUserForder(phone, "share.js");
-					data.shares = gson.fromJson(shareContent, Shares.class);
+				if (data.boards == null) {
+					String boardsContent = getFromUserForder(phone, "boards.js");
+					data.boards = gson.fromJson(boardsContent, Boards.class);
 				}
 			} catch (Exception e) {
-				deleteFile(phone, "share.js");
+				deleteFile(phone, "boards.js");
 			}
 			try {
 				if (data.event == null) {
@@ -353,10 +353,10 @@ public class Parser {
 			}
 		}
 
-		if (data.shares.isModified) {
-			data.shares.isModified = false;
-			String sharesStr = gson.toJson(data.shares);
-			saveToUserForder(phone, "share.js", sharesStr);
+		if (data.boards.isModified) {
+			data.boards.isModified = false;
+			String boards = gson.toJson(data.boards);
+			saveToUserForder(phone, "boards.js", boards);
 		}
 
 		if (data.messages != null) {

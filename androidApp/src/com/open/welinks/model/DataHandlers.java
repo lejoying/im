@@ -23,13 +23,13 @@ import com.open.welinks.controller.UploadMultipart;
 import com.open.welinks.controller.UploadMultipartList;
 import com.open.welinks.customListener.OnUploadLoadingListListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
+import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Shares.Share;
-import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
@@ -134,6 +134,16 @@ public class DataHandlers {
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}
 
+	public static void getGroupBoards(String gid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, responseHandlers.group_getGroupBoards);
+	}
+
 	public static void clearInvalidGroupMessages() {
 		try {
 			parser.check();
@@ -218,8 +228,8 @@ public class DataHandlers {
 			// data.messages.groupMessageMap.clear();
 			// data.messages.messagesOrder.clear();
 
-			data.shares.isModified = false;
-			data.shares.shareMap.clear();
+			data.boards.isModified = false;
+			data.boards.boardsMap.clear();
 
 			data.event.isModified = false;
 			data.event.groupEvents.clear();
@@ -297,7 +307,7 @@ public class DataHandlers {
 					public void run() {
 						final ShareDraft entity = sequeceMap.get(ogsid);
 						try {
-							if (!data.shares.shareMap.get(entity.gid).shareMessagesOrder.contains(ogsid)) {
+							if (!data.boards.boardsMap.get(entity.sid).shareMessagesOrder.contains(ogsid)) {
 								return;
 							}
 						} catch (Exception e1) {
@@ -310,9 +320,9 @@ public class DataHandlers {
 							public void onSuccess(OnUploadLoadingListListener instance) {
 								super.onSuccess(instance);
 								try {
-									sendMessageToServer(instance.shareMessage.content, entity.gid, entity.gsid);
+									sendMessageToServer(instance.shareMessage.content, entity.gid, entity.gsid, entity.sid);
 								} catch (Exception e) {
-									sendMessageToServer("出现bug", entity.gid, entity.gsid);
+									sendMessageToServer("出现bug", entity.gid, entity.gsid, entity.sid);
 									e.printStackTrace();
 								}
 							}
@@ -320,17 +330,18 @@ public class DataHandlers {
 						long time = new Date().getTime();
 
 						parser.check();
-						if (data.shares == null) {
-							data.shares = data.new Shares();
+						if (data.boards == null) {
+							data.boards = data.new Boards();
 						}
-						if (data.shares.shareMap.get(entity.gid) == null) {
-							Share share = data.shares.new Share();
-							data.shares.shareMap.put(entity.gid, share);
+						if (data.boards.boardsMap.get(entity.sid) == null) {
+							Board board = data.boards.new Board();
+							data.boards.boardsMap.put(entity.sid, board);
 						}
-						Share share = data.shares.shareMap.get(entity.gid);
-						ShareMessage shareMessage = share.new ShareMessage();
+						Board board = data.boards.boardsMap.get(entity.sid);
+						ShareMessage shareMessage = data.boards.new ShareMessage();
 						shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 						shareMessage.gsid = entity.gsid;
+						shareMessage.sid = entity.sid;
 						shareMessage.type = "imagetext";
 						shareMessage.phone = currentUser.phone;
 						shareMessage.time = time;
@@ -352,11 +363,11 @@ public class DataHandlers {
 								copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems, imageList, onUploadLoadingListListener);
 							} else {
 								String content = gson.toJson(shareContent.shareContentItems);
-								sendMessageToServer(content, entity.gid, shareMessage.gsid);
+								sendMessageToServer(content, entity.gid, shareMessage.gsid, shareMessage.sid);
 							}
 						} else {
 							String content = gson.toJson(shareContent.shareContentItems);
-							sendMessageToServer(content, entity.gid, shareMessage.gsid);
+							sendMessageToServer(content, entity.gid, shareMessage.gsid, shareMessage.sid);
 						}
 
 						String content = gson.toJson(shareContent.shareContentItems);
@@ -364,10 +375,10 @@ public class DataHandlers {
 						shareMessage.content = content;
 
 						// To add data to the data
-						if (share.shareMessagesOrder.contains(entity.gsid)) {
-							share.shareMessagesOrder.add(0, shareMessage.gsid);
-							share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
-							data.shares.isModified = true;
+						if (board.shareMessagesOrder.contains(entity.gsid)) {
+							board.shareMessagesOrder.add(0, shareMessage.gsid);
+							data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+							data.boards.isModified = true;
 
 							// Local data diaplay in MainHandler
 							if ("square".equals(entity.gtype)) {
@@ -449,7 +460,7 @@ public class DataHandlers {
 		public String content;
 	}
 
-	public void sendMessageToServer(String content, String gid, String gsid) {
+	public void sendMessageToServer(String content, String gid, String gsid, String sid) {
 
 		SendShareMessage sendShareMessage = new SendShareMessage();
 		sendShareMessage.type = "imagetext";
@@ -463,6 +474,8 @@ public class DataHandlers {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("ogsid", gsid);
+		params.addBodyParameter("sid", sid);
+		params.addBodyParameter("nickName", currentUser.nickName);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
