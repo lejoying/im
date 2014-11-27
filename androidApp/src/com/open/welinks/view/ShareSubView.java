@@ -390,11 +390,11 @@ public class ShareSubView {
 			return;
 		}
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		if (!flag || currentGroup == null) {
+		if (currentGroup == null || !flag) {
 			return;
 		}
 		if (currentGroup.currentBoard == null || "".equals(currentGroup.currentBoard)) {
-			if (currentGroup.boards.size() > 0) {
+			if (currentGroup.boards != null && currentGroup.boards.size() > 0) {
 				currentGroup.currentBoard = currentGroup.boards.get(0);
 			}
 		}

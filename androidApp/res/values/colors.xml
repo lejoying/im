@@ -32,6 +32,7 @@
     <color name="white30">#4cffffff</color>
     <color name="white50">#7fffffff</color>
     <color name="white80">#ccffffff</color>
+    <color name="white90">#eeffffff</color>
     <color name="back">#fff0f0f0</color>
 
 </resources>

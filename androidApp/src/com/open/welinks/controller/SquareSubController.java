@@ -497,11 +497,12 @@ public class SquareSubController {
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedSquare);
 		parser.check();
+
 		thisView.currentSquare = data.relationship.groupsMap.get(thisView.currentSquare.gid + "");
 		params.addBodyParameter("sid", thisView.currentSquare.currentBoard);
+
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
-
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack);
 	}
 

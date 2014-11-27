@@ -30,7 +30,8 @@ public class NewChatActivity extends Activity {
 
 		this.thisController.onCreate();
 		this.thisView.initViews();
-		this.thisController.initListeners();
+		this.thisController.initData();
+		this.thisView.fillData();
 	}
 
 	@Override

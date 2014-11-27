@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -183,7 +184,7 @@ public class FileHandlers {
 		};
 	}
 
-	public void getImage(String fileName, final ImageView imageView, final int type, final DisplayImageOptions options) {
+	public void getImage(String fileName, final ImageView imageView, final LayoutParams params, final int type, final DisplayImageOptions options) {
 		File file = null;
 		String excessivePath = "", excessiveUrl = "";
 		if (fileName == null || "".equals(fileName)) {
@@ -214,10 +215,12 @@ public class FileHandlers {
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 						if (imageView.getTag(R.id.tag_first) != null) {
-							float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
-							int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
-							LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
-							imageView.setLayoutParams(params);
+							if (params == null) {
+								float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
+								int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
+								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
+								imageView.setLayoutParams(params);
+							}
 						}
 					}
 				});
@@ -229,7 +232,7 @@ public class FileHandlers {
 	}
 
 	public void getImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
-		getImage(fileName, imageView, DownloadFile.TYPE_IMAGE, options);
+		getImage(fileName, imageView, null, DownloadFile.TYPE_IMAGE, options);
 	}
 
 	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {

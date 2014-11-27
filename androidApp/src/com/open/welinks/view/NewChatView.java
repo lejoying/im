@@ -40,6 +40,7 @@ import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.NewChatController;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.DataHandlers;
@@ -69,6 +70,8 @@ public class NewChatView {
 	public EditText chatInput;
 	public GridView chatMenu;
 	public ChatFaceView faceLayout;
+
+	public SmallBusinessCardPopView businessCardPopView;
 
 	public ChatAdapter mChatAdapter;
 	public ChatMenuAdapter mChatMenuAdapter;
@@ -108,6 +111,8 @@ public class NewChatView {
 		chatInput = (EditText) thisActivity.findViewById(R.id.chatInput);
 		chatMenu = (GridView) thisActivity.findViewById(R.id.chatMenu);
 		faceLayout = (ChatFaceView) thisActivity.findViewById(R.id.faceLayout);
+
+		businessCardPopView = new SmallBusinessCardPopView(thisActivity, thisActivity.findViewById(R.id.chatMainView));
 
 		chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_record));
 		chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
@@ -217,7 +222,7 @@ public class NewChatView {
 				return TYPE_EVENT;
 			} else {
 				if (message.phone.equals(currentUser.phone)) {
-					if (message2 != null && message2.phone.equals(message.phone)) {
+					if (message2 != null && message2.phone != null && message2.phone.equals(message.phone)) {
 						return TYPE_SELF;
 					} else {
 						return TYPE_SELF_FIRST;
@@ -225,13 +230,13 @@ public class NewChatView {
 				} else {
 					friend = thisController.data.relationship.friendsMap.get(message.phone);
 					if (friend.sex.equals("male") || friend.sex.equals("男")) {
-						if (message2 != null && message2.phone.equals(message.phone)) {
+						if (message2 != null && message2.phone != null && message2.phone.equals(message.phone)) {
 							return TYPE_OTHER_MALE;
 						} else {
 							return TYPE_OTHER_MALE_FIRST;
 						}
 					} else {
-						if (message2 != null && message2.phone.equals(message.phone)) {
+						if (message2 != null && message2.phone != null && message2.phone.equals(message.phone)) {
 							return TYPE_OTHER_FEMALE;
 						} else {
 							return TYPE_OTHER_FEMALE_FIRST;
@@ -314,20 +319,21 @@ public class NewChatView {
 				holder = (ChatHolder) convertView.getTag();
 			}
 
-			holder.chatLayout.setBackgroundResource(backgroundDrawableId);
-
-			if (!"".equals(messageHead)) {
-				thisController.fileHandlers.getHeadImage(messageHead, holder.head, headOptions);
-			} else {
-				holder.head.setVisibility(View.GONE);
-			}
-
 			if (type == TYPE_EVENT) {
 				MyGson gson = new MyGson();
 				EventMessage event = gson.fromJson(message.content, EventMessage.class);
 				String content = DataHandlers.switchChatMessageEvent(event);
 				holder.character.setText(content);
 			} else {
+				if (!"".equals(messageHead)) {
+					thisController.fileHandlers.getHeadImage(messageHead, holder.head, headOptions);
+					holder.head.setTag(R.id.tag_first, "head");
+					holder.head.setTag(R.id.tag_second, message.phone);
+					holder.head.setOnClickListener(thisController.mOnClickListener);
+				} else {
+					holder.head.setVisibility(View.GONE);
+				}
+				holder.chatLayout.setBackgroundResource(backgroundDrawableId);
 				String contentType = message.contentType;
 				if (type == TYPE_SELF) {
 					holder.status.setVisibility(View.VISIBLE);
@@ -454,6 +460,8 @@ public class NewChatView {
 						gifDrawable.stop();
 					}
 					thisController.audiohandlers.prepareVoice(fileName);
+					holder.voice.setTag(R.id.tag_first, contentType);
+					holder.voice.setTag(R.id.tag_second, fileName);
 					holder.voice.setOnClickListener(thisController.mOnClickListener);
 				} else if (contentType.equals("image")) {
 					holder.character.setVisibility(View.GONE);
@@ -476,14 +484,16 @@ public class NewChatView {
 					if (images.size() == 1) {
 						holder.imagesLayout.setVisibility(View.GONE);
 						holder.image.setVisibility(View.VISIBLE);
-						holder.image.setTag(R.id.tag_first, images);
+						holder.image.setTag(R.id.tag_first, contentType);
+						holder.image.setTag(R.id.tag_second, images);
 						holder.image.setOnClickListener(thisController.mOnClickListener);
 						thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 					} else {
 						holder.image.setVisibility(View.GONE);
 						holder.imagesLayout.setVisibility(View.VISIBLE);
 						holder.imagesCount.setText(String.valueOf(images.size()));
-						holder.imagesLayout.setTag(R.id.tag_first, images);
+						holder.imagesLayout.setTag(R.id.tag_first, contentType);
+						holder.imagesLayout.setTag(R.id.tag_second, images);
 						holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
 						thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 					}
@@ -510,8 +520,10 @@ public class NewChatView {
 					} else {
 						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, holder.shareImage, thisController.viewManage.options);
 					}
+					holder.share.setTag(R.id.tag_first, contentType);
 					holder.share.setTag(R.id.tag_second, messageContent.gid);
 					holder.share.setTag(R.id.tag_third, messageContent.gsid);
+					holder.share.setTag(R.id.tag_four, messageContent.sid);
 					holder.share.setOnClickListener(thisController.mOnClickListener);
 				}
 			}

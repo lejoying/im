@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.gson.Gson;
@@ -35,9 +36,11 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
+import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.customListener.AudioListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
@@ -111,10 +114,9 @@ public class NewChatController {
 		if (type != null && !"".equals(type)) {
 			this.type = type;
 		}
-		initData();
 	}
 
-	private void initData() {
+	public void initData() {
 		user = data.userInformation.currentUser;
 		messageMap = new HashMap<String, Message>();
 		inputManager = new InputMethodManagerUtils(thisActivity);
@@ -124,16 +126,41 @@ public class NewChatController {
 				thisView.chatInput.setText(content);
 			}
 		}
+		initListeners();
 	}
 
 	public void initListeners() {
 		mOnClickListener = new OnClickListener() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
 					String contentType = (String) view.getTag(R.id.tag_first);
 					if ("voice".equals(contentType)) {
 						thisView.changeVoice(view);
+					} else if ("image".equals(contentType)) {
+						data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_second);
+						Intent intent = new Intent(thisActivity, ImageScanActivity.class);
+						intent.putExtra("position", String.valueOf(0));
+						thisActivity.startActivity(intent);
+					} else if ("share".equals(contentType)) {
+						String gid = (String) view.getTag(R.id.tag_second);
+						String gsid = (String) view.getTag(R.id.tag_third);
+						String sid = (String) view.getTag(R.id.tag_four);
+						if (gid.matches("[\\d]+") && gsid.matches("[\\d]+")) {
+							Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+							intent.putExtra("gid", gid);
+							intent.putExtra("sid", sid);
+							intent.putExtra("gsid", gsid);
+							thisActivity.startActivity(intent);
+						} else {
+							Toast.makeText(thisActivity, "群分享不存在", Toast.LENGTH_SHORT).show();
+						}
+					} else if ("head".equals(contentType)) {
+						String phone = (String) view.getTag(R.id.tag_second);
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
+						thisView.businessCardPopView.cardView.setMenu(false);
+						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (thisView.backView.equals(view)) {
 					thisActivity.finish();

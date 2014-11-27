@@ -367,7 +367,8 @@ public class SquareSubView {
 
 		// imageLoader.displayImage("drawable://" + R.drawable.login_background_1, groupCoverView);
 		currentSquare = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
-		if(currentSquare==null)return;
+		if (currentSquare == null)
+			return;
 		if (currentSquare.cover != null && !currentSquare.cover.equals("")) {
 			setConver();
 		} else {

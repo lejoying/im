@@ -21,9 +21,8 @@ import android.util.Log;
 
 public class AudioHandlers {
 	private FileHandlers fileHandlers = FileHandlers.getInstance();
-	// private Data data = Data.getInstance();
 
-	private static final int SAMPLE_RATE = 11025;// 8000 11025 32000 44100
+	private static final int SAMPLE_RATE = 11025;// 8000 11025 22050 32000 44100
 
 	private short[] mRecordData;
 	private short[] mPlayData;
@@ -40,7 +39,6 @@ public class AudioHandlers {
 	private int mPrimePlaySize = 0, mRecordReadSize = 38;
 	private long recorderStartTime, recorderEndTime;
 	private int mRecorderMinBufferSize = 0;
-
 	private int mSpeexEncodeFrameSize = 0, mSpeexDecodeFrameSize = 0;
 
 	private static Speex speex;
@@ -51,7 +49,6 @@ public class AudioHandlers {
 	public AudioHandlers() {
 		mSpeexEncodeFrameSize = speex.getEncodeFrameSize();
 		mSpeexDecodeFrameSize = speex.getDecodeFrameSize();
-		Log.e(tag, "mSpeexEncodeFrameSize:" + mSpeexEncodeFrameSize + "          mSpeexDecodeFrameSize:" + mSpeexDecodeFrameSize);
 		audioFolder = new File(fileHandlers.sdcardVoiceFolder.getAbsolutePath());
 		if (!audioFolder.exists()) {
 			audioFolder.mkdir();
@@ -74,18 +71,19 @@ public class AudioHandlers {
 		if (isRecording) {
 			return;
 		}
-		if (mAudioRecord == null) {
-			initRecorder();
+		if (mAudioRecord != null) {
+			this.closeRecord();
 		}
+		initRecorder();
 		getFilePath();
 		new RecordAudioThread().start();
 		isRecording = true;
 	}
 
 	public String stopRecording() {
+		isRecording = false;
 		if (mAudioRecord != null) {
 			mAudioRecord.stop();
-			isRecording = false;
 			this.closeRecord();
 		}
 		int time = (int) ((recorderEndTime - recorderStartTime) / 1000);
@@ -148,7 +146,6 @@ public class AudioHandlers {
 		mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, mRecorderMinBufferSize);
 		mRecordData = new short[mRecorderMinBufferSize];
 		mRecordProcessedData = new byte[mSpeexEncodeFrameSize];
-
 	}
 
 	private void initAudioTrack() {
@@ -295,11 +292,7 @@ public class AudioHandlers {
 						output.write(mRecordProcessedData, 0, encodeSize);
 						Log.d(tag, "encodeSize:" + encodeSize + "    mSpeexFrameSize:" + mSpeexEncodeFrameSize);
 					} else {
-						if (!isRecording) {
-							break;
-						} else {
-							sleep(50);
-						}
+						sleep(50);
 					}
 
 				}

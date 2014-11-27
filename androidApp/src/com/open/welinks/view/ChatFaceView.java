@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -36,7 +37,6 @@ public class ChatFaceView extends FrameLayout {
 	private PageControlView facePagerControl;
 	private LinearLayout faceViewList;
 
-	private String type = "default";
 	private List<Integer> defaultEmojis;
 	private List<View> pagerViews;
 	private List<String> faceList;
@@ -220,7 +220,7 @@ public class ChatFaceView extends FrameLayout {
 		image.setLayoutParams(params);
 		image.setBackgroundResource(R.drawable.selector_chat_face_item);
 		image.setOnClickListener(mOnClickListener);
-		fileHandlers.getImage(filePath, image, DownloadFile.TYPE_GIF_IMAGE, null);
+		fileHandlers.getImage(filePath, image, params, DownloadFile.TYPE_GIF_IMAGE, null);
 		faceViewList.addView(image);
 		addSpaceView();
 		image.setTag((faceViewList.getChildCount() - 1) / 2);
@@ -315,7 +315,7 @@ public class ChatFaceView extends FrameLayout {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (type.equals("default")) {
 				convertView = new ImageView(context);
-				android.widget.AbsListView.LayoutParams params = new android.widget.AbsListView.LayoutParams(LayoutParams.WRAP_CONTENT, (int) BaseDataUtils.dpToPx(60));
+				AbsListView.LayoutParams params = new AbsListView.LayoutParams(LayoutParams.WRAP_CONTENT, (int) BaseDataUtils.dpToPx(60));
 				convertView.setLayoutParams(params);
 				convertView.setPadding((int) BaseDataUtils.dpToPx(5), (int) BaseDataUtils.dpToPx(5), (int) BaseDataUtils.dpToPx(5), (int) BaseDataUtils.dpToPx(5));
 				if (position == total) {
@@ -333,13 +333,13 @@ public class ChatFaceView extends FrameLayout {
 			} else {
 				if (faceNames != null) {
 					convertView = new ImageView(context);
-					android.widget.AbsListView.LayoutParams params = new android.widget.AbsListView.LayoutParams(LayoutParams.WRAP_CONTENT, (int) BaseDataUtils.dpToPx(90));
+					AbsListView.LayoutParams params = new AbsListView.LayoutParams(android.widget.AbsListView.LayoutParams.WRAP_CONTENT, (int) BaseDataUtils.dpToPx(90));
 					convertView.setLayoutParams(params);
 					convertView.setPadding((int) BaseDataUtils.dpToPx(5), (int) BaseDataUtils.dpToPx(5), (int) BaseDataUtils.dpToPx(5), (int) BaseDataUtils.dpToPx(5));
 					int resource = total * current + position;
 					if (resource < faceNames.size()) {
 						convertView.setBackgroundResource(R.drawable.selector_chat_face_item);
-						fileHandlers.getImage(faceNames.get(resource), ((ImageView) convertView), DownloadFile.TYPE_GIF_IMAGE, null);
+						fileHandlers.getImage(faceNames.get(resource), ((ImageView) convertView), params, DownloadFile.TYPE_GIF_IMAGE, null);
 						convertView.setTag(R.id.tag_first, faceNames.get(resource));
 					}
 				}
