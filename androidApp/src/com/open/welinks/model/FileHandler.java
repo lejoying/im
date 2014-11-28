@@ -55,9 +55,11 @@ public class FileHandler {
 
 					resolveFile(myFile);
 					myFile.status.state = myFile.status.LocalStored;
+					myFileUploadQueue.offer(myFile);
 
 				} catch (Exception e) {
 					StackTraceElement ste = new Throwable().getStackTrace()[1];
+					log.e("Exception@" + ste.getLineNumber());
 				}
 			}
 		}
@@ -71,10 +73,20 @@ public class FileHandler {
 			while (true) {
 				try {
 					MyFile myFile = myFileUploadQueue.take();
-					checkFile(myFile);
-
+					if (myFile.status.state == myFile.status.LocalStored) {
+						checkFile(myFile);
+					} else if (myFile.status.state == myFile.status.Checked) {
+						initiateUpLoad(myFile);
+					} else if (myFile.status.state == myFile.status.Initialized) {
+						upLoadFile(myFile);
+					} else if (myFile.status.state == myFile.status.Uploaded) {
+						completeFile(myFile);
+					} else if (myFile.status.state == myFile.status.Completed) {
+						recordFileName(myFile);
+					}
 				} catch (Exception e) {
 					StackTraceElement ste = new Throwable().getStackTrace()[1];
+					log.e("Exception@" + ste.getLineNumber());
 				}
 			}
 		}
@@ -89,24 +101,49 @@ public class FileHandler {
 
 	public void onCheckFile(MyFile myFile) {
 		if (myFile.isExists) {
-			myFile.status.state = myFile.status.Uploaded;
+			myFile.status.state = myFile.status.Completed;
 		} else {
-			initiateUpLoad(myFile);
+			myFile.status.state = myFile.status.Checked;
+			myFileUploadQueue.offer(myFile);
 		}
 	}
 
 	public void initiateUpLoad(MyFile myFile) {
+		myFile.status.state = myFile.status.Initializing;
 		mMultipartUploader.initiateUpLoad(myFile);
 	}
+
 	public void onInitiateUpLoad(MyFile myFile) {
-		
-		
-		
+		myFile.status.state = myFile.status.Initialized;
+		myFileUploadQueue.offer(myFile);
 	}
 
 	public void upLoadFile(MyFile myFile) {
-		
+		myFile.status.state = myFile.status.Uploading;
+		mMultipartUploader.uploadParts(myFile);
+	}
 
+	public void onUpLoadFile(MyFile myFile) {
+		myFile.status.state = myFile.status.Uploaded;
+		myFileUploadQueue.offer(myFile);
+	}
+
+	public void completeFile(MyFile myFile) {
+		myFile.status.state = myFile.status.Completing;
+		mMultipartUploader.completeFile(myFile);
+	}
+
+	public void onCompleteFile(MyFile myFile) {
+		myFile.status.state = myFile.status.Completed;
+		myFileUploadQueue.offer(myFile);
+	}
+
+	public void recordFileName(MyFile myFile) throws Exception {
+		myFile.bytes = null;
+		mTaskManager.onMyFileUploaded(myFile);
+		mMultipartUploader.recordFileName(myFile);
+		System.gc();
+		Thread.sleep(50);
 	}
 
 	int CompressThreshold = 400 * 1024;
@@ -323,7 +360,6 @@ public class FileHandler {
 	}
 
 	void test(MyFile myFile) {
-		myFile.status.state = myFile.status.Uploaded;
 		mTaskManager.onMyFileUploaded(myFile);
 
 	}
