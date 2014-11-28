@@ -216,7 +216,11 @@ public class Parser {
 			try {
 				if (data.localStatus.localData == null) {
 					String localDataStr = getFromUserForder(phone, "localData.js");
-					data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
+					if (localDataStr == null || !"".equals(localDataStr)) {
+						data.localStatus.localData = data.localStatus.new LocalData();
+					} else {
+						data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
+					}
 					if (data.localStatus.localData == null) {
 						data.localStatus.localData = data.localStatus.new LocalData();
 					}

@@ -85,7 +85,7 @@ shareManage.sendshare = function (data, response) {
                 type: "Main",
                 gid: gid,
                 status: "active",
-                createTime: new Date().getTime(),
+                createTime: new Date().getTime()
             }
         };
         db.query(query, params, function (error, results) {
@@ -873,14 +873,15 @@ shareManage.sendboardshare = function (data, response) {
     var sid = data.sid;
     var phone = data.phone;
     var nickName = data.nickName;
-    var message = data.message;
+    //var message = data.message;
+    var type = data.type;
+    var content = data.content;
     var gid = data.gid; //unused
     var ogsid = data.ogsid;
     if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, message, ogsid, nickName], response)) {
         try {
-            message = JSON.parse(message);
-            if (message.type == "imagetext") {
-                createShare(message);
+            if (type == "imagetext") {
+                createShare();
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "发布群分享失败",
@@ -901,7 +902,7 @@ shareManage.sendboardshare = function (data, response) {
             }), response);
         }
     }
-    function createShare(message) {
+    function createShare() {
         var query = [
             'MATCH (shares:Shares)',
             'WHERE shares.sid={sid}',
@@ -916,10 +917,10 @@ shareManage.sendboardshare = function (data, response) {
                 nickName: nickName,
                 praises: "[]",
                 comments: "[]",
-                type: message.type,
+                type: type,
                 nodeType: "Share",
                 sid: sid,
-                content: message.content,
+                content: content,
                 time: new Date().getTime()
             }
         };

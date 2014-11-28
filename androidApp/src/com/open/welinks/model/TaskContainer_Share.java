@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
