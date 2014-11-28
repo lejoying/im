@@ -43,6 +43,11 @@ public class ResponseHandler<T> extends RequestCallBack<T> {
 		timeLine.received = System.currentTimeMillis();
 		Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms   onSuccess: " + responseInfo.result);
 	}
+	
+	public void onSuccess(String results) {
+		timeLine.received = System.currentTimeMillis();
+		Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms   onSuccess: " + results);
+	}
 
 	@Override
 	public void onFailure(HttpException error, String msg) {
