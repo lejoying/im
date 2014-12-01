@@ -282,6 +282,8 @@ public class TaskContainer_Share {
 		@Override
 		public void modifyView() {
 			if (this.myFileList != null && this.myFileList.size() > 0) {
+				currentResolveFileCount = 0;
+				resolveFileTotal = this.myFileList.size();
 				MyFile myFile = this.myFileList.get(0);
 				copyFileToSprecifiedDirecytory(myFile, true);
 				ShareContentItem contentItem = shareContent.new ShareContentItem();
@@ -295,7 +297,7 @@ public class TaskContainer_Share {
 
 		@Override
 		public void onLocalFilesResolved() {
-			for (int i = 1; i < this.myFileList.size(); i++) {
+			for (int i = 0; i < this.myFileList.size(); i++) {
 				MyFile myFile = this.myFileList.get(i);
 				ShareContentItem contentItem = shareContent.new ShareContentItem();
 				contentItem.type = "image";
@@ -431,6 +433,8 @@ public class TaskContainer_Share {
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.e(e.toString());
+				StackTraceElement ste = new Throwable().getStackTrace()[1];
+				log.e("Exception@" + ste.getLineNumber());
 			}
 		}
 	}

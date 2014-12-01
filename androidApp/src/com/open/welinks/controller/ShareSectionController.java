@@ -31,7 +31,7 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.TaskContainer_Share.GetShares;
 import com.open.welinks.model.TaskContainer_Share.Praise;
-import com.open.welinks.model.TaskManager;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.view.ShareSectionView;
 
 public class ShareSectionController {
@@ -42,7 +42,8 @@ public class ShareSectionController {
 	public MyLog log = new MyLog(tag, true);
 
 	public TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
-	public TaskManager mTaskManager = TaskManager.getInstance();
+	// public TaskManager mTaskManager = TaskManager.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public ShareSectionView thisView;
@@ -109,11 +110,11 @@ public class ShareSectionController {
 					if (direction == 1) {
 						nowpage = 0;
 						task.nowpage = nowpage;
-						mTaskManager.pushTask(task);
+						taskManageHolder.taskManager.pushTask(task);
 					} else if (direction == -1) {
 						nowpage++;
 						task.nowpage = nowpage;
-						mTaskManager.pushTask(task);
+						taskManageHolder.taskManager.pushTask(task);
 					}
 					thisView.showRoomTime();
 				}
@@ -212,7 +213,7 @@ public class ShareSectionController {
 						praise.thisView = thisView;
 						praise.gid = data.localStatus.localData.currentSelectedGroup;
 						praise.API = API.SHARE_ADDPRAISE;
-						mTaskManager.pushTask(praise);
+						taskManageHolder.taskManager.pushTask(praise);
 
 					}
 				}

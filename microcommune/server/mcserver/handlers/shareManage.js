@@ -870,6 +870,10 @@ var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 shareManage.sendboardshare = function (data, response) {
     response.asynchronous = 1;
+    console.error(data);
+    if (data) {
+        return;
+    }
     var sid = data.sid;
     var phone = data.phone;
     var nickName = data.nickName;

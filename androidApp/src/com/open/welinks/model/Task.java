@@ -36,6 +36,9 @@ public abstract class Task {
 	public List<MyFile> myFileList;
 	public int uploadeFileCount = 0;
 
+	public int currentResolveFileCount = 0;
+	public int resolveFileTotal = 0;
+
 	public void onLocalFilesResolved() {// 子线程
 
 	}

@@ -413,7 +413,7 @@ public class ShareSubView {
 		}
 
 		Board board = data.boards.boardsMap.get(currentGroup.currentBoard);
-		log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + board);
+		// log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + board);
 		if (board == null) {
 			return;
 		}

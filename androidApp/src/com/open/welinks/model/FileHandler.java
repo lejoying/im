@@ -16,27 +16,56 @@ import android.os.Environment;
 import android.os.SystemClock;
 
 import com.open.lib.MyLog;
+import com.open.welinks.MainActivity;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 
 public class FileHandler {
 
-	public String tag = "FileHandlers";
-	public MyLog log = new MyLog(tag, true);
+	public static String tag = "FileHandlers";
+	public static MyLog log = new MyLog(tag, true);
 
 	public static FileHandler fileHandlers;
 
 	public static FileHandler getInstance() {
 		if (fileHandlers == null) {
 			fileHandlers = new FileHandler();
-			fileHandlers.FileHandlers();
+
+			log.e("FileHandler getInstance()》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》");
 		}
 		return fileHandlers;
 	}
 
-	public TaskManager mTaskManager = TaskManager.getInstance();
+	public FileResolveRunnable fileResolveRunnable;
+	public FileUploadRunnable fileUploadRunnable;
 
-	public LinkedBlockingQueue<MyFile> myFileQueue = new LinkedBlockingQueue<MyFile>();
+	public void startLoop() {
+		if (this.isIntialized) {
+			log.e("startLoop");
+			this.fileResolveRunnable.start();
+			new Thread(this.fileUploadRunnable).start();
+		}
+	}
+
+	public boolean isIntialized = false;
+
+	public void initialize() {
+		if (this.isIntialized == false) {
+			this.setSdcardFile();
+			this.fileResolveRunnable = new FileResolveRunnable();
+			this.fileUploadRunnable = new FileUploadRunnable();
+			this.myFileUploadQueue = new MyLinkedListQueue<MyFile>();
+			this.myFileUploadQueue.currentRunnable = fileUploadRunnable;
+			this.myFileQueue = new LinkedBlockingQueue<MyFile>();
+
+			this.isIntialized = true;
+		}
+	}
+
+	// public TaskManager mTaskManager = TaskManager.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
+
+	public LinkedBlockingQueue<MyFile> myFileQueue;
 
 	public void pushMyFile(MyFile myFile) {
 		long currentTime = SystemClock.uptimeMillis();
@@ -46,102 +75,136 @@ public class FileHandler {
 		myFile.status.state = myFile.status.Queueing;
 	}
 
-	class FileResolveThread extends Thread {
+	class FileResolveRunnable extends Thread {
+
 		@Override
 		public void run() {
 			while (true) {
 				try {
 					MyFile myFile = myFileQueue.take();
-
-					resolveFile(myFile);
-					myFile.status.state = myFile.status.LocalStored;
-					myFileUploadQueue.offer(myFile);
-
-				} catch (Exception e) {
-					StackTraceElement ste = new Throwable().getStackTrace()[1];
-					log.e("Exception@" + ste.getLineNumber());
-				}
-			}
-		}
-	}
-
-	public LinkedBlockingQueue<MyFile> myFileUploadQueue = new LinkedBlockingQueue<MyFile>();
-
-	class FileUploadThread extends Thread {
-		@Override
-		public void run() {
-			while (true) {
-				try {
-					MyFile myFile = myFileUploadQueue.take();
-					if (myFile.status.state == myFile.status.LocalStored) {
-						checkFile(myFile);
-					} else if (myFile.status.state == myFile.status.Checked) {
-						initiateUpLoad(myFile);
-					} else if (myFile.status.state == myFile.status.Initialized) {
-						upLoadFile(myFile);
-					} else if (myFile.status.state == myFile.status.Uploaded) {
-						completeFile(myFile);
-					} else if (myFile.status.state == myFile.status.Completed) {
-						recordFileName(myFile);
+					if (myFile == null) {
+					} else {
+						resolveFile(myFile);
+						myFile.task.currentResolveFileCount++;
+						if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
+							myFile.task.onLocalFilesResolved();
+						}
+						myFile.status.state = myFile.status.LocalStored;
+						myFileUploadQueue.offerE(myFile);
 					}
 				} catch (Exception e) {
-					StackTraceElement ste = new Throwable().getStackTrace()[1];
-					log.e("Exception@" + ste.getLineNumber());
+					StackTraceElement ste = new Throwable().getStackTrace()[0];
+					log.e("Exception@" + ste.getLineNumber() + "," + ExceptionHandler.printStackTrace(MainActivity.instance.thisController.context, e));
 				}
 			}
 		}
 	}
 
-	public MultipartUploader mMultipartUploader = MultipartUploader.getInstance();
+	// public LinkedBlockingQueue<MyFile> myFileUploadQueue2 = new LinkedBlockingQueue<MyFile>();
+	// public LinkedList<MyFile> myFileUploadQueue = new LinkedList<MyFile>();
 
-	public void checkFile(MyFile myFile) throws Exception {
-		myFile.status.state = myFile.status.Checking;
-		mMultipartUploader.checkFileExists(myFile);
+	public MyLinkedListQueue<MyFile> myFileUploadQueue;
+
+	class FileUploadRunnable implements Runnable {
+
+		@Override
+		public void run() {
+			log.e("while>>>>>>>>>>>>:" + myFileUploadQueue.isRunning);
+			while (myFileUploadQueue.isRunning) {
+				try {
+					MyFile myFile = myFileUploadQueue.takeE();
+					if (myFile == null) {
+						log.e("Break");
+						// break;
+					} else {
+						log.e("My:" + myFile.status.state);
+						if (myFile.status.state == myFile.status.LocalStored) {
+							log.e("state LocalStored");
+							checkFile(myFile);
+						} else if (myFile.status.state == myFile.status.Checked) {
+							log.e("state Checked");
+							initiateUpLoad(myFile);
+						} else if (myFile.status.state == myFile.status.Initialized) {
+							log.e("state Initialized");
+							upLoadFile(myFile);
+						} else if (myFile.status.state == myFile.status.Uploaded) {
+							log.e("state Uploaded");
+							completeFile(myFile);
+						} else if (myFile.status.state == myFile.status.Completed) {
+							log.e("state Completed");
+							recordFileName(myFile);
+						}
+					}
+				} catch (Exception e) {
+					log.e("Exception:" + e.toString());
+					// StackTraceElement ste = new Throwable().getStackTrace()[0];
+					// log.e("Exception@" + ste.getLineNumber() + "," + ExceptionHandler.printStackTrace(MainActivity.instance.thisController.context, e));
+				}
+			}
+		}
 	}
 
-	public void onCheckFile(MyFile myFile) {
+	public void checkFile(MyFile myFile) throws Exception {
+		log.e("checkFile");
+		myFile.status.state = myFile.status.Checking;
+		taskManageHolder.multipartUploader.checkFileExists(myFile);
+	}
+
+	public void onCheckFile(MyFile myFile) throws Exception {
+		log.e("onCheckFile" + myFile.isExists);
 		if (myFile.isExists) {
 			myFile.status.state = myFile.status.Completed;
+			myFile.bytes = null;
+			taskManageHolder.taskManager.onMyFileUploaded(myFile);
+			System.gc();
+			Thread.sleep(50);
 		} else {
 			myFile.status.state = myFile.status.Checked;
-			myFileUploadQueue.offer(myFile);
+			myFileUploadQueue.offerE(myFile);
 		}
 	}
 
 	public void initiateUpLoad(MyFile myFile) {
+		log.e("initiateUpLoad");
 		myFile.status.state = myFile.status.Initializing;
-		mMultipartUploader.initiateUpLoad(myFile);
+		taskManageHolder.multipartUploader.initiateUpLoad(myFile);
 	}
 
 	public void onInitiateUpLoad(MyFile myFile) {
+		log.e("onInitiateUpLoad");
 		myFile.status.state = myFile.status.Initialized;
-		myFileUploadQueue.offer(myFile);
+		myFileUploadQueue.offerE(myFile);
 	}
 
-	public void upLoadFile(MyFile myFile) {
+	public void upLoadFile(MyFile myFile) throws Exception {
+		log.e("upLoadFile");
 		myFile.status.state = myFile.status.Uploading;
-		mMultipartUploader.uploadParts(myFile);
+		taskManageHolder.multipartUploader.uploadParts(myFile);
 	}
 
 	public void onUpLoadFile(MyFile myFile) {
+		log.e("onUpLoadFile");
 		myFile.status.state = myFile.status.Uploaded;
-		myFileUploadQueue.offer(myFile);
+		myFileUploadQueue.offerE(myFile);
 	}
 
 	public void completeFile(MyFile myFile) {
+		log.e("completeFile");
 		myFile.status.state = myFile.status.Completing;
-		mMultipartUploader.completeFile(myFile);
+		taskManageHolder.multipartUploader.completeFile(myFile);
 	}
 
 	public void onCompleteFile(MyFile myFile) {
+		log.e("onCompleteFile");
 		myFile.status.state = myFile.status.Completed;
-		myFileUploadQueue.offer(myFile);
+		myFileUploadQueue.offerE(myFile);
 	}
 
 	public void recordFileName(MyFile myFile) throws Exception {
+		log.e("recordFileName");
 		myFile.bytes = null;
-		mTaskManager.onMyFileUploaded(myFile);
-		mMultipartUploader.recordFileName(myFile);
+		taskManageHolder.taskManager.onMyFileUploaded(myFile);
+		taskManageHolder.multipartUploader.recordFileName(myFile);
 		System.gc();
 		Thread.sleep(50);
 	}
@@ -254,7 +317,7 @@ public class FileHandler {
 		return sdcard;
 	}
 
-	public void FileHandlers() {
+	public void setSdcardFile() {
 		sdcard = getSdCardFile();
 		sdcardFolder = new File(sdcard, "welinks");
 		if (!sdcardFolder.exists()) {
@@ -294,6 +357,8 @@ public class FileHandler {
 			return bytes;
 		} catch (Exception e) {
 			e.printStackTrace();
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		}
 		return null;
 	}
@@ -328,13 +393,19 @@ public class FileHandler {
 			System.gc();
 		} catch (OutOfMemoryError oome) {
 			log.e("*************OutOfMemoryError*************");
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		} catch (Exception e1) {
 			e1.printStackTrace();
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		}
 		try {
 			fileInputStream1.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		}
 		return byteArrayOutputStream;
 	}
@@ -360,7 +431,7 @@ public class FileHandler {
 	}
 
 	void test(MyFile myFile) {
-		mTaskManager.onMyFileUploaded(myFile);
+		taskManageHolder.taskManager.onMyFileUploaded(myFile);
 
 	}
 

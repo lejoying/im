@@ -24,7 +24,7 @@ import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.TaskManager;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.UpdateManager;
 import com.open.welinks.service.PushService;
 import com.open.welinks.utils.NotificationUtils;
@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
 
 	public static MainActivity instance;
 
-	public TaskManager taskManager = TaskManager.getInstance();
+	public TaskManageHolder taskManageHolder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,8 @@ public class MainActivity extends Activity {
 
 		startPushService();
 
-		taskManager.startLoop();
+		taskManageHolder = TaskManageHolder.getInstance();
+		taskManageHolder.initialize();
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 

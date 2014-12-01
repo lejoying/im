@@ -1,7 +1,8 @@
 package com.open.welinks.model;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigInteger;
@@ -22,7 +23,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -38,13 +38,16 @@ import com.open.lib.ResponseHandler;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.MyFile.Part;
 import com.open.welinks.utils.Base64;
+import com.open.welinks.utils.StreamParser;
 
 public class MultipartUploader {
 
 	public Data data = Data.getInstance();
 	public static String tag = "MultipartUploader";
-	
+
 	public MyLog log = new MyLog(tag, true);
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public static MultipartUploader instance;
 
@@ -55,12 +58,7 @@ public class MultipartUploader {
 		return instance;
 	}
 
-	public FileHandler fileHandler;
 	public Gson gson = new Gson();
-
-	void initialize() {
-		fileHandler = FileHandler.getInstance();
-	}
 
 	public void checkFileExists(MyFile myFile) {
 		RequestParams params = new RequestParams();
@@ -90,7 +88,11 @@ public class MultipartUploader {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("查找成功")) {
 				myFile.isExists = response.exists;
-				fileHandler.onCheckFile(myFile);
+				try {
+					taskManageHolder.fileHandler.onCheckFile(myFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			} else {
 				myFile.status.state = myFile.status.Failed;
 			}
@@ -99,6 +101,8 @@ public class MultipartUploader {
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			myFile.status.state = myFile.status.Exception;
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		};
 	};
 
@@ -114,10 +118,10 @@ public class MultipartUploader {
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
-		} catch (InvalidKeyException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		}
 
 		RequestParams params = new RequestParams();
@@ -145,15 +149,19 @@ public class MultipartUploader {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			try {
 				parseXml(responseInfo.result, myFile);
-				fileHandler.onInitiateUpLoad(myFile);
+				taskManageHolder.fileHandler.onInitiateUpLoad(myFile);
 			} catch (Exception e) {
 				e.printStackTrace();
+				StackTraceElement ste = new Throwable().getStackTrace()[1];
+				log.e("Exception@" + ste.getLineNumber());
 			}
 		};
 
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			myFile.status.state = myFile.status.Exception;
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		};
 	};
 
@@ -191,8 +199,12 @@ public class MultipartUploader {
 
 	public int PartSize = 256000;
 
-	public void uploadParts(MyFile myFile) {
+	public void uploadParts(MyFile myFile) throws Exception {
 		myFile.partCount = (int) Math.ceil((double) myFile.length / (double) PartSize);
+
+		File file = new File(taskManageHolder.fileHandler.sdcardImageFolder, myFile.fileName);
+		FileInputStream inputStream = new FileInputStream(file);
+		myFile.bytes = StreamParser.parseToByteArray(inputStream);
 
 		for (int i = 0; i < myFile.partCount; i++) {
 			int partID = i + 1;
@@ -261,6 +273,9 @@ public class MultipartUploader {
 			uploadResponseHandler.myFile = myFile;
 			uploadResponseHandler.part = part;
 			httpUtils.send(HttpMethod.PUT, url, params, uploadResponseHandler);
+		} else {
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		}
 	}
 
@@ -291,19 +306,18 @@ public class MultipartUploader {
 			// uploadLoadingListener.onLoading(instance, uploadPrecent, (time.received - time.start), UPLOAD_SUCCESS);
 			// log.e(partSuccessCount + "-----" + partCount + "------" +
 			// part.eTag);
+			log.e("SuccessCount:" + myFile.partSuccessCount);
 			if (myFile.partSuccessCount == myFile.partCount) {
-				fileHandler.onUpLoadFile(myFile);
+				taskManageHolder.fileHandler.onUpLoadFile(myFile);
 			}
 		};
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
-			// log.e( error + "-----************---" + msg);
-			// instance.isUploadStatus = UPLOAD_FAILED;
 			part.status = part.PART_FAILED;
 			uploadPart(myFile, partID);
-			// uploadLoadingListener.loading(
-			// instance.partSuccessCount / partCount, UPLOAD_FAILED);
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		};
 	};
 
@@ -314,10 +328,10 @@ public class MultipartUploader {
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
-		} catch (InvalidKeyException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		}
 
 		RequestParams params = new RequestParams();
@@ -339,9 +353,9 @@ public class MultipartUploader {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			fileHandler.onCompleteFile(myFile);
+			taskManageHolder.fileHandler.onCompleteFile(myFile);
 			// uploadLoadingListener.onSuccess(instance, (int) (time.received - time.start));
-	
+
 			// log.e(completeMultipartUploadResult.location + "---" +
 			// completeMultipartUploadResult.bucket + "---" +
 			// completeMultipartUploadResult.key + "---" +
@@ -351,6 +365,8 @@ public class MultipartUploader {
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			myFile.status.state = myFile.status.Exception;
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		};
 	};
 
@@ -374,19 +390,14 @@ public class MultipartUploader {
 			}
 			xmlSerializer.endTag(null, "CompleteMultipartUpload");
 			xmlSerializer.endDocument();
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (XmlPullParserException e) {
-			e.printStackTrace();
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		}
 		return stringWriter.toString();
 	}
-	
-	
+
 	public void recordFileName(MyFile myFile) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -395,7 +406,7 @@ public class MultipartUploader {
 		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("fileName", myFile.fileName);
 
-		UploadFileName uploadFileName=new UploadFileName();
+		UploadFileName uploadFileName = new UploadFileName();
 		httpUtils.send(HttpMethod.POST, API.IMAGE_UPLOADFILENAME, params, uploadFileName);
 	}
 
@@ -419,6 +430,8 @@ public class MultipartUploader {
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			log.e("上传文件名到服务器失败**********************" + "请求错误");
+			StackTraceElement ste = new Throwable().getStackTrace()[1];
+			log.e("Exception@" + ste.getLineNumber());
 		};
 	};
 

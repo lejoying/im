@@ -15,9 +15,10 @@ public class TaskManager {
 	public String tag = "TaskManager";
 	public MyLog log = new MyLog(tag, true);
 
-	public FileHandler fileHandlers;
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public static TaskManager instance;
+
 	public static TaskManager getInstance() {
 		if (instance == null) {
 			instance = new TaskManager();
@@ -26,7 +27,6 @@ public class TaskManager {
 	}
 
 	public void startLoop() {
-		fileHandlers = FileHandler.getInstance();
 		new TaskThread().start();
 		postHandler();
 
@@ -48,6 +48,7 @@ public class TaskManager {
 
 	public LinkedBlockingQueue<Task> requestQueue = new LinkedBlockingQueue<Task>();
 
+	// public MyLinkedListQueue<Task> requestQueue = new MyLinkedListQueue<Task>();
 
 	class TaskThread extends Thread {
 		@Override
@@ -59,7 +60,7 @@ public class TaskManager {
 						if (task.myFileList != null) {
 							for (MyFile myFile : task.myFileList) {
 								myFile.task = task;
-								fileHandlers.pushMyFile(myFile);
+								taskManageHolder.fileHandler.pushMyFile(myFile);
 							}
 							task.status.state = task.status.FilesUploading;
 							// task.resolveLocalFiles();
@@ -82,13 +83,16 @@ public class TaskManager {
 
 					}
 				} catch (Exception e) {
-					StackTraceElement ste = new Throwable().getStackTrace()[1];
+					log.e("TaskThread@" + "异常");
+					// StackTraceElement ste = new Throwable().getStackTrace()[1];
+					// log.e("Exception@" + ste.getLineNumber());
 				}
 			}
 		}
 	}
 
 	void onMyFileUploaded(MyFile uploadedMyFile) {
+		log.e("onMyFileUploaded");
 		Task task = uploadedMyFile.task;
 		if (task.myFileList == null) {
 			return;
@@ -98,15 +102,15 @@ public class TaskManager {
 		if (task.uploadeFileCount >= task.myFileList.size()) {
 			for (MyFile myFile : task.myFileList) {
 				if (myFile.status.state != myFile.status.Uploaded) {
-					isUploaded=false;
+					isUploaded = false;
 					break;
 				}
 			}
-		}else{
-			isUploaded=false;
+		} else {
+			isUploaded = false;
 		}
-		
-		if(isUploaded){
+
+		if (isUploaded) {
 			task.status.state = task.status.FilesUploaded;
 			requestQueue.offer(task);
 		}
@@ -164,8 +168,8 @@ public class TaskManager {
 
 			} catch (Exception e) {
 				StackTraceElement ste = new Throwable().getStackTrace()[1];
+				log.e("Exception@" + ste.getLineNumber());
 			}
-
 		}
 	};
 
