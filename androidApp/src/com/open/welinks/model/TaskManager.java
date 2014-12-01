@@ -27,12 +27,25 @@ public class TaskManager {
 	}
 
 	public void startLoop() {
-		new TaskThread().start();
+		new Thread(this.taskRunnable).start();
 		postHandler();
-
 	}
 
-	public LinkedBlockingQueue<Task> taskQueue = new LinkedBlockingQueue<Task>();
+	public boolean isIntialized = false;
+
+	public void initialize() {
+		if (this.isIntialized == false) {
+			this.taskRunnable = new TaskRunnable();
+			this.taskQueue = new LinkedBlockingQueue<Task>();
+			this.requestQueue = new MyLinkedListQueue<Task>();
+			this.requestQueue.currentRunnable = this.taskRunnable;
+			this.responseQueue = new LinkedBlockingQueue<Task>();
+			this.mHandler = new Handler();
+			this.isIntialized = true;
+		}
+	}
+
+	public LinkedBlockingQueue<Task> taskQueue;
 
 	public void pushTask(Task task) {
 		long currentTime = SystemClock.uptimeMillis();
@@ -41,46 +54,50 @@ public class TaskManager {
 		task.status.state = task.status.DataModified;
 		task.modifyView();
 		task.status.state = task.status.ViewModified;
-
 		taskQueue.offer(task);
-		requestQueue.offer(task);
+		requestQueue.offerE(task);
 	}
 
-	public LinkedBlockingQueue<Task> requestQueue = new LinkedBlockingQueue<Task>();
+	// public LinkedBlockingQueue<Task> requestQueue = new LinkedBlockingQueue<Task>();
 
-	// public MyLinkedListQueue<Task> requestQueue = new MyLinkedListQueue<Task>();
+	public MyLinkedListQueue<Task> requestQueue;
+	public TaskRunnable taskRunnable;
 
-	class TaskThread extends Thread {
+	class TaskRunnable implements Runnable {
 		@Override
 		public void run() {
-			while (true) {
+			while (requestQueue.isRunning) {
 				try {
-					Task task = requestQueue.take();
-					if (task.status.state == task.status.ViewModified) {
-						if (task.myFileList != null) {
-							for (MyFile myFile : task.myFileList) {
-								myFile.task = task;
-								taskManageHolder.fileHandler.pushMyFile(myFile);
+					Task task = requestQueue.takeE();
+					if (task == null) {
+						log.e("break");
+					} else {
+						if (task.status.state == task.status.ViewModified) {
+							if (task.myFileList != null) {
+								for (MyFile myFile : task.myFileList) {
+									myFile.task = task;
+									taskManageHolder.fileHandler.pushMyFile(myFile);
+								}
+								task.status.state = task.status.FilesUploading;
+								// task.resolveLocalFiles();
+								// task.status.state = task.status.localFilesResolved;
+								// task.uploadFiles();
+
+								// task.status.state = task.status.FilesUploaded;
+							} else {
+								task.status.state = task.status.FilesUploaded;
 							}
-							task.status.state = task.status.FilesUploading;
-							// task.resolveLocalFiles();
-							// task.status.state = task.status.localFilesResolved;
-							// task.uploadFiles();
-
-							// task.status.state = task.status.FilesUploaded;
-						} else {
-							task.status.state = task.status.FilesUploaded;
 						}
-					}
 
-					if (task.status.state == task.status.FilesUploaded) {
-						MyResponseHandler responseHandler = new MyResponseHandler();
-						responseHandler.task = task;
-						task.sendRequest();
-						HttpUtils httpUtils = new HttpUtils();
-						httpUtils.send(task.mHttpMethod, task.API, task.params, responseHandler);
-						task.status.state = task.status.RequestSending;
-
+						if (task.status.state == task.status.FilesUploaded) {
+							log.e("task.status.state == task.status.FilesUploaded");
+							MyResponseHandler responseHandler = new MyResponseHandler();
+							responseHandler.task = task;
+							task.sendRequest();
+							HttpUtils httpUtils = new HttpUtils();
+							httpUtils.send(task.mHttpMethod, task.API, task.params, responseHandler);
+							task.status.state = task.status.RequestSending;
+						}
 					}
 				} catch (Exception e) {
 					log.e("TaskThread@" + "异常");
@@ -101,7 +118,7 @@ public class TaskManager {
 		boolean isUploaded = true;
 		if (task.uploadeFileCount >= task.myFileList.size()) {
 			for (MyFile myFile : task.myFileList) {
-				if (myFile.status.state != myFile.status.Uploaded) {
+				if (myFile.status.state != myFile.status.Completed) {
 					isUploaded = false;
 					break;
 				}
@@ -109,10 +126,10 @@ public class TaskManager {
 		} else {
 			isUploaded = false;
 		}
-
+		log.e(task.uploadeFileCount + "--" + task.myFileList.size() + "--" + isUploaded);
 		if (isUploaded) {
 			task.status.state = task.status.FilesUploaded;
-			requestQueue.offer(task);
+			requestQueue.offerE(task);
 		}
 	}
 
@@ -122,6 +139,7 @@ public class TaskManager {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			if (task != null) {
+				log.e("MyResponseHandler onSuccess");
 				task.status.state = task.status.ResponseReceiving;
 				boolean needResolveResponse = task.onResponseReceived(responseInfo);
 				task.status.state = task.status.ResponseReceived;
@@ -136,8 +154,8 @@ public class TaskManager {
 		};
 	};
 
-	public LinkedBlockingQueue<Task> responseQueue = new LinkedBlockingQueue<Task>();
-	public Handler mHandler = new Handler();
+	public LinkedBlockingQueue<Task> responseQueue;
+	public Handler mHandler;
 	public boolean handlerIsRunning = false;
 
 	public void postHandler() {
@@ -149,6 +167,7 @@ public class TaskManager {
 	public Runnable mTaskRunnable = new Runnable() {
 		@Override
 		public void run() {
+			log.e("mTaskRunnable Runnable");
 			Task task;
 			try {
 				task = responseQueue.poll();

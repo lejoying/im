@@ -25,6 +25,7 @@ public class TaskManageHolder {
 	public void initialize() {
 		if (this.isInitialized == false) {
 			this.taskManager = TaskManager.getInstance();
+			this.taskManager.initialize();
 			this.taskManager.startLoop();
 			this.fileHandler = FileHandler.getInstance();
 			this.fileHandler.initialize();

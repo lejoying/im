@@ -84,10 +84,14 @@ public class FileHandler {
 					MyFile myFile = myFileQueue.take();
 					if (myFile == null) {
 					} else {
-						resolveFile(myFile);
-						myFile.task.currentResolveFileCount++;
-						if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
-							myFile.task.onLocalFilesResolved();
+						if (myFile.uploadFileType == myFile.UPLOAD_TYPE_IMAGE || myFile.uploadFileType == myFile.UPLOAD_TYPE_BACKGROUND || myFile.uploadFileType == myFile.UPLOAD_TYPE_HEAD) {
+							resolveFile(myFile);
+							myFile.task.currentResolveFileCount++;
+							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
+								myFile.task.onLocalFilesResolved();
+							}
+						} else {
+							// TODO voice
 						}
 						myFile.status.state = myFile.status.LocalStored;
 						myFileUploadQueue.offerE(myFile);

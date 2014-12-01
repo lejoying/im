@@ -107,14 +107,29 @@ public class MultipartUploader {
 	};
 
 	public int addExpires = 600;
-	public String BUCKETNAME = "wxgs";// welinkstest
+	public String BUCKETNAME = "wxgs";
 	public String OSSACCESSKEYID = "dpZe5yUof6KSJ8RM";
 	public String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
-	public String OSS_HOST_URL = "http://images2.we-links.com/";// http://images5.we-links.com/
+	public String OSS_HOST_URL = "http://images2.we-links.com/";
+
+	public void checkOSSFile(MyFile myFile) {
+		if (myFile.uploadFileType == myFile.UPLOAD_TYPE_BACKGROUND) {
+			myFile.Oss_Directory = "backgrounds/";
+		} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_HEAD) {
+			myFile.Oss_Directory = "heads/";
+		} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_IMAGE) {
+			myFile.Oss_Directory = "images/";
+		} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_VOICE) {
+			myFile.Oss_Directory = "voices/";
+		} else {
+			myFile.Oss_Directory = "temp/";
+		}
+	}
 
 	public void initiateUpLoad(MyFile myFile) {
+		checkOSSFile(myFile);
 		long expires = (new Date().getTime() / 1000) + addExpires;
-		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + myFile.fileName + "?uploads";
+		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + myFile.Oss_Directory + myFile.fileName + "?uploads";
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -127,7 +142,7 @@ public class MultipartUploader {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = OSS_HOST_URL + myFile.fileName + "?uploads";
+		String url = OSS_HOST_URL + myFile.Oss_Directory + myFile.fileName + "?uploads";
 
 		// if (contentType != null) {
 		// params.addHeader("Content-Type", contentType);
@@ -215,7 +230,7 @@ public class MultipartUploader {
 	public void uploadPart(MyFile myFile, int partID) {
 		long expires = (new Date().getTime() / 1000) + addExpires;
 
-		String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + myFile.fileName + "?partNumber=" + partID + "&uploadId=" + myFile.uploadId;
+		String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + myFile.Oss_Directory + myFile.fileName + "?partNumber=" + partID + "&uploadId=" + myFile.uploadId;
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -227,7 +242,7 @@ public class MultipartUploader {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = OSS_HOST_URL + myFile.fileName + "?partNumber=" + partID + "&uploadId=" + myFile.uploadId;
+		String url = OSS_HOST_URL + myFile.Oss_Directory + myFile.fileName + "?partNumber=" + partID + "&uploadId=" + myFile.uploadId;
 
 		params.addQueryStringParameter("OSSAccessKeyId", OSSACCESSKEYID);
 		params.addQueryStringParameter("Expires", expires + "");
@@ -324,7 +339,7 @@ public class MultipartUploader {
 	public void completeFile(MyFile myFile) {
 		long expires = (new Date().getTime() / 1000) + addExpires;
 
-		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + myFile.fileName + "?uploadId=" + myFile.uploadId;
+		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + myFile.Oss_Directory + myFile.fileName + "?uploadId=" + myFile.uploadId;
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -337,7 +352,7 @@ public class MultipartUploader {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = OSS_HOST_URL + myFile.fileName + "?uploadId=" + myFile.uploadId;
+		String url = OSS_HOST_URL + myFile.Oss_Directory + myFile.fileName + "?uploadId=" + myFile.uploadId;
 
 		params.addQueryStringParameter("OSSAccessKeyId", OSSACCESSKEYID);
 		params.addQueryStringParameter("Expires", expires + "");

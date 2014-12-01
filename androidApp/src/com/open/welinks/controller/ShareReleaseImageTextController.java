@@ -370,6 +370,7 @@ public class ShareReleaseImageTextController {
 			task.myFileList = new ArrayList<MyFile>();
 			for (int i = 0; i < data.tempData.selectedImageList.size(); i++) {
 				MyFile myFile = new MyFile();
+				myFile.uploadFileType = taskManageHolder.multipartUploader.UPLOAD_TYPE_IMAGE;
 				myFile.path = data.tempData.selectedImageList.get(i);
 				task.myFileList.add(myFile);
 			}

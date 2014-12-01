@@ -297,7 +297,7 @@ public class TaskContainer_Share {
 
 		@Override
 		public void onLocalFilesResolved() {
-			for (int i = 0; i < this.myFileList.size(); i++) {
+			for (int i = 1; i < this.myFileList.size(); i++) {
 				MyFile myFile = this.myFileList.get(i);
 				ShareContentItem contentItem = shareContent.new ShareContentItem();
 				contentItem.type = "image";

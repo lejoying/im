@@ -872,7 +872,7 @@ shareManage.sendboardshare = function (data, response) {
     response.asynchronous = 1;
     console.error(data);
     if (data) {
-        return;
+        //return;
     }
     var sid = data.sid;
     var phone = data.phone;
@@ -882,7 +882,7 @@ shareManage.sendboardshare = function (data, response) {
     var content = data.content;
     var gid = data.gid; //unused
     var ogsid = data.ogsid;
-    if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, message, ogsid, nickName], response)) {
+    if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, ogsid, nickName, type, content], response)) {
         try {
             if (type == "imagetext") {
                 createShare();
@@ -949,7 +949,7 @@ shareManage.sendboardshare = function (data, response) {
                 }), response);
             } else {
                 var shareData = results.pop().share.data;
-                console.log("发布群分享成功");
+                //console.log("发布群分享成功");
                 ResponseData(JSON.stringify({
                     "提示信息": "发布群分享成功",
                     time: shareData.time,

@@ -45,6 +45,13 @@ public class MyFile {
 	public String key;
 	public String uploadId;
 
+	public int UPLOAD_TYPE_IMAGE = 0x01;
+	public int UPLOAD_TYPE_VOICE = 0x02;
+	public int UPLOAD_TYPE_HEAD = 0x03;
+	public int UPLOAD_TYPE_BACKGROUND = 0x04;
+	public int uploadFileType;
+	public String Oss_Directory;
+
 	public Task task;
 
 	public int partSuccessCount = 0;
