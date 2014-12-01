@@ -72,7 +72,6 @@ public class ExpressionUtil {
 	public static SpannableString getExpressionString(Context context, String str, String zhengze) {
 		SpannableString spannableString = new SpannableString(str);
 		Pattern sinaPatten = Pattern.compile(zhengze, Pattern.CASE_INSENSITIVE); // 通过传入的正则表达式来生成一个pattern
-		System.out.println(str);
 		try {
 			dealExpression(context, spannableString, sinaPatten, 0);
 		} catch (Exception e) {

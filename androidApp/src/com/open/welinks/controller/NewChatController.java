@@ -16,32 +16,52 @@ import java.util.regex.Pattern;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Matrix;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.location.LocationManagerProxy;
+import com.amap.api.location.LocationProviderProxy;
+import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.AMap.OnMapScreenShotListener;
+import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.model.BitmapDescriptorFactory;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.MarkerOptions;
+import com.amap.api.services.geocoder.GeocodeSearch;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.open.welinks.BusinessCardActivity;
+import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
+import com.open.welinks.LocationActivity;
 import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.customListener.AudioListener;
+import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.AudioHandlers;
@@ -53,6 +73,10 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.SubData;
+import com.open.welinks.model.SubData.LocationMessageContent;
+import com.open.welinks.model.SubData.VoiceMessageContent;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.ExpressionUtil;
 import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.utils.SHA1;
@@ -63,6 +87,7 @@ import com.open.welinks.view.ViewManage;
 
 public class NewChatController {
 	public Data data = Data.getInstance();
+	public SubData subData = SubData.getInstance();
 	public Parser parser = Parser.getInstance();
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
@@ -73,24 +98,28 @@ public class NewChatController {
 	public Gson gson = new Gson();
 	public SHA1 sha1 = new SHA1();
 
+	public AMap mAMap;
+	public LocationManagerProxy mLocationManagerProxy;
+	public AMapLocationListener mAMapLocationListener;
+	public OnMapScreenShotListener mOnMapScreenShotListener;
+
 	public NewChatView thisView;
 	public NewChatController thisController;
 	public NewChatActivity thisActivity;
 
-	public OnClickListener mOnClickListener;
+	public MyOnClickListener mOnClickListener;
 	public OnTouchListener mOnTouchListener;
 	public OnItemClickListener mItemClickListener;
 	public OnFaceSeletedListener mOnFaceSeletedListener;
 	public OnUploadLoadingListener uploadLoadingListener;
 	public OnFocusChangeListener mOnFocusChangeListener;
 	public TextWatcher mTextWatcher;
-	public GestureDetector voiceGestureDetector;
 	public AudioListener mAudioListener;
 
 	public String key = "", type = "";
 	public User user;
 
-	public Map<String, Message> messageMap;
+	public Map<String, Message> messagesMap;
 
 	public VoiceTimerTask timerTask;
 	public Timer timer;
@@ -99,6 +128,11 @@ public class NewChatController {
 	public boolean sendRecording = true;
 
 	public Handler handler;
+	public Runnable chatContentRunnable;
+	public Thread chatContentThread;
+
+	public File tempPhotoFile;
+	public String tempLocationKey = "";
 
 	public NewChatController(NewChatActivity activity) {
 		thisController = this;
@@ -118,8 +152,9 @@ public class NewChatController {
 
 	public void initData() {
 		user = data.userInformation.currentUser;
-		messageMap = new HashMap<String, Message>();
+		messagesMap = new HashMap<String, Message>();
 		inputManager = new InputMethodManagerUtils(thisActivity);
+		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
 		if (data.localStatus.localData.notSentMessagesMap != null) {
 			String content = data.localStatus.localData.notSentMessagesMap.get(type + key);
 			if (content != null) {
@@ -129,11 +164,12 @@ public class NewChatController {
 		initListeners();
 	}
 
+	@SuppressLint("HandlerLeak")
 	public void initListeners() {
-		mOnClickListener = new OnClickListener() {
+		mOnClickListener = new MyOnClickListener() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public void onClick(View view) {
+			public void onClickEffective(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
 					String contentType = (String) view.getTag(R.id.tag_first);
 					if ("voice".equals(contentType)) {
@@ -156,11 +192,28 @@ public class NewChatController {
 						} else {
 							Toast.makeText(thisActivity, "群分享不存在", Toast.LENGTH_SHORT).show();
 						}
+					} else if ("location".equals(contentType)) {
+						Intent intent = new Intent(thisActivity, LocationActivity.class);
+						intent.putExtra("address", (String) view.getTag(R.id.tag_second));
+						intent.putExtra("latitude", (String) view.getTag(R.id.tag_third));
+						intent.putExtra("longitude", (String) view.getTag(R.id.tag_four));
+						thisActivity.startActivity(intent);
+					} else if ("card".equals(contentType)) {
 					} else if ("head".equals(contentType)) {
 						String phone = (String) view.getTag(R.id.tag_second);
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
 						thisView.businessCardPopView.cardView.setMenu(false);
 						thisView.businessCardPopView.showUserCardDialogView();
+					} else if ("resend".equals(contentType)) {
+						int position = (Integer) view.getTag(R.id.tag_second);
+						List<Message> messages = thisView.mChatAdapter.messages;
+						if (messages.size() > position) {
+							Message message = messages.get(position);
+							message.status = "sending";
+							message.time = String.valueOf(System.currentTimeMillis());
+							thisView.mChatAdapter.notifyDataSetChanged();
+							sendMessage(message);
+						}
 					}
 				} else if (thisView.backView.equals(view)) {
 					thisActivity.finish();
@@ -176,26 +229,22 @@ public class NewChatController {
 					thisView.changeChatInput();
 				} else if (thisView.chatSend.equals(view)) {
 					createTextMessage();
-				} else if (thisView.voiceLayout.equals(view)) {
-
 				} else if (thisView.takePhoto.equals(view)) {
-
+					takePhoto();
 				} else if (thisView.ablum.equals(view)) {
 					thisActivity.startActivityForResult(new Intent(thisActivity, ImagesDirectoryActivity.class), Constant.REQUESTCODE_ABLUM);
 				} else if (thisView.location.equals(view)) {
-
+					requestLocation();
+				} else if (thisView.chatContent.equals(view)) {
+					if (thisController.inputManager.isActive(thisView.chatInput))
+						thisController.inputManager.hide(thisView.chatInput);
+				} else if (thisView.chatMenuBackground.equals(view)) {
+					thisView.changeChatMenu();
 				}
 
 			}
 
 		};
-		voiceGestureDetector = new GestureDetector(thisActivity, new SimpleOnGestureListener() {
-			@Override
-			public boolean onDown(MotionEvent e) {
-				return true;
-			}
-
-		});
 		mOnTouchListener = new OnTouchListener() {
 
 			@SuppressLint("ClickableViewAccessibility")
@@ -236,6 +285,9 @@ public class NewChatController {
 							completeVoiceRecording(sendRecording);
 						}
 					}
+				} else if (thisView.chatContent.equals(view) && event.getAction() == MotionEvent.ACTION_DOWN) {
+					if (thisController.inputManager.isActive(thisView.chatInput))
+						thisController.inputManager.hide(thisView.chatInput);
 				}
 				return false;
 			}
@@ -245,7 +297,19 @@ public class NewChatController {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+				String tag = (String) view.getTag();
+				if (position == 0) {
+					if (tag.equals(thisActivity.getString(R.string.personalDetails))) {
+						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+						intent.putExtra("key", key);
+						intent.putExtra("type", type);
+						thisActivity.startActivity(intent);
+					} else if (tag.equals(thisActivity.getString(R.string.groupDetails))) {
+						Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
+						intent.putExtra("gid", key);
+						thisActivity.startActivity(intent);
+					}
+				}
 			}
 		};
 		mTextWatcher = new TextWatcher() {
@@ -343,16 +407,103 @@ public class NewChatController {
 					total = (Integer) instance.view.getTag(R.id.tag_second);
 					current = (Integer) instance.view.getTag(R.id.tag_third);
 					if (total == ++current) {
-						message = messageMap.remove(fileName);
+						message = messagesMap.remove(fileName);
 					} else {
 						instance.view.setTag(R.id.tag_third, current);
 					}
 				} else {
 					fileName = (String) instance.view.getTag();
-					message = messageMap.remove(fileName);
+					message = messagesMap.remove(fileName);
 				}
 				if (message != null) {
 					sendMessage(message);
+				}
+			}
+		};
+		mOnMapScreenShotListener = new OnMapScreenShotListener() {
+
+			@Override
+			public void onMapScreenShot(Bitmap bitmap) {
+				try {
+					View view = new View(thisActivity);
+					Message message = messagesMap.remove(tempLocationKey);
+					bitmap = Bitmap.createBitmap(bitmap, (int) BaseDataUtils.dpToPx(65), (int) BaseDataUtils.dpToPx(40), (int) BaseDataUtils.dpToPx(150), (int) BaseDataUtils.dpToPx(100));
+					File toFile = new File(fileHandlers.sdcardImageFolder, tempLocationKey + ".png");
+					FileOutputStream fos;
+					fos = new FileOutputStream(toFile);
+					bitmap.compress(CompressFormat.PNG, 100, fos);
+					Map<String, Object> map = processImagesInformation(toFile.getAbsolutePath());
+					String fileName = (String) map.get("fileName");
+					File fromFile = new File(fileHandlers.sdcardImageFolder, fileName);
+					if (message != null) {
+						LocationMessageContent messageContent = gson.fromJson(message.content, LocationMessageContent.class);
+						messageContent.imageFileName = fileName;
+						message.content = gson.toJson(messageContent);
+						data.messages.isModified = true;
+						thisView.mChatAdapter.notifyDataSetChanged();
+					}
+					messagesMap.put(fileName, message);
+					view.setTag(fileName);
+					UploadMultipart multipart = uploadFile(fromFile.getAbsolutePath(), fileName, (byte[]) map.get("bytes"), view, UploadMultipart.UPLOAD_TYPE_IMAGE);
+					uploadMultipartList.addMultipart(multipart);
+					tempLocationKey = "";
+					toFile.delete();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		mAMapLocationListener = new AMapLocationListener() {
+
+			@Override
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+
+			}
+
+			@Override
+			public void onProviderEnabled(String provider) {
+
+			}
+
+			@Override
+			public void onProviderDisabled(String provider) {
+
+			}
+
+			@Override
+			public void onLocationChanged(Location location) {
+
+			}
+
+			@Override
+			public void onLocationChanged(AMapLocation mAMapLocation) {
+				if (mAMapLocation != null && mAMapLocation.getAMapException().getErrorCode() == 0) {
+					mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+					mLocationManagerProxy.destroy();
+					Double geoLat = mAMapLocation.getLatitude();
+					Double geoLng = mAMapLocation.getLongitude();
+					String address = mAMapLocation.getAddress();
+					LatLng latLonPoint = new LatLng(geoLat, geoLng);
+					thisController.mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 18));
+					mAMap.clear();
+					MarkerOptions markOptions = new MarkerOptions();
+					markOptions.position(latLonPoint);
+					mAMap.addMarker(markOptions);
+					Message message = messagesMap.get(tempLocationKey);
+					if (message != null) {
+						LocationMessageContent messageContent = subData.new LocationMessageContent();
+						messageContent.address = address;
+						messageContent.latitude = String.valueOf(geoLat);
+						messageContent.longitude = String.valueOf(geoLng);
+						message.content = gson.toJson(messageContent);
+					}
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					thisController.mAMap.getMapScreenShot(mOnMapScreenShotListener);
+				} else {
 				}
 			}
 		};
@@ -395,7 +546,6 @@ public class NewChatController {
 				android.os.Message msg = new android.os.Message();
 				msg.what = Constant.HANDLER_CHAT_STARTPLAY;
 				handler.sendMessage(msg);
-				audiohandlers.startPlay("");
 			}
 		};
 		handler = new Handler() {
@@ -437,7 +587,9 @@ public class NewChatController {
 		thisView.ablum.setOnClickListener(mOnClickListener);
 		thisView.location.setOnClickListener(mOnClickListener);
 		thisView.chatInput.setOnClickListener(mOnClickListener);
+		thisView.chatMenuBackground.setOnClickListener(mOnClickListener);
 
+		thisView.chatContent.setOnTouchListener(mOnTouchListener);
 		thisView.voiceLayout.setOnTouchListener(mOnTouchListener);
 
 		thisView.faceLayout.setOnFaceSeletedListener(mOnFaceSeletedListener);
@@ -507,29 +659,34 @@ public class NewChatController {
 			uploadMultipartList.addMultipart(multipart);
 		}
 		message.content = gson.toJson(messageContent);
-		messageMap.put(String.valueOf(time), message);
+		messagesMap.put(String.valueOf(time), message);
 		addMessageToLocation(message);
 	}
 
 	private void createVoiceMessage(String filePath) {
 		long time = new Date().getTime();
 		View view = new View(thisActivity);
-		String voiceTime = "";
+		String voiceTime = "", recordReadSize = "";
 		String[] infomation = filePath.split("@");
 		filePath = infomation[0];
 		voiceTime = infomation[1];
+		recordReadSize = infomation[2];
 		Map<String, Object> map = processVoiceInformation(filePath);
 		String fileName = (String) map.get("fileName");
 		view.setTag(fileName);
 		Message message = data.messages.new Message();
-		message.content = fileName + "@" + voiceTime;
+		VoiceMessageContent content = subData.new VoiceMessageContent();
+		content.fileName = fileName;
+		content.time = voiceTime;
+		content.recordReadSize = recordReadSize;
+		message.content = gson.toJson(content);
 		message.contentType = "voice";
 		message.phone = user.phone;
 		message.nickName = user.nickName;
 		message.time = String.valueOf(time);
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;
-		messageMap.put(fileName, message);
+		messagesMap.put(fileName, message);
 		UploadMultipart multipart = uploadFile(filePath, fileName, (byte[]) map.get("bytes"), view, UploadMultipart.UPLOAD_TYPE_VOICE);
 		uploadMultipartList.addMultipart(multipart);
 		addMessageToLocation(message);
@@ -547,6 +704,54 @@ public class NewChatController {
 		message.type = Constant.MESSAGE_TYPE_SEND;
 		addMessageToLocation(message);
 		sendMessage(message);
+	}
+
+	private void createLocationMessage() {
+		long time = new Date().getTime();
+		tempLocationKey = String.valueOf(time);
+		Message message = data.messages.new Message();
+		message.content = "";
+		message.contentType = "location";
+		message.phone = user.phone;
+		message.nickName = user.nickName;
+		message.time = String.valueOf(time);
+		message.status = "sending";
+		message.type = Constant.MESSAGE_TYPE_SEND;
+		messagesMap.put(tempLocationKey, message);
+		addMessageToLocation(message);
+	}
+
+	private void takePhoto() {
+		tempPhotoFile = new File(thisController.fileHandlers.sdcardImageFolder, "tempimage.jpg");
+		int i = 1;
+		while (tempPhotoFile.exists()) {
+			tempPhotoFile = new File(thisController.fileHandlers.sdcardImageFolder, "tempimage" + (i++) + ".jpg");
+		}
+		Uri uri = Uri.fromFile(tempPhotoFile);
+		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		tackPicture.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
+		tackPicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		thisActivity.startActivityForResult(tackPicture, Constant.REQUESTCODE_TAKEPHOTO);
+	}
+
+	@SuppressLint("ShowToast")
+	private void requestLocation() {
+		if ("".equals(tempLocationKey)) {
+			createLocationMessage();
+			mLocationManagerProxy.setGpsEnable(true);
+			mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 10, mAMapLocationListener);
+		} else {
+			long lastTime = Long.valueOf(tempLocationKey);
+			long time = System.currentTimeMillis();
+			if ((time - lastTime) / 1000 > 30) {
+				Message message = messagesMap.remove(tempLocationKey);
+				tempLocationKey = String.valueOf(time);
+				messagesMap.put(tempLocationKey, message);
+				mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 10, mAMapLocationListener);
+			} else {
+				Toast.makeText(thisActivity, R.string.locationing, Toast.LENGTH_SHORT).show();
+			}
+		}
 	}
 
 	private void addMessageToLocation(final Message message) {
@@ -597,6 +802,7 @@ public class NewChatController {
 					}
 					messages.add(message);
 				}
+				data.messages.isModified = true;
 				android.os.Message msg = new android.os.Message();
 				msg.what = Constant.HANDLER_CHAT_NOTIFY;
 				handler.sendMessage(msg);
@@ -682,7 +888,7 @@ public class NewChatController {
 		return multipart;
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == Constant.REQUESTCODE_ABLUM && resultCode == Activity.RESULT_OK) {
 			ArrayList<String> selectedImageList = data.tempData.selectedImageList;
 			if (selectedImageList == null || selectedImageList.size() == 0) {
@@ -690,16 +896,23 @@ public class NewChatController {
 			}
 			data.tempData.selectedImageList = null;
 			createImageMessage(selectedImageList);
+		} else if (requestCode == Constant.REQUESTCODE_TAKEPHOTO && resultCode == Activity.RESULT_OK) {
+			String strRingPath = tempPhotoFile.getAbsolutePath();
+			ArrayList<String> selectedImageList = new ArrayList<String>();
+			selectedImageList.add(strRingPath);
+			createImageMessage(selectedImageList);
+			tempPhotoFile.delete();
 		}
 
 	}
 
 	public void onDestroy() {
 		audiohandlers.releasePlyer();
+		thisView.locationMapView.onDestroy();
 	}
 
 	public void onResume() {
-
+		thisView.locationMapView.onResume();
 	}
 
 	private class VoiceTimerTask extends TimerTask {
@@ -713,5 +926,23 @@ public class NewChatController {
 				thisView.changeVoice();
 			}
 		}
+	}
+
+	public void finish() {
+		String content = thisView.chatInput.getText().toString();
+		if (!"".equals(content)) {
+			Map<String, String> notSentMessagesMap = data.localStatus.localData.notSentMessagesMap;
+			if (notSentMessagesMap == null) {
+				notSentMessagesMap = new HashMap<String, String>();
+				data.localStatus.localData.notSentMessagesMap = notSentMessagesMap;
+			}
+			notSentMessagesMap.put(type + key, content);
+		}
+		viewManage.newChatView = null;
+		viewManage.messagesSubView.showMessagesSequence();
+	}
+
+	public void onPause() {
+		thisView.locationMapView.onPause();
 	}
 }

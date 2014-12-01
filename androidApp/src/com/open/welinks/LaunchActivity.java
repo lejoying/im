@@ -1,11 +1,9 @@
 package com.open.welinks;
 
-import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.UserInformation.LocalConfig;
-import com.open.welinks.utils.BaseDataUtils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,16 +32,21 @@ public class LaunchActivity extends Activity {
 		data = Data.getInstance();
 
 		if (data.userInformation == null) {
-			String userInformationStr = parser.getFromRootForder("userInformation.js");
-			data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+			String userInformationStr = parser
+					.getFromRootForder("userInformation.js");
+			data.userInformation = parser.gson.fromJson(userInformationStr,
+					UserInformation.class);
 		}
 		try {
-			if (!"".equals(data.userInformation.currentUser.phone) && !"".equals(data.userInformation.currentUser.accessKey)) {
-				startActivity(new Intent(LaunchActivity.this, LoadingActivity.class));
+			if (!"".equals(data.userInformation.currentUser.phone)
+					&& !"".equals(data.userInformation.currentUser.accessKey)) {
+				startActivity(new Intent(LaunchActivity.this,
+						LoadingActivity.class));
 				LaunchActivity.this.finish();
 				return;
 			} else {
-				startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+				startActivity(new Intent(LaunchActivity.this,
+						LoginActivity.class));
 				LaunchActivity.this.finish();
 				return;
 			}
@@ -58,7 +61,8 @@ public class LaunchActivity extends Activity {
 		// parser.readSdFileToData();
 		// getLocalInformation();
 		// if (isDebug) {
-		// startActivity(new Intent(LaunchActivity.this, TestListActivity.class));
+		// startActivity(new Intent(LaunchActivity.this,
+		// TestListActivity.class));
 		// } else {
 		// startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
 		// }
@@ -67,11 +71,14 @@ public class LaunchActivity extends Activity {
 	public void getLocalInformation() {
 		LocalConfig localConfig = data.userInformation.localConfig;
 
-		TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+		TelephonyManager telephonyManager = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
 		localConfig.deviceid = telephonyManager.getDeviceId();
 		localConfig.line1Number = telephonyManager.getLine1Number();
 		localConfig.imei = telephonyManager.getSimSerialNumber();
 		localConfig.imsi = telephonyManager.getSubscriberId();
-		Log.e(tag, "deviceid:" + localConfig.deviceid + "-line1Number:" + localConfig.line1Number + "--imei:" + localConfig.imei + "--imsi:" + localConfig.imsi);
+		Log.e(tag, "deviceid:" + localConfig.deviceid + "-line1Number:"
+				+ localConfig.line1Number + "--imei:" + localConfig.imei
+				+ "--imsi:" + localConfig.imsi);
 	}
 }

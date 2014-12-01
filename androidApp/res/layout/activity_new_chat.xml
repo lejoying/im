@@ -5,10 +5,16 @@
     android:layout_height="match_parent"
     tools:context="com.open.welinks.NewChatActivity" >
 
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/locationMapView"
+        android:layout_width="300dp"
+        android:layout_height="200dp" >
+    </com.amap.api.maps2d.MapView>
+
     <ListView
         android:id="@+id/chatContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_above="@+id/chatBottomLayout"
         android:layout_marginBottom="1dp"
         android:layout_marginTop="55dp"

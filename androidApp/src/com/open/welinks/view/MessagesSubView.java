@@ -476,6 +476,12 @@ public class MessagesSubView {
 						lastChatMessageView.setText(leftText + "[声音]");
 					} else if ("share".equals(message.contentType)) {
 						lastChatMessageView.setText(leftText + "[分享]");
+					} else if ("gif".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + "[动图]");
+					} else if ("location".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + "[定位]");
+					} else if ("card".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + "[名片]");
 					}
 				}
 			}

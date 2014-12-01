@@ -34,4 +34,17 @@ public class SubData {
 			public String detail;
 		}
 	}
+
+	public class VoiceMessageContent {
+		public String time = "";
+		public String fileName = "";
+		public String recordReadSize = "";
+	}
+
+	public class LocationMessageContent {
+		public String address = "";
+		public String latitude = "";
+		public String longitude = "";
+		public String imageFileName = "";
+	}
 }

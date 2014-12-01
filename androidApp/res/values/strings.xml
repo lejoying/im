@@ -105,5 +105,6 @@
     <string name="personalDetails">个人详情</string>
     <string name="personalAlbum">个人相册</string>
     <string name="setting">设置</string>
+    <string name="locationing">正在定位，请稍后</string>
 
 </resources>

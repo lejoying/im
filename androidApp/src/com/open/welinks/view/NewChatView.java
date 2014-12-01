@@ -1,6 +1,5 @@
 package com.open.welinks.view;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,33 +11,38 @@ import pl.droidsonroids.gif.GifImageView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
-import android.os.Handler;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.RelativeLayout.LayoutParams;
 
+import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
+import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.NewChatController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Constant;
@@ -49,12 +53,13 @@ import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.SubData.LocationMessageContent;
 import com.open.welinks.model.SubData.MessageShareContent;
+import com.open.welinks.model.SubData.VoiceMessageContent;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.utils.ExpressionUtil;
 import com.open.welinks.utils.MyGson;
-import com.open.welinks.view.ChatView.ChatAdapter;
-import com.open.welinks.view.ChatView.ChatAdapter.ChatHolder;
 
 public class NewChatView {
 
@@ -69,6 +74,7 @@ public class NewChatView {
 	public ImageView chatAdd, chatSmily, chatRecord, titleImage, chatMenuBackground, voicePopImage;
 	public EditText chatInput;
 	public GridView chatMenu;
+	public MapView locationMapView;
 	public ChatFaceView faceLayout;
 
 	public SmallBusinessCardPopView businessCardPopView;
@@ -78,7 +84,7 @@ public class NewChatView {
 
 	private Animation inTranslateAnimation, inAlphaAnimation, outTranslateAnimation;
 
-	private DisplayImageOptions headOptions;
+	private DisplayImageOptions headOptions, locationOptions;
 
 	public NewChatView(NewChatActivity activity) {
 		thisView = this;
@@ -111,6 +117,7 @@ public class NewChatView {
 		chatInput = (EditText) thisActivity.findViewById(R.id.chatInput);
 		chatMenu = (GridView) thisActivity.findViewById(R.id.chatMenu);
 		faceLayout = (ChatFaceView) thisActivity.findViewById(R.id.faceLayout);
+		locationMapView = (MapView) thisActivity.findViewById(R.id.locationMapView);
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, thisActivity.findViewById(R.id.chatMainView));
 
@@ -122,6 +129,7 @@ public class NewChatView {
 		rightContainer.addView(titleImage);
 
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
+		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) BaseDataUtils.dpToPx(30))).build();
 
 		mChatMenuAdapter = new ChatMenuAdapter();
 		chatMenu.setAdapter(mChatMenuAdapter);
@@ -129,6 +137,10 @@ public class NewChatView {
 		inTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in);
 		outTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_out);
 		inAlphaAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in_alpha);
+
+		locationMapView.onCreate(thisActivity.savedInstanceState);
+		thisController.mAMap = locationMapView.getMap();
+		thisController.mAMap.getUiSettings().setZoomControlsEnabled(false);
 
 	}
 
@@ -170,7 +182,7 @@ public class NewChatView {
 		thisController.data.relationship.isModified = true;
 		mChatAdapter = new ChatAdapter(messages);
 		chatContent.setAdapter(mChatAdapter);
-		chatContent.setSelection(mChatAdapter.getCount());
+		changeChatList();
 	}
 
 	public class ChatAdapter extends BaseAdapter {
@@ -192,7 +204,7 @@ public class NewChatView {
 		@Override
 		public void notifyDataSetChanged() {
 			super.notifyDataSetChanged();
-			chatContent.setSelection(messages.size() - 1);
+			chatContent.setSelection(chatContent.getBottom());
 		}
 
 		@Override
@@ -261,34 +273,21 @@ public class NewChatView {
 			if (message != null) {
 				friend = thisController.data.relationship.friendsMap.get(message.phone);
 			}
-			int backgroundDrawableId = 0;
 			String messageHead = "";
 			if (convertView == null) {
 				holder = new ChatHolder();
 				if (type == TYPE_SELF) {
 					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_send, null);
-					backgroundDrawableId = R.drawable.myself_chat_order_bg;
-					messageHead = "";
 				} else if (type == TYPE_SELF_FIRST) {
 					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_send, null);
-					backgroundDrawableId = R.drawable.myself_chat_bg;
-					messageHead = currentUser.head;
 				} else if (type == TYPE_OTHER_MALE) {
 					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
-					backgroundDrawableId = R.drawable.male_chat_from_order_bg;
-					messageHead = "";
 				} else if (type == TYPE_OTHER_MALE_FIRST) {
 					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
-					backgroundDrawableId = R.drawable.male_chat_from_bg;
-					messageHead = friend.head;
 				} else if (type == TYPE_OTHER_FEMALE) {
 					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
-					backgroundDrawableId = R.drawable.female_chat_from_order_bg;
-					messageHead = "";
 				} else if (type == TYPE_OTHER_FEMALE_FIRST) {
 					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
-					backgroundDrawableId = R.drawable.female_chat_from_bg;
-					messageHead = friend.head;
 				} else if (type == TYPE_EVENT) {
 					convertView = thisActivity.mInflater.inflate(R.layout.chat_item_event, null);
 				}
@@ -305,6 +304,7 @@ public class NewChatView {
 					holder.head = (ImageView) convertView.findViewById(R.id.head);
 					holder.status = (ImageView) convertView.findViewById(R.id.status);
 					holder.shareImage = (ImageView) convertView.findViewById(R.id.shareImage);
+					holder.locationImage = (ImageView) convertView.findViewById(R.id.locationImage);
 					holder.time = (TextView) convertView.findViewById(R.id.time);
 					holder.character = (TextView) convertView.findViewById(R.id.character);
 					holder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
@@ -313,6 +313,19 @@ public class NewChatView {
 					holder.shareText = (TextView) convertView.findViewById(R.id.shareText);
 					holder.gif = (GifImageView) convertView.findViewById(R.id.gif);
 					holder.voiceGif = (GifImageView) convertView.findViewById(R.id.voiceGif);
+				}
+				if (type == TYPE_SELF) {
+					holder.chatLayout.setBackgroundResource(R.drawable.myself_chat_order_bg);
+				} else if (type == TYPE_SELF_FIRST) {
+					holder.chatLayout.setBackgroundResource(R.drawable.myself_chat_bg);
+				} else if (type == TYPE_OTHER_MALE) {
+					holder.chatLayout.setBackgroundResource(R.drawable.male_chat_from_order_bg);
+				} else if (type == TYPE_OTHER_MALE_FIRST) {
+					holder.chatLayout.setBackgroundResource(R.drawable.male_chat_from_bg);
+				} else if (type == TYPE_OTHER_FEMALE) {
+					holder.chatLayout.setBackgroundResource(R.drawable.female_chat_from_order_bg);
+				} else if (type == TYPE_OTHER_FEMALE_FIRST) {
+					holder.chatLayout.setBackgroundResource(R.drawable.female_chat_from_bg);
 				}
 				convertView.setTag(holder);
 			} else {
@@ -325,6 +338,11 @@ public class NewChatView {
 				String content = DataHandlers.switchChatMessageEvent(event);
 				holder.character.setText(content);
 			} else {
+				if (type == TYPE_SELF_FIRST) {
+					messageHead = currentUser.head;
+				} else if (type == TYPE_OTHER_MALE_FIRST || type == TYPE_OTHER_FEMALE_FIRST) {
+					messageHead = friend.head;
+				}
 				if (!"".equals(messageHead)) {
 					thisController.fileHandlers.getHeadImage(messageHead, holder.head, headOptions);
 					holder.head.setTag(R.id.tag_first, "head");
@@ -333,7 +351,7 @@ public class NewChatView {
 				} else {
 					holder.head.setVisibility(View.GONE);
 				}
-				holder.chatLayout.setBackgroundResource(backgroundDrawableId);
+
 				String contentType = message.contentType;
 				if (type == TYPE_SELF) {
 					holder.status.setVisibility(View.VISIBLE);
@@ -342,10 +360,7 @@ public class NewChatView {
 						long cha = (currentLong - Long.valueOf(message.time)) / 1000;
 						if (cha > 60) {
 							message.status = "failed";
-							holder.status.setImageResource(R.drawable.message_resend);
-							holder.status.setTag(R.id.tag_class, "resend_message");
-							holder.status.setTag(R.id.tag_first, position);
-							holder.status.setOnClickListener(thisController.mOnClickListener);
+							this.notifyDataSetChanged();
 						} else {
 							holder.status.setImageResource(R.drawable.message_send);
 						}
@@ -353,8 +368,8 @@ public class NewChatView {
 						holder.status.setVisibility(View.GONE);
 					} else if ("failed".equals(message.status)) {
 						holder.status.setImageResource(R.drawable.message_resend);
-						holder.status.setTag(R.id.tag_class, "resend_message");
-						holder.status.setTag(R.id.tag_first, position);
+						holder.status.setTag(R.id.tag_first, "resend");
+						holder.status.setTag(R.id.tag_second, position);
 						holder.status.setOnClickListener(thisController.mOnClickListener);
 					} else {
 						holder.status.setImageResource(R.drawable.message_failed);
@@ -402,6 +417,7 @@ public class NewChatView {
 					holder.gif.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
 					holder.imagesLayout.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
 					holder.character.setText(message.content);
 					holder.character.setAutoLinkMask(Linkify.WEB_URLS);
 					holder.character.setMovementMethod(LinkMovementMethod.getInstance());
@@ -431,18 +447,16 @@ public class NewChatView {
 							}
 						}
 					}
-					holder.character.setText(style);
+					SpannableString spannableString = ExpressionUtil.getExpressionString(thisActivity, style.toString(), Constant.FACEREGX);
+					holder.character.setText(spannableString);
 				} else if (contentType.equals("voice")) {
 					holder.character.setVisibility(View.GONE);
 					holder.voice.setVisibility(View.VISIBLE);
 					holder.image.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
 					holder.imagesLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
-
-					String[] infomation = message.content.split("@");
-					String time = infomation[1], fileName = infomation[0];
-					holder.voicetime.setText(time + "s");
 					GifDrawable gifDrawable = null;
 					try {
 						if (type == TYPE_SELF || type == TYPE_SELF_FIRST) {
@@ -455,19 +469,28 @@ public class NewChatView {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+
 					if (gifDrawable != null) {
 						holder.voiceGif.setImageDrawable(gifDrawable);
 						gifDrawable.stop();
 					}
-					thisController.audiohandlers.prepareVoice(fileName);
-					holder.voice.setTag(R.id.tag_first, contentType);
-					holder.voice.setTag(R.id.tag_second, fileName);
-					holder.voice.setOnClickListener(thisController.mOnClickListener);
+					VoiceMessageContent messageContent = thisController.gson.fromJson(message.content, VoiceMessageContent.class);
+					if (messageContent == null) {
+						holder.voicetime.setText("数据结构错误");
+					} else {
+						holder.voicetime.setText(messageContent.time + "s");
+						thisController.audiohandlers.prepareVoice(messageContent.fileName, Integer.valueOf(messageContent.recordReadSize));
+						holder.voice.setTag(R.id.tag_first, contentType);
+						holder.voice.setTag(R.id.tag_second, messageContent.fileName);
+						holder.voice.setTag(R.id.tag_third, messageContent.recordReadSize);
+						holder.voice.setOnClickListener(thisController.mOnClickListener);
+					}
 				} else if (contentType.equals("image")) {
 					holder.character.setVisibility(View.GONE);
 					holder.voice.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
 
 					List<String> images = null;
 					try {
@@ -503,6 +526,7 @@ public class NewChatView {
 					holder.image.setVisibility(View.GONE);
 					holder.imagesLayout.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.VISIBLE);
 					thisController.fileHandlers.getGifImage(message.content, holder.gif);
 				} else if (contentType.equals("share")) {
@@ -511,6 +535,7 @@ public class NewChatView {
 					holder.image.setVisibility(View.GONE);
 					holder.imagesLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
 					holder.share.setVisibility(View.VISIBLE);
 
 					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
@@ -525,6 +550,31 @@ public class NewChatView {
 					holder.share.setTag(R.id.tag_third, messageContent.gsid);
 					holder.share.setTag(R.id.tag_four, messageContent.sid);
 					holder.share.setOnClickListener(thisController.mOnClickListener);
+				} else if (contentType.equals("location")) {
+					holder.character.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.VISIBLE);
+					if (!"".equals(message.content)) {
+						LocationMessageContent messageContent = thisController.gson.fromJson(message.content, LocationMessageContent.class);
+						if (messageContent != null) {
+							if ("".equals(messageContent.imageFileName)) {
+								holder.locationImage.setImageResource(R.drawable.chat_location_searching);
+							} else {
+								thisController.fileHandlers.getImage(messageContent.imageFileName, holder.locationImage, new LinearLayout.LayoutParams((int) BaseDataUtils.dpToPx(150), (int) BaseDataUtils.dpToPx(100)), DownloadFile.TYPE_IMAGE, locationOptions);
+							}
+							holder.locationImage.setTag(R.id.tag_first, contentType);
+							holder.locationImage.setTag(R.id.tag_second, messageContent.address);
+							holder.locationImage.setTag(R.id.tag_third, messageContent.latitude);
+							holder.locationImage.setTag(R.id.tag_four, messageContent.longitude);
+							holder.locationImage.setOnClickListener(thisController.mOnClickListener);
+						}
+					} else {
+						holder.locationImage.setImageResource(R.drawable.chat_location_searching);
+					}
 				}
 			}
 			return convertView;
@@ -532,7 +582,7 @@ public class NewChatView {
 
 		class ChatHolder {
 			View voice, share, chatLayout, imagesLayout;
-			ImageView voiceIcon, image, head, status, images, shareImage;
+			ImageView voiceIcon, image, head, status, images, shareImage, locationImage;
 			TextView time, character, voicetime, imagesCount, shareTitle, shareText;
 			GifImageView gif, voiceGif;
 		}
@@ -598,6 +648,7 @@ public class NewChatView {
 			TextView text = (TextView) convertView.findViewById(R.id.item_text);
 			image.setImageResource(menuImage.get(position));
 			text.setText(menuString.get(position));
+			convertView.setTag(menuString.get(position));
 			return convertView;
 		}
 
@@ -625,7 +676,7 @@ public class NewChatView {
 				thisController.audiohandlers.stopPlay();
 			} else {
 				// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_on);
-				thisController.audiohandlers.startPlay((String) view.getTag(R.id.tag_second));
+				thisController.audiohandlers.startPlay((String) view.getTag(R.id.tag_second), (String) view.getTag(R.id.tag_third));
 			}
 		} else {
 			if (thisController.audiohandlers.isPlaying()) {
@@ -634,7 +685,7 @@ public class NewChatView {
 			}
 			this.currentVoiceView = view;
 			// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_on);
-			thisController.audiohandlers.startPlay((String) view.getTag(R.id.tag_second));
+			thisController.audiohandlers.startPlay((String) view.getTag(R.id.tag_second), (String) view.getTag(R.id.tag_third));
 		}
 	}
 
@@ -655,6 +706,8 @@ public class NewChatView {
 			this.voicePopImage.setImageResource(R.drawable.image_chat_voice_cancel);
 			this.voicePopPrompt.setText(thisActivity.getString(R.string.loosenFingers));
 		}
+		if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+			thisView.titleImage.performClick();
 	}
 
 	public void changeChatMenu() {
@@ -664,6 +717,13 @@ public class NewChatView {
 			this.chatMenuLayout.setVisibility(View.VISIBLE);
 			this.chatMenuBackground.startAnimation(inAlphaAnimation);
 			this.chatMenuBackground.setVisibility(View.VISIBLE);
+			if (thisController.inputManager.isActive(chatInput))
+				thisController.inputManager.hide(chatInput);
+			if (this.faceLayout.getVisibility() == View.VISIBLE)
+				this.chatSmily.performClick();
+			if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
+				this.chatAdd.performClick();
+			}
 		} else {
 			this.titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
 			this.chatMenuLayout.startAnimation(outTranslateAnimation);
@@ -674,25 +734,23 @@ public class NewChatView {
 
 	public void changeChatRecord() {
 		if (this.textLayout.getVisibility() == View.VISIBLE) {
+			if (this.faceLayout.getVisibility() == View.VISIBLE)
+				this.chatSmily.performClick();
+			if (thisController.inputManager.isActive(chatInput))
+				thisController.inputManager.hide(chatInput);
 			this.textLayout.setVisibility(View.GONE);
 			this.voiceLayout.setVisibility(View.VISIBLE);
 			this.chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_keyboard));
-			if (this.faceLayout.getVisibility() == View.VISIBLE) {
-				this.faceLayout.setVisibility(View.GONE);
-			}
-			if (thisController.inputManager.isActive(chatInput)) {
-				thisController.inputManager.hide(chatInput);
-			}
 		} else if (this.voiceLayout.getVisibility() == View.VISIBLE) {
 			this.textLayout.setVisibility(View.VISIBLE);
 			this.voiceLayout.setVisibility(View.GONE);
 			this.chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_record));
 			this.chatInput.requestFocus();
 		}
-		if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
-			this.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
-			this.chatAddLayout.setVisibility(View.GONE);
-		}
+		if (this.chatAddLayout.getVisibility() == View.VISIBLE)
+			this.chatAdd.performClick();
+		if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+			thisView.titleImage.performClick();
 	}
 
 	public void changeChatAdd() {
@@ -704,10 +762,12 @@ public class NewChatView {
 			if (thisController.inputManager.isActive(chatInput)) {
 				thisController.inputManager.hide(chatInput);
 			}
-			if (this.faceLayout.getVisibility() == View.VISIBLE) {
-				this.faceLayout.setVisibility(View.GONE);
-			}
+			if (this.faceLayout.getVisibility() == View.VISIBLE)
+				this.chatSmily.performClick();
+			if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+				thisView.titleImage.performClick();
 			this.chatAddLayout.setVisibility(View.VISIBLE);
+			changeChatList();
 		}
 	}
 
@@ -715,21 +775,23 @@ public class NewChatView {
 		if (this.faceLayout.getVisibility() == View.VISIBLE) {
 			this.faceLayout.setVisibility(View.GONE);
 		} else {
-			if (thisController.inputManager.isActive(chatInput)) {
+			if (thisController.inputManager.isActive(chatInput))
 				thisController.inputManager.hide(chatInput);
-			}
+
 			if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
 				this.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
 				this.chatAddLayout.setVisibility(View.GONE);
 			}
+			if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+				thisView.titleImage.performClick();
 			this.faceLayout.setVisibility(View.VISIBLE);
+			changeChatList();
 		}
-
 	}
 
 	public void changeChatInput() {
 		if (this.faceLayout.getVisibility() == View.VISIBLE) {
-			this.faceLayout.setVisibility(View.GONE);
+			this.chatSmily.performClick();
 		}
 		if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
 			this.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
@@ -738,7 +800,29 @@ public class NewChatView {
 		if (this.faceLayout.getVisibility() == View.VISIBLE) {
 			this.faceLayout.setVisibility(View.GONE);
 		}
+		changeChatList();
+	}
 
+	public void changeChatList() {
+		new Thread() {
+			public void run() {
+				try {
+					sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if (thisController.chatContentRunnable == null) {
+					thisController.chatContentRunnable = new Runnable() {
+						@Override
+						public void run() {
+							chatContent.setSelection(chatContent.getBottom());
+						}
+					};
+
+				}
+				thisController.handler.post(thisController.chatContentRunnable);
+			};
+		}.start();
 	}
 
 	private class MyURLSpan extends ClickableSpan {

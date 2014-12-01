@@ -376,7 +376,7 @@ public class CreateGroupLocationActivity extends Activity {
 					location.setText("当前地址：" + address);
 					positioned = false;
 				} else {
-					mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork, -1, 10, mAMapLocationListener);
+					mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 10, mAMapLocationListener);
 				}
 			}
 

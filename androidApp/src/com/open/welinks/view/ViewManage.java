@@ -28,6 +28,7 @@ public class ViewManage {
 	public SquareSubView squareSubView = null;
 	public ShareSubView shareSubView = null;
 	public ChatView chatView = null;
+	public NewChatView newChatView = null;
 	public MessagesSubView messagesSubView = null;
 	public ShareMessageDetailView shareMessageDetailView = null;
 
@@ -55,6 +56,7 @@ public class ViewManage {
 	}
 
 	public DisplayImageOptions options;
+	public DisplayImageOptions optionsRound;
 	public DisplayImageOptions options40;
 	public DisplayImageOptions options52;
 	public DisplayImageOptions options50;
@@ -141,6 +143,8 @@ public class ViewManage {
 		} else if (viewName.equals("ChatMessage")) {
 			if (chatView != null) {
 				chatView.mChatAdapter.notifyDataSetChanged();
+			} else if (newChatView != null) {
+				newChatView.mChatAdapter.notifyDataSetChanged();
 			}
 		} else if (viewName.equals("CirclesManageView")) {
 			if (circlesManageView != null) {

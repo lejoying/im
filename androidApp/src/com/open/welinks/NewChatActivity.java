@@ -16,17 +16,21 @@ public class NewChatActivity extends Activity {
 	public NewChatController thisController;
 	public NewChatActivity thisActivity;
 	public LayoutInflater mInflater;
+	public Bundle savedInstanceState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.mInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.thisActivity = this;
+		this.mInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.savedInstanceState = savedInstanceState;
 		this.thisView = new NewChatView(thisActivity);
 		this.thisController = new NewChatController(thisActivity);
 
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
+
+		thisController.viewManage.newChatView = thisView;
 
 		this.thisController.onCreate();
 		this.thisView.initViews();
@@ -41,6 +45,12 @@ public class NewChatActivity extends Activity {
 	}
 
 	@Override
+	protected void onPause() {
+		super.onPause();
+		this.thisController.onPause();
+	}
+	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		return super.onKeyDown(keyCode, event);
 	}
@@ -49,6 +59,12 @@ public class NewChatActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		this.thisController.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void finish() {
+		this.thisController.finish();
+		super.finish();
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import com.open.welinks.R;
 
 public class MyOnClickListener implements OnClickListener {
 
-	public long defaultTime = 800;
+	public long defaultTime = 500;
 
 	public MyOnClickListener() {
 	}

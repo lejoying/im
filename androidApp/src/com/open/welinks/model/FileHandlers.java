@@ -367,14 +367,14 @@ public class FileHandlers {
 		downloadFileList.addDownloadFile(downloadFile);
 	}
 
-	public void downloadVoiceFile(File file, final String fileName, final boolean play) {
+	public void downloadVoiceFile(File file, final String fileName, final int readSize, final boolean play) {
 		DownloadFile downloadFile = new DownloadFile(API.DOMAIN_COMMONIMAGE + "voices/" + fileName, file.getAbsolutePath());
 		downloadFile.setDownloadFileListener(new OnDownloadListener() {
 			@Override
 			public void onSuccess(DownloadFile instance, int status) {
 				super.onSuccess(instance, status);
 				if (play) {
-					audioHandlers.startPlay(fileName);
+					audioHandlers.startPlay(fileName, readSize);
 				}
 			}
 
