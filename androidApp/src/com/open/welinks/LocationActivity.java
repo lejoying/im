@@ -47,7 +47,7 @@ public class LocationActivity extends Activity implements OnClickListener {
 		mAMap = mapView.getMap();
 
 		LatLng latLonPoint = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-		mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 18));
+		mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 17));
 		titleText.setText(address);
 
 		MarkerOptions markOptions = new MarkerOptions();

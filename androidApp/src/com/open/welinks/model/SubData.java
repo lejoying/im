@@ -47,4 +47,12 @@ public class SubData {
 		public String longitude = "";
 		public String imageFileName = "";
 	}
+
+	public class CardMessageContent {
+		public String type = "";
+		public String key = "";
+		public String name = "";
+		public String mainBusiness = "";
+		public String head = "";
+	}
 }

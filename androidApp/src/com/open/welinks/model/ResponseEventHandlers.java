@@ -621,7 +621,20 @@ public class ResponseEventHandlers {
 			} else {
 				modifyMessagesSubView(message);
 			}
-		} else {
+		} else if (viewManage.newChatView != null) {
+			String key = viewManage.newChatView.thisController.key;
+			if (key.equals(message.phone) || key.equals(message.gid)) {
+				viewManage.newChatView.thisController.handler.post(new Runnable() {
+					@Override
+					public void run() {
+						viewManage.newChatView.mChatAdapter.notifyDataSetChanged();
+					}
+				});
+			} else {
+				modifyMessagesSubView(message);
+			}
+		}
+		{
 			modifyMessagesSubView(message);
 		}
 	}

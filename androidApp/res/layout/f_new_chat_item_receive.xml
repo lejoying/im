@@ -106,6 +106,82 @@
                 android:layout_margin="10dp"
                 android:visibility="gone" />
 
+            <RelativeLayout
+                android:id="@+id/cardLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:visibility="gone" >
+
+                <LinearLayout
+                    android:id="@+id/titleLayout"
+                    android:layout_width="200dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/shape_chat_card_title"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="2dp" >
+
+                    <ImageView
+                        android:id="@+id/cardTitleImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/cardTitleText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/gray60"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/cardHead"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/titleLayout"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="15dp" />
+
+                <LinearLayout
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/titleLayout"
+                    android:layout_toRightOf="@+id/cardHead"
+                    android:orientation="vertical"
+                    android:padding="5dp" >
+
+                    <TextView
+                        android:id="@+id/cardName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:singleLine="true"
+                        android:textColor="@color/black70"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/cardId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:singleLine="true"
+                        android:textColor="@color/gray60"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/cardMainBusiness"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:singleLine="true"
+                        android:textColor="@color/gray60"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
             <FrameLayout
                 android:id="@+id/imagesLayout"
                 android:layout_width="wrap_content"
@@ -140,7 +216,8 @@
                 android:layout_width="150dp"
                 android:layout_height="100dp"
                 android:layout_margin="10dp"
-                android:src="@drawable/chat_location_searching" />
+                android:src="@drawable/chat_location_searching"
+                android:visibility="gone" />
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/gif"

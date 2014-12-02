@@ -27,6 +27,7 @@ public class Constant {
 	public static final int REQUESTCODE_ABLUM = 0x21;
 	public static final int REQUESTCODE_TAKEPHONE = 0x22;
 	public static final int REQUESTCODE_TAKEPHOTO = 0x23;
+	public static final int REQUESTCODE_SHAREVIEW = 0x24;
 	// faceRegx
 	public static String FACEREGX = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 	// tableId

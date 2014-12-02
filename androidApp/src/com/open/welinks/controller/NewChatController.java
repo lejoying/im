@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import pl.droidsonroids.gif.GifDrawable;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -54,6 +55,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.GroupInfoActivity;
+import com.open.welinks.GroupListActivity;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.LocationActivity;
@@ -68,12 +70,14 @@ import com.open.welinks.model.AudioHandlers;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
+import com.open.welinks.model.SubData.CardMessageContent;
 import com.open.welinks.model.SubData.LocationMessageContent;
 import com.open.welinks.model.SubData.VoiceMessageContent;
 import com.open.welinks.utils.BaseDataUtils;
@@ -125,7 +129,7 @@ public class NewChatController {
 	public Timer timer;
 	public long voiceTime = 0;
 
-	public boolean sendRecording = true;
+	public boolean sendRecording = true, continuePlay = false;
 
 	public Handler handler;
 	public Runnable chatContentRunnable;
@@ -298,18 +302,21 @@ public class NewChatController {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				String tag = (String) view.getTag();
-				if (position == 0) {
-					if (tag.equals(thisActivity.getString(R.string.personalDetails))) {
-						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
-						intent.putExtra("key", key);
-						intent.putExtra("type", type);
-						thisActivity.startActivity(intent);
-					} else if (tag.equals(thisActivity.getString(R.string.groupDetails))) {
-						Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
-						intent.putExtra("gid", key);
-						thisActivity.startActivity(intent);
-					}
+				if (tag.equals(thisActivity.getString(R.string.personalDetails))) {
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("key", key);
+					intent.putExtra("type", type);
+					thisActivity.startActivity(intent);
+				} else if (tag.equals(thisActivity.getString(R.string.groupDetails))) {
+					Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
+					intent.putExtra("gid", key);
+					thisActivity.startActivity(intent);
+				} else if (tag.equals(thisActivity.getString(R.string.sendCard))) {
+					Intent intent = new Intent(thisActivity, GroupListActivity.class);
+					intent.putExtra("type", "sendCard");
+					thisActivity.startActivityForResult(intent, Constant.REQUESTCODE_SHAREVIEW);
 				}
+
 			}
 		};
 		mTextWatcher = new TextWatcher() {
@@ -484,7 +491,7 @@ public class NewChatController {
 					Double geoLng = mAMapLocation.getLongitude();
 					String address = mAMapLocation.getAddress();
 					LatLng latLonPoint = new LatLng(geoLat, geoLng);
-					thisController.mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 18));
+					thisController.mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 17));
 					mAMap.clear();
 					MarkerOptions markOptions = new MarkerOptions();
 					markOptions.position(latLonPoint);
@@ -512,9 +519,7 @@ public class NewChatController {
 			@Override
 			public void onRecording(int volume) {
 				if (sendRecording) {
-					if (volume == 0) {
-						thisView.changeVoice(R.drawable.image_chat_voice_talk);
-					} else if (volume > 0 && volume <= 10) {
+					if (volume >= 0 && volume <= 10) {
 						thisView.changeVoice(R.drawable.image_chat_voice_talk_1);
 					} else if (volume > 10 && volume <= 20) {
 						thisView.changeVoice(R.drawable.image_chat_voice_talk_2);
@@ -529,23 +534,29 @@ public class NewChatController {
 
 			@Override
 			public void onPlayFail() {
-				android.os.Message msg = new android.os.Message();
-				msg.what = Constant.HANDLER_CHAT_STOPPLAY;
-				handler.sendMessage(msg);
+				postHandler(Constant.HANDLER_CHAT_STOPPLAY);
 			}
 
 			@Override
 			public void onPlayComplete() {
-				android.os.Message msg = new android.os.Message();
-				msg.what = Constant.HANDLER_CHAT_STOPPLAY;
-				handler.sendMessage(msg);
+				postHandler(Constant.HANDLER_CHAT_STOPPLAY);
+				if (continuePlay) {
+					continuePlay = false;
+					thisController.audiohandlers.startPlay((String) thisView.currentVoiceView.getTag(R.id.tag_second), (String) thisView.currentVoiceView.getTag(R.id.tag_third));
+					postHandler(Constant.HANDLER_CHAT_STARTPLAY);
+				}
 			}
 
 			@Override
 			public void onPrepared() {
-				android.os.Message msg = new android.os.Message();
-				msg.what = Constant.HANDLER_CHAT_STARTPLAY;
-				handler.sendMessage(msg);
+
+			}
+
+			@Override
+			public void onRecorded(String filePath) {
+				if (!"".equals(filePath)) {
+					createVoiceMessage(filePath);
+				}
 			}
 		};
 		handler = new Handler() {
@@ -557,15 +568,18 @@ public class NewChatController {
 					break;
 				case Constant.HANDLER_CHAT_HIDEVOICEPOP:
 					thisView.voicePop.setVisibility(View.GONE);
+					thisView.voicePopImage.setImageResource(R.drawable.image_chat_voice_talk);
 					break;
 				case Constant.HANDLER_CHAT_STARTPLAY:
 					if (thisView.currentVoiceView != null) {
-						// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_on);
+						thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.VISIBLE);
+						((GifDrawable) thisView.currentVoiceView.getTag(R.id.tag_four)).start();
 					}
 					break;
 				case Constant.HANDLER_CHAT_STOPPLAY:
 					if (thisView.currentVoiceView != null) {
-						// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_off);
+						((GifDrawable) thisView.currentVoiceView.getTag(R.id.tag_four)).stop();
+						thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.INVISIBLE);
 					}
 					break;
 				}
@@ -602,18 +616,13 @@ public class NewChatController {
 	}
 
 	private void completeVoiceRecording(boolean weather) {
-		android.os.Message msg = new android.os.Message();
-		msg.what = Constant.HANDLER_CHAT_HIDEVOICEPOP;
-		handler.sendMessage(msg);
+		postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
 		timer.cancel();
 		timer.purge();
 		voiceTime = 0;
 		timer = null;
 		if (weather) {
-			String filePath = audiohandlers.stopRecording();
-			if (!"".equals(filePath)) {
-				createVoiceMessage(filePath);
-			}
+			audiohandlers.stopRecording();
 		} else {
 			audiohandlers.releaseRecording();
 		}
@@ -803,12 +812,90 @@ public class NewChatController {
 					messages.add(message);
 				}
 				data.messages.isModified = true;
-				android.os.Message msg = new android.os.Message();
-				msg.what = Constant.HANDLER_CHAT_NOTIFY;
-				handler.sendMessage(msg);
+				postHandler(Constant.HANDLER_CHAT_NOTIFY);
 			}
 		}).start();
 
+	}
+
+	private void createCardMessageToLocation(final String key, final String type) {
+		new Thread() {
+			public void run() {
+				List<String> messagesOrder = data.messages.messagesOrder;
+				String orderKey = "";
+				long time = new Date().getTime();
+				Message message = data.messages.new Message();
+				message.contentType = "card";
+				message.phone = user.phone;
+				message.nickName = user.nickName;
+				message.time = String.valueOf(time);
+				message.status = "sending";
+				message.type = Constant.MESSAGE_TYPE_SEND;
+				CardMessageContent messageContent = subData.new CardMessageContent();
+				messageContent.key = thisController.key;
+				messageContent.type = thisController.type;
+				if ("point".equals(thisController.type)) {
+					Friend friend = data.relationship.friendsMap.get(thisController.key);
+					if (friend != null) {
+						messageContent.head = friend.head;
+						messageContent.name = friend.nickName;
+						messageContent.mainBusiness = friend.mainBusiness;
+					}
+				} else if ("group".equals(thisController.type)) {
+					Group group = data.relationship.groupsMap.get(thisController.key);
+					if (group != null) {
+						messageContent.head = group.icon;
+						messageContent.name = group.name;
+						messageContent.mainBusiness = group.description;
+					}
+				}
+				message.content = gson.toJson(messageContent);
+				if ("point".equals(type)) {
+					orderKey = "p" + key;
+					if (messagesOrder.contains(orderKey)) {
+						messagesOrder.remove(orderKey);
+					}
+					messagesOrder.add(0, orderKey);
+					message.sendType = "point";
+					message.phoneto = "[\"" + key + "\"]";
+
+					Map<String, ArrayList<Message>> friendMessageMap = data.messages.friendMessageMap;
+					if (friendMessageMap == null) {
+						friendMessageMap = new HashMap<String, ArrayList<Message>>();
+						data.messages.friendMessageMap = friendMessageMap;
+					}
+					ArrayList<Message> messages = friendMessageMap.get(orderKey);
+					if (messages == null) {
+						messages = new ArrayList<Message>();
+						friendMessageMap.put(orderKey, messages);
+					}
+					messages.add(message);
+				} else if ("group".equals(type)) {
+					orderKey = "g" + key;
+					if (messagesOrder.contains(orderKey)) {
+						messagesOrder.remove(orderKey);
+					}
+					messagesOrder.add(0, orderKey);
+					message.gid = key;
+					message.sendType = "group";
+
+					message.phoneto = data.relationship.groupsMap.get(key).members.toString();
+					Map<String, ArrayList<Message>> groupMessageMap = data.messages.groupMessageMap;
+					if (groupMessageMap == null) {
+						groupMessageMap = new HashMap<String, ArrayList<Message>>();
+						data.messages.groupMessageMap = groupMessageMap;
+					}
+					ArrayList<Message> messages = groupMessageMap.get(orderKey);
+					if (messages == null) {
+						messages = new ArrayList<Message>();
+						groupMessageMap.put(orderKey, messages);
+					}
+					messages.add(message);
+				}
+				data.messages.isModified = true;
+				sendMessage(message);
+			};
+		}.start();
 	}
 
 	private void sendMessage(Message message) {
@@ -888,6 +975,12 @@ public class NewChatController {
 		return multipart;
 	}
 
+	public void postHandler(int what) {
+		android.os.Message msg = new android.os.Message();
+		msg.what = what;
+		handler.sendMessage(msg);
+	}
+
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == Constant.REQUESTCODE_ABLUM && resultCode == Activity.RESULT_OK) {
 			ArrayList<String> selectedImageList = data.tempData.selectedImageList;
@@ -902,6 +995,12 @@ public class NewChatController {
 			selectedImageList.add(strRingPath);
 			createImageMessage(selectedImageList);
 			tempPhotoFile.delete();
+		} else if (requestCode == Constant.REQUESTCODE_SHAREVIEW && resultCode == Activity.RESULT_OK) {
+			String type = intent.getStringExtra("sendType");
+			String key = intent.getStringExtra("key");
+			if (!"".equals(key) && !"".equals(type)) {
+				createCardMessageToLocation(key, type);
+			}
 		}
 
 	}

@@ -30,7 +30,7 @@ public class AudioHandlers {
 	private byte[] mPlayProcessedData;
 	private boolean isRecording = false;
 	private boolean isPlaying = false;
-	private File audioFolder;
+	private boolean isSend = false;
 	private File raw;
 	private AudioRecord mAudioRecord;
 	private AudioTrack mAudioTrack;
@@ -50,10 +50,6 @@ public class AudioHandlers {
 		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		mSpeexEncodeFrameSize = speex.getEncodeFrameSize();
 		mSpeexDecodeFrameSize = speex.getDecodeFrameSize();
-		audioFolder = new File(fileHandlers.sdcardVoiceFolder.getAbsolutePath());
-		if (!audioFolder.exists()) {
-			audioFolder.mkdir();
-		}
 	}
 
 	public static AudioHandlers getInstance() {
@@ -87,6 +83,7 @@ public class AudioHandlers {
 			mAudioRecord.stop();
 			this.closeRecord();
 		}
+		isSend = true;
 		isRecording = false;
 		int time = (int) ((recorderEndTime - recorderStartTime) / 1000);
 		return raw.getAbsolutePath() + "@" + time + "@" + mRecordReadSize;
@@ -96,6 +93,7 @@ public class AudioHandlers {
 		if (mAudioRecord != null) {
 			mAudioRecord.stop();
 		}
+		isSend = false;
 		isRecording = false;
 		this.closeRecord();
 		raw.delete();
@@ -108,9 +106,13 @@ public class AudioHandlers {
 	}
 
 	public void prepareVoice(String fileName, int recordReadSize, boolean play) {
-		File file = new File(fileName);
+		File file = new File(fileHandlers.sdcardVoiceFolder, fileName);
 		if (!file.exists()) {
 			fileHandlers.downloadVoiceFile(file, fileName, recordReadSize, play);
+		} else {
+			if (play) {
+				startPlay(fileName, recordReadSize);
+			}
 		}
 	}
 
@@ -123,7 +125,7 @@ public class AudioHandlers {
 		if (isPlaying) {
 			stopPlay();
 		} else {
-			file = new File(audioFolder, fileName);
+			file = new File(fileHandlers.sdcardVoiceFolder, fileName);
 			if (!file.exists()) {
 				prepareVoice(fileName, recordReadSize, true);
 			} else {
@@ -141,7 +143,6 @@ public class AudioHandlers {
 
 	public void stopPlay() {
 		isPlaying = false;
-		stopPlayThread();
 	}
 
 	public void releasePlyer() {
@@ -153,34 +154,21 @@ public class AudioHandlers {
 	private void initRecorder() {
 		mRecorderMinBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
 		mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, mRecorderMinBufferSize);
-		// for (int rate : new int[] { 8000, 11025, 22050, 32000, 44100 }) {
-		// for (short format : new short[] { AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT }) {
-		// for (short config : new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO }) {
-		// if (mAudioRecord == null || mAudioRecord.getState() == AudioRecord.STATE_UNINITIALIZED) {
-		// mRecorderMinBufferSize = AudioRecord.getMinBufferSize(rate, config, format);
-		// Log.e(tag, "rate:" + rate + "             format:" + format + "             config:" + config + "             minBufferSize:" + mRecorderMinBufferSize);
-		// if (mRecorderMinBufferSize != AudioRecord.ERROR_BAD_VALUE) {
-		// mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, rate, config, format, mRecorderMinBufferSize);
-		// }
-		// }
-		// }
-		// }
-		// }
 		mRecordData = new short[mRecorderMinBufferSize];
-		mRecordProcessedData = new byte[mSpeexEncodeFrameSize];
+		mRecordProcessedData = new byte[mRecorderMinBufferSize];
 	}
 
 	private void initAudioTrack() {
 		mPrimePlaySize = AudioTrack.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
 		mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, mPrimePlaySize * 2, AudioTrack.MODE_STREAM);
 		mPlayData = new short[mPrimePlaySize];
-		mPlayProcessedData = new byte[mSpeexDecodeFrameSize];
+		mPlayProcessedData = new byte[mPrimePlaySize];
 	}
 
 	private void getFilePath() {
 		try {
 			String fileName = String.valueOf(System.currentTimeMillis());
-			raw = new File(audioFolder, fileName);
+			raw = new File(fileHandlers.sdcardVoiceFolder, fileName);
 			raw.createNewFile();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -218,37 +206,23 @@ public class AudioHandlers {
 		}
 	}
 
-	private void stopPlayThread() {
-		if (mPlayAudioThread != null) {
-			mPlayAudioThread.interrupt();
-			mPlayAudioThread = null;
-		}
-	}
-
 	class PlayAudioThread extends Thread {
 		private DataInputStream inStream;
 
 		public PlayAudioThread(DataInputStream inStream) {
 			this.inStream = inStream;
-
-			try {
-				Log.i(tag, "available:" + inStream.available());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
 		@Override
 		public void run() {
 			mAudioTrack.play();
-			int total = 0;
 			while (isPlaying) {
 				try {
 					int readSize = inStream.read(mPlayProcessedData, 0, mRecordReadSize);
 					int decodeSize = speex.decode(mPlayProcessedData, mPlayData, readSize);
 					int size = mAudioTrack.write(mPlayData, 0, decodeSize);
-					// Log.i(tag, "readSize:" + readSize + "    decodeSize:" + decodeSize + "   size:" + size + "    total:" + total);
 					if (inStream.available() <= 0) {
+						isPlaying = false;
 						if (mAudioListener != null) {
 							mAudioListener.onPlayComplete();
 						}
@@ -262,16 +236,10 @@ public class AudioHandlers {
 					break;
 				}
 			}
-			isPlaying = false;
 			mAudioTrack.stop();
+			mAudioListener.onPlayComplete();
 		}
 
-		@Override
-		public void interrupt() {
-			isPlaying = false;
-			mAudioTrack.stop();
-			super.interrupt();
-		}
 	}
 
 	class RecordAudioThread extends Thread {
@@ -283,15 +251,14 @@ public class AudioHandlers {
 			recorderStartTime = System.currentTimeMillis();
 			while (isRecording) {
 				int readSize = mAudioRecord.read(mRecordData, 0, mRecorderMinBufferSize);
-				// Log.v(tag, "pushEncodeData: " + readSize);
-				speex.pushEncodeData(mRecordData, readSize);
-
-				// Log.i(tag, "readSize:" + readSize + "    mRecorderMinBufferSize:" + mRecorderMinBufferSize);
-				if (mRecordReadSize != readSize) {
-					mRecordReadSize = readSize;
-					// Log.i(tag, "readSize:" + readSize + "    mRecordReadSize:" + mRecordReadSize);
+				if (mRecordData.length > 0 && mRecordData.length >= readSize) {
+					speex.pushEncodeData(mRecordData, readSize);
 				}
+				Log.i(tag, "readSize:" + readSize + "    mRecorderMinBufferSize:" + mRecorderMinBufferSize);
 				int volume = 0;
+				for (int i = 0; i < mRecordData.length; i++) {
+					volume += mRecordData[i] * mRecordData[i];
+				}
 				if (mAudioListener != null) {
 					mAudioListener.onRecording((int) Math.abs(volume / (float) readSize) / 10000 >> 1);
 				}
@@ -307,15 +274,23 @@ public class AudioHandlers {
 				output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(raw)));
 				int encodeSize = 0;
 				while (isRecording) {
-					// Log.v(tag, "encodeFrame");
 					encodeSize = speex.encodeFrame(mRecordProcessedData);
+					if (mRecordReadSize != encodeSize && encodeSize != -1) {
+						mRecordReadSize = encodeSize;
+						Log.i(tag, "encodeSize:" + encodeSize + "    mRecordReadSize:" + mRecordReadSize);
+					}
 					if (encodeSize > 0) {
 						output.write(mRecordProcessedData, 0, encodeSize);
-						// Log.d(tag, "encodeSize:" + encodeSize + "    mSpeexFrameSize:" + mSpeexEncodeFrameSize);
 					} else {
 						sleep(50);
 					}
 
+				}
+				int time = (int) ((recorderEndTime - recorderStartTime) / 1000);
+				if (mAudioListener != null && isSend) {
+					isSend = false;
+					sleep(5000);
+					mAudioListener.onRecorded(raw.getAbsolutePath() + "@" + time + "@" + mRecordReadSize);
 				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();

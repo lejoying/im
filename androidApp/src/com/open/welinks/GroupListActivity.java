@@ -77,7 +77,7 @@ public class GroupListActivity extends Activity {
 	public Status status;
 
 	private enum Status {
-		square, friend, share_group, message_group, list_group
+		square, friend, share_group, message_group, list_group, card_friend, card_group
 	}
 
 	@Override
@@ -91,6 +91,8 @@ public class GroupListActivity extends Activity {
 			this.status = Status.square;
 		} else if ("message".equals(type)) {
 			this.status = Status.friend;
+		} else if ("sendCard".equals(type)) {
+			this.status = Status.card_friend;
 		}
 		initView();
 		initializeListeners();
@@ -101,7 +103,7 @@ public class GroupListActivity extends Activity {
 	private void initData() {
 		friends = new String[] {};
 		parser.check();
-		if (status == Status.friend) {
+		if (status == Status.friend || status == Status.card_friend) {
 			friendsMap = data.relationship.friendsMap;
 			Set<String> friends = new HashSet<String>();
 			for (String circles : data.relationship.circles) {
@@ -154,6 +156,12 @@ public class GroupListActivity extends Activity {
 			layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 			layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 			this.rightContainer.addView(this.createGroupButton, layoutParams);
+		} else if (status == Status.card_friend) {
+			this.backTitileView.setText("发送名片");
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			this.threeChoicesView.setButtonOneText("全部好友");
+			this.threeChoicesView.setButtonThreeText("群组");
+			this.rightContainer.addView(this.threeChoicesView, layoutParams);
 		} else {
 			this.backTitileView.setText("分享");
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -190,12 +198,16 @@ public class GroupListActivity extends Activity {
 						status = Status.square;
 					} else if (status == Status.message_group) {
 						status = Status.friend;
+					} else if (status == Status.card_group) {
+						status = Status.card_friend;
 					}
 				} else if (position == 3) {
 					if (status == Status.friend) {
 						status = Status.message_group;
 					} else if (status == Status.square) {
 						status = Status.share_group;
+					} else if (status == Status.card_friend) {
+						status = Status.card_group;
 					}
 				}
 				groupListAdapter.notifyDataSetChanged();
@@ -217,7 +229,7 @@ public class GroupListActivity extends Activity {
 						@Override
 						public void onClick(AlertInputDialog dialog) {
 							Intent intent = new Intent();
-							if (status == Status.friend) {
+							if (status == Status.friend || status == Status.card_friend) {
 								intent.putExtra("key", friendsMap.get(friends[position]).phone);
 								intent.putExtra("type", "message");
 								intent.putExtra("sendType", "point");
@@ -225,7 +237,7 @@ public class GroupListActivity extends Activity {
 								intent.putExtra("key", String.valueOf(groupsMap.get(groups.get(position)).gid));
 								if (status == Status.share_group || status == Status.square) {
 									intent.putExtra("type", "share");
-								} else if (status == Status.message_group) {
+								} else if (status == Status.message_group || status == Status.card_group) {
 									intent.putExtra("type", "message");
 									intent.putExtra("sendType", "group");
 								}
@@ -247,15 +259,19 @@ public class GroupListActivity extends Activity {
 	}
 
 	public String getDialogTitle(int position) {
-		String title = "是否分享";
+		String title = "是否";
 		if (status == Status.friend) {
-			title += "给好友：【" + friendsMap.get(friends[position]).nickName + "】?";
+			title += "分享给好友：【" + friendsMap.get(friends[position]).nickName + "】?";
 		} else if (status == Status.message_group) {
-			title += "给房间：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "分享给房间：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.square) {
-			title += "到社区：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "分享到社区：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.share_group) {
-			title += "到房间：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "分享到房间：【" + groupsMap.get(groups.get(position)).name + "】?";
+		} else if (status == Status.card_friend) {
+			title += "发送名片给好友：【" + friendsMap.get(friends[position]).nickName + "】?";
+		} else if (status == Status.card_group) {
+			title += "发送名片到群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		}
 		return title;
 	}
@@ -280,7 +296,7 @@ public class GroupListActivity extends Activity {
 		@Override
 		public int getCount() {
 			int size = 0;
-			if (status == Status.friend) {
+			if (status == Status.friend || status == Status.card_friend) {
 				size = friends.length;
 			} else {
 				size = groups.size();
@@ -291,7 +307,7 @@ public class GroupListActivity extends Activity {
 		@Override
 		public Object getItem(int position) {
 			Object item = null;
-			if (status == Status.friend) {
+			if (status == Status.friend || status == Status.card_friend) {
 				item = friends[position];
 			} else {
 				item = groups.get(position);
@@ -317,7 +333,7 @@ public class GroupListActivity extends Activity {
 			} else {
 				holder = (GroupHolder) convertView.getTag();
 			}
-			if (status == Status.friend) {
+			if (status == Status.friend || status == Status.card_friend) {
 				Friend friend = friendsMap.get(friends[position]);
 				// holder.headView.setImageBitmap(bitmap);
 				fileHandlers.getHeadImage(friend.head, holder.headView, viewManage.options50);

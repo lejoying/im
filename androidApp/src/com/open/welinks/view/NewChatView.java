@@ -53,6 +53,7 @@ import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.SubData.CardMessageContent;
 import com.open.welinks.model.SubData.LocationMessageContent;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.VoiceMessageContent;
@@ -298,6 +299,7 @@ public class NewChatView {
 					holder.chatLayout = convertView.findViewById(R.id.chatLayout);
 					holder.voice = convertView.findViewById(R.id.voice);
 					holder.imagesLayout = convertView.findViewById(R.id.imagesLayout);
+					holder.cardLayout = convertView.findViewById(R.id.cardLayout);
 					holder.share = convertView.findViewById(R.id.share);
 					holder.image = (ImageView) convertView.findViewById(R.id.image);
 					holder.images = (ImageView) convertView.findViewById(R.id.images);
@@ -305,12 +307,18 @@ public class NewChatView {
 					holder.status = (ImageView) convertView.findViewById(R.id.status);
 					holder.shareImage = (ImageView) convertView.findViewById(R.id.shareImage);
 					holder.locationImage = (ImageView) convertView.findViewById(R.id.locationImage);
+					holder.cardTitleImage = (ImageView) convertView.findViewById(R.id.cardTitleImage);
+					holder.cardHead = (ImageView) convertView.findViewById(R.id.cardHead);
 					holder.time = (TextView) convertView.findViewById(R.id.time);
 					holder.character = (TextView) convertView.findViewById(R.id.character);
 					holder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
 					holder.imagesCount = (TextView) convertView.findViewById(R.id.imagesCount);
 					holder.shareTitle = (TextView) convertView.findViewById(R.id.shareTitle);
 					holder.shareText = (TextView) convertView.findViewById(R.id.shareText);
+					holder.cardTitleText = (TextView) convertView.findViewById(R.id.cardTitleText);
+					holder.cardName = (TextView) convertView.findViewById(R.id.cardName);
+					holder.cardId = (TextView) convertView.findViewById(R.id.cardId);
+					holder.cardMainBusiness = (TextView) convertView.findViewById(R.id.cardMainBusiness);
 					holder.gif = (GifImageView) convertView.findViewById(R.id.gif);
 					holder.voiceGif = (GifImageView) convertView.findViewById(R.id.voiceGif);
 				}
@@ -418,6 +426,7 @@ public class NewChatView {
 					holder.share.setVisibility(View.GONE);
 					holder.imagesLayout.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
 					holder.character.setText(message.content);
 					holder.character.setAutoLinkMask(Linkify.WEB_URLS);
 					holder.character.setMovementMethod(LinkMovementMethod.getInstance());
@@ -456,6 +465,7 @@ public class NewChatView {
 					holder.share.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.GONE);
 					holder.imagesLayout.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
 					GifDrawable gifDrawable = null;
 					try {
@@ -471,6 +481,7 @@ public class NewChatView {
 					}
 
 					if (gifDrawable != null) {
+						holder.voiceGif.setVisibility(View.INVISIBLE);
 						holder.voiceGif.setImageDrawable(gifDrawable);
 						gifDrawable.stop();
 					}
@@ -483,6 +494,7 @@ public class NewChatView {
 						holder.voice.setTag(R.id.tag_first, contentType);
 						holder.voice.setTag(R.id.tag_second, messageContent.fileName);
 						holder.voice.setTag(R.id.tag_third, messageContent.recordReadSize);
+						holder.voice.setTag(R.id.tag_four, gifDrawable);
 						holder.voice.setOnClickListener(thisController.mOnClickListener);
 					}
 				} else if (contentType.equals("image")) {
@@ -491,6 +503,7 @@ public class NewChatView {
 					holder.gif.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
 
 					List<String> images = null;
 					try {
@@ -502,23 +515,24 @@ public class NewChatView {
 						holder.character.setVisibility(View.VISIBLE);
 						holder.character.setText("数据结构错误");
 						holder.image.setVisibility(View.GONE);
-					}
-					String image = images.get(0);
-					if (images.size() == 1) {
-						holder.imagesLayout.setVisibility(View.GONE);
-						holder.image.setVisibility(View.VISIBLE);
-						holder.image.setTag(R.id.tag_first, contentType);
-						holder.image.setTag(R.id.tag_second, images);
-						holder.image.setOnClickListener(thisController.mOnClickListener);
-						thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 					} else {
-						holder.image.setVisibility(View.GONE);
-						holder.imagesLayout.setVisibility(View.VISIBLE);
-						holder.imagesCount.setText(String.valueOf(images.size()));
-						holder.imagesLayout.setTag(R.id.tag_first, contentType);
-						holder.imagesLayout.setTag(R.id.tag_second, images);
-						holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
-						thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+						String image = images.get(0);
+						if (images.size() == 1) {
+							holder.imagesLayout.setVisibility(View.GONE);
+							holder.image.setVisibility(View.VISIBLE);
+							holder.image.setTag(R.id.tag_first, contentType);
+							holder.image.setTag(R.id.tag_second, images);
+							holder.image.setOnClickListener(thisController.mOnClickListener);
+							thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+						} else {
+							holder.image.setVisibility(View.GONE);
+							holder.imagesLayout.setVisibility(View.VISIBLE);
+							holder.imagesCount.setText(String.valueOf(images.size()));
+							holder.imagesLayout.setTag(R.id.tag_first, contentType);
+							holder.imagesLayout.setTag(R.id.tag_second, images);
+							holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
+							thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+						}
 					}
 				} else if (contentType.equals("gif")) {
 					holder.character.setVisibility(View.GONE);
@@ -527,6 +541,7 @@ public class NewChatView {
 					holder.imagesLayout.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.VISIBLE);
 					thisController.fileHandlers.getGifImage(message.content, holder.gif);
 				} else if (contentType.equals("share")) {
@@ -536,6 +551,7 @@ public class NewChatView {
 					holder.imagesLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
 					holder.share.setVisibility(View.VISIBLE);
 
 					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
@@ -557,6 +573,7 @@ public class NewChatView {
 					holder.imagesLayout.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.VISIBLE);
 					if (!"".equals(message.content)) {
 						LocationMessageContent messageContent = thisController.gson.fromJson(message.content, LocationMessageContent.class);
@@ -575,15 +592,26 @@ public class NewChatView {
 					} else {
 						holder.locationImage.setImageResource(R.drawable.chat_location_searching);
 					}
+				} else if (contentType.equals("card")) {
+					holder.character.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.VISIBLE);
+
+					CardMessageContent messageContent = thisController.gson.fromJson(message.content, CardMessageContent.class);
 				}
 			}
 			return convertView;
 		}
 
 		class ChatHolder {
-			View voice, share, chatLayout, imagesLayout;
-			ImageView voiceIcon, image, head, status, images, shareImage, locationImage;
-			TextView time, character, voicetime, imagesCount, shareTitle, shareText;
+			View voice, share, chatLayout, imagesLayout, cardLayout;
+			ImageView voiceIcon, image, head, status, images, shareImage, locationImage, cardTitleImage, cardHead;
+			TextView time, character, voicetime, imagesCount, shareTitle, shareText, cardTitleText, cardName, cardId, cardMainBusiness;
 			GifImageView gif, voiceGif;
 		}
 
@@ -672,20 +700,23 @@ public class NewChatView {
 	public void changeVoice(View view) {
 		if (this.currentVoiceView != null && this.currentVoiceView.equals(view)) {
 			if (thisController.audiohandlers.isPlaying()) {
-				// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_off);
+				thisController.postHandler(Constant.HANDLER_CHAT_STOPPLAY);
 				thisController.audiohandlers.stopPlay();
 			} else {
-				// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_on);
-				thisController.audiohandlers.startPlay((String) view.getTag(R.id.tag_second), (String) view.getTag(R.id.tag_third));
+				thisController.audiohandlers.prepareVoice((String) view.getTag(R.id.tag_second), Integer.valueOf((String) view.getTag(R.id.tag_third)), true);
+				thisController.postHandler(Constant.HANDLER_CHAT_STARTPLAY);
 			}
 		} else {
 			if (thisController.audiohandlers.isPlaying()) {
 				thisController.audiohandlers.stopPlay();
-				// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_off);
+				thisController.postHandler(Constant.HANDLER_CHAT_STOPPLAY);
+				thisController.continuePlay = true;
+				this.currentVoiceView = view;
+			} else {
+				thisController.audiohandlers.prepareVoice((String) view.getTag(R.id.tag_second), Integer.valueOf((String) view.getTag(R.id.tag_third)), true);
+				this.currentVoiceView = view;
+				thisController.postHandler(Constant.HANDLER_CHAT_STARTPLAY);
 			}
-			this.currentVoiceView = view;
-			// ((ImageView) thisView.currentView.findViewById(R.id.voiceIcon)).setImageResource(R.drawable.icon_play_on);
-			thisController.audiohandlers.startPlay((String) view.getTag(R.id.tag_second), (String) view.getTag(R.id.tag_third));
 		}
 	}
 

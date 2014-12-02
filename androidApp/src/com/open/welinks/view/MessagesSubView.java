@@ -479,7 +479,7 @@ public class MessagesSubView {
 					} else if ("gif".equals(message.contentType)) {
 						lastChatMessageView.setText(leftText + "[动图]");
 					} else if ("location".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[定位]");
+						lastChatMessageView.setText(leftText + "[位置信息]");
 					} else if ("card".equals(message.contentType)) {
 						lastChatMessageView.setText(leftText + "[名片]");
 					}
