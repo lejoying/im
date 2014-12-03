@@ -258,12 +258,12 @@ public class MainActivity extends Activity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if ("chatFriend".equals(NotificationUtils.showFragment)) {
-			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			Intent intent = new Intent(MainActivity.this, NewChatActivity.class);
 			intent.putExtra("id", NotificationUtils.message.phone);
 			intent.putExtra("type", "point");
 			startActivityForResult(intent, R.id.tag_second);
 		} else if ("chatGroup".equals(NotificationUtils.showFragment)) {
-			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			Intent intent = new Intent(MainActivity.this, NewChatActivity.class);
 			intent.putExtra("id", NotificationUtils.message.gid);
 			intent.putExtra("type", "group");
 			startActivityForResult(intent, R.id.tag_second);

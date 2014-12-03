@@ -56,7 +56,7 @@ public class ViewManage {
 	}
 
 	public DisplayImageOptions options;
-	public DisplayImageOptions optionsRound;
+	public DisplayImageOptions options30;
 	public DisplayImageOptions options40;
 	public DisplayImageOptions options52;
 	public DisplayImageOptions options50;
@@ -71,6 +71,7 @@ public class ViewManage {
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		float density = displayMetrics.density / 1.5f;
 		options = new DisplayImageOptions.Builder().cacheInMemory(false).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		options30 = new DisplayImageOptions.Builder().cacheInMemory(false).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (0 * density))).build();
 		options40 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) (40 * density))).build();
 		options52 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) (52 * density))).build();
 		options50 = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.default_user_head).showImageForEmptyUri(R.drawable.default_user_head).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) (50 * density))).build();

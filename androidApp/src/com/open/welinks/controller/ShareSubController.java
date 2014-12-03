@@ -36,6 +36,7 @@ import com.open.welinks.CreateGroupStartActivity;
 import com.open.welinks.FindMoreActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.GroupListActivity;
+import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -343,7 +344,7 @@ public class ShareSubController {
 
 					thisView.showReleaseShareDialogView();
 				} else if (view.equals(thisView.groupMembersListContentView)) {
-					Intent intent = new Intent(thisActivity, ChatActivity.class);
+					Intent intent = new Intent(thisActivity, NewChatActivity.class);
 					intent.putExtra("type", "group");
 					intent.putExtra("id", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivityForResult(intent, R.id.tag_second);

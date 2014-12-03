@@ -337,10 +337,10 @@ public class GroupListActivity extends Activity {
 				Friend friend = friendsMap.get(friends[position]);
 				// holder.headView.setImageBitmap(bitmap);
 				fileHandlers.getHeadImage(friend.head, holder.headView, viewManage.options50);
-				if (friend.alias.equals("")) {
-					holder.nameView.setText(friend.nickName);
-				} else {
+				if (friend.alias != null && !friend.alias.equals("")) {
 					holder.nameView.setText(friend.alias + "(" + friend.nickName + ")");
+				} else {
+					holder.nameView.setText(friend.nickName);
 				}
 				holder.descriptionView.setText(friend.mainBusiness);
 			} else {

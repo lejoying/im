@@ -33,6 +33,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -56,6 +58,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.GroupListActivity;
+import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.LocationActivity;
@@ -117,6 +120,7 @@ public class NewChatController {
 	public OnFaceSeletedListener mOnFaceSeletedListener;
 	public OnUploadLoadingListener uploadLoadingListener;
 	public OnFocusChangeListener mOnFocusChangeListener;
+	public OnScrollListener mOnScrollListener;
 	public TextWatcher mTextWatcher;
 	public AudioListener mAudioListener;
 
@@ -126,8 +130,10 @@ public class NewChatController {
 	public Map<String, Message> messagesMap;
 
 	public VoiceTimerTask timerTask;
-	public Timer timer;
+	public Timer voicePopTimer;
 	public long voiceTime = 0;
+
+	public int showChatCounts;
 
 	public boolean sendRecording = true, continuePlay = false;
 
@@ -155,6 +161,7 @@ public class NewChatController {
 	}
 
 	public void initData() {
+		showChatCounts = 20;
 		user = data.userInformation.currentUser;
 		messagesMap = new HashMap<String, Message>();
 		inputManager = new InputMethodManagerUtils(thisActivity);
@@ -186,7 +193,7 @@ public class NewChatController {
 					} else if ("share".equals(contentType)) {
 						String gid = (String) view.getTag(R.id.tag_second);
 						String gsid = (String) view.getTag(R.id.tag_third);
-						String sid = (String) view.getTag(R.id.tag_four);
+						String sid = (String) view.getTag(R.id.tag_fourth);
 						if (gid.matches("[\\d]+") && gsid.matches("[\\d]+")) {
 							Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 							intent.putExtra("gid", gid);
@@ -200,9 +207,13 @@ public class NewChatController {
 						Intent intent = new Intent(thisActivity, LocationActivity.class);
 						intent.putExtra("address", (String) view.getTag(R.id.tag_second));
 						intent.putExtra("latitude", (String) view.getTag(R.id.tag_third));
-						intent.putExtra("longitude", (String) view.getTag(R.id.tag_four));
+						intent.putExtra("longitude", (String) view.getTag(R.id.tag_fourth));
 						thisActivity.startActivity(intent);
 					} else if ("card".equals(contentType)) {
+						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+						intent.putExtra("type", (String) view.getTag(R.id.tag_second));
+						intent.putExtra("key", (String) view.getTag(R.id.tag_third));
+						thisActivity.startActivity(intent);
 					} else if ("head".equals(contentType)) {
 						String phone = (String) view.getTag(R.id.tag_second);
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
@@ -244,10 +255,19 @@ public class NewChatController {
 						thisController.inputManager.hide(thisView.chatInput);
 				} else if (thisView.chatMenuBackground.equals(view)) {
 					thisView.changeChatMenu();
+				} else if (thisView.chatContentHeaderView.equals(view)) {
+					if (showChatCounts < thisView.mChatAdapter.messages.size()) {
+						showChatCounts += 10;
+						thisView.mChatAdapter.notifyDataSetChanged();
+						if (showChatCounts < thisView.mChatAdapter.messages.size()) {
+							thisView.chatContent.setSelection(11);
+						} else {
+							thisView.chatContent.setSelection(thisView.mChatAdapter.messages.size() - showChatCounts + 11);
+							thisView.chatContentHeaderView.setVisibility(View.GONE);
+						}
+					}
 				}
-
 			}
-
 		};
 		mOnTouchListener = new OnTouchListener() {
 
@@ -256,11 +276,11 @@ public class NewChatController {
 			public boolean onTouch(View view, MotionEvent event) {
 				if (thisView.voiceLayout.equals(view)) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						if (timer == null) {
-							timer = new Timer();
+						if (voicePopTimer == null) {
+							voicePopTimer = new Timer();
 							timerTask = new VoiceTimerTask();
 							voiceTime = System.currentTimeMillis();
-							timer.schedule(timerTask, 0, 1000);
+							voicePopTimer.schedule(timerTask, 0, 1000);
 						}
 						sendRecording = true;
 						audiohandlers.startRecording();
@@ -288,6 +308,8 @@ public class NewChatController {
 							}
 							completeVoiceRecording(sendRecording);
 						}
+					} else if (event.getAction() == MotionEvent.ACTION_UP) {
+
 					}
 				} else if (thisView.chatContent.equals(view) && event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (thisController.inputManager.isActive(thisView.chatInput))
@@ -296,7 +318,26 @@ public class NewChatController {
 				return false;
 			}
 		};
+		mOnScrollListener = new OnScrollListener() {
 
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				if (thisView.chatContent.getFirstVisiblePosition() == 0) {
+					if (showChatCounts >= thisView.mChatAdapter.messages.size()) {
+						thisView.chatContentHeaderView.setVisibility(View.GONE);
+					} else {
+						thisView.chatContentHeaderView.setVisibility(View.VISIBLE);
+					}
+				} else if (thisView.chatContent.getLastVisiblePosition() == (thisView.chatContent.getCount() - 1)) {
+
+				}
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+			}
+		};
 		mItemClickListener = new OnItemClickListener() {
 
 			@Override
@@ -308,13 +349,23 @@ public class NewChatController {
 					intent.putExtra("type", type);
 					thisActivity.startActivity(intent);
 				} else if (tag.equals(thisActivity.getString(R.string.groupDetails))) {
-					Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
-					intent.putExtra("gid", key);
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("key", key);
+					intent.putExtra("type", type);
 					thisActivity.startActivity(intent);
 				} else if (tag.equals(thisActivity.getString(R.string.sendCard))) {
 					Intent intent = new Intent(thisActivity, GroupListActivity.class);
 					intent.putExtra("type", "sendCard");
 					thisActivity.startActivityForResult(intent, Constant.REQUESTCODE_SHAREVIEW);
+				} else if (tag.equals(thisActivity.getString(R.string.setting))) {
+					Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
+					intent.putExtra("gid", key);
+					thisActivity.startActivity(intent);
+				} else if (tag.equals(thisActivity.getString(R.string.groupMembers))) {
+					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);
+					intent.putExtra("gid", key);
+					intent.putExtra("type", 2);
+					thisActivity.startActivity(intent);
 				}
 
 			}
@@ -534,16 +585,19 @@ public class NewChatController {
 
 			@Override
 			public void onPlayFail() {
-				postHandler(Constant.HANDLER_CHAT_STOPPLAY);
+				thisView.showVoiceMoive(false);
 			}
 
 			@Override
 			public void onPlayComplete() {
-				postHandler(Constant.HANDLER_CHAT_STOPPLAY);
 				if (continuePlay) {
 					continuePlay = false;
 					thisController.audiohandlers.startPlay((String) thisView.currentVoiceView.getTag(R.id.tag_second), (String) thisView.currentVoiceView.getTag(R.id.tag_third));
-					postHandler(Constant.HANDLER_CHAT_STARTPLAY);
+					thisController.postHandler(Constant.HANDLER_CHAT_STARTPLAY);
+					thisView.showVoiceMoive(true);
+				} else {
+					thisController.postHandler(Constant.HANDLER_CHAT_STOPPLAY);
+					thisView.showVoiceMoive(false);
 				}
 			}
 
@@ -554,6 +608,11 @@ public class NewChatController {
 
 			@Override
 			public void onRecorded(String filePath) {
+				postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
+				voicePopTimer.cancel();
+				voicePopTimer.purge();
+				voiceTime = 0;
+				voicePopTimer = null;
 				if (!"".equals(filePath)) {
 					createVoiceMessage(filePath);
 				}
@@ -571,16 +630,10 @@ public class NewChatController {
 					thisView.voicePopImage.setImageResource(R.drawable.image_chat_voice_talk);
 					break;
 				case Constant.HANDLER_CHAT_STARTPLAY:
-					if (thisView.currentVoiceView != null) {
-						thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.VISIBLE);
-						((GifDrawable) thisView.currentVoiceView.getTag(R.id.tag_four)).start();
-					}
+					thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.VISIBLE);
 					break;
 				case Constant.HANDLER_CHAT_STOPPLAY:
-					if (thisView.currentVoiceView != null) {
-						((GifDrawable) thisView.currentVoiceView.getTag(R.id.tag_four)).stop();
-						thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.INVISIBLE);
-					}
+					thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.INVISIBLE);
 					break;
 				}
 				super.handleMessage(msg);
@@ -603,6 +656,8 @@ public class NewChatController {
 		thisView.chatInput.setOnClickListener(mOnClickListener);
 		thisView.chatMenuBackground.setOnClickListener(mOnClickListener);
 
+		thisView.chatContent.setOnScrollListener(mOnScrollListener);
+
 		thisView.chatContent.setOnTouchListener(mOnTouchListener);
 		thisView.voiceLayout.setOnTouchListener(mOnTouchListener);
 
@@ -616,14 +671,14 @@ public class NewChatController {
 	}
 
 	private void completeVoiceRecording(boolean weather) {
-		postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
-		timer.cancel();
-		timer.purge();
-		voiceTime = 0;
-		timer = null;
 		if (weather) {
 			audiohandlers.stopRecording();
 		} else {
+			postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
+			voicePopTimer.cancel();
+			voicePopTimer.purge();
+			voiceTime = 0;
+			voicePopTimer = null;
 			audiohandlers.releaseRecording();
 		}
 	}
@@ -818,7 +873,7 @@ public class NewChatController {
 
 	}
 
-	private void createCardMessageToLocation(final String key, final String type) {
+	private void createCardMessage(final String key, final String type) {
 		new Thread() {
 			public void run() {
 				List<String> messagesOrder = data.messages.messagesOrder;
@@ -893,7 +948,31 @@ public class NewChatController {
 					messages.add(message);
 				}
 				data.messages.isModified = true;
-				sendMessage(message);
+				HttpUtils httpUtils = new HttpUtils();
+				RequestParams params = new RequestParams();
+
+				params.addBodyParameter("phone", user.phone);
+				params.addBodyParameter("accessKey", user.accessKey);
+				params.addBodyParameter("sendType", type);
+				params.addBodyParameter("contentType", message.contentType);
+				params.addBodyParameter("content", message.content);
+				params.addBodyParameter("time", message.time);
+				if ("group".equals(type)) {
+					Group group = data.relationship.groupsMap.get(key);
+					if (group == null) {
+						group = data.relationship.new Group();
+					}
+					params.addBodyParameter("gid", key);
+					params.addBodyParameter("phoneto", gson.toJson(group.members));
+				} else if ("point".equals(type)) {
+					List<String> phoneto = new ArrayList<String>();
+					phoneto.add(key);
+					params.addBodyParameter("phoneto", gson.toJson(phoneto));
+					params.addBodyParameter("gid", "");
+				}
+
+				ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+				httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
 			};
 		}.start();
 	}
@@ -999,7 +1078,7 @@ public class NewChatController {
 			String type = intent.getStringExtra("sendType");
 			String key = intent.getStringExtra("key");
 			if (!"".equals(key) && !"".equals(type)) {
-				createCardMessageToLocation(key, type);
+				createCardMessage(key, type);
 			}
 		}
 
@@ -1011,6 +1090,7 @@ public class NewChatController {
 	}
 
 	public void onResume() {
+		viewManage.newChatView = thisView;
 		thisView.locationMapView.onResume();
 	}
 

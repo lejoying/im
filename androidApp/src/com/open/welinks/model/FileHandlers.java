@@ -148,15 +148,17 @@ public class FileHandlers {
 					imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, instance.options);
 				} else if (instance.type == DownloadFile.TYPE_IMAGE) {
 					final ImageView imageView = ((ImageView) instance.view);
-					imageLoader.displayImage("file://" + instance.path, imageView, new SimpleImageLoadingListener() {
+					imageLoader.displayImage("file://" + instance.path, imageView, instance.options, new SimpleImageLoadingListener() {
 
 						@Override
 						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 							if (imageView.getTag(R.id.tag_first) != null) {
-								float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
-								int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
-								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
-								imageView.setLayoutParams(params);
+								if (imageView.getTag(R.id.tag_fifth) == null) {
+									float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
+									int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
+									LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
+									imageView.setLayoutParams(params);
+								}
 							}
 						}
 					});

@@ -30,6 +30,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfoActivity;
+import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.model.API;
@@ -408,7 +409,7 @@ public class SmallBusinessCardPopView {
 						}
 					} else if (view.equals(goChatView)) {
 						// String phone = (String) view.getTag(R.id.tag_first);
-						Intent intent = new Intent(thisActivity, ChatActivity.class);
+						Intent intent = new Intent(thisActivity, NewChatActivity.class);
 						intent.putExtra("id", key);
 						intent.putExtra("type", type);
 						thisActivity.startActivityForResult(intent, R.id.tag_second);

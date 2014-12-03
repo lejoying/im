@@ -2,6 +2,7 @@ package com.open.welinks.utils;
 
 import java.lang.reflect.Field;
 
+import com.open.welinks.R;
 import com.open.welinks.model.Data;
 
 import android.content.Context;
@@ -12,7 +13,10 @@ import android.util.TypedValue;
 public class BaseDataUtils {
 	public static Data data = Data.getInstance();
 
+	public static Context context;
+
 	public static void initBaseData(Context context) {
+		BaseDataUtils.context = context;
 		data.baseData.metrics = new DisplayMetrics();
 		((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(data.baseData.metrics);
 
@@ -65,6 +69,18 @@ public class BaseDataUtils {
 			return false;
 		}
 
+	}
+
+	public static String generateMainBusiness(String type, String mainBusiness) {
+		if ("".equals(mainBusiness)) {
+			if ("point".equals(type)) {
+				mainBusiness = context.getString(R.string.business_personal_not_business);
+			} else if ("group".equals(type)) {
+				mainBusiness = context.getString(R.string.business_room_not_business);
+			}
+
+		}
+		return mainBusiness;
 	}
 
 	public static String generateUserName(String nickName, String alias) {

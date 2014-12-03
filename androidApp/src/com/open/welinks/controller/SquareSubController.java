@@ -498,8 +498,10 @@ public class SquareSubController {
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedSquare);
 		parser.check();
 
-		thisView.currentSquare = data.relationship.groupsMap.get(thisView.currentSquare.gid + "");
-		params.addBodyParameter("sid", thisView.currentSquare.currentBoard);
+		if (thisView.currentSquare != null) {
+			thisView.currentSquare = data.relationship.groupsMap.get(thisView.currentSquare.gid + "");
+			params.addBodyParameter("sid", thisView.currentSquare.currentBoard);
+		}
 
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
@@ -507,10 +509,9 @@ public class SquareSubController {
 	}
 
 	public void setCurrentSquare() {
-
 		String gid = data.relationship.squares.get(0);
 		List<String> squares = data.relationship.squares;
-		Map<String, Group> groups = data.relationship.groupsMap;
+		final Map<String, Group> groups = data.relationship.groupsMap;
 		for (int i = 1; i < squares.size(); i++) {
 			if ((groups.get(squares.get(i)).distance) < (groups.get(gid).distance)) {
 				gid = squares.get(i);
@@ -524,6 +525,7 @@ public class SquareSubController {
 				@Override
 				public void onClick(AlertInputDialog dialog) {
 					data.localStatus.localData.currentSelectedSquare = currentSid;
+					thisView.currentSquare = groups.get(currentSid);
 					getCurrentSquareShareMessages();
 					thisView.setSquaresDialogContent();
 				}
@@ -537,6 +539,7 @@ public class SquareSubController {
 			}).show();
 		} else {
 			data.localStatus.localData.currentSelectedSquare = currentSid;
+			thisView.currentSquare = groups.get(currentSid);
 			getCurrentSquareShareMessages();
 			thisView.setSquaresDialogContent();
 		}

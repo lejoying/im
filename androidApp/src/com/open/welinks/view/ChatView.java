@@ -423,7 +423,7 @@ public class ChatView {
 					}
 					chatHolder.share.setTag(R.id.tag_second, messageContent.gid);
 					chatHolder.share.setTag(R.id.tag_third, messageContent.gsid);
-					chatHolder.share.setTag(R.id.tag_four, messageContent.sid);
+					chatHolder.share.setTag(R.id.tag_fourth, messageContent.sid);
 					chatHolder.share.setOnClickListener(thisController.mOnClickListener);
 				}
 				if (position != 0) {

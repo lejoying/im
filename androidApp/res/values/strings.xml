@@ -55,6 +55,7 @@
     <string name="business_chat_room">聊天室</string>
     <string name="business_input_room_info">请输入房间描述信息</string>
     <string name="business_room_not_business">此房间暂无业务</string>
+    <string name="business_personal_not_business">此用户暂无签名</string>
     <string name="business_modify_room_card">修改房间名片</string>
     <string name="business_add_to_room">加入房间</string>
     <string name="business_go_community">进入社区</string>
@@ -94,9 +95,9 @@
     <string name="seconds">秒</string>
     <string name="slideFingers">手指上滑，可取消发送</string>
     <string name="loosenFingers">松开手指，取消发送</string>
-    <string name="groupDetails">群详情</string>
-    <string name="groupAlbum">群相册</string>
-    <string name="groupMembers">群成员</string>
+    <string name="groupDetails">房间详情</string>
+    <string name="groupAlbum">房间相册</string>
+    <string name="groupMembers">房间成员</string>
     <string name="closeNotice">关闭提示</string>
     <string name="openNotice">打开提示</string>
     <string name="share">分享</string>
@@ -106,5 +107,8 @@
     <string name="personalAlbum">个人相册</string>
     <string name="setting">设置</string>
     <string name="locationing">正在定位，请稍后</string>
+    <string name="personCard">个人名片</string>
+    <string name="groupCard">房间名片</string>
+    <string name="cilkeLoadMore">点击加载更多</string>
 
 </resources>

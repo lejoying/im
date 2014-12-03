@@ -26,6 +26,7 @@ import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
+import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareListActivity;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -252,10 +253,15 @@ public class BusinessCardController {
 	}
 
 	public void startChat(String type) {
-		Intent intent = new Intent(thisActivity, ChatActivity.class);
-		intent.putExtra("id", key);
-		intent.putExtra("type", type);
-		thisActivity.startActivity(intent);
+		if (viewManage.newChatView != null && viewManage.newChatView.thisController.key.equals(key)) {
+			thisActivity.finish();
+		} else {
+			Intent intent = new Intent(thisActivity, NewChatActivity.class);
+			intent.putExtra("id", key);
+			intent.putExtra("type", type);
+			thisActivity.startActivity(intent);
+
+		}
 	}
 
 	public void modifyAlias() {
