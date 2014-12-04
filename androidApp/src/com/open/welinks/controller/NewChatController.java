@@ -33,6 +33,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -121,6 +123,7 @@ public class NewChatController {
 	public OnUploadLoadingListener uploadLoadingListener;
 	public OnFocusChangeListener mOnFocusChangeListener;
 	public OnScrollListener mOnScrollListener;
+	public AnimationListener mAnimationListener;
 	public TextWatcher mTextWatcher;
 	public AudioListener mAudioListener;
 
@@ -402,6 +405,48 @@ public class NewChatController {
 
 			}
 		};
+		mAnimationListener = new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				if (animation.equals(thisView.chatContentAddOutTranslateAnimation)) {
+
+				}
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				if (animation.equals(thisView.samilyInTranslateAnimation)) {
+
+				} else if (animation.equals(thisView.samilyOutTranslateAnimation)) {
+					thisView.chatBottomLayout.clearAnimation();
+					thisView.faceLayout.setVisibility(View.GONE);
+				} else if (animation.equals(thisView.addInTranslateAnimation)) {
+
+				} else if (animation.equals(thisView.addOutTranslateAnimation)) {
+					thisView.chatBottomLayout.clearAnimation();
+					thisView.chatAddLayout.setVisibility(View.GONE);
+				} else if (animation.equals(thisView.chatContentAddInTranslateAnimation)) {
+					// thisView.chatContent.getLayoutParams().height = (int) (data.baseData.appHeight - BaseDataUtils.dpToPx(206.5f));
+					thisView.chatContent.setSelection(thisView.chatContent.getBottom());
+					thisView.chatContent.clearAnimation();
+				} else if (animation.equals(thisView.chatContentAddOutTranslateAnimation)) {
+					thisView.chatContent.clearAnimation();
+				} else if (animation.equals(thisView.chatContentSamilyInTranslateAnimation)) {
+					thisView.chatContent.clearAnimation();
+
+				} else if (animation.equals(thisView.chatContentSamilyOutTranslateAnimation)) {
+					thisView.chatContent.clearAnimation();
+					// thisView.chatContent.getLayoutParams().height = (int) (thisController.data.baseData.appHeight - BaseDataUtils.dpToPx(106));
+				}
+			}
+		};
+
 		mOnFaceSeletedListener = new OnFaceSeletedListener() {
 
 			@Override
@@ -668,6 +713,15 @@ public class NewChatController {
 		thisView.chatMenu.setOnItemClickListener(mItemClickListener);
 
 		audiohandlers.setAudioListener(mAudioListener);
+
+		thisView.samilyInTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.samilyOutTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.addInTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.addOutTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.chatContentAddInTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.chatContentAddOutTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.chatContentSamilyInTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.chatContentSamilyOutTranslateAnimation.setAnimationListener(mAnimationListener);
 	}
 
 	private void completeVoiceRecording(boolean weather) {

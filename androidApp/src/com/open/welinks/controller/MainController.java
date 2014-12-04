@@ -344,24 +344,26 @@ public class MainController {
 						if (result.getQuery().equals(mQuery)) {
 							mCloudItems = result.getClouds();
 							parser.check();
-							if (data.relationship.squares == null) {
-								data.relationship.squares = new ArrayList<String>();
-							}
-							for (CloudItem item : mCloudItems) {
-								Map<String, Object> map = new HashMap<String, Object>();
-								LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
-								map.put("location", item.getLatLonPoint());
-								map.put("name", item.getTitle());
-								map.put("address", item.getSnippet());
-								map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
-								Iterator<?> iter = item.getCustomfield().entrySet().iterator();
-								while (iter.hasNext()) {
-									Entry<?, ?> entry = (Entry<?, ?>) iter.next();
-									map.put(entry.getKey().toString(), entry.getValue());
+							if (data.relationship != null) {
+								if (data.relationship.squares == null) {
+									data.relationship.squares = new ArrayList<String>();
 								}
-								addSquare(map);
+								for (CloudItem item : mCloudItems) {
+									Map<String, Object> map = new HashMap<String, Object>();
+									LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
+									map.put("location", item.getLatLonPoint());
+									map.put("name", item.getTitle());
+									map.put("address", item.getSnippet());
+									map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
+									Iterator<?> iter = item.getCustomfield().entrySet().iterator();
+									while (iter.hasNext()) {
+										Entry<?, ?> entry = (Entry<?, ?>) iter.next();
+										map.put(entry.getKey().toString(), entry.getValue());
+									}
+									addSquare(map);
+								}
+								thisView.squareSubView.thisController.setCurrentSquare();
 							}
-							thisView.squareSubView.thisController.setCurrentSquare();
 						}
 					}
 				}

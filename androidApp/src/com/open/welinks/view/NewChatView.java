@@ -21,7 +21,9 @@ import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -63,7 +65,7 @@ public class NewChatView {
 	public NewChatController thisController;
 	public NewChatActivity thisActivity;
 
-	public View currentVoiceView, chatContentHeaderView, backView, chatMenuLayout, textLayout, voiceLayout, chatAddLayout, takePhoto, ablum, location, voicePop;
+	public View currentVoiceView, chatContentHeaderView, chatBottomLayout, chatLayout, backView, chatMenuLayout, textLayout, voiceLayout, chatAddLayout, takePhoto, ablum, location, voicePop;
 	public RelativeLayout rightContainer;
 	public TextView titleText, chatSend, voicePopTime, voicePopPrompt;
 	public ListView chatContent;
@@ -78,7 +80,7 @@ public class NewChatView {
 	public ChatAdapter mChatAdapter;
 	public ChatMenuAdapter mChatMenuAdapter;
 
-	private Animation inTranslateAnimation, inAlphaAnimation, outTranslateAnimation;
+	public Animation chatContentAddInTranslateAnimation, chatContentAddOutTranslateAnimation, chatContentSamilyInTranslateAnimation, chatContentSamilyOutTranslateAnimation, menuInTranslateAnimation, menuInAlphaAnimation, menuOutTranslateAnimation, samilyInTranslateAnimation, samilyOutTranslateAnimation, recoredInAlphAnimation, recoredOutAlphAnimation, addInTranslateAnimation, addOutTranslateAnimation;
 
 	private DisplayImageOptions headOptions, locationOptions;
 
@@ -97,11 +99,13 @@ public class NewChatView {
 		chatMenuLayout = thisActivity.findViewById(R.id.chatMenuLayout);
 		textLayout = thisActivity.findViewById(R.id.textLayout);
 		voiceLayout = thisActivity.findViewById(R.id.voiceLayout);
-		chatAddLayout = thisActivity.findViewById(R.id.chatSmilyLayout);
+		chatAddLayout = thisActivity.findViewById(R.id.chatAddLayout);
 		takePhoto = thisActivity.findViewById(R.id.takePhoto);
 		ablum = thisActivity.findViewById(R.id.ablum);
 		location = thisActivity.findViewById(R.id.location);
 		voicePop = thisActivity.findViewById(R.id.voicePop);
+		chatLayout = thisActivity.findViewById(R.id.chatLayout);
+		chatBottomLayout = thisActivity.findViewById(R.id.chatBottomLayout);
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		titleText = (TextView) thisActivity.findViewById(R.id.titleText);
 		chatSend = (TextView) thisActivity.findViewById(R.id.chatSend);
@@ -133,13 +137,34 @@ public class NewChatView {
 		mChatMenuAdapter = new ChatMenuAdapter();
 		chatMenu.setAdapter(mChatMenuAdapter);
 
-		inTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in);
-		outTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_out);
-		inAlphaAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in_alpha);
-
 		locationMapView.onCreate(thisActivity.savedInstanceState);
 		thisController.mAMap = locationMapView.getMap();
 		thisController.mAMap.getUiSettings().setZoomControlsEnabled(false);
+
+		initAnimations();
+
+	}
+
+	private void initAnimations() {
+		menuInTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in);
+		menuOutTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_out);
+		menuInAlphaAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in_alpha);
+		samilyInTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_samily_in);
+		samilyOutTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_samily_out);
+		recoredInAlphAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_chat_alpha_in);
+		recoredOutAlphAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_chat_alpha_out);
+		addInTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_add_in);
+		addOutTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_add_out);
+		// TODO init animation
+
+		chatContentAddInTranslateAnimation = new TranslateAnimation(0, 0, BaseDataUtils.dpToPx(101), 0);
+		chatContentAddOutTranslateAnimation = new TranslateAnimation(0, 0, -BaseDataUtils.dpToPx(101), 0);
+		chatContentSamilyInTranslateAnimation = new TranslateAnimation(0, 0, 0, -BaseDataUtils.dpToPx(200));
+		chatContentSamilyOutTranslateAnimation = new TranslateAnimation(0, 0, BaseDataUtils.dpToPx(200), 0);
+		chatContentAddInTranslateAnimation.setDuration(250);
+		chatContentAddOutTranslateAnimation.setDuration(250);
+		chatContentSamilyInTranslateAnimation.setDuration(2000);
+		chatContentSamilyOutTranslateAnimation.setDuration(2000);
 
 	}
 
@@ -182,6 +207,11 @@ public class NewChatView {
 		mChatAdapter = new ChatAdapter(messages);
 		chatContent.addHeaderView(initHeaderView());
 		chatContent.setAdapter(mChatAdapter);
+		if (thisController.showChatCounts >= thisView.mChatAdapter.messages.size()) {
+			thisView.chatContentHeaderView.setVisibility(View.GONE);
+		} else {
+			thisView.chatContentHeaderView.setVisibility(View.VISIBLE);
+		}
 		changeChatList();
 	}
 
@@ -765,9 +795,9 @@ public class NewChatView {
 	public void changeChatMenu() {
 		if (this.chatMenuLayout.getVisibility() == View.GONE) {
 			this.titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_up));
-			this.chatMenuLayout.startAnimation(inTranslateAnimation);
+			this.chatMenuLayout.startAnimation(menuInTranslateAnimation);
 			this.chatMenuLayout.setVisibility(View.VISIBLE);
-			this.chatMenuBackground.startAnimation(inAlphaAnimation);
+			this.chatMenuBackground.startAnimation(menuInAlphaAnimation);
 			this.chatMenuBackground.setVisibility(View.VISIBLE);
 			if (thisController.inputManager.isActive(chatInput))
 				thisController.inputManager.hide(chatInput);
@@ -778,7 +808,7 @@ public class NewChatView {
 			}
 		} else {
 			this.titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
-			this.chatMenuLayout.startAnimation(outTranslateAnimation);
+			this.chatMenuLayout.startAnimation(menuOutTranslateAnimation);
 			this.chatMenuLayout.setVisibility(View.GONE);
 			this.chatMenuBackground.setVisibility(View.GONE);
 		}
@@ -790,54 +820,63 @@ public class NewChatView {
 				this.chatSmily.performClick();
 			if (thisController.inputManager.isActive(chatInput))
 				thisController.inputManager.hide(chatInput);
+			this.textLayout.startAnimation(recoredOutAlphAnimation);
 			this.textLayout.setVisibility(View.GONE);
 			this.voiceLayout.setVisibility(View.VISIBLE);
+			this.voiceLayout.startAnimation(recoredInAlphAnimation);
 			this.chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_keyboard));
 		} else if (this.voiceLayout.getVisibility() == View.VISIBLE) {
-			this.textLayout.setVisibility(View.VISIBLE);
+			this.voiceLayout.startAnimation(recoredOutAlphAnimation);
 			this.voiceLayout.setVisibility(View.GONE);
+			this.textLayout.setVisibility(View.VISIBLE);
+			this.textLayout.startAnimation(recoredInAlphAnimation);
 			this.chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_record));
 			this.chatInput.requestFocus();
 		}
 		if (this.chatAddLayout.getVisibility() == View.VISIBLE)
 			this.chatAdd.performClick();
 		if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
-			thisView.titleImage.performClick();
+			this.titleImage.performClick();
 	}
 
 	public void changeChatAdd() {
+		// TODO animation
 		if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
 			this.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
-			this.chatAddLayout.setVisibility(View.GONE);
+			chatAddLayout.setVisibility(View.GONE);
+			// this.chatBottomLayout.startAnimation(addOutTranslateAnimation);
+			// this.chatContent.startAnimation(chatContentAddOutTranslateAnimation);
 		} else {
 			this.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_return));
-			if (thisController.inputManager.isActive(chatInput)) {
+			if (thisController.inputManager.isActive(chatInput))
 				thisController.inputManager.hide(chatInput);
-			}
 			if (this.faceLayout.getVisibility() == View.VISIBLE)
 				this.chatSmily.performClick();
 			if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
-				thisView.titleImage.performClick();
+				this.titleImage.performClick();
 			this.chatAddLayout.setVisibility(View.VISIBLE);
 			changeChatList();
+			// this.chatContent.getLayoutParams().height = (int) (thisController.data.baseData.appHeight - BaseDataUtils.dpToPx(106));
+			// this.chatBottomLayout.startAnimation(addInTranslateAnimation);
+			// this.chatContent.startAnimation(chatContentAddInTranslateAnimation);
 		}
 	}
 
 	public void changeChatSmily() {
+		// TODO animation
 		if (this.faceLayout.getVisibility() == View.VISIBLE) {
-			this.faceLayout.setVisibility(View.GONE);
+			faceLayout.setVisibility(View.GONE);
+			// chatBottomLayout.startAnimation(samilyOutTranslateAnimation);
 		} else {
 			if (thisController.inputManager.isActive(chatInput))
 				thisController.inputManager.hide(chatInput);
-
-			if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
-				this.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
-				this.chatAddLayout.setVisibility(View.GONE);
-			}
+			if (this.chatAddLayout.getVisibility() == View.VISIBLE)
+				this.chatAdd.performClick();
 			if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
 				thisView.titleImage.performClick();
-			this.faceLayout.setVisibility(View.VISIBLE);
+			faceLayout.setVisibility(View.VISIBLE);
 			changeChatList();
+			// chatBottomLayout.startAnimation(samilyInTranslateAnimation);
 		}
 	}
 
@@ -859,7 +898,7 @@ public class NewChatView {
 		new Thread() {
 			public void run() {
 				try {
-					sleep(500);
+					sleep(250);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

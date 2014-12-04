@@ -13,8 +13,8 @@
 
     <ListView
         android:id="@+id/chatContent"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@+id/chatBottomLayout"
         android:layout_marginBottom="1dp"
         android:layout_marginTop="55dp"
@@ -74,7 +74,7 @@
         <LinearLayout
             android:id="@+id/chatLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="5dp" >
@@ -164,7 +164,7 @@
             android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/chatSmilyLayout"
+            android:id="@+id/chatAddLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/chatLayout"
@@ -188,7 +188,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_margin="5dp"
                     android:text="@string/takePhoto"
                     android:textColor="@color/black" />
@@ -211,7 +211,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_margin="5dp"
                     android:text="@string/album"
                     android:textColor="@color/black" />
@@ -234,7 +234,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_margin="5dp"
                     android:text="@string/location"
                     android:textColor="@color/black" />
