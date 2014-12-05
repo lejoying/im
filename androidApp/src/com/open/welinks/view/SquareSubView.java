@@ -332,7 +332,7 @@ public class SquareSubView {
 		// this.squareMessageListBody.height = 10 * displayMetrics.density;
 
 		data = parser.check();
-		if (data.boards.boardsMap == null || data.localStatus.localData == null) {
+		if (data.localStatus.localData == null || data.boards == null || data.boards.boardsMap == null) {
 			log.e("return shareMap or localData");
 			return;
 		}

@@ -169,12 +169,6 @@ public class NewChatController {
 		messagesMap = new HashMap<String, Message>();
 		inputManager = new InputMethodManagerUtils(thisActivity);
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
-		if (data.localStatus.localData.notSentMessagesMap != null) {
-			String content = data.localStatus.localData.notSentMessagesMap.get(type + key);
-			if (content != null) {
-				thisView.chatInput.setText(content);
-			}
-		}
 		initListeners();
 	}
 
@@ -442,7 +436,16 @@ public class NewChatController {
 
 				} else if (animation.equals(thisView.chatContentSamilyOutTranslateAnimation)) {
 					thisView.chatContent.clearAnimation();
-					// thisView.chatContent.getLayoutParams().height = (int) (thisController.data.baseData.appHeight - BaseDataUtils.dpToPx(106));
+					// chatContentAddInRotateAnimation thisView.chatContent.getLayoutParams().height = (int) (thisController.data.baseData.appHeight - BaseDataUtils.dpToPx(106));
+				} else if (animation.equals(thisView.chatContentAddInRotateAnimation)) {
+					thisView.chatAdd.clearAnimation();
+					thisView.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_return));
+					thisView.chatAddLayout.setVisibility(View.VISIBLE);
+					thisView.changeChatList();
+				} else if (animation.equals(thisView.chatContentAddOutRotateAnimation)) {
+					thisView.chatAdd.clearAnimation();
+					thisView.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
+					thisView.chatAddLayout.setVisibility(View.GONE);
 				}
 			}
 		};
@@ -722,6 +725,8 @@ public class NewChatController {
 		thisView.chatContentAddOutTranslateAnimation.setAnimationListener(mAnimationListener);
 		thisView.chatContentSamilyInTranslateAnimation.setAnimationListener(mAnimationListener);
 		thisView.chatContentSamilyOutTranslateAnimation.setAnimationListener(mAnimationListener);
+		thisView.chatContentAddInRotateAnimation.setAnimationListener(mAnimationListener);
+		thisView.chatContentAddOutRotateAnimation.setAnimationListener(mAnimationListener);
 	}
 
 	private void completeVoiceRecording(boolean weather) {

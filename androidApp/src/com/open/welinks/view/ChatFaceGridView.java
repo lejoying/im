@@ -63,7 +63,7 @@ public class ChatFaceGridView extends GridView implements android.widget.Adapter
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if (mChatFaceView.mOnFaceSeletedListener != null) {
+		if (mChatFaceView.mOnFaceSeletedListener != null && view.getTag(R.id.tag_first) != null) {
 			mChatFaceView.mOnFaceSeletedListener.onFaceSeleted((String) view.getTag(R.id.tag_first));
 		}
 	}

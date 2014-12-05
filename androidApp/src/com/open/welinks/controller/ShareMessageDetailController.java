@@ -730,7 +730,7 @@ public class ShareMessageDetailController {
 
 	public void showTempShare() {
 		shareMessage = data.tempData.tempShareMessageMap.get(gsid);
-		thisView.showShareMessageDetail();
+		thisView.showShareMessageDetails();
 	}
 
 	public void getShareMessageDetail() {
@@ -758,10 +758,13 @@ public class ShareMessageDetailController {
 					try {
 						flag = data.boards.shareMessagesMap.containsKey(shareMessage.gsid);
 						data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+						data.boards.boardsMap.put(shareMessage.sid, board);
 						data.boards.isModified = true;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					if (thisController.shareMessage == null)
+						flag = false;
 					thisController.shareMessage = shareMessage;
 					final boolean flag0 = flag;
 					thisView.fileHandlers.handler.post(new Runnable() {
@@ -770,7 +773,7 @@ public class ShareMessageDetailController {
 								thisView.showPraiseUsersContent();
 								thisView.notifyShareMessageComments();
 							} else {
-								thisView.showShareMessageDetail();
+								thisView.showShareMessageDetails();
 							}
 						}
 					});

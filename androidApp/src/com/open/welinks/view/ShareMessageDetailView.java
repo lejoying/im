@@ -234,7 +234,7 @@ public class ShareMessageDetailView {
 		// detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
 
 		if (thisController.shareMessage != null) {
-			showShareMessageDetail();
+			showShareMessageDetails();
 			thisController.getShareMessageDetail();
 		}
 	}
@@ -256,7 +256,7 @@ public class ShareMessageDetailView {
 	public String imagePath = "";
 	public ImageView imageView;
 
-	public void showShareMessageDetail() {
+	public void showShareMessageDetails() {
 		shareMessageDetailContentView.removeAllViews();
 		friend = data.relationship.friendsMap.get(thisController.shareMessage.phone);
 		if (friend != null) {

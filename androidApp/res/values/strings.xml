@@ -40,7 +40,6 @@
     <string name="hint_verify">请输入验证消息</string>
     <!-- common textview -->
     <string name="text_verify">对方启用了朋友验证</string>
-    <string name="ImageView">ImageView</string>
 
     <!-- BusinessCard -->
     <string name="business_modify_card">修改名片</string>
@@ -110,5 +109,6 @@
     <string name="personCard">个人名片</string>
     <string name="groupCard">房间名片</string>
     <string name="cilkeLoadMore">点击加载更多</string>
+    <string name="shareTitle">我发送了一个分享，点击看看吧</string>
 
 </resources>

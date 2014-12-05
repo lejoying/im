@@ -44,7 +44,6 @@
                         android:id="@+id/head"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
-                        android:contentDescription="@string/ImageView"
                         android:src="@drawable/face_man" />
 
                     <TextView
@@ -240,7 +239,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:contentDescription="@string/ImageView"
                         android:padding="15dp"
                         android:src="@drawable/into" />
                 </RelativeLayout>
@@ -274,8 +272,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="28dp"
-                    android:background="#9fff"
-                    android:contentDescription="@string/ImageView" />
+                    android:background="#9fff" />
 
                 <ImageView
                     android:id="@+id/tdcode"
@@ -285,7 +282,6 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="10dp"
-                    android:contentDescription="@string/ImageView"
                     android:src="@drawable/qrcode" />
             </RelativeLayout>
 

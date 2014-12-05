@@ -408,11 +408,13 @@ public class ShareSubView {
 			log.e("cover" + currentGroup.cover);
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
-
-		Board board = data.boards.boardsMap.get(currentGroup.currentBoard);
-		log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + board);
-		if (board == null) {
-			return;
+		Board board = null;
+		if (data.boards != null) {
+			board = data.boards.boardsMap.get(currentGroup.currentBoard);
+			log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + board);
+			if (board == null) {
+				return;
+			}
 		}
 		showRoomTime();
 		List<String> sharesOrder = board.shareMessagesOrder;
