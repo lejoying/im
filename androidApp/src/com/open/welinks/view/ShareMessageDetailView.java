@@ -339,7 +339,7 @@ public class ShareMessageDetailView {
 			String contentString = thisController.textContent;
 			Map<String, Integer> positionMap = new HashMap<String, Integer>();
 			if (urls.length > 0) {
-				Log.e(tag, "Url length:" + urls.length);
+				// Log.e(tag, "Url length:" + urls.length);
 				for (int i = 0; i < urls.length; i++) {
 					String str = urls[i].getURL();
 					Log.e(tag, "Url content:" + str);

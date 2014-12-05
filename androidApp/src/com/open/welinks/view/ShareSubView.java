@@ -57,6 +57,7 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.view.ShareSectionView.SharesMessageBody;
 
 public class ShareSubView {
 
@@ -411,21 +412,15 @@ public class ShareSubView {
 			log.e("cover" + currentGroup.cover);
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
-<<<<<<< HEAD
 		Board board = null;
-		if (data.boards != null) {
+		if (data.boards != null && data.boards.boardsMap != null) {
 			board = data.boards.boardsMap.get(currentGroup.currentBoard);
-			log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + board);
+			// log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + board);
 			if (board == null) {
 				return;
 			}
-=======
-
-		Board board = data.boards.boardsMap.get(currentGroup.currentBoard);
-		// log.e("ShareList Board:" + currentGroup.currentBoard + ",Share:" + board);
-		if (board == null) {
+		} else {
 			return;
->>>>>>> 5988eb7bf20463ed1dad74ab26998fae94c0790e
 		}
 		showRoomTime();
 		List<String> sharesOrder = board.shareMessagesOrder;

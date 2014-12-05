@@ -243,7 +243,7 @@ public class UploadMultipart {
 	};
 
 	public void initiateMultipartupload() {
-		log.e("i" + i);
+		// log.e("i" + i);
 		isUploadStatus = UPLOAD_INIT;
 		long expires = (new Date().getTime() / 1000) + addExpires;
 		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploads";

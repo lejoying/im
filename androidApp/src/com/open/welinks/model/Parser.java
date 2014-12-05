@@ -216,7 +216,7 @@ public class Parser {
 			try {
 				if (data.localStatus.localData == null) {
 					String localDataStr = getFromUserForder(phone, "localData.js");
-					if (localDataStr == null || !"".equals(localDataStr)) {
+					if (localDataStr == null || "".equals(localDataStr)) {
 						data.localStatus.localData = data.localStatus.new LocalData();
 					} else {
 						data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
@@ -269,7 +269,11 @@ public class Parser {
 			try {
 				if (data.boards == null) {
 					String boardsContent = getFromUserForder(phone, "boards.js");
-					data.boards = gson.fromJson(boardsContent, Boards.class);
+					if (boardsContent != null && !"".equals(boardsContent)) {
+						data.boards = gson.fromJson(boardsContent, Boards.class);
+					} else {
+
+					}
 				}
 			} catch (Exception e) {
 				deleteFile(phone, "boards.js");
@@ -357,7 +361,7 @@ public class Parser {
 			}
 		}
 
-		if (data.boards.isModified) {
+		if (data.boards != null && data.boards.isModified) {
 			data.boards.isModified = false;
 			String boards = gson.toJson(data.boards);
 			saveToUserForder(phone, "boards.js", boards);
@@ -379,9 +383,12 @@ public class Parser {
 			saveToUserForder(phone, "event.js", eventStr);
 		}
 
-		if (phone != null && !"".equals(phone)) {
+		// if (data.localStatus.localData.isModified) {
+		if (data.localStatus.localData != null) {
 			String localDataStr = gson.toJson(data.localStatus.localData);
 			saveToUserForder(phone, "localData.js", localDataStr);
+			data.localStatus.localData.isModified = false;
 		}
+		// }
 	}
 }

@@ -390,7 +390,7 @@ public class ShareSubController {
 					int index = tagContent.lastIndexOf("#");
 					String type = tagContent.substring(0, index);
 					String content = tagContent.substring(index + 1);
-					log.e(tagContent);
+					// log.e(tagContent);
 					if ("GroupDialogContentItem".equals(type)) {
 						parser.check();
 						// modify data

@@ -1102,7 +1102,7 @@ public class NewChatController {
 			e.printStackTrace();
 		}
 		File toSnapFile = new File(fileHandlers.sdcardThumbnailFolder, fileName);
-		fileHandlers.makeImageThumbnail(fromFile, (int) (data.baseData.screenWidth / 3), (int) (data.baseData.screenHeight / 4), toSnapFile, fileName);
+		fileHandlers.makeImageThumbnail(fromFile, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146), toSnapFile, fileName);
 		return map;
 	}
 

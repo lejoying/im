@@ -22,11 +22,11 @@ public class MyGson {
 				t = classOfT.newInstance();
 			} catch (InstantiationException e1) {
 				e1.printStackTrace();
-				log.e(e.toString());
+				log.e(e.toString() + json);
 				t = null;
 			} catch (IllegalAccessException e1) {
 				e1.printStackTrace();
-				log.e(e.toString());
+				log.e(e.toString() + json);
 				t = null;
 			}
 		}

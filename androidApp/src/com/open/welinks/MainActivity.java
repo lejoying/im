@@ -69,8 +69,8 @@ public class MainActivity extends Activity {
 		Constant.init();
 		startPushService();
 
-		taskManageHolder = TaskManageHolder.getInstance();
-		taskManageHolder.initialize();
+		// taskManageHolder = TaskManageHolder.getInstance();
+		// taskManageHolder.initialize();
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 

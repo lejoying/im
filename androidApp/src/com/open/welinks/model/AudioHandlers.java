@@ -68,13 +68,13 @@ public class AudioHandlers {
 		if (isRecording) {
 			return;
 		}
+		isRecording = true;
 		if (mAudioRecord != null) {
 			this.closeRecord();
 		}
 		initRecorder();
 		getFilePath();
 		new RecordAudioThread().start();
-		isRecording = true;
 	}
 
 	public void stopRecording() {
@@ -238,7 +238,11 @@ public class AudioHandlers {
 
 		@Override
 		public void run() {
-			mAudioRecord.startRecording();
+			try {
+				mAudioRecord.startRecording();
+			} catch (Exception e) {
+				Log.e(tag, "Exception" + e.toString());
+			}
 			new EncodeAudioThread().start();
 			recorderStartTime = System.currentTimeMillis();
 			while (isRecording) {

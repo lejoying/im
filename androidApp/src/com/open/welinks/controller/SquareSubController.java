@@ -498,10 +498,8 @@ public class SquareSubController {
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedSquare);
 		parser.check();
 
-		if (thisView.currentSquare != null) {
-			thisView.currentSquare = data.relationship.groupsMap.get(thisView.currentSquare.gid + "");
-			params.addBodyParameter("sid", thisView.currentSquare.currentBoard);
-		}
+		thisView.currentSquare = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+		params.addBodyParameter("sid", thisView.currentSquare.currentBoard);
 
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
@@ -517,15 +515,15 @@ public class SquareSubController {
 				gid = squares.get(i);
 			}
 		}
-		final String currentSid = gid;
+		final String currentGid = gid;
 		parser.check();
-		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid) && !data.localStatus.localData.currentSelectedSquare.equals("")) {
-			Alert.createDialog(thisActivity).setTitle("您已进入微型社区" + groups.get(currentSid).description + "站,是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
+		if (!data.localStatus.localData.currentSelectedSquare.equals(currentGid) && !data.localStatus.localData.currentSelectedSquare.equals("")) {
+			Alert.createDialog(thisActivity).setTitle("您已进入微型社区" + groups.get(currentGid).description + "站,是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
 
 				@Override
 				public void onClick(AlertInputDialog dialog) {
-					data.localStatus.localData.currentSelectedSquare = currentSid;
-					thisView.currentSquare = groups.get(currentSid);
+					data.localStatus.localData.currentSelectedSquare = currentGid;
+					thisView.currentSquare = groups.get(currentGid);
 					getCurrentSquareShareMessages();
 					thisView.setSquaresDialogContent();
 				}
@@ -538,15 +536,12 @@ public class SquareSubController {
 				}
 			}).show();
 		} else {
-			data.localStatus.localData.currentSelectedSquare = currentSid;
-<<<<<<< HEAD
-			thisView.currentSquare = groups.get(currentSid);
-=======
-			thisView.currentSquare = data.relationship.groupsMap.get(currentSid);
-			thisView.showSquareMessages2(true);
->>>>>>> 5988eb7bf20463ed1dad74ab26998fae94c0790e
-			getCurrentSquareShareMessages();
+			data.localStatus.localData.currentSelectedSquare = currentGid;
+			data.localStatus.localData.isModified = true;
+			thisView.currentSquare = data.relationship.groupsMap.get(currentGid);
+			thisView.showSquareMessages(true);
 			thisView.setSquaresDialogContent();
+			getCurrentSquareShareMessages();
 		}
 	}
 

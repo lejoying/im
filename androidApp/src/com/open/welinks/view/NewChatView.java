@@ -18,6 +18,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -26,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -82,7 +84,7 @@ public class NewChatView {
 
 	public Animation chatContentAddInRotateAnimation, chatContentAddOutRotateAnimation, chatContentAddInTranslateAnimation, chatContentAddOutTranslateAnimation, chatContentSamilyInTranslateAnimation, chatContentSamilyOutTranslateAnimation, menuInTranslateAnimation, menuInAlphaAnimation, menuOutTranslateAnimation, samilyInTranslateAnimation, samilyOutTranslateAnimation, recoredInAlphAnimation, recoredOutAlphAnimation, addInTranslateAnimation, addOutTranslateAnimation;
 
-	private DisplayImageOptions headOptions, locationOptions;
+	private DisplayImageOptions locationOptions;
 
 	public Timer voiceTimer;
 	public int voiceTimerTimes;
@@ -131,7 +133,6 @@ public class NewChatView {
 		titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
 		rightContainer.addView(titleImage);
 
-		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) BaseDataUtils.dpToPx(30))).build();
 
 		mChatMenuAdapter = new ChatMenuAdapter();
@@ -248,29 +249,29 @@ public class NewChatView {
 
 		@Override
 		public int getCount() {
-			int size;
-			if (messages.size() > thisController.showChatCounts) {
-				size = thisController.showChatCounts;
-			} else {
-				size = messages.size();
-			}
-			return size;
+			// int size;
+			// if (messages.size() > thisController.showChatCounts) {
+			// size = thisController.showChatCounts;
+			// } else {
+			// size = messages.size();
+			// }
+			return messages.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return messages.get((int) getItemId(position));
+			return messages.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			int id;
-			if (messages.size() > thisController.showChatCounts) {
-				id = messages.size() - thisController.showChatCounts + position;
-			} else {
-				id = position;
-			}
-			return id;
+			// int id;
+			// if (messages.size() > thisController.showChatCounts) {
+			// id = messages.size() - thisController.showChatCounts + position;
+			// } else {
+			// id = position;
+			// }
+			return position;
 		}
 
 		@Override
@@ -314,7 +315,6 @@ public class NewChatView {
 			return TYPECOUNT;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ChatHolder holder = null;
@@ -386,6 +386,7 @@ public class NewChatView {
 				}
 				convertView.setTag(holder);
 			} else {
+				// Log.e("NewChatView", type + "::::::::::::::::::::::::::::::" + message.content);
 				holder = (ChatHolder) convertView.getTag();
 			}
 
@@ -401,7 +402,7 @@ public class NewChatView {
 					messageHead = friend.head;
 				}
 				if (!"".equals(messageHead)) {
-					thisController.fileHandlers.getHeadImage(messageHead, holder.head, headOptions);
+					thisController.fileHandlers.getHeadImage(messageHead, holder.head, thisController.viewManage.options40);
 					holder.head.setTag(R.id.tag_first, "head");
 					holder.head.setTag(R.id.tag_second, message.phone);
 					holder.head.setOnClickListener(thisController.mOnClickListener);
@@ -517,7 +518,12 @@ public class NewChatView {
 					holder.cardLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
 
-					VoiceMessageContent messageContent = thisController.gson.fromJson(message.content, VoiceMessageContent.class);
+					VoiceMessageContent messageContent = null;
+					try {
+						messageContent = thisController.gson.fromJson(message.content, VoiceMessageContent.class);
+					} catch (Exception e) {
+						Log.e("NewChatView", message.content);
+					}
 					if (messageContent == null) {
 						holder.voicetime.setText("数据结构错误");
 					} else {
@@ -548,6 +554,8 @@ public class NewChatView {
 						holder.character.setText("数据结构错误");
 						holder.image.setVisibility(View.GONE);
 					} else {
+						LinearLayout.LayoutParams imagePrams = new LinearLayout.LayoutParams((int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146));
+						imagePrams.setMargins((int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10));
 						String image = images.get(0);
 						if (images.size() == 1) {
 							holder.imagesLayout.setVisibility(View.GONE);
@@ -555,7 +563,8 @@ public class NewChatView {
 							holder.image.setTag(R.id.tag_first, contentType);
 							holder.image.setTag(R.id.tag_second, images);
 							holder.image.setOnClickListener(thisController.mOnClickListener);
-							thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+							holder.image.setLayoutParams(imagePrams);
+							thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146), thisController.viewManage.options30, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 						} else {
 							holder.image.setVisibility(View.GONE);
 							holder.imagesLayout.setVisibility(View.VISIBLE);
@@ -563,7 +572,8 @@ public class NewChatView {
 							holder.imagesLayout.setTag(R.id.tag_first, contentType);
 							holder.imagesLayout.setTag(R.id.tag_second, images);
 							holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
-							thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(106), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+							holder.imagesLayout.setLayoutParams(imagePrams);
+							thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 						}
 					}
 				} else if (contentType.equals("gif")) {
@@ -646,7 +656,7 @@ public class NewChatView {
 					}
 					holder.cardName.setText(messageContent.name);
 					holder.cardMainBusiness.setText(BaseDataUtils.generateMainBusiness(messageContent.type, messageContent.mainBusiness));
-					thisController.fileHandlers.getHeadImage(messageContent.head, holder.cardHead, headOptions);
+					thisController.fileHandlers.getHeadImage(messageContent.head, holder.cardHead, thisController.viewManage.options40);
 					holder.cardLayout.setTag(R.id.tag_first, contentType);
 					holder.cardLayout.setTag(R.id.tag_second, messageContent.type);
 					holder.cardLayout.setTag(R.id.tag_third, messageContent.key);

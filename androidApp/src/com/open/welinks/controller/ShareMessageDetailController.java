@@ -142,20 +142,20 @@ public class ShareMessageDetailController {
 				board = data.boards.boardsMap.get(sid);
 				shareMessage = data.boards.shareMessagesMap.get(gsid);
 				getShareMessageDetail();
-				log.e("1");
+				// log.e("1");
 			} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
 				board = data.boards.new Board();
 				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
 				getShareMessageDetail();
-				log.e("2");
+				// log.e("2");
 			} else {
 				board = data.boards.new Board();
 				// getShareFromServer(gid, gsid);
 				getShareMessageDetail();
-				log.e("3");
+				// log.e("3");
 			}
 		}
-		log.e(gid + "!---!" + gsid);
+		// log.e(gid + "!---!" + gsid);
 	}
 
 	public void initShareListener() {
@@ -758,7 +758,6 @@ public class ShareMessageDetailController {
 					try {
 						flag = data.boards.shareMessagesMap.containsKey(shareMessage.gsid);
 						data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
-						data.boards.boardsMap.put(shareMessage.sid, board);
 						data.boards.isModified = true;
 					} catch (Exception e) {
 						e.printStackTrace();
