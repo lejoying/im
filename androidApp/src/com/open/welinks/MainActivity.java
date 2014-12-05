@@ -25,6 +25,7 @@ import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.UpdateManager;
 import com.open.welinks.service.PushService;
 import com.open.welinks.utils.BaseDataUtils;
@@ -55,6 +56,8 @@ public class MainActivity extends Activity {
 
 	public static MainActivity instance;
 
+	public TaskManageHolder taskManageHolder;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,6 +68,9 @@ public class MainActivity extends Activity {
 		BaseDataUtils.initBaseData(this);
 		Constant.init();
 		startPushService();
+
+		taskManageHolder = TaskManageHolder.getInstance();
+		taskManageHolder.initialize();
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 

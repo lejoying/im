@@ -58,7 +58,7 @@ public class ShareSectionView {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareSectionView";
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public Context context;
 	public ShareSectionView thisView;
@@ -392,7 +392,7 @@ public class ShareSectionView {
 				}
 				sharesMessageBody.setContent(shareMessage, fileName, imageContent, textContent, totalHeight);
 			} else {
-				sharesMessageBody.setContent(sharesMessageBody.message, sharesMessageBody.fileName, sharesMessageBody.imageContent, sharesMessageBody.textContent, sharesMessageBody.totalHeight);
+				sharesMessageBody.setContent(shareMessage, sharesMessageBody.fileName, sharesMessageBody.imageContent, sharesMessageBody.textContent, sharesMessageBody.totalHeight);
 				totalHeight = sharesMessageBody.totalHeight;
 			}
 
@@ -613,7 +613,12 @@ public class ShareSectionView {
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
+				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
+				if (file.exists()) {
+					fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
+				} else {
+					imageLoader.displayImage("file://" + fileHandlers.sdcardImageFolder.getAbsolutePath() + "/" + imageContent, shareImageContentView);
+				}
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;

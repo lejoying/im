@@ -80,7 +80,12 @@ shareManage.sendshare = function (data, response) {
         var params = {
             gid: parseInt(gid),
             shares: {
-                nodeType: "Shares"
+                name: "主版",
+                nodeType: "Shares",
+                type: "Main",
+                gid: gid,
+                status: "active",
+                createTime: new Date().getTime()
             }
         };
         db.query(query, params, function (error, results) {
@@ -112,7 +117,7 @@ shareManage.sendshare = function (data, response) {
     function saveShareNode(message) {
         var query = [
             'MATCH (group:Group)-[r:SHARE]->(shares:Shares)',
-            'WHERE group.gid={gid}',
+            'WHERE group.gid={gid} AND shares.type="Main"',
             'CREATE shares-[r1:HAS_SHARE]->(share:Share{share})',
             'SET share.gsid=ID(share)',
             'RETURN group,share'
@@ -181,7 +186,7 @@ shareManage.getshares = function (data, response) {
     function getSharesNodes() {
         var query = [
             "MATCH (group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid}",
+            "WHERE group.gid={gid} AND shares.type='Main'",
             "RETURN share",
             "ORDER BY share.time DESC",
             "SKIP {start}",
@@ -269,7 +274,7 @@ shareManage.addpraise = function (data, response) {
     function modifySharePraise() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -360,7 +365,7 @@ shareManage.addcomment = function (data, response) {
     function modifyShareComments() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -444,7 +449,7 @@ shareManage.delete = function (data, response) {
     function deleteShareNode() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "DELETE r1,share",
             "RETURN group"
         ].join("\n");
@@ -493,7 +498,7 @@ shareManage.deletecomment = function (data, response) {
     function deleteComment() {
         var query = [
             "MACTH (group:Group)-[r:HAS_SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -563,7 +568,7 @@ shareManage.getshare = function (data, response) {
         try {
             var query = [
                 "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-                "WHERE group.gid={gid} AND share.gsid={gsid}",
+                "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
                 "RETURN share"
             ].join("\n");
             var params = {
@@ -638,7 +643,7 @@ shareManage.modifyvote = function (data, response) {
     function modifyShareVote() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
             "RETURN share"
         ].join("\n");
         var params = {
@@ -726,7 +731,7 @@ shareManage.getgroupshares = function (data, response) {
     function getSharesNodes() {
         var query = [
             "MATCH (group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid}",
+            "WHERE group.gid={gid} AND shares.type='Main'",
             "RETURN share",
             "ORDER BY share.time DESC",
             "SKIP {start}",
@@ -800,7 +805,7 @@ shareManage.getusershares = function (data, response) {
     function getUserShares() {
         var query = [
             "MATCH (group:Group)-->(shares:Shares)-->(share:Share)",
-            "WHERE  share.phone={phone}",
+            "WHERE  share.phone={phone} AND shares.type='Main'",
             "RETURN group,share",
             "ORDER BY share.time DESC",
             "SKIP {start}",
@@ -865,17 +870,22 @@ var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 shareManage.sendboardshare = function (data, response) {
     response.asynchronous = 1;
+    console.error(data);
+    if (data) {
+        //return;
+    }
     var sid = data.sid;
     var phone = data.phone;
     var nickName = data.nickName;
-    var message = data.message;
+    //var message = data.message;
+    var type = data.type;
+    var content = data.content;
     var gid = data.gid; //unused
     var ogsid = data.ogsid;
-    if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, message, ogsid, nickName], response)) {
+    if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, ogsid, nickName, type, content], response)) {
         try {
-            message = JSON.parse(message);
-            if (message.type == "imagetext") {
-                createShare(message);
+            if (type == "imagetext") {
+                createShare();
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "发布群分享失败",
@@ -896,7 +906,7 @@ shareManage.sendboardshare = function (data, response) {
             }), response);
         }
     }
-    function createShare(message) {
+    function createShare() {
         var query = [
             'MATCH (shares:Shares)',
             'WHERE shares.sid={sid}',
@@ -911,10 +921,10 @@ shareManage.sendboardshare = function (data, response) {
                 nickName: nickName,
                 praises: "[]",
                 comments: "[]",
-                type: message.type,
+                type: type,
                 nodeType: "Share",
                 sid: sid,
-                content: message.content,
+                content: content,
                 time: new Date().getTime()
             }
         };
@@ -939,7 +949,7 @@ shareManage.sendboardshare = function (data, response) {
                 }), response);
             } else {
                 var shareData = results.pop().share.data;
-                console.log("发布群分享成功");
+                //console.log("发布群分享成功");
                 ResponseData(JSON.stringify({
                     "提示信息": "发布群分享成功",
                     time: shareData.time,

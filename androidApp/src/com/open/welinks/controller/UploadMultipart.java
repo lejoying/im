@@ -675,7 +675,7 @@ public class UploadMultipart {
 	class InitiateMultipartUploadResult {
 		public String bucket;
 		public String key;
-		String uploadId;
+		public String uploadId;
 	}
 
 	public InitiateMultipartUploadResult parseXml(String resultXml) throws Exception {

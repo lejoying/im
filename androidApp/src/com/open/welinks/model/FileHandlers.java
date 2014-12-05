@@ -37,7 +37,7 @@ import com.open.welinks.view.ViewManage;
 public class FileHandlers {
 
 	public String tag = "FileHandlers";
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public static FileHandlers fileHandlers;
 	public static AudioHandlers audioHandlers;

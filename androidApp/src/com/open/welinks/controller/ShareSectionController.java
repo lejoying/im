@@ -1,7 +1,5 @@
 package com.open.welinks.controller;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
@@ -27,13 +25,14 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.TaskContainer_Share;
+import com.open.welinks.model.TaskContainer_Share.GetShares;
+import com.open.welinks.model.TaskContainer_Share.Praise;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.view.ShareSectionView;
-import com.open.welinks.view.ShareSectionView.SharesMessageBody;
 
 public class ShareSectionController {
 
@@ -41,6 +40,10 @@ public class ShareSectionController {
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareSectionController";
 	public MyLog log = new MyLog(tag, true);
+
+	public TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
+	// public TaskManager mTaskManager = TaskManager.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public ShareSectionView thisView;
@@ -79,6 +82,19 @@ public class ShareSectionController {
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 	}
 
+	public void getCurrentGroupShareMessages() {
+		// RequestParams params = new RequestParams();
+		// HttpUtils httpUtils = new HttpUtils();
+		// params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		// params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		// params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		// params.addBodyParameter("sid", thisView.currentGroup.currentBoard);
+		// params.addBodyParameter("nowpage", nowpage + "");
+		// params.addBodyParameter("pagesize", pagesize + "");
+		//
+		// httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack2);
+	}
+
 	public void initializeListeners() {
 		shareBodyCallback = new BodyCallback() {
 			@Override
@@ -86,12 +102,19 @@ public class ShareSectionController {
 				super.onRefresh(direction);
 				if (reflashStatus.state != reflashStatus.Reflashing) {
 					reflashStatus.state = reflashStatus.Reflashing;
+					GetShares task = mTaskContainer_Share.new GetShares();
+					task.API = API.SHARE_GETSHARES;
+					task.gid = thisView.currentGroup.gid + "";
+					task.sid = thisView.currentGroup.currentBoard;
+					task.pagesize = pagesize;
 					if (direction == 1) {
 						nowpage = 0;
-						getCurrentGroupShareMessages();
+						task.nowpage = nowpage;
+						taskManageHolder.taskManager.pushTask(task);
 					} else if (direction == -1) {
 						nowpage++;
-						getCurrentGroupShareMessages();
+						task.nowpage = nowpage;
+						taskManageHolder.taskManager.pushTask(task);
 					}
 					thisView.showRoomTime();
 				}
@@ -184,39 +207,14 @@ public class ShareSectionController {
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent("point", content);
 						thisView.businessCardPopView.showUserCardDialogView();
 					} else if ("SharePraise".equals(type)) {
-						parser.check();
-						User currentUser = data.userInformation.currentUser;
-						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
-						boolean option = false;
-						if (!shareMessage.praiseusers.contains(currentUser.phone)) {
-							option = true;
-							boolean flag = false;
-							for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-								if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-									flag = true;
-									break;
-								}
-							}
-							if (!flag) {
-								shareMessage.praiseusers.add(currentUser.phone);
-							}
-							SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
-							sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-							sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
-						} else {
-							ArrayList<String> list = new ArrayList<String>();
-							for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-								if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-									list.add(shareMessage.praiseusers.get(i));
-								}
-							}
-							shareMessage.praiseusers.removeAll(list);
-							SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
-							sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-							sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
-						}
-						modifyPraiseusersToMessage(option, data.localStatus.localData.currentSelectedGroup, shareMessage.gsid);
-						view.setTag(R.id.time, null);
+
+						Praise praise = mTaskContainer_Share.new Praise();
+						praise.gsid = content;
+						praise.thisView = thisView;
+						praise.gid = data.localStatus.localData.currentSelectedGroup;
+						praise.API = API.SHARE_ADDPRAISE;
+						taskManageHolder.taskManager.pushTask(praise);
+
 					}
 				}
 				onTouchDownView = null;
@@ -363,19 +361,6 @@ public class ShareSectionController {
 	}
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-
-	public void getCurrentGroupShareMessages() {
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
-		params.addBodyParameter("sid", thisView.currentGroup.currentBoard);
-		params.addBodyParameter("nowpage", nowpage + "");
-		params.addBodyParameter("pagesize", pagesize + "");
-
-		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack2);
-	}
 
 	public void modifyPraiseusersToMessage(boolean option, String gid, String gsid) {
 		RequestParams params = new RequestParams();

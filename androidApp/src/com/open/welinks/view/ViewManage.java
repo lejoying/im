@@ -64,11 +64,16 @@ public class ViewManage {
 	public DisplayImageOptions options70;
 	public DisplayImageOptions options60;
 	public DisplayImageOptions options56;
+	
+	public int screenWidth;
+	public int screenHeight;
 
 	void initialize(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		this.screenWidth = displayMetrics.widthPixels;
+		this.screenHeight = displayMetrics.heightPixels;
 		float density = displayMetrics.density / 1.5f;
 		options = new DisplayImageOptions.Builder().cacheInMemory(false).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		options30 = new DisplayImageOptions.Builder().cacheInMemory(false).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer((int) (0 * density))).build();

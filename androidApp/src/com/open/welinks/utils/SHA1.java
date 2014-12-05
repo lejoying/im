@@ -1,6 +1,17 @@
 package com.open.welinks.utils;
 
+
 public class SHA1 {
+	
+	public static SHA1 instance;
+	public static SHA1 getInstance() {
+		if (instance == null) {
+			instance = new SHA1();
+		}
+		return instance;
+	}
+	
+	
 	private final int[] abcde = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 };
 	private int[] digestInt = new int[5];
 	private int[] tmpData = new int[80];
