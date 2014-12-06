@@ -11,6 +11,8 @@ import java.util.Set;
 
 import org.apache.http.Header;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -351,6 +353,8 @@ public class ResponseHandlers {
 				data.userInformation.currentUser.phone = phone;
 				data.userInformation.currentUser.accessKey = accessKey;
 				data.userInformation.isModified = true;
+				log.e(data.userInformation.currentUser + "-=-=-=account_auth" + data.userInformation.currentUser.accessKey);
+				// parser.save();
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();
 				params.addBodyParameter("phone", phone);
@@ -406,6 +410,7 @@ public class ResponseHandlers {
 						user.userBackground = account.userBackground;
 						user.blackList = account.blackList;
 						data.userInformation.isModified = true;
+						Log.e("logincontroller", user.phone + "get-=-=-=startPushService" + data.userInformation.currentUser.accessKey);
 					} else {
 						boolean isTemp = true;
 						List<String> circles = data.relationship.circles;

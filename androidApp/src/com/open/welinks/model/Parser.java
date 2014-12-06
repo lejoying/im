@@ -376,7 +376,7 @@ public class Parser {
 			}
 		}
 
-		if (data.event.isModified) {
+		if (data.event != null&&data.event.isModified) {
 			data.event.isModified = false;
 
 			String eventStr = gson.toJson(data.event);

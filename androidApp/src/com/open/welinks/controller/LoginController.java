@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.MyLog;
 import com.open.welinks.MainActivity;
 import com.open.welinks.R;
 import com.open.welinks.customView.Alert;
@@ -29,6 +31,7 @@ import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.view.LoginView;
@@ -816,23 +819,32 @@ public class LoginController {
 		}.start();
 	}
 
+	MyLog log = new MyLog(tag, true);
+
 	public void loginSuccessful(final String phone) {
-		new Thread() {
-			public void run() {
-				Intent intent = new Intent(thisActivity, MainActivity.class);
-				intent.putExtra("phone", phone);
-				for (int i = 1; i <= 50; i++) {
-					try {
-						sleep(10);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					thisView.progressBar.incrementProgressBy(1);
-				}
-				thisActivity.startActivity(intent);
-				thisActivity.finish();
-			};
-		}.start();
+		log.e("**********" + phone);
+		// new Thread() {
+		// public void run() {
+		log.e(data.userInformation.currentUser.phone + "**********" + data.userInformation.currentUser.accessKey);
+		Intent intent = new Intent(thisActivity, MainActivity.class);
+		intent.putExtra("phone", phone);
+		// TODO
+		// for (int i = 1; i <= 50; i++) {
+		// try {
+		// Thread.sleep(10);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// thisView.progressBar.incrementProgressBy(1);
+		// }
+		// Parser parser = Parser.getInstance();
+		// parser.initialize(thisActivity);
+		// parser.check();
+		Log.e("logincontroller", data.userInformation.currentUser + "0-=-=-=startPushService" + data.userInformation.currentUser.accessKey);
+		thisActivity.startActivity(intent);
+		thisActivity.finish();
+		// };
+		// }.start();
 	}
 
 	public void loginFail(String 失败原因) {

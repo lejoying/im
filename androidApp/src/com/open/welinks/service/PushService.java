@@ -79,6 +79,8 @@ public class PushService extends Service {
 				i = Math.abs(random.nextInt()) % 1000;
 				String phone = intent.getStringExtra("phone");
 				String accessKey = intent.getStringExtra("accessKey");
+				log.e(data.userInformation.currentUser.phone + "-=-=-=pushservice" + data.userInformation.currentUser.accessKey);
+
 				startIMLongPull(phone, accessKey);
 			} else {
 				stopLongPull();
@@ -134,7 +136,6 @@ public class PushService extends Service {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			System.out.println("success-----------------");
 			if (httpHandler != null) {
 				httpHandler.cancel(true);
 			}
@@ -151,6 +152,7 @@ public class PushService extends Service {
 					// parser.check();
 					// data.userInformation.currentUser.accessKey = "";
 					// data.userInformation.isModified = true;
+					log.e(data.userInformation.currentUser.accessKey + ":::::" + data.userInformation.currentUser.phone);
 					log.e("accessKey 无效,自动退出...");
 					if (MainActivity.instance != null) {
 						MainActivity.instance.thisController.exit();

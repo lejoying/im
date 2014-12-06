@@ -133,7 +133,7 @@ public class ShareMessageDetailController {
 
 		if (sid == null || "".equals(sid)) {
 			log.e(ViewManage.getErrorLineNumber() + "少传参数了");
-			return;
+//			return;
 		}
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {

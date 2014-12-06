@@ -786,7 +786,7 @@ public class SquareSubView {
 	public void setSquaresDialogContent() {
 		data = parser.check();
 
-		if (data.relationship.groupsMap == null || data.localStatus.localData == null) {
+		if (data.relationship == null || data.relationship.groupsMap == null || data.localStatus == null || data.localStatus.localData == null) {
 			log.e("return shareMap or localData");
 			return;
 		}

@@ -109,7 +109,7 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		viewManager.loginView = null;
+//		viewManager.loginView = null;
 		thisController.onDestroy();
 	}
 

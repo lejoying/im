@@ -346,7 +346,7 @@ public class ShareSubView {
 		data = parser.check();
 
 		showTopMenuRoomName();
-		if (data.relationship.groups == null || data.localStatus.localData == null) {
+		if (data.relationship == null || data.relationship.groupsMap == null || data.localStatus == null || data.localStatus.localData == null) {
 			log.e("return groups or localData");
 			return;
 		}
@@ -942,7 +942,7 @@ public class ShareSubView {
 
 	public void setGroupsDialogContent() {
 		data = parser.check();
-		if (data.relationship.groups == null || data.localStatus.localData == null) {
+		if (data.relationship == null || data.relationship.groupsMap == null || data.localStatus == null || data.localStatus.localData == null) {
 			log.e("return groups or localData");
 			return;
 		}
@@ -1083,7 +1083,7 @@ public class ShareSubView {
 	public void showTopMenuRoomName() {
 		data = parser.check();
 		groupMembersListContentView.removeAllViews();
-		if (data.relationship.groupsMap == null || data.localStatus.localData == null) {
+		if (data.relationship == null || data.relationship.groupsMap == null || data.localStatus == null || data.localStatus.localData == null) {
 			return;
 		}
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);

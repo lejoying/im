@@ -7,6 +7,8 @@ public interface AudioListener {
 
 	public void onPrepared();
 
+	public void onRelease();
+
 	public void onPlayComplete();
 
 	public void onPlayFail();

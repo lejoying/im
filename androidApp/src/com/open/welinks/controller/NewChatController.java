@@ -364,7 +364,7 @@ public class NewChatController {
 					intent.putExtra("type", 2);
 					thisActivity.startActivity(intent);
 				}
-
+				thisView.titleImage.performClick();
 			}
 		};
 		mTextWatcher = new TextWatcher() {
@@ -657,13 +657,20 @@ public class NewChatController {
 			@Override
 			public void onRecorded(String filePath) {
 				postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
-				voicePopTimer.cancel();
-				voicePopTimer.purge();
+				if (voicePopTimer != null) {
+					voicePopTimer.cancel();
+					voicePopTimer.purge();
+					voicePopTimer = null;
+				}
 				voiceTime = 0;
-				voicePopTimer = null;
 				if (!"".equals(filePath)) {
 					createVoiceMessage(filePath);
 				}
+			}
+
+			@Override
+			public void onRelease() {
+
 			}
 		};
 		handler = new Handler() {
@@ -734,10 +741,12 @@ public class NewChatController {
 			audiohandlers.stopRecording();
 		} else {
 			postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
-			voicePopTimer.cancel();
-			voicePopTimer.purge();
+			if (voicePopTimer != null) {
+				voicePopTimer.cancel();
+				voicePopTimer.purge();
+				voicePopTimer = null;
+			}
 			voiceTime = 0;
-			voicePopTimer = null;
 			audiohandlers.releaseRecording();
 		}
 	}
@@ -1158,8 +1167,14 @@ public class NewChatController {
 		@Override
 		public void run() {
 			long time = System.currentTimeMillis();
-			if (time - voiceTime > 60 * 1000) {
+			if (time - voiceTime > 61 * 1000) {
 				completeVoiceRecording(true);
+				if (voicePopTimer != null) {
+					voicePopTimer.cancel();
+					voicePopTimer.purge();
+					voicePopTimer = null;
+				}
+				voiceTime = 0;
 			} else {
 				thisView.changeVoice();
 			}
@@ -1182,5 +1197,16 @@ public class NewChatController {
 
 	public void onPause() {
 		thisView.locationMapView.onPause();
+	}
+
+	public void onBackPressed() {
+		if (thisView.chatAddLayout.getVisibility() == View.VISIBLE) {
+			thisView.chatAdd.performClick();
+		} else if (thisView.faceLayout.getVisibility() == View.VISIBLE) {
+			thisView.chatSmily.performClick();
+		} else {
+			thisActivity.finish();
+		}
+
 	}
 }

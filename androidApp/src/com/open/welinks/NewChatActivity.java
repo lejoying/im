@@ -73,4 +73,9 @@ public class NewChatActivity extends Activity {
 		super.onDestroy();
 	}
 
+	@Override
+	public void onBackPressed() {
+		this.thisController.onBackPressed();
+	}
+	
 }

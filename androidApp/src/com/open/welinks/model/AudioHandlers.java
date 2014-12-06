@@ -240,30 +240,30 @@ public class AudioHandlers {
 		public void run() {
 			try {
 				mAudioRecord.startRecording();
+				new EncodeAudioThread().start();
+				recorderStartTime = System.currentTimeMillis();
+				while (isRecording) {
+					int readSize = mAudioRecord.read(mRecordData, 0, mRecorderMinBufferSize);
+					if (mRecordData.length > 0 && mRecordData.length >= readSize) {
+						speex.pushEncodeData(mRecordData, readSize);
+					}
+					// Log.i(tag, "readSize:" + readSize + "    mRecorderMinBufferSize:" + mRecorderMinBufferSize);
+					int volume = 0;
+					for (int i = 0; i < mRecordData.length; i++) {
+						volume += mRecordData[i] * mRecordData[i];
+					}
+					if (mAudioListener != null) {
+						mAudioListener.onRecording((int) Math.abs(volume / (float) readSize) / 10000 >> 1);
+					}
+					long duration = System.currentTimeMillis();
+					if ((duration - recorderStartTime) / 1000 > 60) {
+						isRecording = false;
+						isSend = true;
+						recorderEndTime = duration;
+					}
+				}
 			} catch (Exception e) {
 				Log.e(tag, "Exception" + e.toString());
-			}
-			new EncodeAudioThread().start();
-			recorderStartTime = System.currentTimeMillis();
-			while (isRecording) {
-				int readSize = mAudioRecord.read(mRecordData, 0, mRecorderMinBufferSize);
-				if (mRecordData.length > 0 && mRecordData.length >= readSize) {
-					speex.pushEncodeData(mRecordData, readSize);
-				}
-				// Log.i(tag, "readSize:" + readSize + "    mRecorderMinBufferSize:" + mRecorderMinBufferSize);
-				int volume = 0;
-				for (int i = 0; i < mRecordData.length; i++) {
-					volume += mRecordData[i] * mRecordData[i];
-				}
-				if (mAudioListener != null) {
-					mAudioListener.onRecording((int) Math.abs(volume / (float) readSize) / 10000 >> 1);
-				}
-				long duration = System.currentTimeMillis();
-				if ((duration - recorderStartTime) / 1000 > 60) {
-					isRecording = false;
-					isSend = true;
-					recorderEndTime = duration;
-				}
 			}
 			closeRecord();
 		}
