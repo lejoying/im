@@ -641,9 +641,23 @@ public class ResponseEventHandlers {
 
 	public void modifyMessagesSubView(Message message) {
 		if ("point".equals(message.sendType)) {
-			data.relationship.friendsMap.get(message.phone).notReadMessagesCount++;
+			if (viewManage.newChatView != null) {
+				String key = viewManage.newChatView.thisController.key;
+				if (!key.equals(message.phone)) {
+					data.relationship.friendsMap.get(message.phone).notReadMessagesCount++;
+				}
+			} else {
+				data.relationship.friendsMap.get(message.phone).notReadMessagesCount++;
+			}
 		} else if ("group".equals(message.sendType)) {
-			data.relationship.groupsMap.get(message.gid).notReadMessagesCount++;
+			if (viewManage.newChatView != null) {
+				String key = viewManage.newChatView.thisController.key;
+				if (!key.equals(message.gid)) {
+					data.relationship.groupsMap.get(message.gid).notReadMessagesCount++;
+				}
+			} else {
+				data.relationship.groupsMap.get(message.gid).notReadMessagesCount++;
+			}
 		}
 		viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
 	}

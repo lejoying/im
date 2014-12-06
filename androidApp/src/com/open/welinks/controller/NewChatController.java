@@ -13,14 +13,11 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import pl.droidsonroids.gif.GifDrawable;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Matrix;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,11 +32,11 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
@@ -48,10 +45,8 @@ import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.AMap.OnMapScreenShotListener;
 import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MarkerOptions;
-import com.amap.api.services.geocoder.GeocodeSearch;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -1192,6 +1187,7 @@ public class NewChatController {
 			notSentMessagesMap.put(type + key, content);
 		}
 		viewManage.newChatView = null;
+		
 		viewManage.messagesSubView.showMessagesSequence();
 	}
 

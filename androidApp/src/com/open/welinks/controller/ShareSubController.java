@@ -54,6 +54,7 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
+import com.open.welinks.view.ViewManage;
 
 public class ShareSubController {
 
@@ -541,6 +542,10 @@ public class ShareSubController {
 	}
 
 	public void getCurrentGroupShareMessages() {
+		if (thisView.currentGroup == null) {
+			log.e(ViewManage.getErrorLineNumber() + "thisView.currentGroup == null");
+			return;
+		}
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);

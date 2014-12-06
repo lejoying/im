@@ -167,6 +167,12 @@ public final class NotificationUtils {
 			contentText = "[声音]";
 		} else if (message.contentType.equals("share")) {
 			contentText = "[分享]";
+		} else if (message.contentType.equals("gif")) {
+			contentText = "[动画]";
+		} else if (message.contentType.equals("card")) {
+			contentText = "[名片]";
+		} else if (message.contentType.equals("location")) {
+			contentText = "[地理位置]";
 		}
 		if (message.sendType.equals("point")) {
 			String nickName = getData().relationship.friendsMap.get(message.phone).nickName;

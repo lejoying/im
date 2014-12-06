@@ -63,9 +63,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
-		log.e(data.userInformation.currentUser.phone + "1-=-=-=startPushService" + data.userInformation.currentUser.accessKey);
 		parser.initialize(this);
-		log.e(data.userInformation.currentUser.phone + "2-=-=-=startPushService" + data.userInformation.currentUser.accessKey);
 
 		// Context context = instance.instance.context;
 		instance = this;
@@ -94,10 +92,8 @@ public class MainActivity extends Activity {
 		Intent service = new Intent(thisActivity, PushService.class);
 		PushService.isRunning = false;
 		Log.e(tag, "* startPushService *check data");
-		log.e(data.userInformation.currentUser.phone + "3-=-=-=startPushService" + data.userInformation.currentUser.accessKey);
 
 		data = parser.check();
-		log.e(data.userInformation.currentUser.phone + "4-=-=-=startPushService" + data.userInformation.currentUser.accessKey);
 
 		service.putExtra("phone", data.userInformation.currentUser.phone);
 		service.putExtra("accessKey", data.userInformation.currentUser.accessKey);

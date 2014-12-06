@@ -12,9 +12,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
@@ -27,7 +24,6 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.TaskContainer_Share.GetShares;
 import com.open.welinks.model.TaskContainer_Share.Praise;
@@ -80,19 +76,6 @@ public class ShareSectionController {
 
 	public void onCrate() {
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
-	}
-
-	public void getCurrentGroupShareMessages() {
-		// RequestParams params = new RequestParams();
-		// HttpUtils httpUtils = new HttpUtils();
-		// params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		// params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		// params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
-		// params.addBodyParameter("sid", thisView.currentGroup.currentBoard);
-		// params.addBodyParameter("nowpage", nowpage + "");
-		// params.addBodyParameter("pagesize", pagesize + "");
-		//
-		// httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack2);
 	}
 
 	public void initializeListeners() {
@@ -358,20 +341,6 @@ public class ShareSectionController {
 	public void onResume() {
 		thisView.businessCardPopView.dismissUserCardDialogView();
 		thisView.dismissReleaseShareDialogView();
-	}
-
-	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-
-	public void modifyPraiseusersToMessage(boolean option, String gid, String gsid) {
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("gid", gid);
-		params.addBodyParameter("gsid", gsid);
-		params.addBodyParameter("option", option + "");
-
-		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
 	}
 
 	public void finish() {

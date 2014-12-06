@@ -22,12 +22,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,8 +34,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amap.api.maps2d.MapView;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.lib.MyLog;
 import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
@@ -46,12 +46,12 @@ import com.open.welinks.controller.NewChatController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.SubData.CardMessageContent;
 import com.open.welinks.model.SubData.LocationMessageContent;
 import com.open.welinks.model.SubData.MessageShareContent;
@@ -62,6 +62,9 @@ import com.open.welinks.utils.ExpressionUtil;
 import com.open.welinks.utils.MyGson;
 
 public class NewChatView {
+
+	public String tag = "NewChatView";
+	public MyLog log = new MyLog(tag, true);
 
 	public NewChatView thisView;
 	public NewChatController thisController;
@@ -195,6 +198,7 @@ public class NewChatView {
 			} else {
 				titleText.setText("Group");
 			}
+			log.e("current:::" + thisController.data.relationship.groupsMap.get(key).members.size());
 		} else if ("point".equals(type)) {
 			messages = thisController.data.messages.friendMessageMap.get("p" + key);
 			if (messages == null) {
@@ -433,6 +437,8 @@ public class NewChatView {
 						holder.status.setImageResource(R.drawable.message_failed);
 						holder.status.setVisibility(View.GONE);
 					}
+					// TODO resend current message
+					holder.status.setVisibility(View.GONE);
 				}
 
 				if (position != 0) {
@@ -545,7 +551,8 @@ public class NewChatView {
 
 					List<String> images = null;
 					try {
-						images = thisController.gson.fromJson(message.content, ArrayList.class);
+						images = thisController.gson.fromJson(message.content, new TypeToken<List<String>>() {
+						}.getType());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

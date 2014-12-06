@@ -57,7 +57,6 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.view.ShareSectionView.SharesMessageBody;
 
 public class ShareSubView {
 
@@ -193,7 +192,7 @@ public class ShareSubView {
 
 		thisController.getUserCurrentAllGroup();
 
-		showShareMessages();
+		// showShareMessages();
 
 		initReleaseShareDialogView();
 
@@ -367,7 +366,7 @@ public class ShareSubView {
 			this.shareMessageListBody.listItemsSequence.clear();
 			this.shareMessageListBody.containerView.removeAllViews();
 			shareMessageView.removeAllViews();
-			log.e("clear share list body.");
+			log.e("clear share list body1.");
 			this.shareMessageListBody.height = 0;
 			if (sharesMessageBody0 == null) {
 				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
@@ -388,7 +387,7 @@ public class ShareSubView {
 			this.shareMessageListBody.containerView.removeAllViews();
 			shareMessageView.removeAllViews();
 			this.shareMessageListBody.height = 0;
-			log.e("clear share list body.");
+			log.e("clear share list body2.");
 			return;
 		}
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);

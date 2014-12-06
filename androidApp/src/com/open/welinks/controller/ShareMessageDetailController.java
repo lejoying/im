@@ -133,7 +133,7 @@ public class ShareMessageDetailController {
 
 		if (sid == null || "".equals(sid)) {
 			log.e(ViewManage.getErrorLineNumber() + "少传参数了");
-//			return;
+			// return;
 		}
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
@@ -782,7 +782,7 @@ public class ShareMessageDetailController {
 							Toast.makeText(thisActivity, response.失败原因, Toast.LENGTH_SHORT).show();
 						}
 					});
-					Log.e(tag, response.失败原因);
+					Log.e(tag, ViewManage.getErrorLineNumber() + response.失败原因);
 				}
 			};
 		});

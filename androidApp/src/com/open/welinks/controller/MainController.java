@@ -159,7 +159,7 @@ public class MainController {
 		data.tempData.statusBarHeight = ViewManage.getStatusBarHeight(thisActivity);
 
 		DataHandlers.getUserInfomation();
-		DataHandlers.getUserCurrentAllGroup();
+		// DataHandlers.getUserCurrentAllGroup();
 		getIntimatefriends();
 
 		dataHandlers.sendShareMessage();
