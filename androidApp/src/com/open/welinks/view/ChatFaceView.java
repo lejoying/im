@@ -4,15 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.open.welinks.R;
-import com.open.welinks.R.color;
-import com.open.welinks.controller.DownloadFile;
-import com.open.welinks.customListener.MyOnClickListener;
-import com.open.welinks.model.Constant;
-import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.utils.BaseDataUtils;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Parcelable;
@@ -28,6 +19,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.open.welinks.R;
+import com.open.welinks.R.color;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.customListener.MyOnClickListener;
+import com.open.welinks.model.Constant;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.FileHandlers;
+import com.open.welinks.utils.BaseDataUtils;
 
 public class ChatFaceView extends FrameLayout {
 	private Data data = Data.getInstance();

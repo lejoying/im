@@ -349,6 +349,9 @@ public class FileHandlers {
 					e.printStackTrace();
 				}
 				((GifImageView) instance.view).setImageDrawable(gifFromFile);
+				if (viewManage.newChatView != null) {
+					viewManage.newChatView.mChatAdapter.notifyDataSetChanged();
+				}
 			}
 
 			@Override
