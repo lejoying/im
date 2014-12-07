@@ -877,14 +877,15 @@ shareManage.sendboardshare = function (data, response) {
     var sid = data.sid;
     var phone = data.phone;
     var nickName = data.nickName;
-    //var message = data.message;
-    var type = data.type;
-    var content = data.content;
+    var message = data.message;
+    //var type = data.type;
+    //var content = data.content;
     var gid = data.gid; //unused
     var ogsid = data.ogsid;
-    if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, ogsid, nickName, type, content], response)) {
+    if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, ogsid, nickName, message], response)) {
         try {
-            if (type == "imagetext") {
+            message = JSON.parse(message);
+            if (message.type == "imagetext") {
                 createShare();
             } else {
                 ResponseData(JSON.stringify({
@@ -921,10 +922,10 @@ shareManage.sendboardshare = function (data, response) {
                 nickName: nickName,
                 praises: "[]",
                 comments: "[]",
-                type: type,
+                type: message.type,
                 nodeType: "Share",
                 sid: sid,
-                content: content,
+                content: message.content,
                 time: new Date().getTime()
             }
         };
