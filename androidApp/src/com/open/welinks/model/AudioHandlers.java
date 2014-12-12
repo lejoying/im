@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.google.zxing.common.detector.WhiteRectangleDetector;
 import com.open.welinks.customListener.AudioListener;
 
 import android.media.AudioFormat;
@@ -28,13 +29,12 @@ public class AudioHandlers {
 	private short[] mPlayData;
 	private byte[] mRecordProcessedData;
 	private byte[] mPlayProcessedData;
-	private boolean isRecording = false;
-	private boolean isPlaying = false;
 	private boolean isSend = false;
 	private File raw;
 	private AudioRecord mAudioRecord;
 	private AudioTrack mAudioTrack;
 	private PlayAudioThread mPlayAudioThread;
+	private RecordAudioThread mRecordAudioThread;
 	private AudioListener mAudioListener;
 	private int mPrimePlaySize = 0, mRecordReadSize = 38;
 	private long recorderStartTime, recorderEndTime;
@@ -42,6 +42,12 @@ public class AudioHandlers {
 	private int mSpeexEncodeFrameSize = 0, mSpeexDecodeFrameSize = 0;
 
 	private static Speex speex;
+
+	private enum Status {
+		recording, inited, releaseing, released, playing, played
+	}
+
+	private Status recorderStatus = Status.released, playStatus = Status.played;
 
 	public static AudioHandlers handlers;
 	String tag = "audio";
@@ -65,27 +71,34 @@ public class AudioHandlers {
 	}
 
 	public void startRecording() {
-		if (isRecording) {
+		if (recorderStatus != Status.released) {
+			mAudioListener.onRecordFail();
 			return;
 		}
-		isRecording = true;
-		if (mAudioRecord != null) {
-			this.closeRecord();
-		}
-		initRecorder();
 		getFilePath();
-		new RecordAudioThread().start();
+		initRecorder();
+		if (recorderStatus == Status.inited) {
+			// while (mRecordAudioThread.isAlive()) {
+			//
+			// }
+			mRecordAudioThread = new RecordAudioThread();
+			mRecordAudioThread.start();
+		}
 	}
 
 	public void stopRecording() {
 		recorderEndTime = System.currentTimeMillis();
 		isSend = true;
-		isRecording = false;
+		if (recorderStatus == Status.recording) {
+			recorderStatus = Status.releaseing;
+		} else {
+			this.closeRecord();
+		}
 	}
 
 	public void releaseRecording() {
 		isSend = false;
-		isRecording = false;
+		recorderStatus = Status.releaseing;
 		this.closeRecord();
 		raw.delete();
 	}
@@ -95,6 +108,7 @@ public class AudioHandlers {
 			mAudioRecord.release();
 		}
 		mAudioRecord = null;
+		recorderStatus = Status.released;
 	}
 
 	public void prepareVoice(String fileName, int recordReadSize, boolean play) {
@@ -114,7 +128,7 @@ public class AudioHandlers {
 
 	public void startPlay(String fileName, int recordReadSize) {
 		File file = null;
-		if (isPlaying) {
+		if (playStatus == Status.playing) {
 			stopPlay();
 		} else {
 			file = new File(fileHandlers.sdcardVoiceFolder, fileName);
@@ -122,7 +136,7 @@ public class AudioHandlers {
 				prepareVoice(fileName, recordReadSize, true);
 			} else {
 				initAudioTrack();
-				isPlaying = true;
+				playStatus = Status.playing;
 				mRecordReadSize = recordReadSize;
 				startPlayThread(file);
 			}
@@ -134,7 +148,7 @@ public class AudioHandlers {
 	}
 
 	public void stopPlay() {
-		isPlaying = false;
+		playStatus = Status.played;
 	}
 
 	public void releasePlyer() {
@@ -148,6 +162,7 @@ public class AudioHandlers {
 		mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, mRecorderMinBufferSize);
 		mRecordData = new short[mRecorderMinBufferSize];
 		mRecordProcessedData = new byte[mRecorderMinBufferSize];
+		recorderStatus = Status.inited;
 	}
 
 	private void initAudioTrack() {
@@ -168,11 +183,17 @@ public class AudioHandlers {
 	}
 
 	public boolean isRecording() {
-		return isRecording;
+		if (recorderStatus == Status.recording) {
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isPlaying() {
-		return isPlaying;
+		if (playStatus == Status.playing) {
+			return true;
+		}
+		return false;
 	}
 
 	private void releaseAudioTrack() {
@@ -208,13 +229,13 @@ public class AudioHandlers {
 		@Override
 		public void run() {
 			mAudioTrack.play();
-			while (isPlaying) {
+			while (playStatus == Status.playing) {
 				try {
 					int readSize = inStream.read(mPlayProcessedData, 0, mRecordReadSize);
 					int decodeSize = speex.decode(mPlayProcessedData, mPlayData, readSize);
 					int size = mAudioTrack.write(mPlayData, 0, decodeSize);
 					if (inStream.available() <= 0) {
-						isPlaying = false;
+						playStatus = Status.played;
 						if (mAudioListener != null) {
 							mAudioListener.onPlayComplete();
 						}
@@ -239,32 +260,39 @@ public class AudioHandlers {
 		@Override
 		public void run() {
 			try {
-				mAudioRecord.startRecording();
-				new EncodeAudioThread().start();
-				recorderStartTime = System.currentTimeMillis();
-				while (isRecording) {
-					int readSize = mAudioRecord.read(mRecordData, 0, mRecorderMinBufferSize);
-					if (mRecordData.length > 0 && mRecordData.length >= readSize) {
-						speex.pushEncodeData(mRecordData, readSize);
+				if (mAudioRecord != null && recorderStatus == Status.inited) {
+					mAudioListener.onRecordStarted();
+					recorderStatus = Status.recording;
+					mAudioRecord.startRecording();
+					new EncodeAudioThread().start();
+					recorderStartTime = System.currentTimeMillis();
+					while (recorderStatus == Status.recording) {
+						int readSize = mAudioRecord.read(mRecordData, 0, mRecorderMinBufferSize);
+						if (mRecordData.length > 0 && mRecordData.length >= readSize) {
+							speex.pushEncodeData(mRecordData, readSize);
+						}
+						// Log.i(tag, "readSize:" + readSize + "    mRecorderMinBufferSize:" + mRecorderMinBufferSize);
+						int volume = 0;
+						for (int i = 0; i < mRecordData.length; i++) {
+							volume += mRecordData[i] * mRecordData[i];
+						}
+						if (mAudioListener != null) {
+							mAudioListener.onRecording((int) Math.abs(volume / (float) readSize) / 10000 >> 1);
+						}
+						long duration = System.currentTimeMillis();
+						if ((duration - recorderStartTime) / 1000 >= 60) {
+							recorderEndTime = duration;
+							isSend = true;
+							break;
+						}
 					}
-					// Log.i(tag, "readSize:" + readSize + "    mRecorderMinBufferSize:" + mRecorderMinBufferSize);
-					int volume = 0;
-					for (int i = 0; i < mRecordData.length; i++) {
-						volume += mRecordData[i] * mRecordData[i];
-					}
-					if (mAudioListener != null) {
-						mAudioListener.onRecording((int) Math.abs(volume / (float) readSize) / 10000 >> 1);
-					}
-					long duration = System.currentTimeMillis();
-					if ((duration - recorderStartTime) / 1000 > 60) {
-						isRecording = false;
-						isSend = true;
-						recorderEndTime = duration;
-					}
+				} else {
+					mAudioListener.onRecordFail();
 				}
 			} catch (Exception e) {
 				Log.e(tag, "Exception" + e.toString());
 			}
+			recorderStatus = Status.releaseing;
 			closeRecord();
 		}
 	}
@@ -284,7 +312,7 @@ public class AudioHandlers {
 					}
 					if (encodeSize > 0) {
 						output.write(mRecordProcessedData, 0, encodeSize);
-					} else if (isRecording) {
+					} else if (recorderStatus == Status.recording) {
 						sleep(50);
 					} else {
 						break;
@@ -308,9 +336,18 @@ public class AudioHandlers {
 							int time = (int) ((recorderEndTime - recorderStartTime) / 1000);
 							if (mAudioListener != null && isSend) {
 								isSend = false;
-								mAudioListener.onRecorded(raw.getAbsolutePath() + "@" + time + "@" + mRecordReadSize);
+								if (time < 1) {
+									mAudioListener.onRecordFail();
+								} else {
+									while (recorderStatus != Status.released || mRecordAudioThread.isAlive()) {
+										sleep(10);
+									}
+									mAudioListener.onRecorded(raw.getAbsolutePath() + "@" + time + "@" + mRecordReadSize);
+								}
 							}
 						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					}

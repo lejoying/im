@@ -768,11 +768,11 @@ public class NewChatView {
 	public void changeVoice(final View view) {
 		if (this.currentVoiceView != null && this.currentVoiceView.equals(view)) {
 			if (thisController.audiohandlers.isPlaying()) {
-				thisController.postHandler(Constant.HANDLER_CHAT_STOPPLAY);
+				thisController.postHandler(thisController.HANDLER_CHAT_STOPPLAY);
 				thisView.showVoiceMoive(false);
 				thisController.audiohandlers.stopPlay();
 			} else {
-				thisController.postHandler(Constant.HANDLER_CHAT_STARTPLAY);
+				thisController.postHandler(thisController.HANDLER_CHAT_STARTPLAY);
 				thisController.audiohandlers.prepareVoice((String) view.getTag(R.id.tag_second), Integer.valueOf((String) view.getTag(R.id.tag_third)), true);
 				thisView.showVoiceMoive(true);
 			}
@@ -789,7 +789,7 @@ public class NewChatView {
 					}
 				});
 			} else {
-				thisController.postHandler(Constant.HANDLER_CHAT_STARTPLAY);
+				thisController.postHandler(thisController.HANDLER_CHAT_STARTPLAY);
 				thisController.audiohandlers.prepareVoice((String) view.getTag(R.id.tag_second), Integer.valueOf((String) view.getTag(R.id.tag_third)), true);
 				this.currentVoiceView = view;
 				thisView.showVoiceMoive(true);

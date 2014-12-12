@@ -53,6 +53,8 @@ public class ChatFaceView extends FrameLayout {
 	private MyOnClickListener mOnClickListener;
 	public OnFaceSeletedListener mOnFaceSeletedListener;
 
+	public ChatFaceAdapter mChatFaceAdapter;
+
 	public ChatFaceView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		thisView = this;
@@ -69,10 +71,13 @@ public class ChatFaceView extends FrameLayout {
 		defaultEmojis = new ArrayList<Integer>(Arrays.asList(Constant.EMOJIS));
 		defaultFaceNames = new ArrayList<String>(Arrays.asList(Constant.DEFAULT_FACE_NAMES));
 		eachPageCountList = new ArrayList<Integer>();
-		faceList = Arrays.asList(Constant.FACES);
+		faceList = data.userInformation.currentUser.faceList;
+		if (faceList == null)
+			faceList = new ArrayList<String>();
 		initListener();
+		mChatFaceAdapter = new ChatFaceAdapter();
+		facePager.setAdapter(mChatFaceAdapter);
 		nodifyChatFace();
-		facePager.setAdapter(new ChatFaceAdapter());
 	}
 
 	public void nodifyChatFace() {
@@ -80,6 +85,7 @@ public class ChatFaceView extends FrameLayout {
 		pagerViews.clear();
 		addSpaceView();
 		fillFaces();
+		mChatFaceAdapter.notifyDataSetChanged();
 	}
 
 	private void initListener() {
@@ -126,7 +132,7 @@ public class ChatFaceView extends FrameLayout {
 			@Override
 			public void onClickEffective(View view) {
 				if (view.equals(addFace)) {
-
+					mOnFaceSeletedListener.onFaceManagerSeleted();
 				} else {
 					int position = (Integer) view.getTag(), currentItem = 0;
 					for (int i = 0; i < position - 1; i++) {
@@ -145,7 +151,6 @@ public class ChatFaceView extends FrameLayout {
 		if (faceList != null) {
 			for (int i = 0; i < faceList.size(); i++) {
 				String facesName = faceList.get(i);
-				System.out.println(facesName + ":::::::::::::::::");
 				List<String> faceResources = new ArrayList<String>(Arrays.asList(Constant.FACE_RESOURCES_MAP.get(facesName)));
 				List<String> faceNames = null;
 				if (Constant.FACE_NAMES_MAP.get(facesName) != null) {
@@ -190,21 +195,6 @@ public class ChatFaceView extends FrameLayout {
 		eachPageCountList.add(pageTotal);
 		addFaceView(defaultEmojis.get(0));
 
-		// String facesName = "tosiji";
-		// List<String> faceNames = new ArrayList<String>(Arrays.asList(Constant.FACE_RESOURCES_MAP.get(facesName)));
-		// total = faceNames.size();
-		// line = 2;
-		// row = 5;
-		// eachPageNum = (line * row);
-		// pageTotal = total % eachPageNum == 0 ? total / eachPageNum : total / eachPageNum + 1;
-		// for (int j = 0; j < pageTotal; j++) {
-		// ChatFaceGridView defaultGridOne = new ChatFaceGridView(this.context, this, facePager, "");
-		// defaultGridOne.setNumColumns(row);
-		// defaultGridOne.setAdapter(new ChatFaceGridItemAdapter(faceNames, "", j, eachPageNum));
-		// pagerViews.add(defaultGridOne);
-		// }
-		// eachPageCountList.add(pageTotal);
-		// addFaceView(faceNames.get(0));
 	}
 
 	public void addFaceView(int resource) {
@@ -368,7 +358,11 @@ public class ChatFaceView extends FrameLayout {
 		mOnFaceSeletedListener = mListener;
 	}
 
-	public interface OnFaceSeletedListener {
-		public void onFaceSeleted(String faceName);
+	public class OnFaceSeletedListener {
+		public void onFaceSeleted(String faceName) {
+		};
+
+		public void onFaceManagerSeleted() {
+		};
 	}
 }

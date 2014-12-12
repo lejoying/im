@@ -1,15 +1,24 @@
 package com.open.welinks.customListener;
 
-public interface AudioListener {
-	public void onRecording(int volume);
+public class AudioListener {
+	public void onRecordStarted() {
+	};
 
-	public void onRecorded(String filePath);
+	public void onRecording(int volume) {
+	};
 
-	public void onPrepared();
+	public void onRecorded(String filePath) {
+	};
 
-	public void onRelease();
+	public void onRecordFail() {
+	};
 
-	public void onPlayComplete();
+	public void onPrepared() {
+	};
 
-	public void onPlayFail();
+	public void onPlayComplete() {
+	};
+
+	public void onPlayFail() {
+	};
 }

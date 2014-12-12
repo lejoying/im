@@ -109,6 +109,7 @@
     <string name="personCard">个人名片</string>
     <string name="groupCard">房间名片</string>
     <string name="cilkeLoadMore">点击加载更多</string>
+    <string name="expressionManage">表情管理</string>
     <string name="shareTitle">我发送了一个分享，点击看看吧</string>
 
 </resources>

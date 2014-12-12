@@ -53,6 +53,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.welinks.BusinessCardActivity;
+import com.open.welinks.ExpressionManageActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.GroupListActivity;
 import com.open.welinks.GroupMemberManageActivity;
@@ -141,6 +142,19 @@ public class NewChatController {
 
 	public File tempPhotoFile;
 	public String tempLocationKey = "";
+
+	// handler
+	public final int HANDLER_CHAT_NOTIFY = 0x11;
+	public final int HANDLER_CHAT_HIDEVOICEPOP = 0x12;
+	public final int HANDLER_CHAT_STARTPLAY = 0x13;
+	public final int HANDLER_CHAT_STOPPLAY = 0x14;
+	public final int HANDLER_CHAT_RECORDSTART = 0x15;
+	// requestCode
+	public int REQUESTCODE_ABLUM = 0x21;
+	public int REQUESTCODE_TAKEPHONE = 0x22;
+	public int REQUESTCODE_TAKEPHOTO = 0x23;
+	public int REQUESTCODE_SHAREVIEW = 0x24;
+	public int REQUESTCODE_EXPRESSIONMANAGE = 0x25;
 
 	public NewChatController(NewChatActivity activity) {
 		thisController = this;
@@ -239,7 +253,8 @@ public class NewChatController {
 				} else if (thisView.takePhoto.equals(view)) {
 					takePhoto();
 				} else if (thisView.ablum.equals(view)) {
-					thisActivity.startActivityForResult(new Intent(thisActivity, ImagesDirectoryActivity.class), Constant.REQUESTCODE_ABLUM);
+					data.tempData.selectedImageList = null;
+					thisActivity.startActivityForResult(new Intent(thisActivity, ImagesDirectoryActivity.class), REQUESTCODE_ABLUM);
 				} else if (thisView.location.equals(view)) {
 					requestLocation();
 				} else if (thisView.chatContent.equals(view)) {
@@ -268,16 +283,7 @@ public class NewChatController {
 			public boolean onTouch(View view, MotionEvent event) {
 				if (thisView.voiceLayout.equals(view)) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						if (voicePopTimer == null) {
-							voicePopTimer = new Timer();
-							timerTask = new VoiceTimerTask();
-							voiceTime = System.currentTimeMillis();
-							voicePopTimer.schedule(timerTask, 0, 1000);
-						}
-						sendRecording = true;
 						audiohandlers.startRecording();
-						thisView.voicePopTime.setText(thisActivity.getText(R.string.seconds));
-						thisView.voicePop.setVisibility(View.VISIBLE);
 					} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 						float x = event.getRawX(), y = event.getRawY(), x1 = thisView.voicePop.getX(), y1 = thisView.voicePop.getY(), x2 = x1 + thisView.voicePop.getWidth(), y2 = y1 + thisView.voicePop.getHeight();
 						if (x > x1 && x < x2 && y < y2 && y > y1) {
@@ -293,13 +299,7 @@ public class NewChatController {
 						}
 
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						long time = System.currentTimeMillis();
-						if (time - voiceTime < 60 * 1000) {
-							if (time - voiceTime < 1000) {
-								sendRecording = false;
-							}
-							completeVoiceRecording(sendRecording);
-						}
+						completeVoiceRecording(sendRecording);
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
 					}
@@ -348,7 +348,7 @@ public class NewChatController {
 				} else if (tag.equals(thisActivity.getString(R.string.sendCard))) {
 					Intent intent = new Intent(thisActivity, GroupListActivity.class);
 					intent.putExtra("type", "sendCard");
-					thisActivity.startActivityForResult(intent, Constant.REQUESTCODE_SHAREVIEW);
+					thisActivity.startActivityForResult(intent, REQUESTCODE_SHAREVIEW);
 				} else if (tag.equals(thisActivity.getString(R.string.setting))) {
 					Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
 					intent.putExtra("gid", key);
@@ -445,7 +445,7 @@ public class NewChatController {
 			}
 		};
 
-		mOnFaceSeletedListener = new OnFaceSeletedListener() {
+		mOnFaceSeletedListener = thisView.faceLayout.new OnFaceSeletedListener() {
 
 			@Override
 			public void onFaceSeleted(String faceName) {
@@ -484,6 +484,13 @@ public class NewChatController {
 				} else {
 					createGifMessage(faceName);
 				}
+			}
+
+			@Override
+			public void onFaceManagerSeleted() {
+				Intent intent = new Intent(thisActivity, ExpressionManageActivity.class);
+				thisActivity.startActivityForResult(intent, REQUESTCODE_EXPRESSIONMANAGE);
+				thisView.chatSmily.performClick();
 			}
 
 		};
@@ -636,10 +643,10 @@ public class NewChatController {
 				if (continuePlay) {
 					continuePlay = false;
 					thisController.audiohandlers.startPlay((String) thisView.currentVoiceView.getTag(R.id.tag_second), (String) thisView.currentVoiceView.getTag(R.id.tag_third));
-					thisController.postHandler(Constant.HANDLER_CHAT_STARTPLAY);
+					thisController.postHandler(HANDLER_CHAT_STARTPLAY);
 					thisView.showVoiceMoive(true);
 				} else {
-					thisController.postHandler(Constant.HANDLER_CHAT_STOPPLAY);
+					thisController.postHandler(HANDLER_CHAT_STOPPLAY);
 					thisView.showVoiceMoive(false);
 				}
 			}
@@ -650,40 +657,56 @@ public class NewChatController {
 			}
 
 			@Override
-			public void onRecorded(String filePath) {
-				postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
-				if (voicePopTimer != null) {
-					voicePopTimer.cancel();
-					voicePopTimer.purge();
-					voicePopTimer = null;
+			public void onRecordStarted() {
+				if (voicePopTimer == null) {
+					voicePopTimer = new Timer();
+					timerTask = new VoiceTimerTask();
+					voiceTime = System.currentTimeMillis();
+					voicePopTimer.schedule(timerTask, 0, 1000);
 				}
-				voiceTime = 0;
+				sendRecording = true;
+				postHandler(HANDLER_CHAT_RECORDSTART);
+			}
+
+			@Override
+			public void onRecorded(String filePath) {
+				postHandler(HANDLER_CHAT_HIDEVOICEPOP);
 				if (!"".equals(filePath)) {
 					createVoiceMessage(filePath);
 				}
 			}
 
 			@Override
-			public void onRelease() {
-
+			public void onRecordFail() {
+				postHandler(HANDLER_CHAT_HIDEVOICEPOP);
 			}
 		};
 		handler = new Handler() {
 			@Override
 			public void handleMessage(android.os.Message msg) {
 				switch (msg.what) {
-				case Constant.HANDLER_CHAT_NOTIFY:
+				case HANDLER_CHAT_NOTIFY:
 					thisView.mChatAdapter.notifyDataSetChanged();
 					break;
-				case Constant.HANDLER_CHAT_HIDEVOICEPOP:
+				case HANDLER_CHAT_HIDEVOICEPOP:
 					thisView.voicePop.setVisibility(View.GONE);
 					thisView.voicePopImage.setImageResource(R.drawable.image_chat_voice_talk);
+					if (voicePopTimer != null) {
+						voicePopTimer.cancel();
+						voicePopTimer.purge();
+						voicePopTimer = null;
+					}
+					voiceTime = 0;
 					break;
-				case Constant.HANDLER_CHAT_STARTPLAY:
+				case HANDLER_CHAT_STARTPLAY:
 					thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.VISIBLE);
 					break;
-				case Constant.HANDLER_CHAT_STOPPLAY:
+				case HANDLER_CHAT_STOPPLAY:
 					thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.INVISIBLE);
+					break;
+				case HANDLER_CHAT_RECORDSTART:
+					thisView.voicePopTime.setText(thisActivity.getText(R.string.seconds));
+					thisView.voicePop.setVisibility(View.VISIBLE);
 					break;
 				}
 				super.handleMessage(msg);
@@ -735,13 +758,7 @@ public class NewChatController {
 		if (weather) {
 			audiohandlers.stopRecording();
 		} else {
-			postHandler(Constant.HANDLER_CHAT_HIDEVOICEPOP);
-			if (voicePopTimer != null) {
-				voicePopTimer.cancel();
-				voicePopTimer.purge();
-				voicePopTimer = null;
-			}
-			voiceTime = 0;
+			postHandler(HANDLER_CHAT_HIDEVOICEPOP);
 			audiohandlers.releaseRecording();
 		}
 	}
@@ -858,7 +875,7 @@ public class NewChatController {
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		tackPicture.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
 		tackPicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		thisActivity.startActivityForResult(tackPicture, Constant.REQUESTCODE_TAKEPHOTO);
+		thisActivity.startActivityForResult(tackPicture, REQUESTCODE_TAKEPHOTO);
 	}
 
 	@SuppressLint("ShowToast")
@@ -930,7 +947,7 @@ public class NewChatController {
 					messages.add(message);
 				}
 				data.messages.isModified = true;
-				postHandler(Constant.HANDLER_CHAT_NOTIFY);
+				postHandler(HANDLER_CHAT_NOTIFY);
 			}
 		}).start();
 
@@ -1124,27 +1141,28 @@ public class NewChatController {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (requestCode == Constant.REQUESTCODE_ABLUM && resultCode == Activity.RESULT_OK) {
+		if (requestCode == REQUESTCODE_ABLUM && resultCode == Activity.RESULT_OK) {
 			ArrayList<String> selectedImageList = data.tempData.selectedImageList;
 			if (selectedImageList == null || selectedImageList.size() == 0) {
 				return;
 			}
 			data.tempData.selectedImageList = null;
 			createImageMessage(selectedImageList);
-		} else if (requestCode == Constant.REQUESTCODE_TAKEPHOTO && resultCode == Activity.RESULT_OK) {
+		} else if (requestCode == REQUESTCODE_TAKEPHOTO && resultCode == Activity.RESULT_OK) {
 			String strRingPath = tempPhotoFile.getAbsolutePath();
 			ArrayList<String> selectedImageList = new ArrayList<String>();
 			selectedImageList.add(strRingPath);
 			createImageMessage(selectedImageList);
 			tempPhotoFile.delete();
-		} else if (requestCode == Constant.REQUESTCODE_SHAREVIEW && resultCode == Activity.RESULT_OK) {
+		} else if (requestCode == REQUESTCODE_SHAREVIEW && resultCode == Activity.RESULT_OK) {
 			String type = intent.getStringExtra("sendType");
 			String key = intent.getStringExtra("key");
 			if (!"".equals(key) && !"".equals(type)) {
 				createCardMessage(key, type);
 			}
+		} else if (requestCode == REQUESTCODE_EXPRESSIONMANAGE) {
+			thisView.faceLayout.nodifyChatFace();
 		}
-
 	}
 
 	public void onDestroy() {
@@ -1161,18 +1179,7 @@ public class NewChatController {
 
 		@Override
 		public void run() {
-			long time = System.currentTimeMillis();
-			if (time - voiceTime > 61 * 1000) {
-				completeVoiceRecording(true);
-				if (voicePopTimer != null) {
-					voicePopTimer.cancel();
-					voicePopTimer.purge();
-					voicePopTimer = null;
-				}
-				voiceTime = 0;
-			} else {
-				thisView.changeVoice();
-			}
+			thisView.changeVoice();
 		}
 	}
 
@@ -1187,7 +1194,7 @@ public class NewChatController {
 			notSentMessagesMap.put(type + key, content);
 		}
 		viewManage.newChatView = null;
-		
+
 		viewManage.messagesSubView.showMessagesSequence();
 	}
 
