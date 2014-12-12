@@ -16,14 +16,12 @@ public class NewChatActivity extends Activity {
 	public NewChatController thisController;
 	public NewChatActivity thisActivity;
 	public LayoutInflater mInflater;
-	public Bundle savedInstanceState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
 		this.mInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		this.savedInstanceState = savedInstanceState;
 		this.thisView = new NewChatView(thisActivity);
 		this.thisController = new NewChatController(thisActivity);
 
@@ -36,6 +34,8 @@ public class NewChatActivity extends Activity {
 		this.thisView.initViews();
 		this.thisController.initData();
 		this.thisView.fillData();
+
+		thisView.locationMapView.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -53,6 +53,12 @@ public class NewChatActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		this.thisController.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -77,5 +83,5 @@ public class NewChatActivity extends Activity {
 	public void onBackPressed() {
 		this.thisController.onBackPressed();
 	}
-	
+
 }

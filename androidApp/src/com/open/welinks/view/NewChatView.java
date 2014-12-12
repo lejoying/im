@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -141,7 +142,6 @@ public class NewChatView {
 		mChatMenuAdapter = new ChatMenuAdapter();
 		chatMenu.setAdapter(mChatMenuAdapter);
 
-		locationMapView.onCreate(thisActivity.savedInstanceState);
 		thisController.mAMap = locationMapView.getMap();
 		thisController.mAMap.getUiSettings().setZoomControlsEnabled(false);
 
@@ -592,6 +592,9 @@ public class NewChatView {
 					holder.locationImage.setVisibility(View.GONE);
 					holder.cardLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.VISIBLE);
+					LinearLayout.LayoutParams layoutParams = (LayoutParams) holder.gif.getLayoutParams();
+					layoutParams.width = (int) (thisController.data.baseData.density / 1.5f * 120);
+					layoutParams.height = (int) (thisController.data.baseData.density / 1.5f * 120);
 					thisController.fileHandlers.getGifImage(message.content, holder.gif);
 				} else if (contentType.equals("share")) {
 					holder.character.setVisibility(View.GONE);

@@ -43,6 +43,7 @@ public class BaseDataUtils {
 	}
 
 	public static float dpToPx(int dp) {
+		// return dp * data.baseData.density;
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, data.baseData.metrics);
 	}
 

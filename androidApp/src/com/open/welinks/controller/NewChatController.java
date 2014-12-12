@@ -43,6 +43,7 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.AMap.OnMapLoadedListener;
 import com.amap.api.maps2d.AMap.OnMapScreenShotListener;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.model.LatLng;
@@ -120,6 +121,7 @@ public class NewChatController {
 	public OnFocusChangeListener mOnFocusChangeListener;
 	public OnScrollListener mOnScrollListener;
 	public AnimationListener mAnimationListener;
+	public OnMapLoadedListener mOnMapLoadedListener;
 	public TextWatcher mTextWatcher;
 	public AudioListener mAudioListener;
 
@@ -561,6 +563,14 @@ public class NewChatController {
 				}
 			}
 		};
+		mOnMapLoadedListener = new OnMapLoadedListener() {
+
+			@Override
+			public void onMapLoaded() {
+				System.out.println("OnMapLoadedListener:::::::::::::::::::::::::::");
+
+			}
+		};
 		mAMapLocationListener = new AMapLocationListener() {
 
 			@Override
@@ -592,11 +602,13 @@ public class NewChatController {
 					Double geoLng = mAMapLocation.getLongitude();
 					String address = mAMapLocation.getAddress();
 					LatLng latLonPoint = new LatLng(geoLat, geoLng);
-					thisController.mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 17));
 					mAMap.clear();
+					mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 17));
+					mAMap.invalidate();
 					MarkerOptions markOptions = new MarkerOptions();
 					markOptions.position(latLonPoint);
 					mAMap.addMarker(markOptions);
+					mAMap.setOnMapLoadedListener(mOnMapLoadedListener);
 					Message message = messagesMap.get(tempLocationKey);
 					if (message != null) {
 						LocationMessageContent messageContent = subData.new LocationMessageContent();
@@ -606,11 +618,11 @@ public class NewChatController {
 						message.content = gson.toJson(messageContent);
 					}
 					try {
-						Thread.sleep(500);
+						Thread.sleep(1500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					thisController.mAMap.getMapScreenShot(mOnMapScreenShotListener);
+					mAMap.getMapScreenShot(mOnMapScreenShotListener);
 				} else {
 				}
 			}
@@ -741,6 +753,7 @@ public class NewChatController {
 		thisView.chatMenu.setOnItemClickListener(mItemClickListener);
 
 		audiohandlers.setAudioListener(mAudioListener);
+		mAMap.setOnMapLoadedListener(mOnMapLoadedListener);
 
 		thisView.samilyInTranslateAnimation.setAnimationListener(mAnimationListener);
 		thisView.samilyOutTranslateAnimation.setAnimationListener(mAnimationListener);
@@ -1211,5 +1224,9 @@ public class NewChatController {
 			thisActivity.finish();
 		}
 
+	}
+
+	public void onSaveInstanceState(Bundle outState) {
+		thisView.locationMapView.onSaveInstanceState(outState);
 	}
 }
