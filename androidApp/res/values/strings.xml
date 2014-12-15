@@ -111,5 +111,18 @@
     <string name="cilkeLoadMore">点击加载更多</string>
     <string name="expressionManage">表情管理</string>
     <string name="shareTitle">我发送了一个分享，点击看看吧</string>
+    <string name="delete">删除</string>
+
+    <!-- Chat SpecialGifMessageString -->
+    <string name="specialGifMessageString">捏捏脸~</string>
+    <string name="specialGifMessageString1">嘤嘤婴~</string>
+    <string name="specialGifMessageString2">小婊砸！</string>
+    <string name="specialGifMessageString3">求带走~</string>
+    <string name="specialGifMessageString4">带你吃麻辣烫~</string>
+    <string name="specialGifMessageString5">叔叔我们不约~</string>
+    <string name="specialGifMessageString6">离我远点，你胖到我了！</string>
+    <string name="specialGifMessageString7">谁在装逼好刺眼！</string>
+    <string name="specialGifMessageString8">我项链两千多！</string>
+    <string name="specialGifMessageString9">我跟你什么仇什么冤？</string>
 
 </resources>

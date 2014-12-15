@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -26,6 +27,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
@@ -81,6 +83,7 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.CardMessageContent;
 import com.open.welinks.model.SubData.LocationMessageContent;
+import com.open.welinks.model.SubData.SpecialGifMessageContent;
 import com.open.welinks.model.SubData.VoiceMessageContent;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.ExpressionUtil;
@@ -124,6 +127,8 @@ public class NewChatController {
 	public OnMapLoadedListener mOnMapLoadedListener;
 	public TextWatcher mTextWatcher;
 	public AudioListener mAudioListener;
+	public MyGestureDetector mGestureDetector;
+	public GestureDetector.SimpleOnGestureListener mSimpleOnGestureListener;
 
 	public String key = "", type = "";
 	public User user;
@@ -135,6 +140,7 @@ public class NewChatController {
 	public long voiceTime = 0;
 
 	public int showChatCounts;
+	public int doubleTapCounts;
 
 	public boolean sendRecording = true, continuePlay = false;
 
@@ -222,11 +228,6 @@ public class NewChatController {
 						intent.putExtra("type", (String) view.getTag(R.id.tag_second));
 						intent.putExtra("key", (String) view.getTag(R.id.tag_third));
 						thisActivity.startActivity(intent);
-					} else if ("head".equals(contentType)) {
-						String phone = (String) view.getTag(R.id.tag_second);
-						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
-						thisView.businessCardPopView.cardView.setMenu(false);
-						thisView.businessCardPopView.showUserCardDialogView();
 					} else if ("resend".equals(contentType)) {
 						int position = (Integer) view.getTag(R.id.tag_second);
 						List<Message> messages = thisView.mChatAdapter.messages;
@@ -278,6 +279,53 @@ public class NewChatController {
 				}
 			}
 		};
+		mSimpleOnGestureListener = new GestureDetector.SimpleOnGestureListener() {
+
+			@Override
+			public boolean onDown(MotionEvent e) {
+				View view = mGestureDetector.getTouchView();
+				if (thisView.chatContent.equals(view)) {
+					if (thisController.inputManager.isActive(thisView.chatInput))
+						thisController.inputManager.hide(thisView.chatInput);
+				}
+				return true;
+			}
+
+			@Override
+			public boolean onDoubleTap(MotionEvent event) {
+				View view = mGestureDetector.getTouchView();
+				if (thisView.chatContent.equals(view)) {
+					createGifMessage("poke");
+				} else {
+					String contentType = (String) view.getTag(R.id.tag_first);
+					if (contentType != null) {
+
+					}
+				}
+				return true;
+			}
+
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				View view = mGestureDetector.getTouchView();
+				if (thisView.chatContent.equals(view)) {
+					if (thisController.inputManager.isActive(thisView.chatInput))
+						thisController.inputManager.hide(thisView.chatInput);
+				} else {
+					String contentType = (String) view.getTag(R.id.tag_first);
+					if (contentType != null) {
+						if ("head".equals(contentType)) {
+							String phone = (String) view.getTag(R.id.tag_second);
+							thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
+							thisView.businessCardPopView.cardView.setMenu(false);
+							thisView.businessCardPopView.showUserCardDialogView();
+						}
+					}
+				}
+				return true;
+			}
+		};
+		mGestureDetector = new MyGestureDetector(thisActivity, mSimpleOnGestureListener);
 		mOnTouchListener = new OnTouchListener() {
 
 			@SuppressLint("ClickableViewAccessibility")
@@ -305,9 +353,8 @@ public class NewChatController {
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
 					}
-				} else if (thisView.chatContent.equals(view) && event.getAction() == MotionEvent.ACTION_DOWN) {
-					if (thisController.inputManager.isActive(thisView.chatInput))
-						thisController.inputManager.hide(thisView.chatInput);
+				} else if (thisView.chatContent.equals(view) || "head".equals(view.getTag(R.id.tag_first))) {
+					return mGestureDetector.onTouchEvent(event, view);
 				}
 				return false;
 			}
@@ -567,7 +614,6 @@ public class NewChatController {
 
 			@Override
 			public void onMapLoaded() {
-				System.out.println("OnMapLoadedListener:::::::::::::::::::::::::::");
 
 			}
 		};
@@ -878,6 +924,22 @@ public class NewChatController {
 		addMessageToLocation(message);
 	}
 
+	private void createSpecialGifMessage(String phone, String type, String content) {
+		long time = new Date().getTime();
+		SpecialGifMessageContent messageContent = subData.new SpecialGifMessageContent();
+		messageContent.phone = phone;
+		messageContent.type = type;
+		messageContent.content = content;
+		Message message = data.messages.new Message();
+		message.content = gson.toJson(messageContent);
+		message.contentType = "specialGif";
+		message.phone = user.phone;
+		message.nickName = user.nickName;
+		message.time = String.valueOf(time);
+		message.status = "sending";
+		message.type = Constant.MESSAGE_TYPE_SEND;
+	}
+
 	private void takePhoto() {
 		tempPhotoFile = new File(thisController.fileHandlers.sdcardImageFolder, "tempimage.jpg");
 		int i = 1;
@@ -1186,6 +1248,24 @@ public class NewChatController {
 	public void onResume() {
 		viewManage.newChatView = thisView;
 		thisView.locationMapView.onResume();
+	}
+
+	private class MyGestureDetector extends GestureDetector {
+		private View view;
+
+		public MyGestureDetector(Context context, OnGestureListener listener) {
+			super(context, listener);
+		}
+
+		public boolean onTouchEvent(MotionEvent ev, View view) {
+			this.view = view;
+			return super.onTouchEvent(ev);
+		}
+
+		public View getTouchView() {
+			return view;
+		}
+
 	}
 
 	private class VoiceTimerTask extends TimerTask {

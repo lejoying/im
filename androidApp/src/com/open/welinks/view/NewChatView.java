@@ -390,7 +390,6 @@ public class NewChatView {
 				}
 				convertView.setTag(holder);
 			} else {
-				// Log.e("NewChatView", type + "::::::::::::::::::::::::::::::" + message.content);
 				holder = (ChatHolder) convertView.getTag();
 			}
 
@@ -409,7 +408,7 @@ public class NewChatView {
 					thisController.fileHandlers.getHeadImage(messageHead, holder.head, thisController.viewManage.options40);
 					holder.head.setTag(R.id.tag_first, "head");
 					holder.head.setTag(R.id.tag_second, message.phone);
-					holder.head.setOnClickListener(thisController.mOnClickListener);
+					holder.head.setOnTouchListener(thisController.mOnTouchListener);
 				} else {
 					holder.head.setVisibility(View.GONE);
 				}

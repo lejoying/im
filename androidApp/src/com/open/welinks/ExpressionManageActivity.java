@@ -6,27 +6,35 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.view.ViewManage;
+import com.mobeta.android.dslv.DragSortListView;
+import com.mobeta.android.dslv.DragSortController;
 
 public class ExpressionManageActivity extends Activity {
 	Data data = Data.getInstance();
@@ -37,13 +45,19 @@ public class ExpressionManageActivity extends Activity {
 	private View backView;
 	private RelativeLayout rightContainer;
 	private TextView titleText, delete;
-	private ListView expressionList;
+	private DragSortListView expressionList;
+
+	private ListController expressionListController;
+	private MyOnClickListener mOnClickListener;
+	private OnDownloadListener mOnDownloadListener;
+	private OnDialogClickListener mConfirmOnDialogClickListener, mCancelOnDialogClickListener;
+
 	private ListAdapter adapter;
 	private LayoutInflater mInflater;
 	private List<String> allExpression, ownedExpression, unownedExpression;
-	private MyOnClickListener mOnClickListener;
-	private OnDownloadListener mOnDownloadListener;
+
 	private Handler handler;
+	private AlertInputDialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +78,11 @@ public class ExpressionManageActivity extends Activity {
 		backView = this.findViewById(R.id.backView);
 		rightContainer = (RelativeLayout) this.findViewById(R.id.rightContainer);
 		titleText = (TextView) this.findViewById(R.id.titleText);
-		expressionList = (ListView) this.findViewById(R.id.expressionList);
+		expressionList = (DragSortListView) this.findViewById(R.id.expressionList);
 		delete = new TextView(this);
+		delete.setText("批量删除");
+		delete.setTextColor(getResources().getColor(R.color.red));
+		// rightContainer.addView(delete);
 		initListener();
 	}
 
@@ -75,7 +92,7 @@ public class ExpressionManageActivity extends Activity {
 			public void onClickEffective(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
 					String expressionName = (String) view.getTag(R.id.tag_first);
-					if (!ownedExpression.contains(expressionName)) {
+					if (unownedExpression.contains(expressionName)) {
 						View convertView = (View) view.getParent();
 						String[] faceResources = Constant.FACE_RESOURCES_MAP.get(expressionName);
 						if (faceResources != null) {
@@ -104,17 +121,44 @@ public class ExpressionManageActivity extends Activity {
 				super.onFailure(instance, status);
 			}
 		};
-		bindEvent();
+		mConfirmOnDialogClickListener = new OnDialogClickListener() {
+
+			@Override
+			public void onClick(AlertInputDialog dialog) {
+				String name = dialog.getInputText();
+				if (ownedExpression.contains(name)) {
+					ownedExpression.remove(name);
+					unownedExpression.add(name);
+				}
+				adapter.notifyDataSetChanged();
+			}
+		};
+		mCancelOnDialogClickListener = new OnDialogClickListener() {
+
+			@Override
+			public void onClick(AlertInputDialog dialog) {
+				adapter.notifyDataSetChanged();
+
+			}
+		};
 	}
 
 	private void bindEvent() {
 		backView.setOnClickListener(mOnClickListener);
 		delete.setOnClickListener(mOnClickListener);
+		dialog.setOnConfirmClickListener(mConfirmOnDialogClickListener);
+		dialog.setOnCancelClickListener(mCancelOnDialogClickListener);
+
+		expressionList.setDropListener(expressionListController);
+		expressionList.setRemoveListener(expressionListController);
+		expressionList.setFloatViewManager(expressionListController);
+		expressionList.setOnTouchListener(expressionListController);
 	}
 
 	private void initData() {
 		mInflater = this.getLayoutInflater();
 		handler = new Handler();
+		dialog = Alert.createDialog(ExpressionManageActivity.this);
 		allExpression = Arrays.asList(Constant.FACES);
 		ownedExpression = data.userInformation.currentUser.faceList;
 		if (ownedExpression == null)
@@ -126,7 +170,9 @@ public class ExpressionManageActivity extends Activity {
 		}
 		titleText.setText(getString(R.string.expressionManage));
 		adapter = new ListAdapter();
+		expressionListController = new ListController(expressionList, adapter);
 		expressionList.setAdapter(adapter);
+		bindEvent();
 	}
 
 	public class ListAdapter extends BaseAdapter {
@@ -183,6 +229,7 @@ public class ExpressionManageActivity extends Activity {
 			holder = new Holder();
 			convertView = mInflater.inflate(R.layout.expression_manage_item, null);
 			holder.percentLayout = convertView.findViewById(R.id.percentLayout);
+			holder.mainLayout = convertView.findViewById(R.id.layout);
 			holder.image = (ImageView) convertView.findViewById(R.id.image);
 			holder.percent = (ImageView) convertView.findViewById(R.id.percent);
 			holder.name = (TextView) convertView.findViewById(R.id.name);
@@ -193,9 +240,11 @@ public class ExpressionManageActivity extends Activity {
 			// }
 			if (type == OWNED) {
 				exressionName = ownedExpression.get(position);
+				holder.status.setBackgroundDrawable(getResources().getDrawable(R.drawable.expression_manager_button_off));
 				holder.status.setText("已下载");
 			} else if (type == UNOWNED) {
 				exressionName = unownedExpression.get(position - ownedExpression.size());
+				holder.status.setBackgroundDrawable(getResources().getDrawable(R.drawable.expression_manager_button));
 				holder.status.setText("下载");
 			}
 			fileHandlers.getImage(Constant.FACE_RESOURCES_MAP.get(exressionName)[0], holder.image, holder.image.getLayoutParams(), DownloadFile.TYPE_GIF_IMAGE, mViewManage.options);
@@ -206,9 +255,88 @@ public class ExpressionManageActivity extends Activity {
 		}
 
 		class Holder {
-			View percentLayout;
+			View percentLayout, mainLayout;
 			ImageView image, percent;
 			TextView name, status;
+		}
+	}
+
+	private class ListController extends DragSortController implements DragSortListView.DropListener, DragSortListView.RemoveListener {
+		private ListAdapter adapter;
+		private int mPos;
+		private int mDivPos;
+
+		public ListController(DragSortListView dslv, ListAdapter adapter) {
+			super(dslv);
+			this.adapter = adapter;
+			// setRemoveEnabled(false);
+			setRemoveMode(DragSortController.FLING_REMOVE);
+			setDragInitMode(DragSortController.ON_LONG_PRESS);
+		}
+
+		@Override
+		public void drop(int from, int to) {
+			if (from != to) {
+				String data = ownedExpression.remove(from);
+				ownedExpression.add(to, data);
+				adapter.notifyDataSetChanged();
+			}
+		}
+
+		@Override
+		public void remove(final int which) {
+			String name = (String) adapter.getItem(which);
+			removeExpression(name);
+		}
+
+		@Override
+		public boolean onDown(MotionEvent ev) {
+			int res = super.dragHandleHitPosition(ev);
+			if (res >= mDivPos) {
+				setRemoveEnabled(false);
+			} else {
+				setRemoveEnabled(true);
+			}
+			return super.onDown(ev);
+		}
+
+		@Override
+		public int startDragPosition(MotionEvent ev) {
+			int res = super.dragHandleHitPosition(ev);
+			mDivPos = ownedExpression.size();
+			if (res >= mDivPos) {
+				return DragSortController.MISS;
+			} else {
+				return res;
+			}
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public View onCreateFloatView(int position) {
+			mPos = position;
+			View view = adapter.getView(position, null, expressionList);
+			view.setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_expression_float_view));
+			return view;
+		}
+
+		@Override
+		public void onDragFloatView(View floatView, Point position, Point touch) {
+			final int lvDivHeight = expressionList.getDividerHeight();
+			View div = expressionList.getChildAt(mDivPos);
+			if (div != null) {
+				if (mPos > mDivPos) {
+					final int limit = div.getBottom() + lvDivHeight;
+					if (position.y < limit) {
+						position.y = limit;
+					}
+				} else {
+					final int limit = div.getTop() - lvDivHeight - floatView.getHeight();
+					if (position.y > limit) {
+						position.y = limit;
+					}
+				}
+			}
 		}
 	}
 
@@ -252,14 +380,17 @@ public class ExpressionManageActivity extends Activity {
 			}
 		} else {
 			view.findViewById(R.id.percentLayout).setVisibility(View.VISIBLE);
-			ImageView percent = (ImageView) view.findViewById(R.id.percent);
-			percent.getLayoutParams().width = (int) BaseDataUtils.dpToPx(50 / (float) (total / current));
+			ImageView image = (ImageView) view.findViewById(R.id.percent);
+			float percent = (current / (float) total) * 50;
+			image.getLayoutParams().width = (int) BaseDataUtils.dpToPx(percent);
 		}
 
 	}
 
-	// "tosiji", "lengtu", "ninimao", "feiniaobulu", "donki", "xiaotumei", "chouerguang", "xiaoan", "oujisang", "tudandan",
-	// "mengleyuan", "chouchoumao", "malimalihong", "yangxiaojian", "xiongnini"
+	private void removeExpression(final String name) {
+		dialog.setTitle("是否删除表情[" + getExpressionName(name) + "]").setInputText(name).show();
+	}
+
 	private String getExpressionName(String name) {
 		String expressionName = "";
 		if ("tosiji".equals(name)) {

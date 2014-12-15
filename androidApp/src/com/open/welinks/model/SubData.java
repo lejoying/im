@@ -55,4 +55,10 @@ public class SubData {
 		public String mainBusiness = "";
 		public String head = "";
 	}
+
+	public class SpecialGifMessageContent {
+		public String phone = "";
+		public String type = "";
+		public String content = "";
+	}
 }

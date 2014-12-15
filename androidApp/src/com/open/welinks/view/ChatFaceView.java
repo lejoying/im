@@ -83,6 +83,7 @@ public class ChatFaceView extends FrameLayout {
 	public void nodifyChatFace() {
 		faceViewList.removeAllViews();
 		pagerViews.clear();
+		eachPageCountList.clear();
 		addSpaceView();
 		fillFaces();
 		mChatFaceAdapter.notifyDataSetChanged();
@@ -245,6 +246,12 @@ public class ChatFaceView extends FrameLayout {
 	}
 
 	private class ChatFaceAdapter extends PagerAdapter {
+
+		@Override
+		public void notifyDataSetChanged() {
+			super.notifyDataSetChanged();
+			facePager.setCurrentItem(0);
+		}
 
 		@Override
 		public int getCount() {

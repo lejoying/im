@@ -13,7 +13,7 @@
             android:id="@+id/backView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4.0" >
+            android:layout_weight="3.5" >
 
             <ImageView
                 android:layout_width="25dp"
