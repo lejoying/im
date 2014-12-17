@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.open.welinks"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -18,6 +19,35 @@
         android:layout_below="@+id/time"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp" >
+
+        <LinearLayout
+            android:id="@+id/specialGifLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:visibility="gone" >
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/specialGif"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <me.grantland.widget.AutofitTextView
+                android:id="@+id/specialGifText"
+                android:layout_width="150dp"
+                android:layout_height="110dp"
+                android:gravity="top|center_horizontal"
+                android:paddingBottom="35dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="11dp"
+                android:paddingTop="25dp"
+                android:textColor="@color/white"
+                app:minTextSize="8sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/chatLayout"

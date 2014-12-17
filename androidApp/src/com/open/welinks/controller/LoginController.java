@@ -820,26 +820,11 @@ public class LoginController {
 	MyLog log = new MyLog(tag, true);
 
 	public void loginSuccessful(final String phone) {
-		// new Thread() {
-		// public void run() {
+		thisView.progressBar.incrementProgressBy(60);
 		Intent intent = new Intent(thisActivity, MainActivity.class);
 		intent.putExtra("phone", phone);
-		// TODO
-		// for (int i = 1; i <= 50; i++) {
-		// try {
-		// Thread.sleep(10);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// thisView.progressBar.incrementProgressBy(1);
-		// }
-		// Parser parser = Parser.getInstance();
-		// parser.initialize(thisActivity);
-		// parser.check();
 		thisActivity.startActivity(intent);
 		thisActivity.finish();
-		// };
-		// }.start();
 	}
 
 	public void loginFail(String 失败原因) {

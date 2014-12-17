@@ -1,5 +1,6 @@
 package com.open.welinks.customView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -11,10 +12,16 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -41,6 +48,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.view.ViewManage;
 
@@ -61,6 +69,8 @@ public class SmallBusinessCardPopView {
 	// public CardHolder cardHolder;
 
 	public PopupWindow userCardPopWindow;
+	public OnDismissListener mOnDismissListener;
+	public OnUserCardListener mOnUserCardListener;
 
 	public SmallBusinessCardPopView(Activity thisActivity, View view) {
 		this.instance = this;
@@ -82,12 +92,33 @@ public class SmallBusinessCardPopView {
 		}
 	}
 
+	public boolean isShowing() {
+		if (userCardPopWindow != null) {
+			return userCardPopWindow.isShowing();
+		} else {
+			return false;
+		}
+	}
+
+	public void showList() {
+		if (this.cardView.listLayout.getVisibility() == View.GONE && !this.cardView.key.equals(data.userInformation.currentUser.phone)) {
+			this.cardView.userBusinessLayout.setVisibility(View.GONE);
+			this.cardView.listLayout.setVisibility(View.VISIBLE);
+		}
+	}
+
+	public void setOnDismissListener(OnUserCardListener mOnUserCardListener) {
+		this.mOnUserCardListener = mOnUserCardListener;
+	}
+
 	public class CardView extends FrameLayout {
 
 		public Context context;
 
 		public DisplayImageOptions smallBusinessCardOptions;
+		public View userBusinessLayout;
 		public View userCardMainView;
+		public View listLayout;
 		public RelativeLayout userBusinessContainer;
 		public TextView goInfomationView;
 		public TextView goChatView;
@@ -101,12 +132,17 @@ public class SmallBusinessCardPopView {
 		public TextView singleButtonView;
 		public TextView cardStatusView;
 		public TextView vLineView;
+		public TextView listTitle, listCancel;
+		public ListView listContent;
 
 		public String TYPE_POINT = "point";
 		public String TYPE_GROUP = "group";
 		public String TYPE_SQUARE = "square";
 
 		public OnClickListener mOnClickListener;
+		public OnItemClickListener mItemClickListener;
+
+		public ListAdapter mAdapter;
 
 		public String type;
 		public String key;
@@ -168,6 +204,9 @@ public class SmallBusinessCardPopView {
 					relation = "不是好友";
 					setContent(false, "", "", "", "", relation, type, key, "0", "0", "0");
 				}
+				if (mAdapter == null)
+					mAdapter = new ListAdapter();
+				listContent.setAdapter(mAdapter);
 			} else if (type.equals(TYPE_GROUP)) {
 				boolean flag = false;
 				if (data.relationship.groupsMap != null) {
@@ -254,7 +293,7 @@ public class SmallBusinessCardPopView {
 		public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
 		boolean isGetData = false;
 
-		public void setContent(boolean isChat, String sex, String age, String fileName, String nickName, String relation, String type, String key, String longitude, String latitude, String lastLoginTime) {
+		private void setContent(boolean isChat, String sex, String age, String fileName, String nickName, String relation, String type, String key, String longitude, String latitude, String lastLoginTime) {
 			parser.check();
 			User user = data.userInformation.currentUser;
 			fileHandlers.getHeadImage(fileName, userHeadView, smallBusinessCardOptions);
@@ -263,8 +302,10 @@ public class SmallBusinessCardPopView {
 			userAgeView.setText(age);
 			if (!"".equals(sex) && ("male".equals(sex) || "男".equals(sex))) {
 				userAgeView.setBackgroundResource(R.drawable.personalinfo_male);
+				listTitle.setText("你要对他做什么？");
 			} else {
 				userAgeView.setBackgroundResource(R.drawable.personalinfo_female);
+				listTitle.setText("你要对她做什么？");
 			}
 			distanceView.setText(lbsHandlers.pointDistance(user.longitude, user.latitude, longitude, latitude) + "km");
 			if (lastLoginTime != null && !"".equals(lastLoginTime)) {
@@ -336,6 +377,8 @@ public class SmallBusinessCardPopView {
 			thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 			userCardMainView = LayoutInflater.from(context).inflate(R.layout.view_dialog_small_businesscard, this);
+			userBusinessLayout = userCardMainView.findViewById(R.id.userBusinessLayout);
+			listLayout = userCardMainView.findViewById(R.id.listLayout);
 			optionTwoView = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo);
 			optionTwoView2 = (LinearLayout) userCardMainView.findViewById(R.id.optionTwo2);
 			userNickNameView = (TextView) userCardMainView.findViewById(R.id.userNickName);
@@ -354,6 +397,10 @@ public class SmallBusinessCardPopView {
 			sectionsView = (TextView) userCardMainView.findViewById(R.id.sections);
 			// singleButtonView.setVisibility(View.GONE);
 			userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
+			listTitle = (TextView) userCardMainView.findViewById(R.id.listTitle);
+			listCancel = (TextView) userCardMainView.findViewById(R.id.listCancel);
+			listContent = (ListView) userCardMainView.findViewById(R.id.listContent);
+
 			userHeadView.getLayoutParams().height = height;
 			userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 			userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -367,6 +414,10 @@ public class SmallBusinessCardPopView {
 			this.goChatView.setOnClickListener(mOnClickListener);
 			this.hotView.setOnClickListener(mOnClickListener);
 			this.sectionsView.setOnClickListener(mOnClickListener);
+			this.listCancel.setOnClickListener(mOnClickListener);
+			this.listContent.setOnItemClickListener(mItemClickListener);
+
+			userCardPopWindow.setOnDismissListener(mOnDismissListener);
 		}
 
 		public void initializeListeners() {
@@ -422,9 +473,86 @@ public class SmallBusinessCardPopView {
 						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
 						intent.putExtra("", "");
 						thisActivity.startActivity(intent);
+					} else if (view.equals(listCancel)) {
+						userBusinessLayout.setVisibility(View.VISIBLE);
+						listLayout.setVisibility(View.GONE);
 					}
 				}
 			};
+			mItemClickListener = new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					String content = (String) view.getTag(R.id.tag_first);
+					if (content != null)
+						mOnUserCardListener.onItemSeleted(content, key);
+					dismissUserCardDialogView();
+				}
+			};
+
+			mOnDismissListener = new OnDismissListener() {
+
+				@Override
+				public void onDismiss() {
+					userBusinessLayout.setVisibility(View.VISIBLE);
+					listLayout.setVisibility(View.GONE);
+					if (mOnUserCardListener != null)
+						mOnUserCardListener.onDismiss();
+				}
+			};
+		}
+
+		private class ListAdapter extends BaseAdapter {
+			public List<String> list;
+
+			public ListAdapter() {
+				List<String> list = new ArrayList<String>();
+				list.add(getResources().getString(R.string.specialGifMessageString1));
+				list.add(getResources().getString(R.string.specialGifMessageString2));
+				list.add(getResources().getString(R.string.specialGifMessageString3));
+				list.add(getResources().getString(R.string.specialGifMessageString4));
+				list.add(getResources().getString(R.string.specialGifMessageString5));
+				list.add(getResources().getString(R.string.specialGifMessageString6));
+				list.add(getResources().getString(R.string.specialGifMessageString7));
+				list.add(getResources().getString(R.string.specialGifMessageString8));
+				list.add(getResources().getString(R.string.specialGifMessageString9));
+				this.list = list;
+			}
+
+			@Override
+			public int getCount() {
+				return list.size();
+			}
+
+			@Override
+			public Object getItem(int position) {
+				return list.get(position);
+			}
+
+			@Override
+			public long getItemId(int position) {
+				return position;
+			}
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				Holder holder;
+				if (convertView == null) {
+					holder = new Holder();
+					convertView = LayoutInflater.from(context).inflate(R.layout.small_business_card_list_item, null);
+					holder.text = (TextView) convertView.findViewById(R.id.text);
+					convertView.setTag(holder);
+				} else {
+					holder = (Holder) convertView.getTag();
+				}
+				holder.text.setText(list.get(position));
+				convertView.setTag(R.id.tag_first, list.get(position));
+				return convertView;
+			}
+
+			class Holder {
+				TextView text;
+			}
 		}
 	}
 
@@ -527,5 +655,14 @@ public class SmallBusinessCardPopView {
 				}
 			};
 		});
+	}
+
+	public class OnUserCardListener {
+		public void onDismiss() {
+		}
+
+		public void onItemSeleted(String string, String phone) {
+
+		}
 	}
 }

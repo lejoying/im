@@ -482,6 +482,8 @@ public class MessagesSubView {
 						lastChatMessageView.setText(leftText + "[位置信息]");
 					} else if ("card".equals(message.contentType)) {
 						lastChatMessageView.setText(leftText + "[名片]");
+					} else if ("specialGif".equals(message.contentType)) {
+						lastChatMessageView.setText(leftText + "[动图]");
 					}
 				}
 			}

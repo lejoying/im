@@ -51,11 +51,6 @@ public class NewChatActivity extends Activity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		this.thisController.onSaveInstanceState(outState);
 		super.onSaveInstanceState(outState);

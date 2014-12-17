@@ -15,10 +15,15 @@ import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -69,6 +74,7 @@ import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.customListener.AudioListener;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
+import com.open.welinks.customView.SmallBusinessCardPopView.OnUserCardListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.AudioHandlers;
 import com.open.welinks.model.Constant;
@@ -107,6 +113,9 @@ public class NewChatController {
 	public Gson gson = new Gson();
 	public SHA1 sha1 = new SHA1();
 
+	public SensorManager mSensorManager;
+	public Sensor mSensor;
+
 	public AMap mAMap;
 	public LocationManagerProxy mLocationManagerProxy;
 	public AMapLocationListener mAMapLocationListener;
@@ -129,6 +138,8 @@ public class NewChatController {
 	public AudioListener mAudioListener;
 	public MyGestureDetector mGestureDetector;
 	public GestureDetector.SimpleOnGestureListener mSimpleOnGestureListener;
+	public SensorEventListener mySensorListener;
+	public OnUserCardListener mOnUserCardListener;
 
 	public String key = "", type = "";
 	public User user;
@@ -137,7 +148,8 @@ public class NewChatController {
 
 	public VoiceTimerTask timerTask;
 	public Timer voicePopTimer;
-	public long voiceTime = 0;
+	public long voiceTime = 0, sensorLastTime = 0;
+	public float sensorLastX, sensorLastY, sensorLastZ;
 
 	public int showChatCounts;
 	public int doubleTapCounts;
@@ -186,6 +198,8 @@ public class NewChatController {
 		messagesMap = new HashMap<String, Message>();
 		inputManager = new InputMethodManagerUtils(thisActivity);
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
+		mSensorManager = (SensorManager) thisActivity.getSystemService(Service.SENSOR_SERVICE);
+		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		initListeners();
 	}
 
@@ -283,11 +297,6 @@ public class NewChatController {
 
 			@Override
 			public boolean onDown(MotionEvent e) {
-				View view = mGestureDetector.getTouchView();
-				if (thisView.chatContent.equals(view)) {
-					if (thisController.inputManager.isActive(thisView.chatInput))
-						thisController.inputManager.hide(thisView.chatInput);
-				}
 				return true;
 			}
 
@@ -299,14 +308,16 @@ public class NewChatController {
 				} else {
 					String contentType = (String) view.getTag(R.id.tag_first);
 					if (contentType != null) {
-
+						String phone = (String) view.getTag(R.id.tag_second);
+						if (phone != null && !phone.equals(data.userInformation.currentUser.phone))
+							createSpecialGifMessage(phone, thisActivity.getString(R.string.specialGifMessageString));
 					}
 				}
 				return true;
 			}
 
 			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
+			public boolean onSingleTapConfirmed(MotionEvent e) {
 				View view = mGestureDetector.getTouchView();
 				if (thisView.chatContent.equals(view)) {
 					if (thisController.inputManager.isActive(thisView.chatInput))
@@ -319,11 +330,13 @@ public class NewChatController {
 							thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
 							thisView.businessCardPopView.cardView.setMenu(false);
 							thisView.businessCardPopView.showUserCardDialogView();
+							mSensorManager.registerListener(mySensorListener, mSensor, SensorManager.SENSOR_DELAY_GAME);
 						}
 					}
 				}
 				return true;
 			}
+
 		};
 		mGestureDetector = new MyGestureDetector(thisActivity, mSimpleOnGestureListener);
 		mOnTouchListener = new OnTouchListener() {
@@ -359,6 +372,50 @@ public class NewChatController {
 				return false;
 			}
 		};
+
+		mySensorListener = new SensorEventListener() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onSensorChanged(SensorEvent event) {
+				if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+					long currentTime = System.currentTimeMillis();
+					long time = currentTime - sensorLastTime;
+					float x, y, z, speed;
+					if (time > 100) {
+						sensorLastTime = currentTime;
+						x = event.values[SensorManager.DATA_X];
+						y = event.values[SensorManager.DATA_Y];
+						z = event.values[SensorManager.DATA_Z];
+						speed = Math.abs(x - sensorLastX) / time * 10000;
+						sensorLastX = x;
+						sensorLastY = y;
+						sensorLastZ = z;
+						if (speed > 1500) {
+							thisView.businessCardPopView.showList();
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+			}
+		};
+
+		mOnUserCardListener = thisView.businessCardPopView.new OnUserCardListener() {
+			@Override
+			public void onDismiss() {
+				mSensorManager.unregisterListener(mySensorListener, mSensor);
+			}
+
+			@Override
+			public void onItemSeleted(String string, String phone) {
+				createSpecialGifMessage(phone, string);
+			}
+		};
+
 		mOnScrollListener = new OnScrollListener() {
 
 			@Override
@@ -811,6 +868,8 @@ public class NewChatController {
 		thisView.chatContentSamilyOutTranslateAnimation.setAnimationListener(mAnimationListener);
 		thisView.chatContentAddInRotateAnimation.setAnimationListener(mAnimationListener);
 		thisView.chatContentAddOutRotateAnimation.setAnimationListener(mAnimationListener);
+
+		thisView.businessCardPopView.setOnDismissListener(mOnUserCardListener);
 	}
 
 	private void completeVoiceRecording(boolean weather) {
@@ -924,11 +983,10 @@ public class NewChatController {
 		addMessageToLocation(message);
 	}
 
-	private void createSpecialGifMessage(String phone, String type, String content) {
+	private void createSpecialGifMessage(String phone, String content) {
 		long time = new Date().getTime();
 		SpecialGifMessageContent messageContent = subData.new SpecialGifMessageContent();
 		messageContent.phone = phone;
-		messageContent.type = type;
 		messageContent.content = content;
 		Message message = data.messages.new Message();
 		message.content = gson.toJson(messageContent);
@@ -938,6 +996,8 @@ public class NewChatController {
 		message.time = String.valueOf(time);
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;
+		addMessageToLocation(message);
+		sendMessage(message);
 	}
 
 	private void takePhoto() {

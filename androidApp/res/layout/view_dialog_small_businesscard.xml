@@ -5,6 +5,7 @@
     android:background="#51000000" >
 
     <RelativeLayout
+        android:id="@+id/userBusinessLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -228,5 +229,56 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/listLayout"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/listTitle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/shape_small_card_title"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/red" />
+
+        <ListView
+            android:id="@+id/listContent"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:background="@color/white"
+            android:cacheColorHint="@color/Transparent"
+            android:divider="@color/gray50"
+            android:dividerHeight="1dp"
+            android:fadingEdge="none"
+            android:listSelector="@color/Transparent"
+            android:scrollbars="none" >
+        </ListView>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/red" />
+
+        <TextView
+            android:id="@+id/listCancel"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/shape_small_card_cancel"
+            android:gravity="center"
+            android:text="@string/cancle_text"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </LinearLayout>
 
 </RelativeLayout>

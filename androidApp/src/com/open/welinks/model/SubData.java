@@ -58,7 +58,6 @@ public class SubData {
 
 	public class SpecialGifMessageContent {
 		public String phone = "";
-		public String type = "";
 		public String content = "";
 	}
 }
