@@ -42,7 +42,6 @@ public class SubData {
 	}
 
 	public class LocationMessageContent {
-		public String address = "";
 		public String latitude = "";
 		public String longitude = "";
 		public String imageFileName = "";

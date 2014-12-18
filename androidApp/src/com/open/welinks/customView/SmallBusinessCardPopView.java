@@ -58,6 +58,7 @@ public class SmallBusinessCardPopView {
 	public MyLog log = new MyLog(tag, true);
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+	public ViewManage mViewManage = ViewManage.getInstance();
 
 	public SmallBusinessCardPopView instance;
 	public Activity thisActivity;
@@ -461,10 +462,14 @@ public class SmallBusinessCardPopView {
 						}
 					} else if (view.equals(goChatView)) {
 						// String phone = (String) view.getTag(R.id.tag_first);
-						Intent intent = new Intent(thisActivity, NewChatActivity.class);
-						intent.putExtra("id", key);
-						intent.putExtra("type", type);
-						thisActivity.startActivityForResult(intent, R.id.tag_second);
+						if (mViewManage.newChatView != null && key.equals(mViewManage.newChatView.thisController.key)) {
+							dismissUserCardDialogView();
+						} else {
+							Intent intent = new Intent(thisActivity, NewChatActivity.class);
+							intent.putExtra("id", key);
+							intent.putExtra("type", type);
+							thisActivity.startActivityForResult(intent, R.id.tag_second);
+						}
 					} else if (view.equals(hotView)) {
 						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
 						intent.putExtra("", "");

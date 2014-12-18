@@ -233,9 +233,8 @@ public class NewChatController {
 						}
 					} else if ("location".equals(contentType)) {
 						Intent intent = new Intent(thisActivity, LocationActivity.class);
-						intent.putExtra("address", (String) view.getTag(R.id.tag_second));
-						intent.putExtra("latitude", (String) view.getTag(R.id.tag_third));
-						intent.putExtra("longitude", (String) view.getTag(R.id.tag_fourth));
+						intent.putExtra("latitude", (String) view.getTag(R.id.tag_second));
+						intent.putExtra("longitude", (String) view.getTag(R.id.tag_third));
 						thisActivity.startActivity(intent);
 					} else if ("card".equals(contentType)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
@@ -703,7 +702,6 @@ public class NewChatController {
 					mLocationManagerProxy.destroy();
 					Double geoLat = mAMapLocation.getLatitude();
 					Double geoLng = mAMapLocation.getLongitude();
-					String address = mAMapLocation.getAddress();
 					LatLng latLonPoint = new LatLng(geoLat, geoLng);
 					mAMap.clear();
 					mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 17));
@@ -715,7 +713,6 @@ public class NewChatController {
 					Message message = messagesMap.get(tempLocationKey);
 					if (message != null) {
 						LocationMessageContent messageContent = subData.new LocationMessageContent();
-						messageContent.address = address;
 						messageContent.latitude = String.valueOf(geoLat);
 						messageContent.longitude = String.valueOf(geoLng);
 						message.content = gson.toJson(messageContent);
@@ -1308,6 +1305,10 @@ public class NewChatController {
 	public void onResume() {
 		viewManage.newChatView = thisView;
 		thisView.locationMapView.onResume();
+
+		if (thisView.businessCardPopView.isShowing()) {
+			thisView.businessCardPopView.dismissUserCardDialogView();
+		}
 	}
 
 	private class MyGestureDetector extends GestureDetector {
@@ -1346,6 +1347,13 @@ public class NewChatController {
 			}
 			notSentMessagesMap.put(type + key, content);
 		}
+
+		if ("point".equals(type)) {
+			data.relationship.friendsMap.get(key).notReadMessagesCount = 0;
+		} else if ("group".equals(type)) {
+			data.relationship.groupsMap.get(key).notReadMessagesCount = 0;
+		}
+		data.relationship.isModified = true;
 		viewManage.newChatView = null;
 
 		viewManage.messagesSubView.showMessagesSequence();

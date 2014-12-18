@@ -1,29 +1,24 @@
 package com.open.welinks;
 
-import java.util.ArrayList;
-
-import com.amap.api.a.af;
-import com.amap.api.a.aj;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.model.BitmapDescriptor;
-import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
-import com.autonavi.amap.mapcore2d.FPoint;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.GeocodeSearch.OnGeocodeSearchListener;
+import com.amap.api.services.geocoder.RegeocodeResult;
 
 import android.app.Activity;
-import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class LocationActivity extends Activity implements OnClickListener {
+public class LocationActivity extends Activity implements OnClickListener, OnGeocodeSearchListener {
 
 	public AMap mAMap;
 
@@ -31,7 +26,7 @@ public class LocationActivity extends Activity implements OnClickListener {
 	public TextView titleText;
 	public MapView mapView;
 
-	public String address, latitude, longitude;
+	public String latitude, longitude;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +34,27 @@ public class LocationActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_location);
 		latitude = getIntent().getStringExtra("latitude");
 		longitude = getIntent().getStringExtra("longitude");
-		address = getIntent().getStringExtra("address");
 		backView = findViewById(R.id.backView);
 		titleText = (TextView) findViewById(R.id.titleText);
 		mapView = (MapView) findViewById(R.id.mapView);
 		mapView.onCreate(savedInstanceState);
 		mAMap = mapView.getMap();
 
-		LatLng latLonPoint = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-		mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLonPoint, 17));
-		titleText.setText(address);
+		LatLng latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+		mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
 
 		MarkerOptions markOptions = new MarkerOptions();
-		markOptions.position(latLonPoint);
+		markOptions.position(latLng);
 		// markOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_location));
 		mAMap.addMarker(markOptions);
 
 		backView.setOnClickListener(this);
+
+		GeocodeSearch geocoderSearch = new GeocodeSearch(this);
+		geocoderSearch.setOnGeocodeSearchListener(this);
+		LatLonPoint latLonPoint = new LatLonPoint(Double.valueOf(latitude), Double.valueOf(longitude));
+		RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200, GeocodeSearch.AMAP);
+		geocoderSearch.getFromLocationAsyn(query);
 	}
 
 	@Override
@@ -64,6 +63,21 @@ public class LocationActivity extends Activity implements OnClickListener {
 			finish();
 		}
 
+	}
+
+	@Override
+	public void onGeocodeSearched(GeocodeResult result, int rCode) {
+
+	}
+
+	@Override
+	public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
+		if (rCode == 0) {
+			if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
+				String address = result.getRegeocodeAddress().getFormatAddress() + "附近";
+				titleText.setText(address);
+			}
+		}
 	}
 
 }

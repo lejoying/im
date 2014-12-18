@@ -12,14 +12,16 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Scroller;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.MyOnClickListener;
@@ -31,7 +33,6 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
-import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.view.ViewManage;
 import com.mobeta.android.dslv.DragSortListView;
 import com.mobeta.android.dslv.DragSortController;
@@ -51,6 +52,7 @@ public class ExpressionManageActivity extends Activity {
 	private MyOnClickListener mOnClickListener;
 	private OnDownloadListener mOnDownloadListener;
 	private OnDialogClickListener mConfirmOnDialogClickListener, mCancelOnDialogClickListener;
+	private SimpleImageLoadingListener mSimpleImageLoadingListener;
 
 	private ListAdapter adapter;
 	private LayoutInflater mInflater;
@@ -64,6 +66,13 @@ public class ExpressionManageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		initViews();
 		initData();
+
+	}
+
+	@Override
+	protected void onResume() {
+		Toast.makeText(this, "长按调整顺序，滑动删除", Toast.LENGTH_LONG).show();
+		super.onResume();
 	}
 
 	@Override
@@ -110,15 +119,18 @@ public class ExpressionManageActivity extends Activity {
 		mOnDownloadListener = new OnDownloadListener() {
 			@Override
 			public void onSuccess(DownloadFile instance, int status) {
-				super.onSuccess(instance, status);
-				int current = (Integer) (instance.view.getTag(R.id.tag_second)), total = (Integer) instance.view.getTag(R.id.tag_first);
-				instance.view.setTag(R.id.tag_second, ++current);
-				changePercent(instance.view);
+				if (instance.view.getTag(R.id.tag_first) == null) {
+					fileHandlers.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, mViewManage.options, mSimpleImageLoadingListener);
+				} else {
+					int current = (Integer) (instance.view.getTag(R.id.tag_second));
+					instance.view.setTag(R.id.tag_second, ++current);
+					changePercent(instance.view);
+				}
 			}
 
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
-				super.onFailure(instance, status);
+				downloadFileList.addDownloadFile(instance);
 			}
 		};
 		mConfirmOnDialogClickListener = new OnDialogClickListener() {
@@ -139,6 +151,16 @@ public class ExpressionManageActivity extends Activity {
 			public void onClick(AlertInputDialog dialog) {
 				adapter.notifyDataSetChanged();
 
+			}
+		};
+		mSimpleImageLoadingListener = new SimpleImageLoadingListener() {
+
+			@Override
+			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+				super.onLoadingFailed(imageUri, view, failReason);
+				String fileName = imageUri.substring(imageUri.lastIndexOf("/") + 1);
+				File file = new File(fileHandlers.sdcardGifImageFolder, fileName);
+				downLoadCoverImage(file.getAbsolutePath(), imageUri, (ImageView) view);
 			}
 		};
 	}
@@ -220,44 +242,38 @@ public class ExpressionManageActivity extends Activity {
 			return TYPECOUNT;
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			Holder holder;
+			Holder holder = new Holder();
 			String exressionName = "";
 			int type = getItemViewType(position);
-			// if (convertView == null) {
-			holder = new Holder();
 			convertView = mInflater.inflate(R.layout.expression_manage_item, null);
-			holder.percentLayout = convertView.findViewById(R.id.percentLayout);
-			holder.mainLayout = convertView.findViewById(R.id.layout);
+			holder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
 			holder.image = (ImageView) convertView.findViewById(R.id.image);
-			holder.percent = (ImageView) convertView.findViewById(R.id.percent);
 			holder.name = (TextView) convertView.findViewById(R.id.name);
 			holder.status = (TextView) convertView.findViewById(R.id.status);
 			convertView.setTag(holder);
-			// } else {
-			// holder = (Holder) convertView.getTag();
-			// }
 			if (type == OWNED) {
 				exressionName = ownedExpression.get(position);
 				holder.status.setBackgroundDrawable(getResources().getDrawable(R.drawable.expression_manager_button_off));
 				holder.status.setText("已下载");
 			} else if (type == UNOWNED) {
 				exressionName = unownedExpression.get(position - ownedExpression.size());
-				holder.status.setBackgroundDrawable(getResources().getDrawable(R.drawable.expression_manager_button));
+				holder.status.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_exprission_item_status));
 				holder.status.setText("下载");
+				holder.status.setTag(R.id.tag_first, exressionName);
+				holder.status.setOnClickListener(mOnClickListener);
 			}
-			fileHandlers.getImage(Constant.FACE_RESOURCES_MAP.get(exressionName)[0], holder.image, holder.image.getLayoutParams(), DownloadFile.TYPE_GIF_IMAGE, mViewManage.options);
+			getCoverImage(Constant.FACE_RESOURCES_MAP.get(exressionName)[0], holder.image);
 			holder.name.setText(getExpressionName(exressionName));
-			holder.status.setTag(R.id.tag_first, exressionName);
-			holder.status.setOnClickListener(mOnClickListener);
 			return convertView;
 		}
 
 		class Holder {
-			View percentLayout, mainLayout;
-			ImageView image, percent;
+			ImageView image;
 			TextView name, status;
+			ProgressBar progressBar;
 		}
 	}
 
@@ -269,7 +285,6 @@ public class ExpressionManageActivity extends Activity {
 		public ListController(DragSortListView dslv, ListAdapter adapter) {
 			super(dslv);
 			this.adapter = adapter;
-			// setRemoveEnabled(false);
 			setRemoveMode(DragSortController.FLING_REMOVE);
 			setDragInitMode(DragSortController.ON_LONG_PRESS);
 		}
@@ -322,8 +337,9 @@ public class ExpressionManageActivity extends Activity {
 
 		@Override
 		public void onDragFloatView(View floatView, Point position, Point touch) {
+			final int first = expressionList.getFirstVisiblePosition();
 			final int lvDivHeight = expressionList.getDividerHeight();
-			View div = expressionList.getChildAt(mDivPos);
+			View div = expressionList.getChildAt(mDivPos - first);
 			if (div != null) {
 				if (mPos > mDivPos) {
 					final int limit = div.getBottom() + lvDivHeight;
@@ -336,6 +352,7 @@ public class ExpressionManageActivity extends Activity {
 						position.y = limit;
 					}
 				}
+			} else {
 			}
 		}
 	}
@@ -364,7 +381,7 @@ public class ExpressionManageActivity extends Activity {
 	private void changePercent(View view) {
 		int total = (Integer) view.getTag(R.id.tag_first), current = (Integer) (view.getTag(R.id.tag_second));
 		if (total == current) {
-			view.findViewById(R.id.percentLayout).setVisibility(View.GONE);
+			view.findViewById(R.id.progressBar).setVisibility(View.GONE);
 			if (current == total) {
 				String expressionName = (String) view.findViewById(R.id.status).getTag(R.id.tag_first);
 				if (unownedExpression.remove(expressionName)) {
@@ -379,12 +396,32 @@ public class ExpressionManageActivity extends Activity {
 				}
 			}
 		} else {
-			view.findViewById(R.id.percentLayout).setVisibility(View.VISIBLE);
-			ImageView image = (ImageView) view.findViewById(R.id.percent);
-			float percent = (current / (float) total) * 50;
-			image.getLayoutParams().width = (int) BaseDataUtils.dpToPx(percent);
+			ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+			progressBar.setVisibility(View.VISIBLE);
+			int percent = 100 / total;
+			progressBar.incrementProgressBy(percent);
 		}
 
+	}
+
+	private void getCoverImage(String fileName, ImageView imageView) {
+		File file = new File(fileHandlers.sdcardGifImageFolder, fileName);
+		String excessivePath = file.getAbsolutePath();
+		String excessiveUrl = API.DOMAIN_COMMONIMAGE + "gifs/" + fileName;
+		if (file.exists()) {
+			fileHandlers.imageLoader.displayImage("file:/" + excessivePath, imageView, mViewManage.options, mSimpleImageLoadingListener);
+		} else {
+			downLoadCoverImage(excessiveUrl, excessivePath, imageView);
+		}
+	}
+
+	private void downLoadCoverImage(String url, String path, ImageView imageView) {
+		DownloadFile downloadFile = new DownloadFile(url, path);
+		downloadFile.view = imageView;
+		downloadFile.options = mViewManage.options;
+		downloadFile.type = DownloadFile.TYPE_GIF_IMAGE;
+		downloadFile.setDownloadFileListener(mOnDownloadListener);
+		downloadFileList.addDownloadFile(downloadFile);
 	}
 
 	private void removeExpression(final String name) {

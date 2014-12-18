@@ -713,9 +713,8 @@ public class NewChatView {
 								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) BaseDataUtils.dpToPx(150), (int) BaseDataUtils.dpToPx(100));
 								thisController.fileHandlers.getImage(messageContent.imageFileName, holder.locationImage, params, DownloadFile.TYPE_IMAGE, locationOptions);
 								holder.locationImage.setTag(R.id.tag_first, contentType);
-								holder.locationImage.setTag(R.id.tag_second, messageContent.address);
-								holder.locationImage.setTag(R.id.tag_third, messageContent.latitude);
-								holder.locationImage.setTag(R.id.tag_fourth, messageContent.longitude);
+								holder.locationImage.setTag(R.id.tag_second, messageContent.latitude);
+								holder.locationImage.setTag(R.id.tag_third, messageContent.longitude);
 								holder.locationImage.setTag(R.id.tag_fifth, params);
 								holder.locationImage.setOnClickListener(thisController.mOnClickListener);
 							}

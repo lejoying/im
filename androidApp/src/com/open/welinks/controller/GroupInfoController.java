@@ -31,6 +31,7 @@ import com.open.welinks.CreateGroupLocationActivity;
 import com.open.welinks.CropActivity;
 import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.ImagesDirectoryActivity;
+import com.open.welinks.LocationActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.customView.Alert;
@@ -181,11 +182,9 @@ public class GroupInfoController {
 				} else if (view.equals(thisView.coverOptionView)) {
 					selectPicture(CONVER_SET);
 				} else if (view.equals(thisView.addressOptionView)) {
-					Intent intent = new Intent(thisActivity, CreateGroupLocationActivity.class);
-					intent.putExtra("type", "scan");
+					Intent intent = new Intent(thisActivity, LocationActivity.class);
 					intent.putExtra("latitude", currentGroup.latitude);
 					intent.putExtra("longitude", currentGroup.longitude);
-					intent.putExtra("address", " ");
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.permissionOptionView)) {
 					String permission = currentGroup.permission;

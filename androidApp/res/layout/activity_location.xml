@@ -3,7 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <include layout="@layout/title" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/white" >
+
+        <RelativeLayout
+            android:id="@+id/backView"
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:paddingRight="20dp" >
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/back_image" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="60dp"
+            android:gravity="center"
+            android:textColor="@color/chat_title_color"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dip"
+            android:layout_alignParentBottom="true"
+            android:background="#ff000000" />
+    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
