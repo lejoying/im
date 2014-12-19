@@ -45,7 +45,6 @@ public class LocationActivity extends Activity implements OnClickListener, OnGeo
 
 		MarkerOptions markOptions = new MarkerOptions();
 		markOptions.position(latLng);
-		// markOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_location));
 		mAMap.addMarker(markOptions);
 
 		backView.setOnClickListener(this);

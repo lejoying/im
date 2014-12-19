@@ -142,6 +142,7 @@ public class ExpressionManageActivity extends Activity {
 					ownedExpression.remove(name);
 					unownedExpression.add(name);
 				}
+				expressionListController.mDivPos = ownedExpression.size();
 				adapter.notifyDataSetChanged();
 			}
 		};
