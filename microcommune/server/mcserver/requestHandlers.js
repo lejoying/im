@@ -20,6 +20,9 @@ requestHandlers.bugManage = function (request, response, pathObject, data) {
     if (operation == "send") {
         bugManage.send(data, response);
     }
+	else if (operation == "sendqxs") {
+        bugManage.send(data, response);
+    }
 }
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
