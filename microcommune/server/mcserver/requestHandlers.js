@@ -21,7 +21,7 @@ requestHandlers.bugManage = function (request, response, pathObject, data) {
         bugManage.send(data, response);
     }
 	else if (operation == "sendqxs") {
-        bugManage.send(data, response);
+        bugManage.sendqxs(data, response);
     }
 }
 var accountManage = require("./handlers/accountManage.js");
