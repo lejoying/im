@@ -1,6 +1,7 @@
 package com.open.welinks.view;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MyGson;
+import com.open.welinks.view.ShareSubView.GroupDialogItem;
 
 public class ShareSectionView {
 
@@ -71,6 +73,7 @@ public class ShareSectionView {
 	public ViewGroup shareMessageView;
 
 	public Group currentGroup;
+	public Board currentBoard;
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public ViewManage viewManage = ViewManage.getInstance();
@@ -87,6 +90,7 @@ public class ShareSectionView {
 	public ViewGroup groupMembersListContentView;
 	public TouchImageView releaseShareView;
 	public TextView roomTextView;
+	public TextView roomName;
 	public TouchImageView groupCoverView;
 	public ImageView groupHeadView;
 
@@ -138,6 +142,7 @@ public class ShareSectionView {
 		releaseShareView.setTag(R.id.tag_class, "share_release");
 
 		roomTextView = (TextView) this.groupMembersView.findViewById(R.id.roomTime);
+		roomName = (TextView) this.groupMembersView.findViewById(R.id.room);
 
 		groupCoverView = (TouchImageView) this.groupMembersView.findViewById(R.id.groupCover);
 		groupCoverView.setTag(R.id.tag_class, "group_head");
@@ -166,7 +171,7 @@ public class ShareSectionView {
 		sectionNameTextView = new TextView(thisActivity);
 		sectionNameTextView.setSingleLine();
 		sectionNameTextView.setTextColor(Color.WHITE);
-		sectionNameTextView.setText("主版");
+
 		RelativeLayout.LayoutParams textViewParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, (int) (48 * displayMetrics.density));
 		linearLayout.addView(sectionNameTextView, textViewParams);
 		sectionNameTextView.setGravity(Gravity.CENTER_VERTICAL);
@@ -174,6 +179,7 @@ public class ShareSectionView {
 		rightContainer.addView(linearLayout, lineParams);
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, this.maxView);
+
 		initReleaseShareDialogView();
 		initializationGroupBoardsDialog();
 		showShareMessages();
@@ -230,22 +236,40 @@ public class ShareSectionView {
 
 		// set conver
 		// TODO conver setting
-		fileHandlers.getHeadImage(currentGroup.icon, this.groupHeadView, viewManage.options56);
 		if (currentGroup.cover != null && !currentGroup.cover.equals("")) {
 			setConver();
 		} else {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		Board board = data.boards.boardsMap.get(currentGroup.currentBoard);
-		if (!flag || board == null) {
+		if (currentBoard == null) {
+			currentBoard = data.boards.boardsMap.get(currentGroup.currentBoard);
+		}
+		if (!flag || currentBoard == null) {
 			return;
 		}
+		fileHandlers.getHeadImage(currentBoard.head, this.groupHeadView, viewManage.options56);
+		log.e(currentBoard.head + ":::::::::::::::::::::::head");
+		String boardName;
+		if (currentBoard != null) {
+			boardName = currentBoard.name;
+			if ("主版".equals(boardName))
+				boardName = "默认版块";
+			sectionNameTextView.setText(boardName);
+			roomName.setText(boardName);
+		} else {
+			boardName = "默认版块";
+			sectionNameTextView.setText(boardName);
+			roomName.setText(boardName);
+		}
+
 		showRoomTime();
 
-		List<String> sharesOrder = board.shareMessagesOrder;
+		List<String> sharesOrder = currentBoard.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = data.boards.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
+		if (sharesOrder == null)
+			sharesOrder = new ArrayList<String>();
 		// int timeBarCount = 0;
 		for (int i = 0; i < sharesOrder.size(); i++) {
 			String key = sharesOrder.get(i);
@@ -764,6 +788,7 @@ public class ShareSectionView {
 	public View groupListButtonView;
 	public View createGroupButtonView;
 	public View findMoreGroupButtonView;
+	public TouchTextView groupName, createGroup, findMore;
 	public int panelHeight;
 	public int panelWidth;
 
@@ -781,6 +806,13 @@ public class ShareSectionView {
 		createGroupButtonView = groupDialogView.findViewById(R.id.createGroupButton);
 		findMoreGroupButtonView = groupDialogView.findViewById(R.id.findMoreButton);
 		groupsManageButtons = groupDialogView.findViewById(R.id.groups_manage_buttons);
+		groupName = (TouchTextView) groupDialogView.findViewById(R.id.groupName);
+		createGroup = (TouchTextView) groupDialogView.findViewById(R.id.createGroup);
+		findMore = (TouchTextView) groupDialogView.findViewById(R.id.findMore);
+
+		groupName.setText("新增版块");
+		createGroup.setText("删除版块");
+		findMoreGroupButtonView.setVisibility(View.GONE);
 
 		TouchView mainContentView = (TouchView) groupDialogView;
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
@@ -793,11 +825,54 @@ public class ShareSectionView {
 		mainContentView.setLayoutParams(mainContentParams);
 		groupListBody = new ListBody1();
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
+
+		groupManageView.setOnClickListener(thisController.mOnClickListener);
+
 		showGroupBoards();
 	}
 
 	public void showGroupBoards() {
+		data = parser.check();
+		List<String> boards = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).boards;
+		groupListBody.height = 0;
+		groupListBody.listItemsSequence.clear();
+		groupsDialogContent.removeAllViews();
+		for (String boardName : boards) {
+			Board board = data.boards.boardsMap.get(boardName);
+			if (board == null)
+				continue;
+			String key = "board#" + board.sid + "_" + board.name;
+			BoardDialogItem boardDialogItem;
+			View view = null;
+			if (groupListBody.listItemBodiesMap.get(key) != null) {
+				boardDialogItem = (BoardDialogItem) groupListBody.listItemBodiesMap.get(key);
+				view = boardDialogItem.cardView;
+			} else {
+				boardDialogItem = new BoardDialogItem(this.groupListBody);
+				view = boardDialogItem.initialize();
+				groupListBody.listItemBodiesMap.put(key, boardDialogItem);
+			}
+			groupListBody.listItemsSequence.add(key);
+			boardDialogItem.setContent(board);
 
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 60), (int) (60 * displayMetrics.density));
+			boardDialogItem.y = this.groupListBody.height;
+			boardDialogItem.cardView.setY(boardDialogItem.y);
+			boardDialogItem.cardView.setX(0);
+			this.groupListBody.height = this.groupListBody.height + 60 * displayMetrics.density;
+			this.groupListBody.containerView.addView(boardDialogItem.cardView, layoutParams);
+
+			// onclick
+			view.setTag("BoardDialogContentItem#" + board.sid);
+			// view.setTag(R.id.shareTopMenuGroupName, shareTopMenuGroupName);
+			// listener
+			view.setTag(R.id.tag_class, "board_view");
+			view.setTag(R.id.tag_first, board);
+			view.setOnClickListener(thisController.mOnClickListener);
+			view.setOnTouchListener(thisController.mOnTouchListener);
+
+		}
+		this.groupListBody.containerHeight = (int) (displayMetrics.heightPixels * 0.6578125f);
 	}
 
 	public boolean isShowGroupDialog = false;
@@ -831,8 +906,8 @@ public class ShareSectionView {
 		}
 	}
 
-	public class GroupDialogItem extends MyListItemBody {
-		GroupDialogItem(ListBody1 listBody) {
+	public class BoardDialogItem extends MyListItemBody {
+		BoardDialogItem(ListBody1 listBody) {
 			listBody.super();
 		}
 
@@ -844,7 +919,7 @@ public class ShareSectionView {
 
 		public ImageView gripCardBackground;
 
-		public Group group;
+		public Board board;
 
 		public View initialize() {
 			this.cardView = mInflater.inflate(R.layout.share_group_select_dialog_item, null);
@@ -858,12 +933,15 @@ public class ShareSectionView {
 			return cardView;
 		}
 
-		public void setContent(Group group) {
+		public void setContent(Board board) {
 			data = parser.check();
-			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.options40);
-			this.groupNameView.setText(group.name);
-			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
+			this.board = board;
+			fileHandlers.getHeadImage(board.head, this.groupIconView, viewManage.options40);
+			String name = board.name;
+			if ("主版".equals(name))
+				name = "默认版块";
+			this.groupNameView.setText(name);
+			if (data.localStatus.localData.currentSelectedGroupBoard.equals(board.sid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
 			} else {
 				this.groupSelectedStatusView.setVisibility(View.GONE);
@@ -873,9 +951,9 @@ public class ShareSectionView {
 
 		public void setViewLayout() {
 			data = parser.check();
-			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
+			if (data.localStatus.localData.currentSelectedGroupBoard.equals(board.sid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
-				this.groupNameView.setText(group.name);
+				this.groupNameView.setText(board.name);
 			} else {
 				this.groupSelectedStatusView.setVisibility(View.GONE);
 			}

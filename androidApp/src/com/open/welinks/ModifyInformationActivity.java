@@ -116,7 +116,6 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), fileHandlers.sdcardHeadImageFolder);
 			headFileName = (String) map.get("fileName");
 			fileHandlers.getHeadImage(headFileName, head, viewManage.options45);
-			System.out.println((String) map.get("fileName"));
 			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"));
 			pic_layout.setVisibility(View.GONE);
 		}

@@ -497,7 +497,22 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> modifyBoardSequenceCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Group group;
+		}
 
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改版块顺序成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------修改版块顺序成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		};
+	};
 	// TODO Relationship
 
 	public ResponseHandler<String> getIntimateFriends = httpClient.new ResponseHandler<String>() {
@@ -1067,6 +1082,10 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("获取版块成功")) {
 				data = parser.check();
 				Group group = data.relationship.groupsMap.get(response.gid);
+				for (Board board : response.boardsMap.values()) {
+					data.boards.boardsMap.put(board.sid, board);
+				}
+				data.boards.isModified = true;
 				if (group != null) {
 					group.boards = response.boards;
 					if (data.relationship.squares.contains(response.gid)) {
@@ -1534,8 +1553,14 @@ public class ResponseHandlers {
 						viewManage.mainView.squareSubView.showSquareMessages(true);
 					}
 				} else {
-					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-						viewManage.mainView.shareSubView.showShareMessages();
+					if (viewManage.shareSectionView != null) {
+						if (viewManage.shareSectionView.currentBoard.sid.equals(sid)) {
+							viewManage.shareSectionView.showShareMessages();
+						}
+					} else {
+						if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+							viewManage.mainView.shareSubView.showShareMessages();
+						}
 					}
 				}
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送成功");
@@ -1557,8 +1582,14 @@ public class ResponseHandlers {
 						viewManage.mainView.squareSubView.showSquareMessages(true);
 					}
 				} else {
-					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-						viewManage.mainView.shareSubView.showShareMessages();
+					if (viewManage.shareSectionView != null) {
+						if (viewManage.shareSectionView.currentBoard.sid.equals(sid)) {
+							viewManage.shareSectionView.showShareMessages();
+						}
+					} else {
+						if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+							viewManage.mainView.shareSubView.showShareMessages();
+						}
 					}
 				}
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -1692,9 +1723,15 @@ public class ResponseHandlers {
 		Board board = data.boards.boardsMap.get(sid);
 		if (board == null) {
 			board = data.boards.new Board();
+			board.sid = sid;
+			board.gid = gid;
 			data.boards.boardsMap.put(sid, board);
 		}
+		if (board.shareMessagesOrder == null)
+			board.shareMessagesOrder = new ArrayList<String>();
 		List<String> sharesOrder = responsesShare.shareMessagesOrder;
+		if (sharesOrder == null)
+			sharesOrder = new ArrayList<String>();
 		if (response.nowpage == 0) {
 			for (int i = sharesOrder.size() - 1; i >= 0; i--) {
 				String key = sharesOrder.get(i);
@@ -1961,6 +1998,73 @@ public class ResponseHandlers {
 				log.d(ViewManage.getErrorLineNumber() + "添加失败===================" + response.失败原因);
 
 			}
+		};
+	};
+
+	public RequestCallBack<String> share_addBoard = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String osid;
+			public String gid;
+			public String sid;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("创建版块成功")) {
+				String targetPhones = "";
+				List<String> boards = data.relationship.groupsMap.get(response.gid).boards;
+				if (boards == null)
+					boards = new ArrayList<String>();
+				boards.remove(response.osid);
+				Board board = data.boards.boardsMap.remove(response.osid);
+				if (board != null) {
+					board.sid = response.sid;
+					data.boards.boardsMap.put(board.sid, board);
+					boards.add(response.sid);
+				}
+
+				if (viewManage.shareSectionView != null) {
+					viewManage.shareSectionView.showGroupBoards();
+				}
+
+				Group group = data.relationship.groupsMap.get(response.gid);
+				if (group != null)
+					targetPhones = gson.toJson(group.members);
+
+				HttpUtils httpUtils = new HttpUtils();
+				RequestParams params = new RequestParams();
+				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+				params.addBodyParameter("description", board.description);
+				params.addBodyParameter("name", board.name);
+				params.addBodyParameter("sid", board.sid);
+				params.addBodyParameter("cover", board.cover);
+				params.addBodyParameter("targetPhones", targetPhones);
+				ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+				httpUtils.send(HttpMethod.POST, API.SHARE_MODIFYBOARD, params, responseHandlers.share_modifyBoard);
+				log.d(ViewManage.getErrorLineNumber() + "创建版块成功===================");
+			} else {
+				log.d(ViewManage.getErrorLineNumber() + "创建版块失败===================" + response.失败原因);
+			}
+		};
+	};
+	public RequestCallBack<String> share_modifyBoard = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Board board;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改版块成功")) {
+				log.d(ViewManage.getErrorLineNumber() + "修改版块成功===================");
+			} else {
+				log.d(ViewManage.getErrorLineNumber() + "修改版块失败===================" + response.失败原因);
+			}
+
 		};
 	};
 }

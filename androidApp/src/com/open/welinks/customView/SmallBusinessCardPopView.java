@@ -337,7 +337,7 @@ public class SmallBusinessCardPopView {
 				}
 			} else if (type.equals(TYPE_GROUP)) {
 				if (this.flag) {
-					this.optionTwoView2.setVisibility(View.GONE);
+					this.optionTwoView2.setVisibility(View.VISIBLE);
 				} else {
 					this.optionTwoView2.setVisibility(View.GONE);
 				}
@@ -366,7 +366,7 @@ public class SmallBusinessCardPopView {
 			if (lastLoginTimeView.getText().toString().equals("")) {
 				vLineView.setVisibility(View.GONE);
 			}
-			optionTwoView2.setVisibility(View.GONE);
+			// optionTwoView2.setVisibility(View.GONE);
 		}
 
 		public TextView hotView;

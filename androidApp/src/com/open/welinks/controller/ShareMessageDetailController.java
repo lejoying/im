@@ -37,6 +37,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
+import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
@@ -779,7 +780,9 @@ public class ShareMessageDetailController {
 				} else {
 					thisView.fileHandlers.handler.post(new Runnable() {
 						public void run() {
-							Toast.makeText(thisActivity, response.失败原因, Toast.LENGTH_SHORT).show();
+
+							// Toast.makeText(thisActivity, response.失败原因 + gsid, Toast.LENGTH_SHORT).show();
+
 						}
 					});
 					Log.e(tag, ViewManage.getErrorLineNumber() + response.失败原因);

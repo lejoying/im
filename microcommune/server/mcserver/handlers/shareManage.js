@@ -1087,8 +1087,9 @@ shareManage.addboard = function (data, response) {
                     osid: osid
                 }), response);
             } else if (results.length > 0) {
-                var sharesData = results.pop().shares.data;
-                var groupNode = results.pop().group;
+                var pop = results.pop();
+                var sharesData = pop.shares.data;
+                var groupNode = pop.group;
                 var groupData = groupNode.data;
                 if (groupData.boardSequenceString) {
                     try {

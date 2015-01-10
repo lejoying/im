@@ -1,6 +1,7 @@
 package com.open.welinks.view;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -143,7 +144,7 @@ public class ShareSubView {
 	public View releaseChannelContainer;
 	public View releaseChannelView;
 
-	public TextView roomTextView;
+	public TextView roomTextView, room;
 
 	public void initViews() {
 		this.shareView = mainView.shareView;
@@ -170,6 +171,7 @@ public class ShareSubView {
 		releaseShareView.setTag(R.id.tag_class, "share_release");
 
 		roomTextView = (TextView) this.groupMembersView.findViewById(R.id.roomTime);
+		room = (TextView) this.groupMembersView.findViewById(R.id.room);
 
 		groupCoverView = (TouchImageView) this.groupMembersView.findViewById(R.id.groupCover);
 		groupCoverView.setTag(R.id.tag_class, "group_head");
@@ -421,11 +423,20 @@ public class ShareSubView {
 		} else {
 			return;
 		}
+
+		String boardName = "";
+		boardName = board.name;
+		if ("主版".equals(boardName))
+			boardName = "默认版块";
+		room.setText(boardName);
+
 		showRoomTime();
 		List<String> sharesOrder = board.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = data.boards.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
 		// int timeBarCount = 0;
+		if (sharesOrder == null)
+			sharesOrder = new ArrayList<String>();
 		for (int i = 0; i < sharesOrder.size(); i++) {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
@@ -970,9 +981,6 @@ public class ShareSubView {
 		this.groupListBody.height = 0;
 		groupListBody.listItemsSequence.clear();
 		for (int i = 0; i < groups.size(); i++) {
-			// boolean a = groups.get(i) == "1765";
-			// log.e(a + "--------" + groups.get(i) + "---" +
-			// groupsMap.get("1765"));
 			Group group = groupsMap.get(groups.get(i));
 			if (group == null) {
 				continue;

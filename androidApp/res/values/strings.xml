@@ -16,10 +16,13 @@
     <string name="groupName_text">群组名称</string>
     <string name="groupPosition_text">群组位置</string>
     <string name="ok_text">完成</string>
-    <string name="createGroupOk_text">恭喜您, 您的房间已经创建成功, 赶快邀请更多的小伙伴来加入您的房间吧   !</string>
+    <string name="createGroupOk_text">恭喜您, 您的群组已经创建成功, 赶快邀请更多的小伙伴来加入您的群组吧   !</string>
     <string name="invitaMailFriend_text">邀请通讯录好友</string>
     <string name="invitaLocalFriend_text">邀请本地好友</string>
     <string name="searchNearFriend_text">搜索附近好友</string>
+    <string name="boardName_text">板块名称</string>
+    <string name="boardHead_text">板块头像</string>
+    <string name="boardDescribe_text">板块描述</string>
 
     <!-- alert message -->
     <string name="alert_text_phonenotnull">手机号不能为空</string>
@@ -52,18 +55,18 @@
     <string name="business_add_to_blacklist">添加到黑名单</string>
     <string name="business_add_as_friend">加为好友</string>
     <string name="business_chat_room">聊天室</string>
-    <string name="business_input_room_info">请输入房间描述信息</string>
-    <string name="business_room_not_business">此房间暂无业务</string>
+    <string name="business_input_room_info">请输入群组描述信息</string>
+    <string name="business_room_not_business">此群组暂无业务</string>
     <string name="business_personal_not_business">此用户暂无签名</string>
-    <string name="business_modify_room_card">修改房间名片</string>
-    <string name="business_add_to_room">加入房间</string>
+    <string name="business_modify_room_card">修改群组名片</string>
+    <string name="business_add_to_room">加入群组</string>
     <string name="business_go_community">进入社区</string>
     <string name="business_my_info">我的详情</string>
     <string name="business_personal_statement">个人宣言：</string>
     <string name="business_hobbies">爱好：</string>
     <string name="business_regist_time">注册时间：</string>
     <string name="business_personal_info">个人详情</string>
-    <string name="business_room_info">房间详情</string>
+    <string name="business_room_info">群组详情</string>
     <string name="business_room_name">名称：</string>
     <string name="business_room_description">描述：</string>
     <string name="business_label">标签：</string>
@@ -94,9 +97,9 @@
     <string name="seconds">秒</string>
     <string name="slideFingers">手指上滑，可取消发送</string>
     <string name="loosenFingers">松开手指，取消发送</string>
-    <string name="groupDetails">房间详情</string>
-    <string name="groupAlbum">房间相册</string>
-    <string name="groupMembers">房间成员</string>
+    <string name="groupDetails">群组详情</string>
+    <string name="groupAlbum">群组相册</string>
+    <string name="groupMembers">群组成员</string>
     <string name="closeNotice">关闭提示</string>
     <string name="openNotice">打开提示</string>
     <string name="share">分享</string>
@@ -107,7 +110,7 @@
     <string name="setting">设置</string>
     <string name="locationing">正在定位，请稍后</string>
     <string name="personCard">个人名片</string>
-    <string name="groupCard">房间名片</string>
+    <string name="groupCard">群组名片</string>
     <string name="cilkeLoadMore">点击加载更多</string>
     <string name="expressionManage">表情管理</string>
     <string name="shareTitle">我发送了一个分享，点击看看吧</string>
@@ -115,7 +118,7 @@
 
     <!-- Chat SpecialGifMessageString -->
     <string name="specialGifMessageString">捏捏脸~</string>
-    <string name="specialGifMessageString1">嘤嘤婴~</string>
+    <string name="specialGifMessageString1">嘤嘤嘤~</string>
     <string name="specialGifMessageString2">小婊砸！</string>
     <string name="specialGifMessageString3">求带走~</string>
     <string name="specialGifMessageString4">带你吃麻辣烫~</string>

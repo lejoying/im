@@ -80,7 +80,7 @@ public class Data {
 
 		public String debugMode = "NONE";// NONE
 
-		public String sendBug = "TRUE";// "NONE"
+		public String sendBug = "NONE";// "NONE"
 
 		public LocalData localData;
 
@@ -265,14 +265,14 @@ public class Data {
 		public Map<String, ShareMessage> shareMessagesMap = new HashMap<String, ShareMessage>();
 
 		public class Board {
-			public String sid;
-			public String name;
-			public String cover;
-			public String head;
-			public String description;
-			public String gid;
+			public String sid = "";
+			public String name = "";
+			public String cover = "";
+			public String head = "";
+			public String description = "";
+			public String gid = "";
 
-			public long updateTime;
+			public long updateTime = 0;
 			public List<String> shareMessagesOrder = new ArrayList<String>();
 		}
 

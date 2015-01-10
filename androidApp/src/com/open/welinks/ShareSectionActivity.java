@@ -2,6 +2,7 @@ package com.open.welinks;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
@@ -51,7 +52,6 @@ public class ShareSectionActivity extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
 		super.onTouchEvent(event);
 		return thisController.onTouchEvent(event);
 	}
@@ -60,5 +60,11 @@ public class ShareSectionActivity extends Activity {
 	public void finish() {
 		super.finish();
 		thisController.finish();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
+		thisController.onActivityResult(requestCode, resultCode, intent);
 	}
 }

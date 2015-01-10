@@ -111,6 +111,18 @@ public class API {
 	 * http://www.we-links.com/api2/share/getgroupboards
 	 */
 	public static String SHARE_GETGROUPBOARDS = API_DOMAIN + "api2/share/getgroupboards";
+	/**
+	 * http://www.we-links.com/api2/share/addboard
+	 */
+	public static String SHARE_ADDBOARD = API_DOMAIN + "api2/share/addboard";
+	/**
+	 * http://www.we-links.com/api2/share/modifyboard
+	 */
+	public static String SHARE_MODIFYBOARD = API_DOMAIN + "api2/share/modifyboard";
+	/**
+	 * http://www.we-links.com/api2/share/modifysquence
+	 */
+	public static String SHARE_MODIFYSQUENCE = API_DOMAIN + "api2/share/modifysquence";
 	// message
 	/**
 	 * http://www.we-links.com/api2/message/send

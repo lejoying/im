@@ -20,10 +20,14 @@ public class TaskManageHolder {
 		return taskManageHolder;
 	}
 
+	public TaskManageHolder() {
+	}
+
 	public boolean isInitialized = false;
 
 	public void initialize() {
 		if (this.isInitialized == false) {
+			this.isInitialized = true;
 			this.taskManager = TaskManager.getInstance();
 			this.taskManager.initialize();
 			this.taskManager.startLoop();
@@ -31,7 +35,6 @@ public class TaskManageHolder {
 			this.fileHandler.initialize();
 			this.fileHandler.startLoop();
 			this.multipartUploader = MultipartUploader.getInstance();
-			this.isInitialized = true;
 		}
 	}
 }

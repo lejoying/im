@@ -408,9 +408,9 @@ public class ShareSubController {
 							}
 							shareTopMenuGroupName.setText(name);
 							thisView.modifyCurrentShowGroup();
-							if (group.boards == null || group.boards.size() == 0) {
-								DataHandlers.getGroupBoards(group.gid + "");
-							}
+
+							DataHandlers.getGroupBoards(group.gid + "");
+
 							// display local data
 							nowpage = 0;
 							thisView.showShareMessages();
