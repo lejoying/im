@@ -235,7 +235,7 @@ accountManage.verifyphone = function (data, response) {
                     if (JSON.parse(data).information == "notify success") {
                         next();
                     } else {
-                        responseFailMessage(response, promptMessage + "失败", "服务器异常");
+                        responseFailMessage(response, promptMessage + "失败", "发送失败");//服务器异常
                     }
                 });
             } else {
