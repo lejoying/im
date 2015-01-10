@@ -399,7 +399,7 @@ public class GroupInfoController {
 		params.addBodyParameter("phone", user.phone);
 		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
-		params.addBodyParameter("location", gson.toJson(location));
+//		params.addBodyParameter("location", gson.toJson(location));
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFY, params, responseHandlers.group_modify);
 	}
