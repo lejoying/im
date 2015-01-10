@@ -7,10 +7,12 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +55,6 @@ import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MyGson;
-import com.open.welinks.view.ShareSubView.GroupDialogItem;
 
 public class ShareSectionView {
 
@@ -92,7 +93,7 @@ public class ShareSectionView {
 	public TextView roomTextView;
 	public TextView roomName;
 	public TouchImageView groupCoverView;
-	public ImageView groupHeadView;
+	public ImageView groupHeadView, backImageView;
 
 	public View backView;
 	public TextView backTitleView;
@@ -113,7 +114,7 @@ public class ShareSectionView {
 
 	public RelativeLayout maxView;
 
-	public View selectMenuView;
+	public View selectMenuView, backMaxView;
 
 	public TextView sectionNameTextView;
 
@@ -129,11 +130,12 @@ public class ShareSectionView {
 		this.backView = thisActivity.findViewById(R.id.backView);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		this.backTitleView.setText("返回");
-
+		this.backTitleView.setText(currentGroup.name);
 		this.selectMenuView = thisActivity.findViewById(R.id.selectMenu);
 
 		shareMessageView = (ViewGroup) thisActivity.findViewById(R.id.groupShareMessageContent);
+		backMaxView = thisActivity.findViewById(R.id.backMaxView);
+		backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
 
 		this.groupMembersView = mInflater.inflate(R.layout.share_group_members_show, null);
 		groupMembersListContentView = (ViewGroup) this.groupMembersView.findViewById(R.id.groupMembersListContent);
@@ -156,12 +158,17 @@ public class ShareSectionView {
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 
+		backMaxView.setBackgroundColor(Color.WHITE);
+		backTitleView.setTextColor(Color.parseColor("#0099cd"));
+		backImageView.setColorFilter(Color.parseColor("#0099cd"));
+
 		LinearLayout linearLayout = new LinearLayout(context);
-		linearLayout.setPadding((int) (10 * displayMetrics.density), 0, (int) (10 * displayMetrics.density), 0);
+		linearLayout.setPadding((int) (10 * displayMetrics.density), 0, (int) (20 * displayMetrics.density), 0);
 		LinearLayout.LayoutParams lineParams = new LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, (int) (48 * displayMetrics.density));
 		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 		RelativeLayout.LayoutParams rightParams = (android.widget.RelativeLayout.LayoutParams) rightContainer.getLayoutParams();
 		rightParams.rightMargin = 0;
+		// rightContainer.setPadding(0, 0, (int) BaseDataUtils.dpToPx(20), 0);
 		moreView = new ImageView(thisActivity);
 		moreView.setTranslationY((int) (30 * displayMetrics.density));
 		moreView.setImageResource(R.drawable.subscript_triangle);
@@ -170,7 +177,8 @@ public class ShareSectionView {
 
 		sectionNameTextView = new TextView(thisActivity);
 		sectionNameTextView.setSingleLine();
-		sectionNameTextView.setTextColor(Color.WHITE);
+		sectionNameTextView.setTextColor(Color.parseColor("#0099cd"));
+		sectionNameTextView.setTextSize(18);
 
 		RelativeLayout.LayoutParams textViewParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, (int) (48 * displayMetrics.density));
 		linearLayout.addView(sectionNameTextView, textViewParams);
@@ -249,7 +257,6 @@ public class ShareSectionView {
 			return;
 		}
 		fileHandlers.getHeadImage(currentBoard.head, this.groupHeadView, viewManage.options56);
-		log.e(currentBoard.head + ":::::::::::::::::::::::head");
 		String boardName;
 		if (currentBoard != null) {
 			boardName = currentBoard.name;
@@ -813,6 +820,7 @@ public class ShareSectionView {
 		groupName.setText("新增版块");
 		createGroup.setText("删除版块");
 		findMoreGroupButtonView.setVisibility(View.GONE);
+		createGroupButtonView.setVisibility(View.GONE);
 
 		TouchView mainContentView = (TouchView) groupDialogView;
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);

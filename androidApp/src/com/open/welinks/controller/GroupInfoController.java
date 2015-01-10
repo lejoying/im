@@ -387,11 +387,19 @@ public class GroupInfoController {
 	}
 
 	public void modifyGroupData(RequestParams params) {
+		class Location {
+			String longitude, latitude;
+		}
+		Location location = new Location();
+		location.longitude = currentGroup.longitude;
+		location.latitude = currentGroup.latitude;
+		log.e(location.longitude + "::::::::::::::::::::::::::::::::::::::::");
 		HttpUtils httpUtils = new HttpUtils();
 		User user = data.userInformation.currentUser;
 		params.addBodyParameter("phone", user.phone);
 		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
+		params.addBodyParameter("location", gson.toJson(location));
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFY, params, responseHandlers.group_modify);
 	}

@@ -63,6 +63,11 @@ public class ShareSectionActivity extends Activity {
 	}
 
 	@Override
+	public void onBackPressed() {
+		thisController.onBackPressed();
+	}
+	
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		thisController.onActivityResult(requestCode, resultCode, intent);

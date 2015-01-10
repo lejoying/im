@@ -30,6 +30,7 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -189,7 +190,7 @@ public class ShareSectionController {
 				} else if (view.equals(thisView.groupHeadView) || view.equals(thisView.groupCoverView)) {
 					if (data.localStatus.localData != null && data.localStatus.localData.currentSelectedGroup != null && !data.localStatus.localData.currentSelectedGroup.equals("")) {
 						parser.check();
-						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, data.localStatus.localData.currentSelectedGroup);
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_BOARD, thisView.currentBoard.sid);
 						thisView.businessCardPopView.cardView.setHot(false);
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
@@ -464,7 +465,8 @@ public class ShareSectionController {
 		thisView.dismissGroupBoardsDialog();
 		thisView.viewManage.shareSectionView = null;
 		thisView.currentGroup.currentBoard = thisView.currentGroup.boards.get(0);
-		thisView.viewManage.postNotifyView("ShareSubViewMessage");
+		thisView.viewManage.shareSubView.thisController.nowpage = 0;
+		thisView.viewManage.shareSubView.getCurrentGroupShareMessages();
 	}
 
 	public void getCurrentGroupShareMessages() {
@@ -503,5 +505,14 @@ public class ShareSectionController {
 			getCurrentGroupShareMessages();
 			thisView.showShareMessages();
 		}
+	}
+
+	public void onBackPressed() {
+		if (thisView.isShowGroupDialog) {
+			thisView.dismissGroupBoardsDialog();
+		} else {
+			thisActivity.finish();
+		}
+
 	}
 }

@@ -2041,7 +2041,8 @@ public class ResponseHandlers {
 				params.addBodyParameter("name", board.name);
 				params.addBodyParameter("sid", board.sid);
 				params.addBodyParameter("cover", board.cover);
-				params.addBodyParameter("targetPhones", targetPhones);
+				params.addBodyParameter("head", board.head);
+				params.addBodyParameter("targetphones", targetPhones);
 				ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 				httpUtils.send(HttpMethod.POST, API.SHARE_MODIFYBOARD, params, responseHandlers.share_modifyBoard);
 				log.d(ViewManage.getErrorLineNumber() + "创建版块成功===================");
