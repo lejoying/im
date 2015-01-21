@@ -84,9 +84,13 @@ public class API {
 	 */
 	public static String SHARE_SENDSHARE = API_DOMAIN + "api2/share/sendboardshare";
 	/**
+	 * http://www.we-links.com/api2/share/getboardshares
+	 */
+	public static String SHARE_GETSHARES = API_DOMAIN + "api2/share/getboardshares";
+	/**
 	 * http://www.we-links.com/api2/share/getboardshare
 	 */
-	public static String SHARE_GETSHARES = API_DOMAIN + "api2/share/getboardshare";
+	public static String SHARE_GETBOARDSHARE = API_DOMAIN + "api2/share/getboardshare";
 	/**
 	 * http://www.we-links.com/api2/share/getusershares
 	 */
@@ -119,6 +123,10 @@ public class API {
 	 * http://www.we-links.com/api2/share/modifyboard
 	 */
 	public static String SHARE_MODIFYBOARD = API_DOMAIN + "api2/share/modifyboard";
+	/**
+	 * http://www.we-links.com/api2/share/deleteboard
+	 */
+	public static String SHARE_DELETEBOARD = API_DOMAIN + "api2/share/deleteboard";
 	/**
 	 * http://www.we-links.com/api2/share/modifysquence
 	 */

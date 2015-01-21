@@ -53,6 +53,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MyGson;
 
@@ -83,6 +84,8 @@ public class ShareMessageDetailView {
 	public RelativeLayout backView;
 	public RelativeLayout rightContainer;
 	public TextView backTitleView;
+	public View backMaxView;
+	public ImageView backImageView;
 
 	public LinearLayout shareMessageDetailContentView;
 	public ScrollView mainScrollView;
@@ -104,6 +107,7 @@ public class ShareMessageDetailView {
 
 	public ImageView commentIconView;
 	public ImageView praiseIconView;
+	public ImageView iv_intoPraise;
 
 	public TextView praiseusersNumView;
 
@@ -143,6 +147,7 @@ public class ShareMessageDetailView {
 
 	public ImageView menuImage;
 
+	@SuppressWarnings("deprecation")
 	public void initView() {
 		initData();
 
@@ -163,17 +168,18 @@ public class ShareMessageDetailView {
 
 		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitleView.setText("分享详情");
+		backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		RelativeLayout.LayoutParams layoutParams1 = (android.widget.RelativeLayout.LayoutParams) rightContainer.getLayoutParams();
-		layoutParams1.rightMargin = (int) (displayMetrics.density * 25 + 0.5f);
+		layoutParams1.rightMargin = (int) (displayMetrics.density * 35 + 0.5f);
 		shareMessageTimeView = new TextView(context);
 		shareMessageTimeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
-		shareMessageTimeView.setTextColor(Color.WHITE);
+		shareMessageTimeView.setTextColor(Color.parseColor("#0099cd"));
 		shareMessageTimeView.setPadding(10, 10, 10 + (int) (10 * displayMetrics.density), 10);// 30
 		shareMessageTimeView.setSingleLine();
 		// shareMessageTimeView.setBackgroundResource(R.drawable.backview_background);
-		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		// layoutParams.rightMargin = (int) (20 * displayMetrics.density);
 		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		// layoutParams.leftMargin = (int) (5 * displayMetrics.density);
@@ -183,13 +189,15 @@ public class ShareMessageDetailView {
 		// shareMessageUserHeadView = (ImageView)
 		// thisActivity.findViewById(R.id.shareMessageUserHead);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
 
 		menuImage = new ImageView(thisActivity);
 		menuImage.setImageResource(R.drawable.chat_more);
+		menuImage.setColorFilter(Color.parseColor("#0099cd"));
 		RelativeLayout view = (RelativeLayout) backView.getParent();
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) BaseDataUtils.dpToPx(25.5f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		params.rightMargin = (int) (5 * displayMetrics.density + 0.5f);
+		params.rightMargin = (int) (15 * displayMetrics.density + 0.5f);
 		int padding = (int) (5 * displayMetrics.density + 0.5f);
 		menuImage.setPadding(2 * padding, padding, 2 * padding, padding);
 		menuImage.setBackgroundResource(R.drawable.backview_background);
@@ -212,7 +220,10 @@ public class ShareMessageDetailView {
 
 		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
 		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
-
+		iv_intoPraise = (ImageView) thisActivity.findViewById(R.id.iv_intoPraise);
+		commentIconView.setColorFilter(Color.parseColor("#0099cd"));
+		praiseIconView.setColorFilter(Color.parseColor("#0099cd"));
+		iv_intoPraise.setColorFilter(Color.parseColor("#0099cd"));
 		// menu option
 		menuOptionsView = (RelativeLayout) thisActivity.findViewById(R.id.menuOptions);
 		shareOptionView = (RelativeLayout) thisActivity.findViewById(R.id.shareOption);
@@ -232,6 +243,11 @@ public class ShareMessageDetailView {
 		thisController.initShareListener();
 		// android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
 		// detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
+		backMaxView = thisActivity.findViewById(R.id.backMaxView);
+
+		backMaxView.setBackgroundColor(Color.WHITE);
+		backTitleView.setTextColor(Color.parseColor("#0099cd"));
+		backImageView.setColorFilter(Color.parseColor("#0099cd"));
 
 		if (thisController.shareMessage != null) {
 			showShareMessageDetails();
@@ -319,9 +335,9 @@ public class ShareMessageDetailView {
 		}
 		if (!"".equals(thisController.textContent)) {
 			TextView textView = new TextView(thisActivity);
-			textView.setTextColor(Color.WHITE);
+			textView.setTextColor(Color.parseColor("#99000000"));
 			textView.setBackgroundColor(Color.parseColor("#26ffffff"));
-			textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+			textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 			int padding = (int) (10 * screenDensity + 0.5f);
 			textView.setPadding(padding, padding, padding, padding);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);

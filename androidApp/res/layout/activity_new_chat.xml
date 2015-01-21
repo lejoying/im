@@ -3,28 +3,37 @@
     android:id="@+id/chatMainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.open.welinks.NewChatActivity" >
 
     <com.amap.api.maps2d.MapView
         android:id="@+id/locationMapView"
         android:layout_width="300dp"
-        android:layout_height="200dp" >
+        android:layout_height="200dp"
+        android:layout_centerInParent="true" >
     </com.amap.api.maps2d.MapView>
+
+    <ImageView
+        android:id="@+id/lineOne"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="48dp"
+        android:background="@color/gray70" />
 
     <ListView
         android:id="@+id/chatContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/chatBottomLayout"
-        android:layout_marginBottom="1dp"
-        android:layout_marginTop="55dp"
+        android:layout_above="@+id/lineTwo"
+        android:layout_below="@+id/lineOne"
         android:background="@color/gray95"
         android:cacheColorHint="@color/Transparent"
         android:divider="@color/Transparent"
         android:dividerHeight="1dp"
         android:fadingEdge="none"
         android:listSelector="@color/Transparent"
-        android:padding="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:scrollbars="none" >
     </ListView>
 
@@ -32,7 +41,7 @@
         android:id="@+id/chatMenuLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="49dp"
         android:background="@color/white"
         android:padding="10dp"
         android:visibility="gone" >
@@ -57,12 +66,14 @@
         android:background="@color/black10"
         android:visibility="gone" />
 
-    <include layout="@layout/title" />
+    <include layout="@layout/view_back_view" />
 
     <ImageView
+        android:id="@+id/lineTwo"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/black10" />
+        android:layout_height="1dp"
+        android:layout_above="@+id/chatBottomLayout"
+        android:background="@color/gray70" />
 
     <RelativeLayout
         android:id="@+id/chatBottomLayout"

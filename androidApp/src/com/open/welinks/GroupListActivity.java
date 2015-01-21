@@ -144,13 +144,13 @@ public class GroupListActivity extends Activity {
 		this.threeChoicesView.setTwoChoice();
 
 		if (status == Status.list_group) {
-			this.backTitileView.setText("房间列表");
+			this.backTitileView.setText("群组列表");
 			int dp_5 = (int) (5 * displayMetrics.density);
 			this.createGroupButton.setGravity(Gravity.CENTER);
 			this.createGroupButton.setTextColor(Color.WHITE);
 			this.createGroupButton.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
 			this.createGroupButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-			this.createGroupButton.setText("创建房间");
+			this.createGroupButton.setText("创建群组");
 			this.createGroupButton.setBackgroundResource(R.drawable.textview_bg);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
@@ -170,7 +170,7 @@ public class GroupListActivity extends Activity {
 				this.threeChoicesView.setButtonThreeText("群组");
 			} else if (status == Status.square) {
 				this.threeChoicesView.setButtonOneText("社区");
-				this.threeChoicesView.setButtonThreeText("房间");
+				this.threeChoicesView.setButtonThreeText("群组");
 			}
 			this.rightContainer.addView(this.threeChoicesView, layoutParams);
 		}

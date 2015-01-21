@@ -292,7 +292,7 @@ public class ShareMessageDetailController {
 				}
 				if ("".equals(thisView.commentEditTextView.getText().toString())) {
 					thisView.sendCommentView.setBackgroundResource(R.drawable.comment_notselected);
-					thisView.sendCommentView.setTextColor(Color.WHITE);
+					thisView.sendCommentView.setTextColor(Color.parseColor("#0099cd"));
 				} else {
 					thisView.sendCommentView.setBackgroundResource(R.drawable.comment_selected);
 					thisView.sendCommentView.setTextColor(Color.BLACK);
@@ -504,6 +504,7 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("gsid", shareMessage.gsid);
 		params.addBodyParameter("option", option + "");
 
@@ -516,6 +517,7 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("gsid", shareMessage.gsid);
 		params.addBodyParameter("nickName", currentUser.nickName);
 		params.addBodyParameter("head", currentUser.head);
@@ -778,16 +780,63 @@ public class ShareMessageDetailController {
 						}
 					});
 				} else {
-					thisView.fileHandlers.handler.post(new Runnable() {
-						public void run() {
-
-							// Toast.makeText(thisActivity, response.失败原因 + gsid, Toast.LENGTH_SHORT).show();
-
-						}
-					});
-					Log.e(tag, ViewManage.getErrorLineNumber() + response.失败原因);
+					getShareMessageDetail2();
 				}
 			};
+		});
+	}
+
+	public void getShareMessageDetail2() {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("sid", sid);
+		params.addBodyParameter("gsid", gsid);
+
+		HttpClient httpClient = HttpClient.getInstance();
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETBOARDSHARE, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+				public ShareMessage share;
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				final Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取群分享成功")) {
+					boolean flag = false;
+					try {
+						flag = data.boards.shareMessagesMap.containsKey(response.share.gsid);
+						data.boards.shareMessagesMap.put(response.share.gsid, response.share);
+						data.boards.isModified = true;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (thisController.shareMessage == null)
+						flag = false;
+					thisController.shareMessage = response.share;
+					final boolean flag0 = flag;
+					thisView.fileHandlers.handler.post(new Runnable() {
+						public void run() {
+							if (flag0) {
+								thisView.showPraiseUsersContent();
+								thisView.notifyShareMessageComments();
+							} else {
+								thisView.showShareMessageDetails();
+							}
+						}
+					});
+				} else {
+					thisView.fileHandlers.handler.post(new Runnable() {
+						public void run() {
+							Toast.makeText(thisActivity, response.失败原因 + gsid, Toast.LENGTH_SHORT).show();
+							Log.e(tag, ViewManage.getErrorLineNumber() + response.失败原因);
+						}
+					});
+				}
+			}
 		});
 	}
 

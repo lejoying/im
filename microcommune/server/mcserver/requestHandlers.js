@@ -20,7 +20,7 @@ requestHandlers.bugManage = function (request, response, pathObject, data) {
     if (operation == "send") {
         bugManage.send(data, response);
     }
-	else if (operation == "sendqxs") {
+    else if (operation == "sendqxs") {
         bugManage.sendqxs(data, response);
     }
 }
@@ -357,6 +357,10 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.sendboardshare(data, response);
         });
+    } else if (operation == "getboardshares") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.getboardshares(data, response);
+        });
     } else if (operation == "getboardshare") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.getboardshare(data, response);
@@ -384,6 +388,10 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
     } else if (operation == "getgroupboards") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.getgroupboards(data, response);
+        });
+    } else if (operation == "deleteboard") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.deleteboard(data, response);
         });
     }
 }

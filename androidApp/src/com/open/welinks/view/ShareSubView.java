@@ -201,7 +201,7 @@ public class ShareSubView {
 		initializationGroupsDialog();
 
 		businessCardPopView = new SmallBusinessCardPopView(mainView.thisActivity, mainView.main_container);
-
+		businessCardPopView.cardView.setHot(false);
 		showReleaseChannel();
 	}
 
@@ -1013,6 +1013,7 @@ public class ShareSubView {
 			// listener
 			view.setTag(R.id.tag_class, "group_view");
 			view.setTag(R.id.tag_first, group);
+
 			view.setOnClickListener(thisController.mOnClickListener);
 			view.setOnTouchListener(thisController.mOnTouchListener);
 

@@ -181,6 +181,9 @@ public class Data {
 		public List<String> groups = new ArrayList<String>();
 		public Map<String, Group> groupsMap = new HashMap<String, Group>();
 
+		public List<String> groupCircles = new ArrayList<String>();
+		public Map<String, GroupCircle> groupCirclesMap = new HashMap<String, GroupCircle>();
+
 		public List<String> squares = new ArrayList<String>();
 
 		public class Friend {
@@ -231,6 +234,12 @@ public class Data {
 
 			public List<String> boards;
 			public List<String> members = new ArrayList<String>();
+		}
+
+		public class GroupCircle {
+			public int rid;
+			public String name = "";
+			public List<String> groups = new ArrayList<String>();
 		}
 	}
 

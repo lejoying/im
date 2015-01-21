@@ -126,9 +126,68 @@ public class ResponseEventHandlers {
 					handleGroupRemoveMeEvent(message, eventMessage);
 				} else if ("group_sequence".equals(contentType)) {
 					handleGroupSequenceEvent(message, eventMessage);
+				} else if ("group_newboard".equals(contentType)) {
+					handleGroupNewBoard(message, eventMessage);
+				} else if ("group_updateboard".equals(contentType)) {
+					handleGroupUpdateBoard(message, eventMessage);
+				} else if ("group_updateboardsequence".equals(contentType)) {
+					handleGroupUpdateBoardSequence(message, eventMessage);
+				} else if ("group_deleteboard".equals(contentType)) {
+					handleGroupDeleteBoard(message, eventMessage);
 				}
 				data.event.isModified = true;
 			}
+		}
+	}
+
+	private void handleGroupDeleteBoard(Message message, EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.groupEvents.contains(key)) {
+			data.event.groupEvents.add(key);
+			data.event.groupEventsMap.put(key, eventMessage);
+			data.event.groupNotReadMessage = true;
+			String eventKey = "event_group";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getGroupBoards(eventMessage.gid);
+		}
+
+	}
+
+	private void handleGroupUpdateBoardSequence(Message message, EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.groupEvents.contains(key)) {
+			data.event.groupEvents.add(key);
+			data.event.groupEventsMap.put(key, eventMessage);
+			data.event.groupNotReadMessage = true;
+			String eventKey = "event_group";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getGroupBoards(eventMessage.gid);
+		}
+
+	}
+
+	private void handleGroupUpdateBoard(Message message, EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.groupEvents.contains(key)) {
+			data.event.groupEvents.add(key);
+			data.event.groupEventsMap.put(key, eventMessage);
+			data.event.groupNotReadMessage = true;
+			String eventKey = "event_group";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getGroupBoards(eventMessage.gid);
+		}
+
+	}
+
+	private void handleGroupNewBoard(Message message, EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.groupEvents.contains(key)) {
+			data.event.groupEvents.add(key);
+			data.event.groupEventsMap.put(key, eventMessage);
+			data.event.groupNotReadMessage = true;
+			String eventKey = "event_group";
+			checkEventIsMessageOrder(eventKey);
+			DataHandlers.getGroupBoards(eventMessage.gid);
 		}
 	}
 

@@ -31,6 +31,7 @@ import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
 import com.open.welinks.view.ViewManage;
@@ -1088,9 +1089,16 @@ public class ResponseHandlers {
 				data.boards.isModified = true;
 				if (group != null) {
 					group.boards = response.boards;
+					if (group.boards.size() > 0)
+						group.currentBoard = group.boards.get(0);
 					if (data.relationship.squares.contains(response.gid)) {
 						viewManage.squareSubView.thisController.getCurrentSquareShareMessages();
 					} else {
+						if (viewManage.shareSectionView != null) {
+							viewManage.shareSectionView.showGroupBoards();
+							viewManage.shareSectionView.showShareMessages();
+						}
+						viewManage.shareSubView.thisController.nowpage = 0;
 						viewManage.shareSubView.getCurrentGroupShareMessages();
 					}
 				}
@@ -1163,6 +1171,9 @@ public class ResponseHandlers {
 					} else {
 						data.relationship.friendsMap.putAll(response.relationship.friendsMap);
 					}
+
+					data.relationship.groupCircles = response.relationship.groupCircles;
+					data.relationship.groupCirclesMap = response.relationship.groupCirclesMap;
 
 					data.relationship.isModified = true;
 					// init current share
@@ -1642,7 +1653,7 @@ public class ResponseHandlers {
 
 				}
 			} else {
-				System.out.println(response.失败原因 + "====================");
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因 + "====================");
 			}
 		};
 
@@ -2051,6 +2062,24 @@ public class ResponseHandlers {
 			}
 		};
 	};
+
+	public RequestCallBack<String> share_deleteBoard = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Group group;
+		}
+
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("删除版块成功")) {
+				log.d(ViewManage.getErrorLineNumber() + "删除版块成功===================");
+			} else {
+				log.d(ViewManage.getErrorLineNumber() + "删除版块失败===================" + response.失败原因);
+			}
+		};
+	};
+
 	public RequestCallBack<String> share_modifyBoard = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;

@@ -49,6 +49,49 @@
                 app:minTextSize="8sp" />
         </LinearLayout>
 
+        <FrameLayout
+            android:id="@+id/imagesLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="5dp" >
+
+            <ImageView
+                android:id="@+id/images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/albums_bg"
+                android:paddingBottom="30dip"
+                android:paddingLeft="20dip"
+                android:paddingRight="20dip"
+                android:paddingTop="18dip"
+                android:scaleType="fitXY"
+                android:src="@drawable/friends_sends_pictures_no" />
+
+            <TextView
+                android:id="@+id/imagesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dip"
+                android:background="@drawable/albums_icon_bg"
+                android:gravity="center"
+                android:text="5" />
+        </FrameLayout>
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gif"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/chatLayout"
             android:layout_width="wrap_content"
@@ -101,7 +144,8 @@
                 android:id="@+id/share"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp" >
+                android:layout_margin="10dp"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/shareTitle"
@@ -205,49 +249,12 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <FrameLayout
-                android:id="@+id/imagesLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" >
-
-                <ImageView
-                    android:id="@+id/images"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/albums_bg"
-                    android:paddingBottom="30dip"
-                    android:paddingLeft="20dip"
-                    android:paddingRight="20dip"
-                    android:paddingTop="18dip"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/friends_sends_pictures_no" />
-
-                <TextView
-                    android:id="@+id/imagesCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginBottom="10dip"
-                    android:background="@drawable/albums_icon_bg"
-                    android:gravity="center"
-                    android:text="5" />
-            </FrameLayout>
-
             <ImageView
                 android:id="@+id/locationImage"
                 android:layout_width="150dp"
                 android:layout_height="100dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/chat_location_searching"
-                android:visibility="gone" />
-
-            <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/gif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:visibility="gone" />
         </LinearLayout>
 

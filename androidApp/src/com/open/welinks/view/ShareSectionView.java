@@ -11,6 +11,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -118,6 +119,7 @@ public class ShareSectionView {
 
 	public TextView sectionNameTextView;
 
+	@SuppressWarnings("deprecation")
 	public void initView() {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -128,6 +130,7 @@ public class ShareSectionView {
 		this.maxView = (RelativeLayout) thisActivity.findViewById(R.id.maxView);
 
 		this.backView = thisActivity.findViewById(R.id.backView);
+		this.backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		this.backTitleView.setText(currentGroup.name);
@@ -187,15 +190,15 @@ public class ShareSectionView {
 		rightContainer.addView(linearLayout, lineParams);
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, this.maxView);
-
+		businessCardPopView.cardView.setMenu(false);
+		businessCardPopView.cardView.setHot(false);
 		initReleaseShareDialogView();
 		initializationGroupBoardsDialog();
-		showShareMessages();
+		// showShareMessages();
 	}
 
 	public void showShareMessages() {
 		data = parser.check();
-
 		if (data.relationship.groups == null || data.localStatus.localData == null) {
 			log.e("return groups or localData");
 			return;
@@ -242,20 +245,18 @@ public class ShareSectionView {
 			return;
 		}
 
-		// set conver
-		// TODO conver setting
-		if (currentGroup.cover != null && !currentGroup.cover.equals("")) {
-			setConver();
-		} else {
-			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
-		}
 		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (currentBoard == null) {
+			currentBoard = data.boards.boardsMap.get(currentGroup.currentBoard);
+		}
+		if (!currentGroup.boards.contains(currentBoard.sid)) {
+			currentGroup.currentBoard = currentGroup.boards.get(0);
 			currentBoard = data.boards.boardsMap.get(currentGroup.currentBoard);
 		}
 		if (!flag || currentBoard == null) {
 			return;
 		}
+		setConver();
 		fileHandlers.getHeadImage(currentBoard.head, this.groupHeadView, viewManage.options56);
 		String boardName;
 		if (currentBoard != null) {
@@ -676,34 +677,29 @@ public class ShareSectionView {
 	}
 
 	public void setConver() {
-		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
-		if (group.cover == null || "".equals(group.cover)) {
-			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
-			return;
-		}
-		final String path = file.getAbsolutePath();
-		if (file.exists()) {
-			imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
-				@Override
-				public void onLoadingStarted(String imageUri, View view) {
-				}
+		if (currentBoard.cover != null && !currentBoard.cover.equals("")) {
+			File file = new File(fileHandlers.sdcardBackImageFolder, currentBoard.cover);
+			final String path = file.getAbsolutePath();
+			if (file.exists()) {
+				imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
 
-				@Override
-				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.cover, path);
-				}
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						downloadConver(currentBoard.cover, path);
+					}
 
-				@Override
-				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-				}
-			});
-		} else {
-			if (group.cover != null) {
-				downloadConver(group.cover, path);
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					}
+				});
 			} else {
-				imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+				downloadConver(currentBoard.cover, path);
 			}
+		} else {
+			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
 	}
 
@@ -836,7 +832,7 @@ public class ShareSectionView {
 
 		groupManageView.setOnClickListener(thisController.mOnClickListener);
 
-		showGroupBoards();
+		// showGroupBoards();
 	}
 
 	public void showGroupBoards() {
@@ -949,7 +945,7 @@ public class ShareSectionView {
 			if ("主版".equals(name))
 				name = "默认版块";
 			this.groupNameView.setText(name);
-			if (data.localStatus.localData.currentSelectedGroupBoard.equals(board.sid + "")) {
+			if (currentBoard.sid.equals(board.sid)) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
 			} else {
 				this.groupSelectedStatusView.setVisibility(View.GONE);

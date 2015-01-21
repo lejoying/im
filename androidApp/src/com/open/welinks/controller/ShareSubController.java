@@ -463,7 +463,8 @@ public class ShareSubController {
 							sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
 							sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 						}
-						modifyPraiseusersToMessage(option, data.localStatus.localData.currentSelectedGroup, shareMessage.gsid);
+
+						modifyPraiseusersToMessage(option, data.localStatus.localData.currentSelectedGroup, thisView.currentGroup.currentBoard, shareMessage.gsid);
 						view.setTag(R.id.time, null);
 					}
 				}
@@ -519,12 +520,13 @@ public class ShareSubController {
 		thisView.pop_out_background2.setOnClickListener(mOnClickListener);
 	}
 
-	public void modifyPraiseusersToMessage(boolean option, String gid, String gsid) {
+	public void modifyPraiseusersToMessage(boolean option, String gid, String sid, String gsid) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("gsid", gsid);
 		params.addBodyParameter("option", option + "");
 

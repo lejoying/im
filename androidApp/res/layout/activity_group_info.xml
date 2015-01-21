@@ -6,565 +6,581 @@
 
     <include layout="@layout/view_back_view" />
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="#EEEEE0"
-        android:overScrollMode="never"
-        android:scrollbars="none" >
+        android:orientation="vertical" >
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/memberListTop"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="房间成员"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/groupMemberCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="99人"
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
+            android:overScrollMode="never"
+            android:scrollbars="none" >
 
             <LinearLayout
-                android:id="@+id/memberList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp" >
+                android:orientation="vertical" >
 
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="13dp"
-                    android:src="@drawable/face_man" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/nickNameOption"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="名称"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/nickNameTx"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="微型社区"
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/headOption"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <ImageView
-                    android:id="@+id/headIv"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/face_man" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:text="修改头像"
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/businessOption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <LinearLayout
+                    android:id="@+id/borderOne"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" >
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#aac0c0c0" />
+
+                <RelativeLayout
+                    android:id="@+id/memberListTop"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="描述"
+                        android:text="群组成员"
                         android:textColor="#aa000000"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/businessTx"
+                        android:id="@+id/groupMemberCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_marginTop="5dp"
-                        android:text="微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000"
+                        android:layout_alignParentRight="true"
+                        android:text="99人"
                         android:textColor="#aa000000"
-                        android:textSize="13sp" />
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/borderEight"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
+
+                <LinearLayout
+                    android:id="@+id/memberList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="13dp"
+                        android:src="@drawable/face_man" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="13dp"
+                        android:src="@drawable/face_man" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="13dp"
+                        android:src="@drawable/face_man" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="13dp"
+                        android:src="@drawable/face_man" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="13dp"
+                        android:src="@drawable/face_man" />
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="标签"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="暂未开通"
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
+                    android:id="@+id/borderTwo"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
+                    android:id="@+id/borderNine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#aac0c0c0" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/converOption"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="封面"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text=""
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
-
-                <ImageView
-                    android:id="@+id/converImage"
-                    android:layout_width="80dp"
+                <RelativeLayout
+                    android:id="@+id/nickNameOption"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="25dp" />
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="名称"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/nickNameTx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="微型社区"
+                        android:textColor="#aa000000"
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
+                <RelativeLayout
+                    android:id="@+id/headOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
 
-            <RelativeLayout
-                android:id="@+id/addressOption"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
+                    <ImageView
+                        android:id="@+id/headIv"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/face_man" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="地理位置"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:text="修改头像"
+                        android:textColor="#aa000000"
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
 
-                <TextView
-                    android:id="@+id/addressTx"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text=""
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/cardOption"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="房间名片"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text=""
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="#aac0c0c0" />
-
-            <RelativeLayout
-                android:id="@+id/newMessageSettingOption"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/businessOption"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="新消息通知"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
 
-                <SeekBar
-                    android:id="@+id/newMessageSettingBar"
-                    android:layout_width="80dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:clickable="false"
-                    android:max="100"
-                    android:maxHeight="20dp"
-                    android:maxWidth="80dp"
-                    android:minHeight="20dp"
-                    android:progressDrawable="@drawable/slide_btn"
-                    android:thumb="@drawable/slide_btn_thumb"
-                    android:thumbOffset="0dp" />
-            </RelativeLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="描述"
+                            android:textColor="#aa000000"
+                            android:textSize="16sp" />
 
-            <RelativeLayout
-                android:id="@+id/permissionOption"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
+                        <TextView
+                            android:id="@+id/businessTx"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="25dp"
+                            android:layout_marginTop="5dp"
+                            android:text="微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000微型公社0000000"
+                            android:textColor="#aa000000"
+                            android:textSize="13sp" />
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="权限设置"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text=""
-                    android:textColor="#aa000000"
-                    android:textSize="14sp"
-                    android:translationX="-25dp" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/into"
-                    android:tint="#c0c0c0" />
-            </RelativeLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
 
-            <RelativeLayout
-                android:id="@+id/inCardOption"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/backview_background1"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp" >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="标签"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="显示在名片"
-                    android:textColor="#aa000000"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="暂未开通"
+                        android:textColor="#aa000000"
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
 
-                <SeekBar
-                    android:id="@+id/inCardBar"
-                    android:layout_width="80dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:clickable="false"
-                    android:max="100"
-                    android:maxHeight="20dp"
-                    android:maxWidth="80dp"
-                    android:minHeight="20dp"
-                    android:progressDrawable="@drawable/slide_btn"
-                    android:thumb="@drawable/slide_btn_thumb"
-                    android:thumbOffset="0dp" />
-            </RelativeLayout>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#aac0c0c0" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
 
-            <RelativeLayout
-                android:id="@+id/exit2DeleteGroup"
-                android:layout_width="340dp"
-                android:layout_height="44dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="50dp"
-                android:background="@drawable/button_75c2b8_background"
-                android:gravity="center" >
+                <RelativeLayout
+                    android:id="@+id/converOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="删除并退出房间"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-            </RelativeLayout>
-        </LinearLayout>
-    </ScrollView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="封面"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text=""
+                        android:textColor="#aa000000"
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
+
+                    <ImageView
+                        android:id="@+id/converImage"
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="25dp"
+                        android:paddingBottom="2dp"
+                        android:paddingTop="2dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
+
+                <RelativeLayout
+                    android:id="@+id/addressOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="地理位置"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/addressTx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text=""
+                        android:textColor="#aa000000"
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
+
+                <RelativeLayout
+                    android:id="@+id/cardOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="群组名片"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text=""
+                        android:textColor="#aa000000"
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/borderThree"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
+
+                <ImageView
+                    android:id="@+id/borderFour"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#aac0c0c0" />
+
+                <RelativeLayout
+                    android:id="@+id/newMessageSettingOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="新消息通知"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
+
+                    <SeekBar
+                        android:id="@+id/newMessageSettingBar"
+                        android:layout_width="80dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:clickable="false"
+                        android:max="100"
+                        android:maxHeight="20dp"
+                        android:maxWidth="80dp"
+                        android:minHeight="20dp"
+                        android:progressDrawable="@drawable/slide_btn"
+                        android:thumb="@drawable/slide_btn_thumb"
+                        android:thumbOffset="0dp" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/borderFive"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
+
+                <RelativeLayout
+                    android:id="@+id/permissionOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="权限设置"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text=""
+                        android:textColor="#aa000000"
+                        android:textSize="14sp"
+                        android:translationX="-25dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@drawable/into"
+                        android:tint="#c0c0c0" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/borderSix"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
+
+                <RelativeLayout
+                    android:id="@+id/inCardOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/backview_background1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="显示在名片"
+                        android:textColor="#aa000000"
+                        android:textSize="16sp" />
+
+                    <SeekBar
+                        android:id="@+id/inCardBar"
+                        android:layout_width="80dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:clickable="false"
+                        android:max="100"
+                        android:maxHeight="20dp"
+                        android:maxWidth="80dp"
+                        android:minHeight="20dp"
+                        android:progressDrawable="@drawable/slide_btn"
+                        android:thumb="@drawable/slide_btn_thumb"
+                        android:thumbOffset="0dp" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/borderSeven"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#aac0c0c0" />
+
+                <RelativeLayout
+                    android:id="@+id/exit2DeleteGroup"
+                    android:layout_width="340dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginTop="35dp"
+                    android:background="@drawable/button_75c2b8_background"
+                    android:gravity="center" >
+
+                    <TextView
+                        android:id="@+id/exitDeleteText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="删除并退出群组"
+                        android:textColor="#fff"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>

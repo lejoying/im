@@ -245,18 +245,21 @@ shareManage.addpraise = function (data, response) {
     var phone = data.phone;
     var gid = data.gid;
     var gsid = data.gsid;
+    var sid = data.sid;
     var option = data.option;
-    var arr = [gid, gsid, option];
+    var arr = [gid, sid, gsid, option];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         if (option == "true" || option == "false") {
             try {
                 parseInt(gid);
+                parseInt(sid);
                 parseInt(gsid);
             } catch (e) {
                 ResponseData(JSON.stringify({
                     "提示信息": "点赞群分享失败",
                     "失败原因": "数据格式不正确",
                     gid: gid,
+                    sid: sid,
                     gsid: gsid
                 }), response);
                 return;
@@ -267,6 +270,7 @@ shareManage.addpraise = function (data, response) {
                 "提示信息": "点赞群分享失败",
                 "失败原因": "数据格式不正确",
                 gid: gid,
+                sid: sid,
                 gsid: gsid
             }), response);
         }
@@ -274,11 +278,12 @@ shareManage.addpraise = function (data, response) {
     function modifySharePraise() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.sid={sid}",
             "RETURN share"
         ].join("\n");
         var params = {
             gid: parseInt(gid),
+            sid: parseInt(sid),
             gsid: parseInt(gsid)
         };
         db.query(query, params, function (error, results) {
@@ -351,6 +356,7 @@ shareManage.addcomment = function (data, response) {
     var phone = data.phone;
     var phoneTo = data.phoneto;
     var gid = data.gid;
+    var sid = data.sid;
     var gsid = data.gsid;
     var nickName = data.nickName;
     var nickNameTo = data.nickNameTo;
@@ -358,18 +364,19 @@ shareManage.addcomment = function (data, response) {
     var headTo = data.headTo;
     var contentType = data.contentType;
     var content = data.content;
-    var arr = [gid, gsid, nickName, contentType, content];
+    var arr = [gid, sid, gsid, nickName, contentType, content];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         modifyShareComments();
     }
     function modifyShareComments() {
         var query = [
             "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.type='Main'",
+            "WHERE group.gid={gid} AND share.gsid={gsid} AND shares.sid={sid}",
             "RETURN share"
         ].join("\n");
         var params = {
             gid: parseInt(gid),
+            sid: parseInt(sid),
             gsid: parseInt(gsid)
         };
         db.query(query, params, function (error, results) {
@@ -378,6 +385,7 @@ shareManage.addcomment = function (data, response) {
                         "提示信息": "评论群分享失败",
                         "失败原因": "数据异常",
                         gid: gid,
+                        sid: sid,
                         gsid: gsid
                     }), response);
                     console.error(error);
@@ -387,6 +395,7 @@ shareManage.addcomment = function (data, response) {
                         "提示信息": "评论群分享失败",
                         "失败原因": "消息不存在",
                         gid: gid,
+                        sid: sid,
                         gsid: gsid
                     }), response);
                 } else {
@@ -418,6 +427,7 @@ shareManage.addcomment = function (data, response) {
                                 "提示信息": "评论群分享失败",
                                 "失败原因": "数据异常",
                                 gid: gid,
+                                sid: sid,
                                 gsid: gsid
                             }), response);
                             console.error(error);
@@ -426,6 +436,7 @@ shareManage.addcomment = function (data, response) {
                             ResponseData(JSON.stringify({
                                 "提示信息": "评论群分享成功",
                                 gid: gid,
+                                sid: sid,
                                 gsid: gsid
                             }), response);
                         }
@@ -964,7 +975,7 @@ shareManage.sendboardshare = function (data, response) {
         });
     }
 }
-shareManage.getboardshare = function (data, response) {
+shareManage.getboardshares = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var gid = data.gid;
@@ -1538,6 +1549,166 @@ shareManage.modifysquence = function (data, response) {
                     "提示信息": "修改版块顺序失败",
                     "失败原因": "群组不存在"
                 }), response);
+            }
+        });
+    }
+}
+shareManage.deleteboard = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var gid = data.gid;
+    var sid = data.sid;
+    var targetPhones = data.targetphones;
+    if (verifyEmpty.verifyEmpty(data, [gid, sid, targetPhones]), response) {
+        try {
+            targetPhones = JSON.parse(targetPhones);
+            deleteBoard();
+        } catch (e) {
+            ResponseData(JSON.stringify({
+                "提示信息": "删除版块失败",
+                "失败原因": "数据格式不正确"
+            }), response);
+        }
+    }
+    function deleteBoard() {
+        var query = [
+            "MATCH (group:Group)-[r:SHARE]->(board:Shares)",
+            "WHERE group.gid={gid} AND board.sid={sid}",
+            "DELETE r",
+            "RETURN group"
+        ].join("\n");
+        var params = {
+            gid: parseInt(gid),
+            sid: parseInt(sid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.log(error);
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除版块失败",
+                    "失败原因": "版块不存在"
+                }), response);
+            } else if (results.length > 0) {
+                var groupNode = results.pop().group;
+                var groupData = groupNode.data;
+                var boardSequence = groupData.boardSequenceString;
+                console.log(boardSequence);
+                try {
+                    boardSequence = JSON.parse(boardSequence);
+                    var newboardSequence = [];
+                    for (var i in boardSequence) {
+                        var boardName = boardSequence[i];
+                        if (boardName != sid) {
+                            newboardSequence.push(boardName);
+                        }
+                    }
+                    groupData.boardSequenceString = newboardSequence;
+                    console.log(groupData.boardSequenceString);
+                    groupNode.save(function (err, node) {
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除版块成功",
+                    group: groupData
+                }), response);
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                for (var index in targetPhones) {
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_deleteboard",
+                        content: JSON.stringify({
+                            type: "group_deleteboard",
+                            phone: phone,
+                            phoneTo: index,
+                            gid: gid,
+                            eid: eid,
+                            time: time,
+                            status: "success",
+                            content: data.sid
+                        })
+                    });
+                    client.rpush(index, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, index, accessKey, "*", event);
+                }
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除版块失败",
+                    "失败原因": "版块不存在"
+                }), response);
+            }
+        });
+    }
+}
+
+shareManage.getboardshare = function (data, response) {
+    response.asynchronous = 1;
+    console.log(data);
+    var sid = data.sid;
+    var gsid = data.gsid;
+    var arr = [sid, gsid];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        getShareNode();
+    }
+    function getShareNode() {
+        try {
+            var query = [
+                "MATCH (shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
+                "WHERE shares.sid={sid} AND share.gsid={gsid}",
+                "RETURN share"
+            ].join("\n");
+            var params = {
+                sid: parseInt(sid),
+                gsid: parseInt(gsid)
+            };
+        } catch (e) {
+            response.write(JSON.stringify({
+                "提示信息": "获取群分享失败",
+                "失败原因": "群分享不存在"
+            }));
+            response.end();
+        }
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享失败",
+                    "失败原因": "群分享不存在"
+                }));
+                response.end();
+            } else {
+                var shareData = results.pop().share.data;
+                var share = {
+                    comments: JSON.parse(shareData.comments),
+                    content: shareData.content,
+                    praiseusers: JSON.parse(shareData.praises),
+                    gsid: shareData.gsid,
+                    type: shareData.type,
+                    time: shareData.time,
+                    phone: shareData.phone,
+                    status: "sent"
+                };
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享成功",
+                    share: share
+                }));
+                response.end();
             }
         });
     }

@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -125,6 +126,7 @@ public class SmallBusinessCardPopView {
 		public TextView goInfomationView;
 		public TextView goChatView;
 		public ImageView userHeadView;
+		public ImageView setting;
 		public TextView userNickNameView;
 		public TextView userAgeView;
 		public TextView distanceView;
@@ -251,7 +253,7 @@ public class SmallBusinessCardPopView {
 					flag = true;
 					board = data.boards.boardsMap.get(key);
 				} else {
-					setContent(false, "", "", "", "", relation, type, board.gid, "0", "0", 0 + "");
+					setContent(true, "", "", "", "", relation, type, board.gid, "0", "0", 0 + "");
 				}
 				if (flag) {
 					if (data.relationship.groups != null) {
@@ -259,7 +261,7 @@ public class SmallBusinessCardPopView {
 							relation = "已加入该群组";
 							Group group = data.relationship.groupsMap.get(board.gid);
 							if (group != null) {
-								setContent(true, "", "", board.head, board.name, relation, type, board.gid, group.longitude, group.latitude, 0 + "");
+								setContent(false, "", "", board.head, board.name, relation, type, board.gid, group.longitude, group.latitude, 0 + "");
 							}
 						} else {
 							relation = "未加入该群组";
@@ -360,6 +362,7 @@ public class SmallBusinessCardPopView {
 				singleButtonView.setVisibility(View.VISIBLE);
 			}
 			if (type.equals(TYPE_POINT)) {
+				this.setting.setVisibility(View.GONE);
 				this.optionTwoView2.setVisibility(View.GONE);
 				if (user.phone.equals(key)) {
 					singleButtonView.setText("个人资料");
@@ -374,14 +377,15 @@ public class SmallBusinessCardPopView {
 					scanUserCard(key);
 				}
 			} else if (type.equals(TYPE_GROUP)) {
+				this.setting.setVisibility(View.VISIBLE);
 				if (this.flag) {
 					this.optionTwoView2.setVisibility(View.VISIBLE);
 				} else {
 					this.optionTwoView2.setVisibility(View.GONE);
 				}
 				if (data.relationship.groups.contains(key)) {
-					goInfomationView.setText("群组信息");
-					goChatView.setText("聊天室");
+					goInfomationView.setText("聊天室");
+					goChatView.setText("更多版块");
 				} else {
 					singleButtonView.setText("群组信息");
 				}
@@ -392,16 +396,17 @@ public class SmallBusinessCardPopView {
 					scanGroupCard(key);
 				}
 			} else if (type.equals(TYPE_BOARD)) {
+				this.setting.setVisibility(View.VISIBLE);
 				if (this.flag) {
 					this.optionTwoView2.setVisibility(View.VISIBLE);
 				} else {
 					this.optionTwoView2.setVisibility(View.GONE);
 				}
 				if (data.relationship.groups.contains(key)) {
-					goInfomationView.setText("板块信息");
-					goChatView.setText("聊天室");
+					singleButtonView.setText("聊天室");
 				} else {
-					singleButtonView.setText("板块信息");
+					goInfomationView.setText("版块信息");
+					goChatView.setText("聊天室");
 				}
 				userAgeView.setVisibility(View.GONE);
 				lastLoginTimeView.setText("");
@@ -410,6 +415,7 @@ public class SmallBusinessCardPopView {
 					scanGroupCard(key);
 				}
 			} else if (type.equals(TYPE_SQUARE)) {
+				this.setting.setVisibility(View.GONE);
 				this.optionTwoView2.setVisibility(View.GONE);
 				goInfomationView.setText("社区资料");
 				userAgeView.setVisibility(View.GONE);
@@ -454,9 +460,12 @@ public class SmallBusinessCardPopView {
 			sectionsView = (TextView) userCardMainView.findViewById(R.id.sections);
 			// singleButtonView.setVisibility(View.GONE);
 			userHeadView = (ImageView) userCardMainView.findViewById(R.id.userHead);
+			setting = (ImageView) userCardMainView.findViewById(R.id.setting);
 			listTitle = (TextView) userCardMainView.findViewById(R.id.listTitle);
 			listCancel = (TextView) userCardMainView.findViewById(R.id.listCancel);
 			listContent = (ListView) userCardMainView.findViewById(R.id.listContent);
+
+			setting.setColorFilter(Color.parseColor("#ffffffff"));
 
 			userHeadView.getLayoutParams().height = height;
 			userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
@@ -468,6 +477,7 @@ public class SmallBusinessCardPopView {
 			this.userCardMainView.setOnClickListener(mOnClickListener);
 			this.goInfomationView.setOnClickListener(mOnClickListener);
 			this.singleButtonView.setOnClickListener(mOnClickListener);
+			this.setting.setOnClickListener(mOnClickListener);
 			this.goChatView.setOnClickListener(mOnClickListener);
 			this.hotView.setOnClickListener(mOnClickListener);
 			this.sectionsView.setOnClickListener(mOnClickListener);
@@ -492,6 +502,45 @@ public class SmallBusinessCardPopView {
 							intent.putExtra("type", type);
 							thisActivity.startActivity(intent);
 						} else if (type.equals(TYPE_GROUP)) {
+							Intent intent = new Intent(thisActivity, NewChatActivity.class);
+							intent.putExtra("id", key);
+							intent.putExtra("type", type);
+							thisActivity.startActivityForResult(intent, R.id.tag_second);
+						} else if (type.equals(TYPE_BOARD)) {
+							Intent intent = new Intent(thisActivity, NewChatActivity.class);
+							Board board = data.boards.boardsMap.get(key);
+							intent.putExtra("id", board.gid);
+							intent.putExtra("type", "group");
+							thisActivity.startActivityForResult(intent, R.id.tag_second);
+						} else if (type.equals(TYPE_SQUARE)) {
+							Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+							intent.putExtra("key", key);
+							intent.putExtra("type", type);
+							thisActivity.startActivity(intent);
+						}
+					} else if (view.equals(goChatView)) {
+						// String phone = (String) view.getTag(R.id.tag_first);
+						if (mViewManage.newChatView != null && key.equals(mViewManage.newChatView.thisController.key)) {
+							dismissUserCardDialogView();
+						} else {
+							if (type.equals(TYPE_GROUP)) {
+								Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+								thisActivity.startActivity(intent);
+							}
+						}
+					} else if (view.equals(hotView)) {
+						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+						intent.putExtra("", "");
+						thisActivity.startActivity(intent);
+					} else if (view.equals(sectionsView)) {
+						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+						intent.putExtra("", "");
+						thisActivity.startActivity(intent);
+					} else if (view.equals(listCancel)) {
+						userBusinessLayout.setVisibility(View.VISIBLE);
+						listLayout.setVisibility(View.GONE);
+					} else if (view.equals(setting)) {
+						if (type.equals(TYPE_GROUP)) {
 							boolean flag = false;
 							if (data.relationship.groups != null) {
 								if (data.relationship.groups.contains(key)) {
@@ -511,39 +560,11 @@ public class SmallBusinessCardPopView {
 								thisActivity.startActivity(intent);
 							}
 						} else if (type.equals(TYPE_BOARD)) {
-						} else if (type.equals(TYPE_SQUARE)) {
-							Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
-							intent.putExtra("key", key);
-							intent.putExtra("type", type);
+							Intent intent = new Intent(thisActivity, GroupInfoActivity.class);
+							intent.putExtra("sid", key);
+							intent.putExtra("type", "board");
 							thisActivity.startActivity(intent);
 						}
-					} else if (view.equals(goChatView)) {
-						// String phone = (String) view.getTag(R.id.tag_first);
-						if (mViewManage.newChatView != null && key.equals(mViewManage.newChatView.thisController.key)) {
-							dismissUserCardDialogView();
-						} else {
-							Intent intent = new Intent(thisActivity, NewChatActivity.class);
-							if (type.equals(TYPE_BOARD)) {
-								Board board = data.boards.boardsMap.get(key);
-								intent.putExtra("id", board.gid);
-								intent.putExtra("type", "group");
-							} else {
-								intent.putExtra("id", key);
-								intent.putExtra("type", type);
-							}
-							thisActivity.startActivityForResult(intent, R.id.tag_second);
-						}
-					} else if (view.equals(hotView)) {
-						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
-						intent.putExtra("", "");
-						thisActivity.startActivity(intent);
-					} else if (view.equals(sectionsView)) {
-						Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
-						intent.putExtra("", "");
-						thisActivity.startActivity(intent);
-					} else if (view.equals(listCancel)) {
-						userBusinessLayout.setVisibility(View.VISIBLE);
-						listLayout.setVisibility(View.GONE);
 					}
 				}
 			};

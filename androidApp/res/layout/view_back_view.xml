@@ -65,7 +65,8 @@
             android:id="@+id/title_control_progress_container"
             android:layout_width="fill_parent"
             android:layout_height="1.5dp"
-            android:translationY="47dp" >
+            android:translationY="47dp"
+            android:visibility="gone" >
 
             <include
                 android:id="@+id/title_control_progress"

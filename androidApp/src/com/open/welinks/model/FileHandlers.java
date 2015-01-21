@@ -233,6 +233,33 @@ public class FileHandlers {
 
 	}
 
+	public void getBackImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
+		imageLoader.displayImage("drawable://" + R.drawable.tempicon, imageView);
+		if (fileName != null && !"".equals(fileName)) {
+			File imageFile = new File(sdcardBackImageFolder, fileName);
+			final String path = imageFile.getAbsolutePath();
+			final String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + fileName;
+			if (imageFile.exists()) {
+				imageLoader.displayImage("file://" + path, imageView, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					}
+				});
+			} else {
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
+			}
+		}
+	}
+
 	public void getImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
 		getImage(fileName, imageView, null, DownloadFile.TYPE_IMAGE, options);
 	}
@@ -267,6 +294,16 @@ public class FileHandlers {
 	public int THUMBLE_TYEP_SQUARE = 0x01;
 	public int THUMBLE_TYEP_GROUP = 0x02;
 	public int THUMBLE_TYEP_CHAT = 0x03;
+
+	public int getThumbleImageSize(String fileName, int width) {
+		File file = new File(sdcardImageFolder, fileName);
+		if (file.exists()) {
+
+		} else {
+
+		}
+		return 0;
+	}
 
 	public void getThumbleImage(String fileName, final ImageView imageView, int width, int height, final DisplayImageOptions options, int thumbleType, final ThumbleListener thumbleListener) {
 		// type : square or group

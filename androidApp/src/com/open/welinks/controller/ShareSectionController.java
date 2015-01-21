@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
@@ -30,10 +31,9 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.DataHandlers;
+import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Boards.Board;
-import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.TaskContainer_Share.GetShares;
@@ -42,14 +42,13 @@ import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.view.ShareSectionView;
 import com.open.welinks.view.ViewManage;
 import com.open.welinks.view.ShareSectionView.BoardDialogItem;
-import com.open.welinks.view.ShareSubView.GroupDialogItem;
 
 public class ShareSectionController {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareSectionController";
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 	public Gson gson = new Gson();
 
 	public TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
@@ -145,9 +144,9 @@ public class ShareSectionController {
 
 				if (!sequenceListString.equals(oldSequece)) {
 					modifyBoardsSequence(sequenceListString);
-					log.e("板块顺序发生改动");
+					log.e("版块顺序发生改动");
 				} else {
-					log.e(oldSequece + "板块顺序没有改动" + sequenceListString);
+					log.e(oldSequece + "版块顺序没有改动" + sequenceListString);
 				}
 			}
 		};
@@ -224,10 +223,14 @@ public class ShareSectionController {
 					thisView.dismissGroupBoardsDialog();
 					thisActivity.startActivityForResult(new Intent(thisActivity, CreateBoardActivity.class), REQUESTCODE_CREATE);
 				} else if (view.equals(thisView.createGroupButtonView)) {
-					for (String str : data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).boards) {
-						Board board = data.boards.boardsMap.get(str);
-						log.e(str + ":::::::::::::::::::::::::::::" + data.localStatus.localData.currentSelectedGroup);
-					}
+					// if (data.relationship.groupCircles != null) {
+					// for (String str : data.relationship.groupCircles) {
+					// GroupCircle a = data.relationship.groupCirclesMap.get(str);
+					// log.e(a.name + ":::::::::" + a.rid + ":::::::::::" + gson.toJson(a.groups));
+					// }
+					// } else {
+					// log.e("null:::::::::::::::::::::::::::");
+					// }
 
 				} else if (view.equals(thisView.findMoreGroupButtonView)) {
 
@@ -238,8 +241,8 @@ public class ShareSectionController {
 					String content = tagContent.substring(index + 1);
 					if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
-						intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
-						intent.putExtra("sid", thisView.currentGroup.currentBoard);
+						intent.putExtra("gid", thisView.currentGroup.gid + "");
+						intent.putExtra("sid", thisView.currentBoard.sid);
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
@@ -253,7 +256,8 @@ public class ShareSectionController {
 						Praise praise = mTaskContainer_Share.new Praise();
 						praise.gsid = content;
 						praise.thisView = thisView;
-						praise.gid = data.localStatus.localData.currentSelectedGroup;
+						praise.gid = thisView.currentGroup.gid + "";
+						praise.sid = thisView.currentBoard.sid;
 						praise.API = API.SHARE_ADDPRAISE;
 						taskManageHolder.taskManager.pushTask(praise);
 
@@ -384,10 +388,12 @@ public class ShareSectionController {
 			} else if (view_class.equals("share_praise")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("board_view")) {
+				onTouchDownView.playSoundEffect(SoundEffectConstants.CLICK);
 				thisView.currentBoard = (Board) onTouchDownView.getTag(R.id.tag_first);
 				nowpage = 0;
 				getCurrentGroupShareMessages();
 				thisView.showShareMessages();
+				thisView.showGroupBoards();
 				thisView.dismissGroupBoardsDialog();
 			}
 			onTouchDownView = null;
@@ -459,6 +465,8 @@ public class ShareSectionController {
 	public void onResume() {
 		thisView.businessCardPopView.dismissUserCardDialogView();
 		thisView.dismissReleaseShareDialogView();
+		thisView.showShareMessages();
+		thisView.showGroupBoards();
 	}
 
 	public void finish() {

@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.open.welinks.customView.ClipImageLayout;
 
-public class CropActivity extends Activity {
+public class CropActivity extends Activity implements OnClickListener {
 
 	public ClipImageLayout mClipImageLayout;
 
@@ -56,21 +56,25 @@ public class CropActivity extends Activity {
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainerView.addView(mConfirm, layoutParams);
-		rightContainerView.setOnClickListener(new OnClickListener() {
+		rightContainerView.setOnClickListener(this);
+		backView.setOnClickListener(this);
+	}
 
-			@Override
-			public void onClick(View view) {
-				Bitmap bitmap = mClipImageLayout.clip();
+	@Override
+	public void onClick(View view) {
+		if (view.equals(rightContainerView)) {
+			Bitmap bitmap = mClipImageLayout.clip();
 
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-				byte[] datas = baos.toByteArray();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+			byte[] datas = baos.toByteArray();
 
-				Intent intent = new Intent();
-				intent.putExtra("bitmap", datas);
-				setResult(Activity.RESULT_OK, intent);
-				finish();
-			}
-		});
+			Intent intent = new Intent();
+			intent.putExtra("bitmap", datas);
+			setResult(Activity.RESULT_OK, intent);
+			finish();
+		} else if (view.equals(backView)) {
+			finish();
+		}
 	}
 }

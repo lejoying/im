@@ -37,6 +37,7 @@ public class TaskContainer_Share {
 
 		public String gsid;
 		public String gid;
+		public String sid;
 		public boolean option = false;
 		public ShareSectionView thisView;
 
@@ -72,9 +73,14 @@ public class TaskContainer_Share {
 		}
 
 		public void modifyView() {// 主UI线程
+			User currentUser = data.userInformation.currentUser;
 			shareMessage = data.boards.shareMessagesMap.get(gsid);
 			SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
-			sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+			if (shareMessage.praiseusers.contains(currentUser.phone)) {
+				sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+			} else {
+				sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+			}
 			sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 		}
 
@@ -84,6 +90,7 @@ public class TaskContainer_Share {
 			params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 			params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 			params.addBodyParameter("gid", gid);
+			params.addBodyParameter("sid", sid);
 			params.addBodyParameter("gsid", gsid);
 			params.addBodyParameter("option", option + "");
 
@@ -155,6 +162,7 @@ public class TaskContainer_Share {
 			if (response == null) {
 				log.e(ViewManage.getErrorLineNumber() + "gson Exception");
 			} else if (response.提示信息.equals("获取群分享成功")) {
+				log.e("获取群分享成功:::::::::::::::::");
 			} else {
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			}
@@ -162,6 +170,7 @@ public class TaskContainer_Share {
 		}
 
 		public void updateData() {// 主UI线程
+			log.e("updateData:::::::::::::::::");
 			SubBoard responsesShare = response.shares;
 			parser.check();
 			// String gid = response.gid;
@@ -193,6 +202,7 @@ public class TaskContainer_Share {
 		}
 
 		public void updateView() {// 主UI线程
+			log.e("updateView:::::::::::::::::");
 			if (data.relationship.groups.contains(gid)) {
 				if (response.shares.shareMessagesOrder.size() == 0) {
 					viewManage.shareSectionView.thisController.nowpage--;

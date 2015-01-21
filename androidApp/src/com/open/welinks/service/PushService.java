@@ -166,7 +166,7 @@ public class PushService extends Service {
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
-			System.out.println("fail---------------------");
+			log.e("fail---------------------");
 			checkConnect();
 			// connect();
 		};

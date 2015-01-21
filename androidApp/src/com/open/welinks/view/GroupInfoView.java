@@ -38,7 +38,7 @@ public class GroupInfoView {
 	public Activity thisActivity;
 
 	public View backView;
-	public TextView backTitleView;
+	public TextView backTitleView, exitDeleteText;
 
 	public View headOptionView;
 	public ImageView headIvView;
@@ -58,6 +58,7 @@ public class GroupInfoView {
 	public View memberListTopView;
 	public LinearLayout memberListView;
 	public View cardOptionView;
+	public View borderOne, borderTwo, borderThree, borderFour, borderFive, borderSix, borderSeven, borderEight, borderNine;
 
 	public ImageView converImageView;
 
@@ -80,7 +81,6 @@ public class GroupInfoView {
 		this.thisActivity.setContentView(R.layout.activity_group_info);
 		this.backView = thisActivity.findViewById(R.id.backView);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
-		this.backTitleView.setText("房间信息");
 		this.headOptionView = thisActivity.findViewById(R.id.headOption);
 		this.headIvView = (ImageView) thisActivity.findViewById(R.id.headIv);
 		this.nickNameOptionView = thisActivity.findViewById(R.id.nickNameOption);
@@ -90,6 +90,7 @@ public class GroupInfoView {
 		this.coverOptionView = thisActivity.findViewById(R.id.converOption);
 		this.addressOptionView = thisActivity.findViewById(R.id.addressOption);
 		this.addressView = (TextView) thisActivity.findViewById(R.id.addressTx);
+		this.exitDeleteText = (TextView) thisActivity.findViewById(R.id.exitDeleteText);
 		this.newMessageSettingOptionView = thisActivity.findViewById(R.id.newMessageSettingOption);
 		this.newMessageSettingBar = (SeekBar) thisActivity.findViewById(R.id.newMessageSettingBar);
 		this.newMessageSettingBar.setTag("newMessageSettingBar");
@@ -103,6 +104,15 @@ public class GroupInfoView {
 		this.memberListView = (LinearLayout) thisActivity.findViewById(R.id.memberList);
 		this.cardOptionView = thisActivity.findViewById(R.id.cardOption);
 		this.converImageView = (ImageView) thisActivity.findViewById(R.id.converImage);
+		this.borderOne = thisActivity.findViewById(R.id.borderOne);
+		this.borderTwo = thisActivity.findViewById(R.id.borderTwo);
+		this.borderThree = thisActivity.findViewById(R.id.borderThree);
+		this.borderFour = thisActivity.findViewById(R.id.borderFour);
+		this.borderFive = thisActivity.findViewById(R.id.borderFive);
+		this.borderSix = thisActivity.findViewById(R.id.borderSix);
+		this.borderSeven = thisActivity.findViewById(R.id.borderSeven);
+		this.borderEight = thisActivity.findViewById(R.id.borderEight);
+		this.borderNine = thisActivity.findViewById(R.id.borderNine);
 	}
 
 	public void setMembersList() {
@@ -127,32 +137,57 @@ public class GroupInfoView {
 	ViewManage viewManage = ViewManage.getInstance();
 
 	public void setData() {
-		this.nickNameView.setText(thisController.currentGroup.name);
-		this.fileHandlers.getHeadImage(thisController.currentGroup.icon, this.headIvView, viewManage.options70);
-		this.businessView.setText(thisController.currentGroup.description);
-		boolean isNotice = false;
-		if (data.localStatus.localData != null) {
-			if (data.localStatus.localData.newMessagePowerMap != null) {
-				if (data.localStatus.localData.newMessagePowerMap.get(thisController.currentGroup.gid + "") != null) {
-					isNotice = data.localStatus.localData.newMessagePowerMap.get(thisController.currentGroup.gid + "");
+		if ("board".equals(thisController.type)) {
+			this.backTitleView.setText("版块信息");
+			this.exitDeleteText.setText("删除版块");
+			this.memberListView.setVisibility(View.GONE);
+			this.memberListTopView.setVisibility(View.GONE);
+			this.newMessageSettingOptionView.setVisibility(View.GONE);
+			this.permissionOptionView.setVisibility(View.GONE);
+			this.inCardOptionView.setVisibility(View.GONE);
+			this.borderOne.setVisibility(View.GONE);
+			this.borderTwo.setVisibility(View.GONE);
+			this.borderThree.setVisibility(View.GONE);
+			this.borderFour.setVisibility(View.GONE);
+			this.borderFive.setVisibility(View.GONE);
+			this.borderSix.setVisibility(View.GONE);
+			this.borderSeven.setVisibility(View.GONE);
+			this.borderEight.setVisibility(View.GONE);
+			this.borderNine.setVisibility(View.GONE);
+
+			this.nickNameView.setText(thisController.currentBoard.name);
+			this.fileHandlers.getHeadImage(thisController.currentBoard.head, this.headIvView, viewManage.options70);
+			this.businessView.setText(thisController.currentBoard.description);
+			setConver();
+		} else {
+			this.backTitleView.setText("群组信息");
+			this.nickNameView.setText(thisController.currentGroup.name);
+			this.fileHandlers.getHeadImage(thisController.currentGroup.icon, this.headIvView, viewManage.options70);
+			this.businessView.setText(thisController.currentGroup.description);
+			boolean isNotice = false;
+			if (data.localStatus.localData != null) {
+				if (data.localStatus.localData.newMessagePowerMap != null) {
+					if (data.localStatus.localData.newMessagePowerMap.get(thisController.currentGroup.gid + "") != null) {
+						isNotice = data.localStatus.localData.newMessagePowerMap.get(thisController.currentGroup.gid + "");
+					} else {
+						isNotice = true;
+					}
 				} else {
 					isNotice = true;
+					data.localStatus.localData.newMessagePowerMap = new HashMap<String, Boolean>();
 				}
 			} else {
 				isNotice = true;
-				data.localStatus.localData.newMessagePowerMap = new HashMap<String, Boolean>();
 			}
-		} else {
-			isNotice = true;
+			if (!isNotice) {
+				this.newMessageSettingBar.setProgress(0);
+			} else {
+				this.newMessageSettingBar.setProgress(100);
+			}
+			groupMemberCountView.setText(thisController.currentGroup.members.size() + "人");
+			setMembersList();
+			setConver();
 		}
-		if (!isNotice) {
-			this.newMessageSettingBar.setProgress(0);
-		} else {
-			this.newMessageSettingBar.setProgress(100);
-		}
-		groupMemberCountView.setText(thisController.currentGroup.members.size() + "人");
-		setMembersList();
-		setConver();
 	}
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
@@ -160,12 +195,18 @@ public class GroupInfoView {
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public void setConver() {
-		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		if (group.cover == null || "".equals(group.cover)) {
+		String tempCover = "";
+		if ("board".equals(thisController.type)) {
+			tempCover = thisController.currentBoard.cover;
+		} else if ("group".equals(thisController.type)) {
+			tempCover = thisController.currentGroup.cover;
+		}
+		final String cover = tempCover;
+		if (cover == null || "".equals(cover)) {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
 			return;
 		}
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
+		File file = new File(fileHandlers.sdcardBackImageFolder, cover);
 		final String path = file.getAbsolutePath();
 		if (file.exists()) {
 			imageLoader.displayImage("file://" + path, converImageView, new SimpleImageLoadingListener() {
@@ -175,7 +216,7 @@ public class GroupInfoView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					downloadConver(group.cover, path);
+					downloadConver(cover, path);
 				}
 
 				@Override
@@ -183,11 +224,7 @@ public class GroupInfoView {
 				}
 			});
 		} else {
-			if (group.cover != null) {
-				downloadConver(group.cover, path);
-			} else {
-				imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
-			}
+			downloadConver(cover, path);
 		}
 	}
 

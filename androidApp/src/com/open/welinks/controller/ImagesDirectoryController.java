@@ -160,9 +160,6 @@ public class ImagesDirectoryController {
 			selectedImage = new ArrayList<String>();
 			thisActivity.setResult(Activity.RESULT_OK);
 			thisActivity.finish();
-			System.out.println("confirm selected image");
-		} else {
-			System.out.println("cancle selected image");
 		}
 	}
 

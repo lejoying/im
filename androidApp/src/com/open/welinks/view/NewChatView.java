@@ -14,6 +14,7 @@ import pl.droidsonroids.gif.GifImageView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
+import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -29,12 +30,13 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.amap.api.maps2d.MapView;
@@ -75,11 +77,11 @@ public class NewChatView {
 	public NewChatController thisController;
 	public NewChatActivity thisActivity;
 
-	public View currentVoiceView, chatContentHeaderView, chatBottomLayout, chatLayout, backView, chatMenuLayout, textLayout, voiceLayout, chatAddLayout, takePhoto, ablum, location, voicePop;
+	public View backMaxView, currentVoiceView, chatContentHeaderView, chatBottomLayout, chatLayout, backView, chatMenuLayout, textLayout, voiceLayout, chatAddLayout, takePhoto, ablum, location, voicePop;
 	public RelativeLayout rightContainer;
-	public TextView titleText, chatSend, voicePopTime, voicePopPrompt;
+	public TextView backTitleView, chatSend, voicePopTime, voicePopPrompt;
 	public ListView chatContent;
-	public ImageView chatAdd, chatSmily, chatRecord, titleImage, chatMenuBackground, voicePopImage;
+	public ImageView chatAdd, chatSmily, chatRecord, titleImage, chatMenuBackground, voicePopImage, backImageView;
 	public EditText chatInput;
 	public GridView chatMenu;
 	public MapView locationMapView;
@@ -102,6 +104,7 @@ public class NewChatView {
 		thisActivity = activity;
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("HandlerLeak")
 	public void initViews() {
 		thisActivity.setContentView(R.layout.activity_new_chat);
@@ -116,8 +119,9 @@ public class NewChatView {
 		voicePop = thisActivity.findViewById(R.id.voicePop);
 		chatLayout = thisActivity.findViewById(R.id.chatLayout);
 		chatBottomLayout = thisActivity.findViewById(R.id.chatBottomLayout);
+		backMaxView = thisActivity.findViewById(R.id.backMaxView);
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
-		titleText = (TextView) thisActivity.findViewById(R.id.titleText);
+		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		chatSend = (TextView) thisActivity.findViewById(R.id.chatSend);
 		voicePopTime = (TextView) thisActivity.findViewById(R.id.voicePopTime);
 		voicePopPrompt = (TextView) thisActivity.findViewById(R.id.voicePopPrompt);
@@ -127,6 +131,7 @@ public class NewChatView {
 		chatRecord = (ImageView) thisActivity.findViewById(R.id.chatRecord);
 		chatMenuBackground = (ImageView) thisActivity.findViewById(R.id.chatMenuBackground);
 		voicePopImage = (ImageView) thisActivity.findViewById(R.id.voicePopImage);
+		backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
 		chatInput = (EditText) thisActivity.findViewById(R.id.chatInput);
 		chatMenu = (GridView) thisActivity.findViewById(R.id.chatMenu);
 		faceLayout = (ChatFaceView) thisActivity.findViewById(R.id.faceLayout);
@@ -139,6 +144,9 @@ public class NewChatView {
 
 		titleImage = new ImageView(thisActivity);
 		titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
+		titleImage.setColorFilter(Color.parseColor("#0099cd"));
+		RelativeLayout.LayoutParams rightParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) BaseDataUtils.dpToPx(30));
+		titleImage.setLayoutParams(rightParams);
 		rightContainer.addView(titleImage);
 
 		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) BaseDataUtils.dpToPx(30))).build();
@@ -148,6 +156,12 @@ public class NewChatView {
 
 		thisController.mAMap = locationMapView.getMap();
 		thisController.mAMap.getUiSettings().setZoomControlsEnabled(false);
+
+		backMaxView.setBackgroundColor(Color.WHITE);
+		backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
+		backTitleView.setTextColor(Color.parseColor("#0099cd"));
+		backTitleView.setTextSize(18);
+		backImageView.setColorFilter(Color.parseColor("#0099cd"));
 
 		initAnimations();
 
@@ -198,9 +212,9 @@ public class NewChatView {
 			Group group = thisController.data.relationship.groupsMap.get(key);
 			if (group != null) {
 				group.notReadMessagesCount = 0;
-				titleText.setText(group.name + "(" + group.members.size() + ")");
+				backTitleView.setText(group.name + "(" + group.members.size() + ")");
 			} else {
-				titleText.setText("Group");
+				backTitleView.setText("Group");
 			}
 			log.e("current:::" + thisController.data.relationship.groupsMap.get(key).members.size());
 		} else if ("point".equals(type)) {
@@ -213,12 +227,12 @@ public class NewChatView {
 			if (friend != null) {
 				friend.notReadMessagesCount = 0;
 				if ("".equals(friend.alias)) {
-					titleText.setText(friend.nickName);
+					backTitleView.setText(friend.nickName);
 				} else {
-					titleText.setText(friend.alias);
+					backTitleView.setText(friend.alias);
 				}
 			} else {
-				titleText.setText("Name");
+				backTitleView.setText("Name");
 			}
 		}
 		thisController.data.relationship.isModified = true;
@@ -491,6 +505,7 @@ public class NewChatView {
 					holder.locationImage.setVisibility(View.GONE);
 					holder.cardLayout.setVisibility(View.GONE);
 					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
 					holder.character.setText(message.content);
 					holder.character.setAutoLinkMask(Linkify.WEB_URLS);
 					holder.character.setMovementMethod(LinkMovementMethod.getInstance());
@@ -533,6 +548,7 @@ public class NewChatView {
 					holder.cardLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.GONE);
 					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
 
 					VoiceMessageContent messageContent = null;
 					try {
@@ -552,7 +568,7 @@ public class NewChatView {
 						holder.voice.setOnClickListener(thisController.mOnClickListener);
 					}
 				} else if (contentType.equals("image")) {
-					holder.chatLayout.setVisibility(View.VISIBLE);
+					holder.chatLayout.setVisibility(View.GONE);
 					holder.character.setVisibility(View.GONE);
 					holder.specialGifLayout.setVisibility(View.GONE);
 					holder.voice.setVisibility(View.GONE);
@@ -560,6 +576,8 @@ public class NewChatView {
 					holder.share.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.GONE);
 					holder.cardLayout.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.VISIBLE);
 
 					List<String> images = null;
 					try {
@@ -569,46 +587,40 @@ public class NewChatView {
 						e.printStackTrace();
 					}
 					if (images == null) {
+						holder.chatLayout.setVisibility(View.VISIBLE);
 						holder.character.setVisibility(View.VISIBLE);
 						holder.character.setText("数据结构错误");
-						holder.image.setVisibility(View.GONE);
+						holder.imagesLayout.setVisibility(View.GONE);
 					} else {
-						LinearLayout.LayoutParams imagePrams = new LinearLayout.LayoutParams((int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146));
-						imagePrams.setMargins((int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10));
+						LayoutParams imagePrams = (LayoutParams) holder.imagesLayout.getLayoutParams();
+						imagePrams.width = (int) BaseDataUtils.dpToPx(228);
+						// new RelativeLayout.LayoutParams((int) BaseDataUtils.dpToPx(228), LayoutParams.WRAP_CONTENT);
+						// imagePrams.setMargins((int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10));
 						String image = images.get(0);
+						holder.imagesCount.setText(String.valueOf(images.size()));
+						holder.imagesLayout.setTag(R.id.tag_first, contentType);
+						holder.imagesLayout.setTag(R.id.tag_second, images);
+						holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
+						holder.imagesLayout.setLayoutParams(imagePrams);
+						thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(228), (int) BaseDataUtils.dpToPx(146), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
 						if (images.size() == 1) {
-							holder.imagesLayout.setVisibility(View.GONE);
-							holder.image.setVisibility(View.VISIBLE);
-							holder.image.setTag(R.id.tag_first, contentType);
-							holder.image.setTag(R.id.tag_second, images);
-							holder.image.setOnClickListener(thisController.mOnClickListener);
-							holder.image.setLayoutParams(imagePrams);
-							thisController.fileHandlers.getThumbleImage(image, holder.image, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146), thisController.viewManage.options30, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+							holder.imagesCount.setVisibility(View.GONE);
 						} else {
-							holder.image.setVisibility(View.GONE);
-							holder.imagesLayout.setVisibility(View.VISIBLE);
-							holder.imagesCount.setText(String.valueOf(images.size()));
-							holder.imagesLayout.setTag(R.id.tag_first, contentType);
-							holder.imagesLayout.setTag(R.id.tag_second, images);
-							holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
-							holder.imagesLayout.setLayoutParams(imagePrams);
-							thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+							holder.imagesCount.setVisibility(View.VISIBLE);
 						}
 					}
 				} else if (contentType.equals("gif")) {
-					holder.chatLayout.setVisibility(View.VISIBLE);
+					holder.chatLayout.setVisibility(View.GONE);
 					holder.specialGifLayout.setVisibility(View.GONE);
-					holder.character.setVisibility(View.GONE);
 					holder.voice.setVisibility(View.GONE);
-					holder.image.setVisibility(View.GONE);
-					holder.imagesLayout.setVisibility(View.GONE);
 					holder.share.setVisibility(View.GONE);
 					holder.locationImage.setVisibility(View.GONE);
 					holder.cardLayout.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
 					holder.gif.setVisibility(View.VISIBLE);
-					LinearLayout.LayoutParams layoutParams = (LayoutParams) holder.gif.getLayoutParams();
-					layoutParams.width = (int) (thisController.data.baseData.density / 1.5f * 120);
-					layoutParams.height = (int) (thisController.data.baseData.density / 1.5f * 120);
+					RelativeLayout.LayoutParams layoutParams = (LayoutParams) holder.gif.getLayoutParams();
+					layoutParams.width = (int) (thisController.data.baseData.density / 1.5f * 150);
+					layoutParams.height = (int) (thisController.data.baseData.density / 1.5f * 150);
 					if ("poke".equals(message.content)) {
 						GifDrawable drawable = null;
 						try {
@@ -628,6 +640,8 @@ public class NewChatView {
 					}
 				} else if (contentType.equals("specialGif")) {
 					holder.chatLayout.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
 					holder.specialGifLayout.setVisibility(View.VISIBLE);
 
 					SpecialGifMessageContent messageContent = thisController.gson.fromJson(message.content, SpecialGifMessageContent.class);

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res/com.open.welinks"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingBottom="5dp" >
 
     <TextView
         android:id="@+id/time"
@@ -48,6 +49,49 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp" />
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/imagesLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="5dp" >
+
+            <ImageView
+                android:id="@+id/images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/albums_bg"
+                android:paddingBottom="30dip"
+                android:paddingLeft="20dip"
+                android:paddingRight="20dip"
+                android:paddingTop="18dip"
+                android:scaleType="fitXY"
+                android:src="@drawable/friends_sends_pictures_no" />
+
+            <TextView
+                android:id="@+id/imagesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dip"
+                android:background="@drawable/albums_icon_bg"
+                android:gravity="center"
+                android:text="5" />
+        </FrameLayout>
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gif"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/chatLayout"
@@ -138,13 +182,6 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-            <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/gif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:visibility="gone" />
-
             <ImageView
                 android:id="@+id/locationImage"
                 android:layout_width="150dp"
@@ -220,36 +257,6 @@
                         android:textSize="14sp" />
                 </LinearLayout>
             </RelativeLayout>
-
-            <FrameLayout
-                android:id="@+id/imagesLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" >
-
-                <ImageView
-                    android:id="@+id/images"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/albums_bg"
-                    android:paddingBottom="30dip"
-                    android:paddingLeft="20dip"
-                    android:paddingRight="20dip"
-                    android:paddingTop="18dip"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/friends_sends_pictures_no" />
-
-                <TextView
-                    android:id="@+id/imagesCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginBottom="10dip"
-                    android:background="@drawable/albums_icon_bg"
-                    android:gravity="center"
-                    android:text="5" />
-            </FrameLayout>
         </LinearLayout>
 
         <ImageView
