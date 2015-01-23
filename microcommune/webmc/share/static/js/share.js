@@ -9,8 +9,8 @@
             gsid: Request.QueryString("gsid")
         },
         success: function (data) {
-            if (data.shares != undefined && data.shares != null) {
-                var contentStr = data.shares[0].content;
+            if (data.share != undefined && data.share != null) {
+                var contentStr = data.share.content;
                 var content = JSON.parse(contentStr);
                 for (var index in content) {
                     var shareContent = content[index];
@@ -22,7 +22,7 @@
                         $(".user-describe pre")[0].innerText = shareContent.detail;
                     }
                 }
-                var commentsStr = data.shares[0].comments;
+                var commentsStr = data.share.comments;
                 var comments = JSON.parse(commentsStr);
                 var comment_list = getTemplate("comment-list");
                 $(".user-comment ul").append(comment_list.render(comments));
