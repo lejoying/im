@@ -293,6 +293,22 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.modifysequence(data, response);
         });
+    } else if (operation == "creategroupcircle") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.creategroupcircle(data, response);
+        });
+    } else if (operation == "deletegroupcircle") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.deletegroupcircle(data, response);
+        });
+    } else if (operation == "modifygroupcircle") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.modifygroupcircle(data, response);
+        });
+    } else if (operation == "movegroupcirclegroups") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.movegroupcirclegroups(data, response);
+        });
     }
 }
 var shareManage = require("./handlers/shareManage.js");
@@ -362,7 +378,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.getboardshares(data, response);
         });
     } else if (operation == "getboardshare") {
-        oauth6(data.phone, data.accessKey, response, function () {
+        oauth6(data.phone, response, function () {
             shareManage.getboardshare(data, response);
         });
     } else if (operation == "addboard") {
