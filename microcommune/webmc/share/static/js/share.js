@@ -3,9 +3,9 @@
     $.ajax({
         type: "POST",
         timeout: 32000,
-        url: "/api2/share/getshare",
+        url: "/api2/share/getboardshare",
         data: {
-            gid: Request.QueryString("gid"),
+            sid: Request.QueryString("sid"),
             gsid: Request.QueryString("gsid")
         },
         success: function (data) {
