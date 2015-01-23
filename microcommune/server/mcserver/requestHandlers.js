@@ -378,9 +378,9 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.getboardshares(data, response);
         });
     } else if (operation == "getboardshare") {
-        oauth6(data.phone, response, function () {
-            shareManage.getboardshare(data, response);
-        });
+//        oauth6(data.phone, data.accessKey, response, function () {
+        shareManage.getboardshare(data, response);
+//        });
     } else if (operation == "addboard") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.addboard(data, response);
