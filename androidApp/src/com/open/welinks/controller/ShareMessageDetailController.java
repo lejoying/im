@@ -163,8 +163,10 @@ public class ShareMessageDetailController {
 		mOnWeChatClickListener = thisView.shareView.new onWeChatClickListener() {
 			@Override
 			public void onWeChatClick() {
-				WeChatBitmap = thisView.imageView.getDrawingCache();
-				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, gid, thisController.gsid);
+				if (thisView.imageView != null) {
+					WeChatBitmap = thisView.imageView.getDrawingCache();
+				}
+				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, sid, thisController.gsid);
 			}
 		};
 	}
@@ -737,6 +739,8 @@ public class ShareMessageDetailController {
 	}
 
 	public void getShareMessageDetail() {
+		log.e(currentUser.phone + "::::::::::" + sid + "::::::::::::::::::::" + gsid);
+
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", currentUser.phone);

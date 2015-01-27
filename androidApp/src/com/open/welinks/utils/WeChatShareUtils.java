@@ -41,16 +41,16 @@ public class WeChatShareUtils {
 		flag = api.registerApp(Constant.WECHAT_ADDID);
 	}
 
-	public void shareMessageToWXFriends(Bitmap bitmap, String content, String phone, String gid, String gsid) {
-		shareToWeChat(Status.friends, bitmap, content, phone, gid, gsid);
+	public void shareMessageToWXFriends(Bitmap bitmap, String content, String phone, String sid, String gsid) {
+		shareToWeChat(Status.friends, bitmap, content, phone, sid, gsid);
 	}
 
-	public void shareMessageToWXMoments(Bitmap bitmap, String content, String phone, String gid, String gsid) {
-		shareToWeChat(Status.moments, bitmap, content, phone, gid, gsid);
+	public void shareMessageToWXMoments(Bitmap bitmap, String content, String phone, String sid, String gsid) {
+		shareToWeChat(Status.moments, bitmap, content, phone, sid, gsid);
 	}
 
-	private void shareToWeChat(Status status, Bitmap bitmap, String content, String phone, String gid, String gsid) {
-		String url = "http://www.we-links.com/share/share.html?phone=" + phone + "&gid=" + gid + "&gsid=" + gsid;// 收到分享的好友点击信息会跳转到这个地址去
+	private void shareToWeChat(Status status, Bitmap bitmap, String content, String phone, String sid, String gsid) {
+		String url = "http://www.we-links.com/share/share.html?phone=" + phone + "&sid=" + sid + "&gsid=" + gsid;// 收到分享的好友点击信息会跳转到这个地址去
 
 		WXWebpageObject localWXWebpageObject = new WXWebpageObject();
 		localWXWebpageObject.webpageUrl = url;

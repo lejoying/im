@@ -247,7 +247,7 @@ public class BusinessCardView {
 			businessCard.lable = thisActivity.getString(R.string.business_not_label);
 			businessCard.creattime = group.createTime;
 			businessCard.button_one = thisActivity.getString(R.string.business_chat_room);
-			businessCard.button_two = thisActivity.getString(R.string.business_modify_room_card);
+			businessCard.button_two = thisActivity.getString(R.string.business_add_to_groupcircle);
 			businessCard.button_three = "";
 			buttonThree.setVisibility(View.GONE);
 			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
@@ -336,7 +336,12 @@ public class BusinessCardView {
 			businessTitle.setText(thisActivity.getString(R.string.business_personal_statement));
 			lableTitle.setText(thisActivity.getString(R.string.business_hobbies));
 			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
-		} else if (status.equals(Status.JOINEDGROUP) || status.equals(Status.NOTJOINGROUP)) {
+		} else if (status.equals(Status.JOINEDGROUP)) {
+			backTitleView.setText(thisActivity.getString(R.string.business_room_info));
+			businessTitle.setText(thisActivity.getString(R.string.business_room_description));
+			lableTitle.setText(thisActivity.getString(R.string.business_label));
+			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
+		} else if (status.equals(Status.NOTJOINGROUP)) {
 			backTitleView.setText(thisActivity.getString(R.string.business_room_info));
 			businessTitle.setText(thisActivity.getString(R.string.business_room_description));
 			lableTitle.setText(thisActivity.getString(R.string.business_label));

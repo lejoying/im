@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#bf000000" />
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="470dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/card_draw_background" >
+
+        <com.mobeta.android.dslv.DragSortListView
+            android:id="@+id/content"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/manage"
+            android:layout_marginTop="20dp"
+            android:background="@color/Transparent"
+            android:cacheColorHint="@color/Transparent"
+            android:divider="@color/Transparent"
+            android:dividerHeight="1dp"
+            android:fadingEdge="none"
+            android:listSelector="@color/Transparent"
+            android:scrollbars="none" >
+        </com.mobeta.android.dslv.DragSortListView>
+
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/manage"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <FrameLayout
+                android:id="@+id/buttonOne"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_gravity="left|center_vertical"
+                android:background="@drawable/button_white" >
+
+                <TextView
+                    android:id="@+id/buttonOneText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:textColor="#99000000"
+                    android:textSize="16sp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/buttonTwo"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/button_white" >
+
+                <TextView
+                    android:id="@+id/buttonTwoText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:textColor="#99000000"
+                    android:textSize="16sp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/buttonThree"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right|center_horizontal"
+                android:background="@drawable/button_white" >
+
+                <TextView
+                    android:id="@+id/buttonThreeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:textColor="#99000000"
+                    android:textSize="16sp" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/manage"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/button_white" >
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:src="@drawable/btn_setting" />
+        </FrameLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

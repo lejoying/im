@@ -1498,7 +1498,6 @@ groupManage.getgroupmembers = function (data, response) {
                                     var groupCircle = groupCircleOrder[index];
                                     if (groupCircle.rid) {
                                         groupCircles.push(groupCircle.rid);
-                                        groupCircle.groups = [];
                                         groupCirclesMap[groupCircle.rid] = groupCircle;
                                     } else {
                                         flag = true;
@@ -1519,25 +1518,22 @@ groupManage.getgroupmembers = function (data, response) {
                                 name: "默认分组",
                                 groups: []
                             };
+                            for (var index1 in results) {
+                                var groupData1 = results[index1].group.data;
+                                var rNode = results[index1].r;
+                                var rData = rNode.data;
+                                groupCirclesMap["8888888"].groups.push(groupData1.gid);
+                            }
                             accountData.groupCirclesOrderString = JSON.stringify([
                                 {
                                     rid: "8888888",
-                                    name: "默认分组"
+                                    name: "默认分组",
+                                    groups: groupCirclesMap["8888888"].groups
                                 }
                             ]);
                             accountNode.save(function (err, node) {
                                 console.log("初始化群组分组顺序.");
                             });
-                        }
-                        for (var index1 in results) {
-                            var groupData1 = results[index1].group.data;
-                            var rNode = results[index1].r;
-                            var rData = rNode.data;
-                            if (groupCirclesMap[rData.rid]) {
-                                groupCirclesMap[rData.rid].groups.push(groupData1.gid);
-                            } else {
-                                groupCirclesMap["8888888"].groups.push(groupData1.gid);
-                            }
                         }
                         getGroupsMembers(groups);
                     }
@@ -1650,7 +1646,8 @@ groupManage.getgroupmembers = function (data, response) {
                         groupsMap[groupData.gid + ""].members.push(account.phone);
                     }
                 }
-                console.log(members.length);
+                console.log(groupCircles);
+                console.log(groupCirclesMap);
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群组成员成功",
                     relationship: {
@@ -1731,14 +1728,32 @@ groupManage.modifysequence = function (data, response) {
         });
     }
 }
-var RID = -1;
-var RIDclient = redis.createClient(serverSetting.redisPort, "112.126.71.180");
+var GRID = -1;
+var GRIDclient = redis.createClient(serverSetting.redisPort, "112.126.71.180");
+GRIDclient.get("GRID", function (err, reply) {
+    if (err != null) {
+        console.error(err + "as");
+        throw "分组RID初始化失败...请查看112.126.71.180服务器";
+        return;
+    } else {
+        if (reply == null) {
+            console.warn(reply + "a");
+            throw "分组RID初始化失败...请查看112.126.71.180服务器";
+            return;
+        } else {
+            console.log("GRID:" + reply + "...init data,from server...112.126.71.180");
+            GRID = reply;
+        }
+    }
+});
+
 
 groupManage.creategroupcircle = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var name = data.name;
     var oldRid = data.rid;
+    var accessKey = data.accessKey;
     if (verifyEmpty.verifyEmpty(data, oldRid, name, response)) {
         createGroupCircle();
     }
@@ -1751,88 +1766,74 @@ groupManage.creategroupcircle = function (data, response) {
             phone: phone
         };
         db.query(query, params, function (error, results) {
-            if (error) {
-                ResponseData(JSON.stringify({
-                    "提示信息": "创建群组分组失败",
-                    "失败原因": "数据异常"
-                }), response);
-                console.error(error);
-            } else if (results.length > 0) {
-                var accountNode = results.pop().account;
-                var accountData = accountNode.data;
-                var groupCirclesOrderString = accountData.groupCirclesOrderString;
-                var flag = false;
-                var rid;
-                try {
-                    if (groupCirclesOrderString) {
-                        var orderObj = JSON.parse(groupCirclesOrderString);
-                        rid = ++RID;
-                        orderObj.push({rid: rid, name: name});
-                        accountData.groupCirclesOrderString = JSON.stringify(orderObj);
-                        accountNode.save(function (err, node) {
-                        });
-                        RIDclient.set("RID", RID, function (err, reply) {
-                        });
-                    } else {
-                        flag = true;
-                    }
-                } catch (e) {
-                    flag = true;
-                }
-                if (flag) {
-                    rid = ++RID;
-                    var orderObj = [
-                        {rid: "8888888", name: "默认分组"},
-                        {rid: rid, name: name}
-                    ];
+                if (error) {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "创建群组分组失败",
+                        "失败原因": "数据异常"
+                    }), response);
+                    console.error(error + ":::创建群组分组失败");
+                } else if (results.length > 0) {
+                    var accountNode = results.pop().account;
+                    var accountData = accountNode.data;
+                    var groupCirclesOrderString = accountData.groupCirclesOrderString;
+                    var flag = false;
+                    var rid;
+
+                    var orderObj = JSON.parse(groupCirclesOrderString);
+                    rid = ++GRID;
+                    orderObj.push({rid: rid, name: name, groups: []});
                     accountData.groupCirclesOrderString = JSON.stringify(orderObj);
                     accountNode.save(function (err, node) {
                     });
-                    RIDclient.set("RID", RID, function (err, reply) {
+                    GRIDclient.set("GRID", GRID, function (err, reply) {
                     });
-                }
-                var time = new Date().getTime();
-                var eid = phone + "_" + time;
-                var event = JSON.stringify({
-                    sendType: "event",
-                    contentType: "group_creategroupcircle",
-                    content: JSON.stringify({
-                        type: "group_creategroupcircle",
-                        phone: phone,
-                        eid: eid,
-                        rid: rid,
-                        name: name,
-                        time: time,
-                        status: "success",
-                        content: ""
-                    })
-                });
-                client.rpush(phone, event, function (err, reply) {
-                    if (err) {
-                        console.error("保存Event失败");
-                    } else {
-                        console.log("保存Event成功");
-                    }
-                });
-                push.inform(phone, phone, accessKey, "*", event);
 
-                ResponseData(JSON.stringify({
-                    "提示信息": "创建群组分组成功",
-                    "groupCircle": {rid: rid, name: name, groups: []},
-                    "rid": oldRid
-                }), response);
-            } else {
-                ResponseData(JSON.stringify({
-                    "提示信息": "创建群组分组失败",
-                    "失败原因": "用户不存在"
-                }), response);
+                    var time = new Date().getTime();
+                    var eid = phone + "_" + time;
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_creategroupcircle",
+                        content: JSON.stringify({
+                            type: "group_creategroupcircle",
+                            phone: phone,
+                            eid: eid,
+                            rid: rid,
+                            name: name,
+                            time: time,
+                            status: "success",
+                            content: ""
+                        })
+                    });
+                    client.rpush(phone, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phone, accessKey, "*", event);
+
+                    ResponseData(JSON.stringify({
+                        "提示信息": "创建群组分组成功",
+                        "groupCircle": {rid: rid, name: name, groups: []},
+                        "oldRid": oldRid
+                    }), response);
+                }
+                else {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "创建群组分组失败",
+                        "失败原因": "用户不存在"
+                    }), response);
+                }
             }
-        });
+        )
+        ;
     }
 }
 groupManage.deletegroupcircle = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var rid = data.rid;
     if (verifyEmpty.verifyEmpty(data, rid, phone, response)) {
         deleteGroupCircle();
@@ -1845,56 +1846,98 @@ groupManage.deletegroupcircle = function (data, response) {
         ].join("\n");
         var params = {
             phone: phone,
-            rid: rid
+            rid: parseInt(rid)
         };
         db.query(query, params, function (error, results) {
             if (error) {
                 ResponseData(JSON.stringify({
                     "提示信息": "删除群组分组失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常1"
                 }), response);
                 console.error(error);
             } else if (results.length > 0) {
                 var accountNode;
                 var accountData;
                 for (var index in results) {
-                    var rNode = results[index].r;
-                    var rData = rNode.data;
-                    rData.rid = "8888888";
-                    rNode.save(function (err, node) {
-                    });
-                    if (index == results.length - 1) {
+                    if (index == 0) {
                         accountNode = results[index].account;
                         accountData = accountNode.data;
                     }
+                    var rNode = results[index].r;
+                    var rData = rNode.data;
+                    rData.rid = 8888888;
+                    rNode.save(function (err, node) {
+                    });
                 }
-                var newGroupCirclesOrderString = [];
-                var groupCirclesOrderString = accountData.groupCirclesOrderString;
-                groupCirclesOrderString = JSON.parse(groupCirclesOrderString);
-                for (var index in groupCirclesOrderString) {
-                    var groupCircle = groupCirclesOrderString[index];
-                    if (groupCircle.rid != rid) {
-                        newGroupCirclesOrderString.push(groupCircle);
-                    }
-                }
-                accountData.groupCirclesOrderString = JSON.stringify(newGroupCirclesOrderString);
-                accountNode.save(function (err, node) {
-                });
-                ResponseData(JSON.stringify({
-                    "提示信息": "删除群组分组成功"
-                }), response);
+                deleteAccountGroupCircle();
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "删除群组分组失败",
-                    "失败原因": "用户不存在"
+                    "失败原因": "用户不存在1"
                 }), response);
             }
         });
+        function deleteAccountGroupCircle() {
+            var query = [
+                "MATCH (account:Account{phone:{phone}})",
+                "RETURN account"
+            ].join("\n");
+            var params = {
+                phone: phone
+            };
+            db.query(query, params, function (error, results) {
+                if (error) {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "删除群组分组失败",
+                        "失败原因": "数据异常2"
+                    }), response);
+                    console.error(error);
+                } else if (results.length > 0) {
+                    var pop = results.pop();
+                    var accountNode = pop.account;
+                    var accountData = accountNode.data;
+                    var newGroupCirclesOrderString = [];
+                    var groupCirclesOrderString = accountData.groupCirclesOrderString;
+                    groupCirclesOrderString = JSON.parse(groupCirclesOrderString);
+                    var deleteGroupCircle;
+                    for (var index in groupCirclesOrderString) {
+                        var groupCircle = groupCirclesOrderString[index];
+                        if (groupCircle.rid != rid) {
+                            newGroupCirclesOrderString.push(groupCircle);
+                        } else {
+                            deleteGroupCircle = groupCircle;
+                        }
+                    }
+                    for (var index in newGroupCirclesOrderString) {
+                        var groupCircle = newGroupCirclesOrderString[index];
+                        if (groupCircle.rid == "8888888") {
+                            for (var index1 in deleteGroupCircle.groups) {
+                                var group = deleteGroupCircle.groups[index1];
+                                groupCircle.groups.push(group);
+                            }
+                            break;
+                        }
+                    }
+                    accountData.groupCirclesOrderString = JSON.stringify(newGroupCirclesOrderString);
+                    accountNode.save(function (err, node) {
+                    });
+                    ResponseData(JSON.stringify({
+                        "提示信息": "删除群组分组成功"
+                    }), response);
+                } else {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "删除群组分组失败",
+                        "失败原因": "用户不存在2"
+                    }), response);
+                }
+            });
+        }
     }
 }
 groupManage.modifygroupcircle = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var name = data.name;
     var rid = data.rid;
     var groupCircles = data.groupCircles;
@@ -1922,29 +1965,196 @@ groupManage.modifygroupcircle = function (data, response) {
                 var accountData = accountNode.data;
                 var groupCirclesOrderString = accountData.groupCirclesOrderString;
                 groupCirclesOrderString = JSON.parse(groupCirclesOrderString);
+                var flag = false;
+                var newGroupCirclesOrderString = [];
+                if (groupCircles != undefined && groupCircles != null && groupCircles != "") {
+                    groupCircles = JSON.parse(groupCircles);
+                    for (var index in groupCircles) {
+                        var rid = groupCircles[index];
+                        for (var index1 in groupCirclesOrderString) {
+                            var groupCircleString = groupCirclesOrderString[index1];
+                            var rid1 = groupCircleString.rid + "";
+                            if (rid1 == rid) {
+                                newGroupCirclesOrderString.push(groupCircleString);
+                                break;
+                            }
+                        }
+                    }
+                    groupCirclesOrderString = newGroupCirclesOrderString;
+                    accountData.groupCirclesOrderString = JSON.stringify(newGroupCirclesOrderString);
+                }
                 if (rid != undefined && rid != null && rid != "" && name != undefined && name != null && name != "") {
+                    newGroupCirclesOrderString = [];
                     for (var index in groupCirclesOrderString) {
                         var groupCircle = groupCirclesOrderString[index];
                         if (groupCircle.rid = rid) {
                             groupCircle.name = name;
                         }
+                        newGroupCirclesOrderString.push(groupCircle);
                     }
+                    accountData.groupCirclesOrderString = JSON.stringify(newGroupCirclesOrderString);
                 }
-                if (groupCircles != undefined && groupCircles != null && groupCircles != "") {
-
-                }
+                accountNode.save(function (err, node) {
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组分组成功"
+                }), response);
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改群组分组失败",
                     "失败原因": "用户不存在"
                 }), response);
             }
-
         });
     }
 }
 groupManage.movegroupcirclegroups = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var gid = data.gid;
+    var rid = data.rid;
+    var orid = data.orid;
+    if (verifyEmpty.verifyEmpty(data, phone, gid, rid, orid, response)) {
+        moveGroupCircleGroups();
+    }
+    function moveGroupCircleGroups() {
+        var query = [
+            'MATCH (account:Account)<-[r:HAS_MEMBER]-(group:Group)',
+            'WHERE account.phone={phone} AND group.gid={gid}',
+            'RETURN account,r'
+        ].join("\n");
+        var params = {
+            phone: phone,
+            gid: parseInt(gid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "移动群组分组失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length > 0) {
+                var pop = results.pop();
+                var accountNode = pop.account;
+                var accountData = accountNode.data;
+                var rNode = pop.r;
+                var rData = rNode.data;
+                var groupCirclesOrderString = accountData.groupCirclesOrderString;
+                groupCirclesOrderString = JSON.parse(groupCirclesOrderString);
+                for (var index in groupCirclesOrderString) {
+                    var groupCircle = groupCirclesOrderString[index];
+                    console.log(groupCircle.rid);
+                    console.log(orid);
+                    if (groupCircle.rid == rid) {
+                        groupCircle.groups.push(parseInt(gid));
+//                        console.log(groupCircle.groups);
+                    } else if (groupCircle.rid == parseInt(orid)) {
+                        groupCircle.groups.splice(groupCircle.groups.indexOf(parseInt(gid)), 1);
+//                        console.log(groupCircle.groups);
+                    }
+                }
+                accountData.groupCirclesOrderString = JSON.stringify(groupCirclesOrderString);
+                rData.rid = parseInt(rid);
+                accountNode.save(function (err, node) {
+                });
+                rNode.save(function (err, node) {
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "移动群组分组成功"
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "移动群组分组失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            }
+        });
+    }
+}
+groupManage.modifygroupcirclesequence = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var groupSequence = data.sequence;
+    var rid = data.rid;
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
+    modifyGroupSeqence();
+    function modifyGroupSeqence() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组顺序失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组顺序失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                var groupCirclesOrderString = accountData.groupCirclesOrderString;
+                var newGroupSequence = [];
+                groupSequence = JSON.parse(groupSequence);
+                for (var index1 in groupSequence) {
+                    var gid = groupSequence[index1];
+                    newGroupSequence.push(parseInt(gid));
+                }
+                groupCirclesOrderString = JSON.parse(groupCirclesOrderString);
+                var newGroupCirclesOrderString = [];
+                for (var index in groupCirclesOrderString) {
+                    var circle = groupCirclesOrderString[index];
+                    if ((circle.rid + "") == rid) {
+                        circle.groups = newGroupSequence;
+                    }
+                    newGroupCirclesOrderString.push(circle);
+                }
+                accountData.groupCirclesOrderString = JSON.stringify(newGroupCirclesOrderString);
+                accountNode.save(function (err, node) {
+                    if (err) {
+                        console.info(err);
+                    }
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组顺序成功"
+                }), response);
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_sequence",
+                    content: JSON.stringify({
+                        type: "group_sequence",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: "",
+                        eid: eid
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
+            }
+        });
+    }
 }
 function ResponseData(responseContent, response) {
     response.writeHead(200, {

@@ -392,7 +392,7 @@ public class ShareMessageDetailView {
 			praiseIconView.setImageResource(R.drawable.praise_icon);
 		}
 		shareView.phone = data.userInformation.currentUser.phone;
-		shareView.gid = thisController.gid;
+		shareView.sid = thisController.sid;
 		shareView.gsid = thisController.gsid;
 		shareView.content = thisController.textContent;
 		showPraiseUsersContent();

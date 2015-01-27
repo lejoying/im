@@ -347,17 +347,17 @@ public class ShareSubView {
 		data = parser.check();
 
 		showTopMenuRoomName();
-		if (data.relationship == null || data.relationship.groupsMap == null || data.localStatus == null || data.localStatus.localData == null) {
+		if (data.relationship == null || data.relationship.groupCircles == null || data.relationship.groupCirclesMap == null || data.localStatus == null || data.localStatus.localData == null) {
 			log.e("return groups or localData");
 			return;
 		}
-		boolean flag0 = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
+		boolean flag0 = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.contains(data.localStatus.localData.currentSelectedGroup);
 		if (!flag0) {
-			if (data.relationship.groups.size() == 0) {
+			if (data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.size() == 0) {
 				data.localStatus.localData.currentSelectedGroup = "";
 				data.relationship.isModified = true;
 			} else {
-				data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
+				data.localStatus.localData.currentSelectedGroup = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.get(0);
 			}
 		}
 
@@ -952,17 +952,17 @@ public class ShareSubView {
 
 	public void setGroupsDialogContent() {
 		data = parser.check();
-		if (data.relationship == null || data.relationship.groupsMap == null || data.localStatus == null || data.localStatus.localData == null) {
+		if (data.relationship == null || data.relationship.groupCircles == null || data.relationship.groupCirclesMap == null || data.localStatus == null || data.localStatus.localData == null) {
 			log.e("return groups or localData");
 			return;
 		}
-		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
+		boolean flag = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.contains(data.localStatus.localData.currentSelectedGroup);
 		if (!flag) {
-			if (data.relationship.groups.size() == 0) {
+			if (data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.size() == 0) {
 				data.localStatus.localData.currentSelectedGroup = "";
 				data.relationship.isModified = true;
 			} else {
-				data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
+				data.localStatus.localData.currentSelectedGroup = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.get(0);
 				getCurrentGroupShareMessages();
 			}
 		}
@@ -975,9 +975,10 @@ public class ShareSubView {
 			this.setMenuNameBotton("暂无房间");
 		}
 
-		List<String> groups = data.relationship.groups;
+		List<String> groups = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
 		groupsDialogContent.removeAllViews();
+		this.groupListBody.containerView.removeAllViews();
 		this.groupListBody.height = 0;
 		groupListBody.listItemsSequence.clear();
 		for (int i = 0; i < groups.size(); i++) {
@@ -1002,10 +1003,10 @@ public class ShareSubView {
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 60), (int) (60 * displayMetrics.density));
 			groupDialogItem.y = this.groupListBody.height;
-			groupDialogItem.cardView.setY(groupDialogItem.y);
-			groupDialogItem.cardView.setX(0);
+			view.setY(groupDialogItem.y);
+			view.setX(0);
 			this.groupListBody.height = this.groupListBody.height + 60 * displayMetrics.density;
-			this.groupListBody.containerView.addView(groupDialogItem.cardView, layoutParams);
+			this.groupListBody.containerView.addView(view, layoutParams);
 
 			// onclick
 			view.setTag("GroupDialogContentItem#" + group.gid);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">微型社区</string>
+    <string name="app_name">学生来吐槽</string>
     <string name="description_image">微型公社new</string>
     <string name="image_text">图文</string>
     <string name="voice_text">语音</string>
@@ -61,6 +61,7 @@
     <string name="business_personal_not_business">此用户暂无签名</string>
     <string name="business_modify_room_card">修改群组名片</string>
     <string name="business_add_to_room">加入群组</string>
+    <string name="business_add_to_groupcircle">加入群组分组</string>
     <string name="business_go_community">进入社区</string>
     <string name="business_my_info">我的详情</string>
     <string name="business_personal_statement">个人宣言：</string>

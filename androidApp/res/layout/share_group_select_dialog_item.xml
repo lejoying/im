@@ -5,6 +5,14 @@
     android:layout_height="60dp" >
 
     <com.open.lib.TouchImageView
+        android:id="@+id/groupSelectedStatus"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:background="@color/card_color"
+        android:visibility="invisible" />
+
+    <com.open.lib.TouchImageView
         android:id="@+id/grip_card_background"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -28,13 +36,5 @@
         android:text="亦庄文化园站"
         android:textColor="#99000000"
         android:textSize="16dp" />
-
-    <com.open.lib.TouchImageView
-        android:id="@+id/groupSelectedStatus"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center_vertical"
-        android:background="@color/card_color"
-        android:visibility="invisible" />
 
 </com.open.lib.TouchView>

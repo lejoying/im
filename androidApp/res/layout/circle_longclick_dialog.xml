@@ -19,7 +19,6 @@
             android:layout_height="30dp"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="20dp"
-            android:text="微型公社"
             android:textColor="#ff0099cd"
             android:textSize="18sp" />
 

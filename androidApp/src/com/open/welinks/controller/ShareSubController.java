@@ -475,6 +475,7 @@ public class ShareSubController {
 		bodyCallback = new BodyCallback() {
 			@Override
 			public void onStopOrdering(List<String> listItemsSequence) {
+				// TODO
 				super.onStopOrdering(listItemsSequence);
 				log.e(tag, listItemsSequence.toString());
 				List<String> groups = new ArrayList<String>();
@@ -483,15 +484,16 @@ public class ShareSubController {
 					groups.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
 				}
 				// modify local data
-				String oldSequece = gson.toJson(data.relationship.groups);
-				data.relationship.groups = groups;
+				String rid = data.relationship.groupCircles.get(0);
+				String oldSequece = gson.toJson(data.relationship.groupCirclesMap.get(rid).groups);
+				data.relationship.groupCirclesMap.get(rid).groups = groups;
 				data.relationship.isModified = true;
 
 				String sequenceListString = gson.toJson(groups);
 
 				// modify server data
 				if (!sequenceListString.equals(oldSequece)) {
-					modifyGroupSequence(sequenceListString);
+					modifyGroupSequence(sequenceListString, rid);
 					log.e("群组顺序发生改动");
 				} else {
 					log.e("群组顺序没有改动");
@@ -533,14 +535,15 @@ public class ShareSubController {
 		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
 	}
 
-	public void modifyGroupSequence(String sequenceListString) {
+	public void modifyGroupSequence(String sequenceListString, String rid) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("sequence", sequenceListString);
+		params.addBodyParameter("rid", rid);
 
-		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFYGROUPSEQUENCE, params, responseHandlers.modifyGroupSequenceCallBack);
+		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFYGROUPCIRCLESEQUENCE, params, responseHandlers.modifyGroupSequenceCallBack);
 	}
 
 	public void getCurrentGroupShareMessages() {

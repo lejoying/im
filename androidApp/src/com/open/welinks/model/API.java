@@ -70,6 +70,10 @@ public class API {
 	 */
 	public static String GROUP_MODIFYGROUPSEQUENCE = API_DOMAIN + "api2/group/modifysequence";
 	/**
+	 * http://www.we-links.com/api2/group/modifygroupcirclesequence
+	 */
+	public static String GROUP_MODIFYGROUPCIRCLESEQUENCE = API_DOMAIN + "api2/group/modifygroupcirclesequence";
+	/**
 	 * http://www.we-links.com/api2/group/get
 	 */
 	public static String GROUP_GET = API_DOMAIN + "api2/group/get";
@@ -77,6 +81,22 @@ public class API {
 	 * http://www.we-links.com/api2/group/getallmembers
 	 */
 	public static String GROUP_GETALLMEMBERS = API_DOMAIN + "api2/group/getallmembers";
+	/**
+	 * http://www.we-links.com/api2/group/creategroupcircle
+	 */
+	public static String GROUP_CREATEGROUPCIRCLE = API_DOMAIN + "api2/group/creategroupcircle";
+	/**
+	 * http://www.we-links.com/api2/group/deletegroupcircle
+	 */
+	public static String GROUP_DELETEGROUPCIRCLE = API_DOMAIN + "api2/group/deletegroupcircle";
+	/**
+	 * http://www.we-links.com/api2/group/modifygroupcircle
+	 */
+	public static String GROUP_MODIFYGROUPCIRCLE = API_DOMAIN + "api2/group/modifygroupcircle";
+	/**
+	 * http://www.we-links.com/api2/group/movegroupcirclegroups
+	 */
+	public static String GROUP_MOVEGROUPCIRCLEGROUPS = API_DOMAIN + "api2/group/movegroupcirclegroups";
 
 	// share
 	/**

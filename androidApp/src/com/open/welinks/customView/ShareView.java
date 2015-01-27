@@ -35,7 +35,7 @@ public class ShareView extends FrameLayout {
 
 	private onWeChatClickListener mWeChatClickListener;
 	private Bitmap bitmap;
-	public String content, phone, gid, gsid;
+	public String content, phone, sid, gsid;
 	public int RESULT_SHAREVIEW = 0x99;
 
 	public List<String> firstPath = new ArrayList<String>();
@@ -76,11 +76,11 @@ public class ShareView extends FrameLayout {
 		this.mWeChatClickListener = mListener;
 	}
 
-	public void setWeChatContent(Bitmap bitmap, String content, String phone, String gid, String gsid) {
+	public void setWeChatContent(Bitmap bitmap, String content, String phone, String sid, String gsid) {
 		this.bitmap = bitmap;
 		this.content = content;
 		this.phone = phone;
-		this.gid = gid;
+		this.sid = sid;
 		this.gsid = gsid;
 	}
 
@@ -133,7 +133,7 @@ public class ShareView extends FrameLayout {
 	}
 
 	private void shareToQQzone() {
-		String url = "http://www.we-links.com/share/share.html?phone=" + phone + "&gid=" + gid + "&gsid=" + gsid;// 收到分享的好友点击信息会跳转到这个地址去
+		String url = "http://www.we-links.com/share/share.html?phone=" + phone + "&sid=" + sid + "&gsid=" + gsid;// 收到分享的好友点击信息会跳转到这个地址去
 		final Bundle params = new Bundle();
 		params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE, QzoneShare.SHARE_TO_QZONE_TYPE_IMAGE_TEXT);
 		params.putString(QzoneShare.SHARE_TO_QQ_TITLE, "微型社区群分享");
@@ -186,9 +186,9 @@ public class ShareView extends FrameLayout {
 
 	private void shareToWechat(Status status) {
 		if (status == Status.wechat_friend) {
-			weChatShareUtils.shareMessageToWXFriends(bitmap, content, phone, gid, gsid);
+			weChatShareUtils.shareMessageToWXFriends(bitmap, content, phone, sid, gsid);
 		} else if (status == Status.wechat_circle) {
-			weChatShareUtils.shareMessageToWXMoments(bitmap, content, phone, gid, gsid);
+			weChatShareUtils.shareMessageToWXMoments(bitmap, content, phone, sid, gsid);
 		}
 
 	}

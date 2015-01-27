@@ -25,6 +25,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
+import com.open.welinks.GroupListActivity;
 import com.open.welinks.ModifyInformationActivity;
 import com.open.welinks.NewChatActivity;
 import com.open.welinks.R;
@@ -38,6 +39,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -77,7 +79,7 @@ public class BusinessCardController {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
-	public static final int REQUESTCODE_MODIFY = 0x1, REQUESTCODE_ADD = 0x2;
+	public static final int REQUESTCODE_MODIFY = 0x1, REQUESTCODE_ADD = 0x2, REQUESTCODE_ADDGROUPCIRCLE = 0x3;
 
 	public BusinessCardController(BusinessCardActivity activity) {
 		thisActivity = activity;
@@ -158,7 +160,7 @@ public class BusinessCardController {
 					} else if (thisView.status.equals(Status.FRIEND)) {
 						modifyAlias();
 					} else if (thisView.status.equals(Status.JOINEDGROUP)) {
-						modifyInformation();
+						addGroupCircle();
 					} else if (thisView.status.equals(Status.TEMPFRIEND)) {
 						// unused
 					} else if (thisView.status.equals(Status.NOTJOINGROUP)) {
@@ -202,6 +204,7 @@ public class BusinessCardController {
 					thisActivity.startActivity(intent);
 				}
 			}
+
 		};
 		mOnTouchListener = new OnTouchListener() {
 
@@ -242,6 +245,37 @@ public class BusinessCardController {
 			thisView.fillData();
 		} else if (requestCode == REQUESTCODE_ADD && resultCode == Activity.RESULT_OK) {
 
+		} else if (requestCode == REQUESTCODE_ADDGROUPCIRCLE && resultCode == Activity.RESULT_OK) {
+			int rid = data.getIntExtra("rid", -1);
+			if (rid != -1) {
+				moveGroupCircle(rid);
+			}
+		}
+	}
+
+	public void moveGroupCircle(int rid) {
+		int orid = thisActivity.getIntent().getIntExtra("orid", -1);
+		if (orid != -1) {
+			GroupCircle oldCircle = data.relationship.groupCirclesMap.get(String.valueOf(orid));
+			GroupCircle circle = data.relationship.groupCirclesMap.get(String.valueOf(rid));
+			if (oldCircle != null && circle != null) {
+				if (!circle.groups.contains(key)) {
+					oldCircle.groups.remove(key);
+					circle.groups.add(key);
+
+					ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+					RequestParams params = new RequestParams();
+					HttpUtils httpUtils = new HttpUtils();
+					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					params.addBodyParameter("gid", key);
+					params.addBodyParameter("rid", String.valueOf(rid));
+					params.addBodyParameter("orid", String.valueOf(orid));
+					httpUtils.send(HttpMethod.POST, API.GROUP_MOVEGROUPCIRCLEGROUPS, params, responseHandlers.group_movegroupcirclegroups);
+				} else {
+					return;
+				}
+			}
 		}
 	}
 
@@ -278,6 +312,14 @@ public class BusinessCardController {
 				uploadAlias(alias);
 			}
 		}).show();
+	}
+
+	public void addGroupCircle() {
+		Intent intent = new Intent(thisActivity, GroupListActivity.class);
+		intent.putExtra("gid", key);
+		intent.putExtra("type", "group_circle");
+		thisActivity.startActivityForResult(intent, REQUESTCODE_ADDGROUPCIRCLE);
+
 	}
 
 	public HttpClient httpClient = HttpClient.getInstance();

@@ -23,6 +23,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskContainer_Share.GetShares;
 
 public final class NotificationUtils {
 
@@ -212,7 +213,7 @@ public final class NotificationUtils {
 			showFragment = "chatFriend";
 		} else if (friendCount > 1 && messageCount > 1) {
 			showFragment = "chatList";
-			contentTitle = "微型公社";
+			contentTitle = context.getString(R.string.app_name);
 			contentText = "有" + friendCount + "个好友给您发来了" + messageCount + "条消息。";
 		}
 

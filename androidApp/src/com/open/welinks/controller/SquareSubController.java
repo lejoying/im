@@ -518,7 +518,7 @@ public class SquareSubController {
 		final String currentGid = gid;
 		parser.check();
 		if (!data.localStatus.localData.currentSelectedSquare.equals(currentGid) && !data.localStatus.localData.currentSelectedSquare.equals("")) {
-			Alert.createDialog(thisActivity).setTitle("您已进入微型社区" + groups.get(currentGid).description + "站,是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
+			Alert.createDialog(thisActivity).setTitle("您已进入" + thisActivity.getString(R.string.app_name) + groups.get(currentGid).description + "站,是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
 
 				@Override
 				public void onClick(AlertInputDialog dialog) {

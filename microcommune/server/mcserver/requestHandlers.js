@@ -309,6 +309,10 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.movegroupcirclegroups(data, response);
         });
+    }else if(operation == "modifygroupcirclesequence"){
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.modifygroupcirclesequence(data, response);
+        });
     }
 }
 var shareManage = require("./handlers/shareManage.js");

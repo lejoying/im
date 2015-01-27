@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maxView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
-    android:orientation="vertical" >
+    android:background="@drawable/main_background" >
 
     <include layout="@layout/view_back_view" />
 
@@ -14,7 +14,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="53dp"
         android:cacheColorHint="#0000"
         android:divider="#00c0c0c0"
         android:dividerHeight="5dp"
@@ -22,4 +22,4 @@
         android:scrollbars="none" >
     </ListView>
 
-</LinearLayout>
+</RelativeLayout>

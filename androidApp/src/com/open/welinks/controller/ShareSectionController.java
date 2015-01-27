@@ -48,7 +48,7 @@ public class ShareSectionController {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareSectionController";
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 	public Gson gson = new Gson();
 
 	public TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
@@ -223,14 +223,15 @@ public class ShareSectionController {
 					thisView.dismissGroupBoardsDialog();
 					thisActivity.startActivityForResult(new Intent(thisActivity, CreateBoardActivity.class), REQUESTCODE_CREATE);
 				} else if (view.equals(thisView.createGroupButtonView)) {
-					// if (data.relationship.groupCircles != null) {
-					// for (String str : data.relationship.groupCircles) {
-					// GroupCircle a = data.relationship.groupCirclesMap.get(str);
-					// log.e(a.name + ":::::::::" + a.rid + ":::::::::::" + gson.toJson(a.groups));
-					// }
-					// } else {
-					// log.e("null:::::::::::::::::::::::::::");
-					// }
+					if (data.relationship.groupCircles != null) {
+						log.e("not null:::::::::::::::::::::::::::");
+						for (String str : data.relationship.groupCircles) {
+							GroupCircle a = data.relationship.groupCirclesMap.get(str);
+							log.e(a.name + ":::::::::" + a.rid + ":::::::::::" + gson.toJson(a.groups));
+						}
+					} else {
+						log.e("null:::::::::::::::::::::::::::");
+					}
 
 				} else if (view.equals(thisView.findMoreGroupButtonView)) {
 

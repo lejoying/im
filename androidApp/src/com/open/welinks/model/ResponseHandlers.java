@@ -1118,8 +1118,10 @@ public class ResponseHandlers {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			try {
+				log.e(responseInfo.result);
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群组成员成功")) {
+					log.e("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!获取群组成员成功");
 					parser.check();
 					data.relationship.groups = response.relationship.groups;
 					Map<String, Group> groupsMap = response.relationship.groupsMap;
@@ -1174,6 +1176,14 @@ public class ResponseHandlers {
 
 					data.relationship.groupCircles = response.relationship.groupCircles;
 					data.relationship.groupCirclesMap = response.relationship.groupCirclesMap;
+
+					if (response.relationship.groupCircles != null && response.relationship.groupCirclesMap != null) {
+						for (String str : response.relationship.groupCircles) {
+							log.e(str + ":::::::::::::");
+						}
+					} else {
+						log.e("null:::::::::::::");
+					}
 
 					data.relationship.isModified = true;
 					// init current share
@@ -1497,6 +1507,74 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("GroupListActivity");
 				}
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------获取群组成员成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public RequestCallBack<String> group_creategroupcircle = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public GroupCircle groupCircle;
+			public String oldRid;
+		}
+
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("创建群组分组成功")) {
+				data.relationship.groupCircles.remove(response.oldRid);
+				data.relationship.groupCirclesMap.remove(response.oldRid);
+				data.relationship.groupCircles.add(String.valueOf(response.groupCircle.rid));
+				data.relationship.groupCirclesMap.put(String.valueOf(response.groupCircle.rid), response.groupCircle);
+				if (viewManage.groupListActivity != null) {
+					viewManage.groupListActivity.showGroupCircles();
+				}
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		}
+	};
+	public RequestCallBack<String> group_deletegroupcircle = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("删除群组分组成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------删除群组分组成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		}
+	};
+	public RequestCallBack<String> group_movegroupcirclegroups = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("移动群组分组成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------移动群组分组成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		}
+	};
+	public RequestCallBack<String> group_modifygroupcircle = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改群组分组成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------修改群组分组成功");
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}

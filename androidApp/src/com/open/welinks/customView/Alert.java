@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.open.welinks.R;
+import com.open.welinks.utils.InputMethodManagerUtils;
 
 public class Alert {
 
@@ -26,6 +27,7 @@ public class Alert {
 	Context mContext;
 	WindowManager mWindowManager;
 	LayoutInflater mInflater;
+	static InputMethodManagerUtils mInputMethodManagerUtils;
 
 	Handler mHandler;
 
@@ -214,6 +216,7 @@ public class Alert {
 
 	public static AlertInputDialog createInputDialog(Context context) {
 		AlertInputDialog dialog = new AlertInputDialog(context);
+		mInputMethodManagerUtils = new InputMethodManagerUtils(context);
 		dialog.showInput();
 		return dialog;
 	}
@@ -319,6 +322,7 @@ public class Alert {
 					public void onClick(View v) {
 						cancel();
 						if (confirmListener != null) {
+							mInputMethodManagerUtils.hide(input);
 							confirmListener.onClick(AlertInputDialog.this);
 						}
 					}
@@ -329,6 +333,7 @@ public class Alert {
 					public void onClick(View v) {
 						cancel();
 						if (cancelListener != null) {
+							mInputMethodManagerUtils.hide(input);
 							cancelListener.onClick(AlertInputDialog.this);
 						}
 					}

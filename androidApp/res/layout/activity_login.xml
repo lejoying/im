@@ -28,11 +28,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="微型社区"
             android:layout_centerHorizontal="true"
-            android:translationY="250dp"
+            android:text="@string/app_name"
             android:textColor="#fff"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:translationY="250dp" />
 
         <RelativeLayout
             android:id="@+id/loginOrRegisterButton"
