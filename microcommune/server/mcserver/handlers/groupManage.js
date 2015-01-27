@@ -1646,8 +1646,6 @@ groupManage.getgroupmembers = function (data, response) {
                         groupsMap[groupData.gid + ""].members.push(account.phone);
                     }
                 }
-                console.log(groupCircles);
-                console.log(groupCirclesMap);
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群组成员成功",
                     relationship: {
@@ -2045,14 +2043,10 @@ groupManage.movegroupcirclegroups = function (data, response) {
                 groupCirclesOrderString = JSON.parse(groupCirclesOrderString);
                 for (var index in groupCirclesOrderString) {
                     var groupCircle = groupCirclesOrderString[index];
-                    console.log(groupCircle.rid);
-                    console.log(orid);
                     if (groupCircle.rid == rid) {
                         groupCircle.groups.push(parseInt(gid));
-//                        console.log(groupCircle.groups);
                     } else if (groupCircle.rid == parseInt(orid)) {
                         groupCircle.groups.splice(groupCircle.groups.indexOf(parseInt(gid)), 1);
-//                        console.log(groupCircle.groups);
                     }
                 }
                 accountData.groupCirclesOrderString = JSON.stringify(groupCirclesOrderString);
