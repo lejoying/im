@@ -122,7 +122,7 @@ public class GroupMemberManageController {
 						if (data.userInformation.currentUser.phone.equals(content)) {
 							// Alert.showMessage("不能把自己移出群组");
 							// Alert.showMessage(message);
-							Toast.makeText(thisActivity, "不能把自己移出房间", Toast.LENGTH_SHORT).show();
+							Toast.makeText(thisActivity, "不能把自己移出群组", Toast.LENGTH_SHORT).show();
 						} else {
 							thisView.subtractMembers.add(content);
 							thisView.groupMembersAdapter.members.remove(content);
@@ -161,7 +161,7 @@ public class GroupMemberManageController {
 						thisView.confirmButtonView.setText("确定");
 						thisView.confirmButtonView.setVisibility(View.VISIBLE);
 					} else if ("subtractonclick".equals(type)) {
-						Toast.makeText(thisActivity, "不能把自己移出房间", Toast.LENGTH_SHORT).show();
+						Toast.makeText(thisActivity, "不能把自己移出群组", Toast.LENGTH_SHORT).show();
 					}
 				}
 			}

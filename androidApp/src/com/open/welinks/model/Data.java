@@ -234,6 +234,7 @@ public class Data {
 
 			public List<String> boards;
 			public List<String> members = new ArrayList<String>();
+			public List<String> labels = new ArrayList<String>();
 		}
 
 		public class GroupCircle {

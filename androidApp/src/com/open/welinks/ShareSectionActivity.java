@@ -38,10 +38,7 @@ public class ShareSectionActivity extends Activity {
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 
-		thisController.initializeListeners();
-		thisView.initView();
 		thisController.onCrate();
-		thisController.bindEvent();
 	}
 
 	@Override
@@ -66,7 +63,7 @@ public class ShareSectionActivity extends Activity {
 	public void onBackPressed() {
 		thisController.onBackPressed();
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);

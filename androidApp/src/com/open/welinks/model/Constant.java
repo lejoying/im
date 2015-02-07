@@ -107,6 +107,8 @@ public class Constant {
 	public static String[] XIAOAN_FACE_NAMES = { "打招呼", "变脸", "草裙舞", "吃货", "恭喜", "喝奶", "惊愕", "酷", "潜水", "撒娇", "委屈", "无聊", "心碎" };
 	public static String[] CHOUERGUANG_FACE_NAMES = { "别想回家", "美图说个P", "抽丫的", "改图", "滚犊子", "啊西吧", "不装会死", "扔你嘚瑟", "让你偷懒", "装13没朋友", "你能怎样我", "为何这么吊", "打你怎么滴", "去死吧", "别告老师啊", "我让你吊", "你告老师啊", "闭嘴", "嫩娘", "山炮", "biang的" };
 
+	public static String[] LABELS = { "+", "吃货", "唱歌", "自拍", "读书", "音乐", "电影", "奢侈品", "美妆", "瑜伽", "游泳", "健身", "星座", "游戏", "动漫", "LOL", "纹身", "汪星人", "喵星人", "文艺", "书法", "摄影", "绘画", "Dota", "DIY", "军事", "篮球", "足球", "羽毛球", "乒乓球", "跑步", "户外" };
+
 	public static Map<String, String[]> FACE_RESOURCES_MAP;
 	public static Map<String, String[]> FACE_NAMES_MAP;
 	public static Map<String, Integer> DEFAULTFACEMAP;

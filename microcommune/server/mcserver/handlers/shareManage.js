@@ -816,7 +816,7 @@ shareManage.getusershares = function (data, response) {
     function getUserShares() {
         var query = [
             "MATCH (group:Group)-->(shares:Shares)-->(share:Share)",
-            "WHERE  share.phone={phone} AND shares.type='Main'",
+            "WHERE  share.phone={phone}",
             "RETURN group,share",
             "ORDER BY share.time DESC",
             "SKIP {start}",
@@ -831,7 +831,6 @@ shareManage.getusershares = function (data, response) {
             if (error) {
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群分享失败",
-                    gid: gid,
                     nowpage: nowpage,
                     "失败原因": "数据异常"
                 }), response);

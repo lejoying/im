@@ -173,7 +173,7 @@ public class NearbyView {
 				String description = (String) infomation.get("description");
 				if ("".equals(description)) {
 					if (thisController.status == Status.group) {
-						holder.mainBusiness.setText("此房间暂无描述");
+						holder.mainBusiness.setText("此群组暂无描述");
 					} else if (thisController.status == Status.square) {
 						holder.mainBusiness.setText("此社区暂无描述");
 					}

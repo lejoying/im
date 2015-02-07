@@ -2,6 +2,7 @@ package com.open.welinks.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Service;
@@ -19,8 +20,11 @@ import android.view.View.OnTouchListener;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.CreateBoardActivity;
@@ -31,6 +35,7 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Boards.Board;
@@ -55,6 +60,7 @@ public class ShareSectionController {
 	// public TaskManager mTaskManager = TaskManager.getInstance();
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+	public HttpClient httpClient = HttpClient.getInstance();
 
 	public Context context;
 	public ShareSectionView thisView;
@@ -84,16 +90,29 @@ public class ShareSectionController {
 		this.thisController = this;
 	}
 
+	public void onCrate() {
+		thisController.initializeListeners();
+		thisView.initView();
+		thisController.bindEvent();
+
+		String key = thisActivity.getIntent().getStringExtra("key");
+		if (key == null || "".equals(key)) {
+			thisView.currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		} else if (data.relationship.groupsMap.containsKey(key)) {
+			thisView.currentGroup = data.relationship.groupsMap.get(key);
+			getGroup(key);
+		} else {
+			getGroup(key);
+		}
+		mGesture = new GestureDetector(thisActivity, new GestureListener());
+	}
+
 	public class ReflashStatus {
 		public int Normal = 1, Reflashing = 2, Failed = 3;
 		public int state = Normal;
 	}
 
 	public ReflashStatus reflashStatus = new ReflashStatus();
-
-	public void onCrate() {
-		mGesture = new GestureDetector(thisActivity, new GestureListener());
-	}
 
 	public void initializeListeners() {
 		shareBodyCallback = new BodyCallback() {
@@ -224,13 +243,10 @@ public class ShareSectionController {
 					thisActivity.startActivityForResult(new Intent(thisActivity, CreateBoardActivity.class), REQUESTCODE_CREATE);
 				} else if (view.equals(thisView.createGroupButtonView)) {
 					if (data.relationship.groupCircles != null) {
-						log.e("not null:::::::::::::::::::::::::::");
 						for (String str : data.relationship.groupCircles) {
 							GroupCircle a = data.relationship.groupCirclesMap.get(str);
-							log.e(a.name + ":::::::::" + a.rid + ":::::::::::" + gson.toJson(a.groups));
 						}
 					} else {
-						log.e("null:::::::::::::::::::::::::::");
 					}
 
 				} else if (view.equals(thisView.findMoreGroupButtonView)) {
@@ -392,10 +408,10 @@ public class ShareSectionController {
 				onTouchDownView.playSoundEffect(SoundEffectConstants.CLICK);
 				thisView.currentBoard = (Board) onTouchDownView.getTag(R.id.tag_first);
 				nowpage = 0;
-				getCurrentGroupShareMessages();
 				thisView.showShareMessages();
 				thisView.showGroupBoards();
 				thisView.dismissGroupBoardsDialog();
+				getCurrentGroupShareMessages();
 			}
 			onTouchDownView = null;
 		}
@@ -464,10 +480,12 @@ public class ShareSectionController {
 	}
 
 	public void onResume() {
-		thisView.businessCardPopView.dismissUserCardDialogView();
-		thisView.dismissReleaseShareDialogView();
-		thisView.showShareMessages();
-		thisView.showGroupBoards();
+		if (thisView.currentGroup != null) {
+			thisView.businessCardPopView.dismissUserCardDialogView();
+			thisView.dismissReleaseShareDialogView();
+			thisView.showShareMessages();
+			thisView.showGroupBoards();
+		}
 	}
 
 	public void finish() {
@@ -507,12 +525,99 @@ public class ShareSectionController {
 		httpUtils.send(HttpMethod.POST, API.SHARE_MODIFYSQUENCE, params, responseHandlers.modifyBoardSequenceCallBack);
 	}
 
+	public void getGroup(String gid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("type", "group");
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public Group group;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取群组信息成功".equals(response.提示信息)) {
+					Group group = response.group;
+					if (group != null) {
+						Group currentGroup = null;
+						if (data.relationship.groups.contains(group.gid + "")) {
+							currentGroup = data.relationship.groupsMap.get(group.gid + "");
+						} else {
+							currentGroup = data.relationship.new Group();
+							data.relationship.groupsMap.put(group.gid + "", currentGroup);
+						}
+						currentGroup.gid = response.group.gid;
+						currentGroup.icon = group.icon;
+						currentGroup.name = group.name;
+						currentGroup.longitude = group.longitude;
+						currentGroup.latitude = group.latitude;
+						currentGroup.description = group.description;
+						currentGroup.createTime = group.createTime;
+						currentGroup.background = group.background;
+						currentGroup.boards = group.boards;
+						currentGroup.labels = group.labels;
+						data.relationship.isModified = true;
+						thisView.currentGroup = currentGroup;
+						getBoards();
+					}
+				}
+			}
+		});
+	}
+
+	private void getBoards() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", thisView.currentGroup.gid + "");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+				public String gid;
+				public List<String> boards;
+				public Map<String, Board> boardsMap;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取版块成功")) {
+					data = parser.check();
+					Group group = data.relationship.groupsMap.get(response.gid);
+					for (Board board : response.boardsMap.values()) {
+						data.boards.boardsMap.put(board.sid, board);
+					}
+					data.boards.isModified = true;
+					if (group != null) {
+						group.boards = response.boards;
+						if (group.boards.size() > 0)
+							group.currentBoard = group.boards.get(0);
+					}
+					thisView.currentBoard = data.boards.boardsMap.get(group.currentBoard);
+					thisView.showShareMessages();
+					thisView.showGroupBoards();
+					getCurrentGroupShareMessages();
+				} else {
+					log.d(ViewManage.getErrorLineNumber() + response.失败原因);
+
+				}
+			};
+		});
+	};
+
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == REQUESTCODE_CREATE && resultCode == Activity.RESULT_OK) {
 			thisView.currentBoard = data.boards.boardsMap.get(thisView.currentGroup.boards.get(thisView.currentGroup.boards.size() - 1));
 			nowpage = 0;
-			getCurrentGroupShareMessages();
 			thisView.showShareMessages();
+			getCurrentGroupShareMessages();
 		}
 	}
 

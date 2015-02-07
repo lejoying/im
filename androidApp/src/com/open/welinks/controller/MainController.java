@@ -174,7 +174,6 @@ public class MainController {
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
-		thisView.squareSubView.businessCardPopView.dismissUserCardDialogView();
 		thisView.friendsSubView.businessCardPopView.dismissUserCardDialogView();
 		thisView.shareSubView.businessCardPopView.dismissUserCardDialogView();
 		// thisView.shareSubView.onResume();
@@ -362,7 +361,7 @@ public class MainController {
 									}
 									addSquare(map);
 								}
-								thisView.squareSubView.thisController.setCurrentSquare();
+								// thisView.squareSubView.thisController.setCurrentSquare();
 							}
 						}
 					}
@@ -453,7 +452,7 @@ public class MainController {
 			if (map.get("conver") != null) {
 				group2.cover = (String) map.get("conver");
 				if (data.localStatus.localData.currentSelectedSquare.equals(group2.gid + "")) {
-					thisView.squareSubView.setConver();
+					// thisView.squareSubView.setConver();
 				}
 			}
 		}
@@ -610,9 +609,6 @@ public class MainController {
 				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
 				thisView.shareSubView.groupListBody.onTouchDown(event);
 				thisView.shareSubView.releaseChannelListBody.onTouchDown(event);
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.squareMessageListBody.onTouchDown(event);
-				thisView.squareSubView.squaresListBody.onTouchDown(event);
 			}
 
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
@@ -627,9 +623,6 @@ public class MainController {
 				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
 				thisView.shareSubView.groupListBody.onTouchMove(event);
 				thisView.shareSubView.releaseChannelListBody.onTouchMove(event);
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.squareMessageListBody.onTouchMove(event);
-				thisView.squareSubView.squaresListBody.onTouchMove(event);
 			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
@@ -646,10 +639,6 @@ public class MainController {
 				thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 				thisView.shareSubView.groupListBody.onTouchUp(event);
 				thisView.shareSubView.releaseChannelListBody.onTouchUp(event);
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				squareSubController.onSingleTapUp(event);
-				thisView.squareSubView.squareMessageListBody.onTouchUp(event);
-				thisView.squareSubView.squaresListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onSingleTapUp(event);
 			}
@@ -696,8 +685,6 @@ public class MainController {
 				// if (thisView.shareSubView.isShowGroupDialog) {
 				// listBody = thisView.shareSubView.groupListBody;
 				// }
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				listBody = thisView.squareSubView.squareMessageListBody;
 			}
 			if (listBody != null) {
 				if (listBody.bodyStatus.state == listBody.bodyStatus.DRAGGING) {
@@ -726,9 +713,6 @@ public class MainController {
 			if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onLongPress(event);
 			}
-			if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				squareSubController.onLongPress(event);
-			}
 
 		}
 
@@ -753,8 +737,6 @@ public class MainController {
 				friendsSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onScroll();
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				squareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
@@ -809,7 +791,7 @@ public class MainController {
 			if (isExit) {
 				thisActivity.finish();
 			} else {
-				if (!shareSubController.thisView.isShowGroupDialog && !squareSubController.thisView.isShowSquareDialog && !isShowDialg) {
+				if (!shareSubController.thisView.isShowGroupDialog && !isShowDialg) {
 					Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
 					isExit = true;
 					new Thread() {
@@ -833,9 +815,9 @@ public class MainController {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		isShowDialg = false;
 		boolean flag = shareSubController.onKeyDown(keyCode, event);
-		if (flag) {
-			flag = squareSubController.onKeyDown(keyCode, event);
-		}
+		// if (flag) {
+		// flag = squareSubController.onKeyDown(keyCode, event);
+		// }
 		if (!flag) {
 			isShowDialg = true;
 		}

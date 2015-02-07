@@ -57,7 +57,7 @@ public class GroupInfoView {
 	public View exit2DeleteGroup;
 	public View memberListTopView;
 	public LinearLayout memberListView;
-	public View cardOptionView;
+	public View cardOptionView, labelLayout;
 	public View borderOne, borderTwo, borderThree, borderFour, borderFive, borderSix, borderSeven, borderEight, borderNine;
 
 	public ImageView converImageView;
@@ -113,6 +113,7 @@ public class GroupInfoView {
 		this.borderSeven = thisActivity.findViewById(R.id.borderSeven);
 		this.borderEight = thisActivity.findViewById(R.id.borderEight);
 		this.borderNine = thisActivity.findViewById(R.id.borderNine);
+		this.labelLayout = thisActivity.findViewById(R.id.labelLayout);
 	}
 
 	public void setMembersList() {

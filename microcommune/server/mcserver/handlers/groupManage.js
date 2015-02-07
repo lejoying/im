@@ -1264,7 +1264,8 @@ groupManage.get = function (data, response) {
                     description: groupData.description || "",
                     background: groupData.background || "",
                     cover: groupData.cover || "",
-                    permission: groupData.permission || ""
+                    permission: groupData.permission || "",
+                    labels: []
                 };
                 if (groupData.boardSequenceString) {
                     try {
@@ -1275,11 +1276,7 @@ groupManage.get = function (data, response) {
                 } else {
                     group.boards = [];
                 }
-                response.write(JSON.stringify({
-                    "提示信息": "获取群组信息成功",
-                    group: group
-                }));
-                response.end();
+                getLabels(group);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "获取群组信息失败",
@@ -1287,9 +1284,43 @@ groupManage.get = function (data, response) {
                 }));
                 response.end();
             }
+            function getLabels(group) {
+                var query = [
+                    "MATCH(group:Group)-[r:HAS_LABEL]->(label:Label)",
+                    "WHERE group.gid={gid}",
+                    "RETURN group,label"
+                ].join('\n');
+                var params = {
+                    gid: group.gid
+                };
+                db.query(query, params, function (error, results) {
+                    if (error) {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "获取群组标签失败",
+                            "失败原因": "数据异常"
+                        }), response);
+                        console.error(error);
+                        return;
+                    } else if (results.length > 0) {
+                        var labels = [];
+                        for (var index in results) {
+                            var label = results[index].label.data;
+                            labels.push(label.name);
+                        }
+                        group.labels = labels;
+                        response.write(JSON.stringify({
+                            "提示信息": "获取群组信息成功",
+                            group: group
+                        }));
+                        response.end();
+                    }
+                });
+            }
+
         });
     }
 }
+
 var ajax = require('../../mcserver/lib/ajax.js');
 /***************************************
  *     URL：/api2/group/getgroupsandmembers
@@ -1626,7 +1657,8 @@ groupManage.getgroupmembers = function (data, response) {
                             description: groupData.description,
                             background: groupData.background,
                             cover: groupData.cover || "",
-                            permission: groupData.permission || ""
+                            permission: groupData.permission || "",
+                            labels: []
                         };
                         if (groupData.boardSequenceString) {
                             try {
@@ -1643,8 +1675,43 @@ groupManage.getgroupmembers = function (data, response) {
                         group.members = members;
                         groupsMap[groupData.gid + ""] = group;
                     } else {
-                        groupsMap[groupData.gid + ""].members.push(account.phone);
+                        var group = groupsMap[groupData.gid + ""];
+                        group.members.push(account.phone);
+                        groupsMap[groupData.gid + ""] = group;
                     }
+                }
+                getLabels(groups);
+            }
+        });
+    }
+
+    function getLabels(groups) {
+        var query = [
+            "MATCH(group:Group)-[r:HAS_LABEL]->(label:Label)",
+            "WHERE group.gid IN {groupIDs}",
+            "RETURN group,label"
+        ].join('\n');
+        var params = {
+            groupIDs: groups
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群组标签失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length >= 0) {
+                for (var index in results) {
+                    var labelData = results[index].label.data;
+                    var groupData = results[index].group.data;
+
+                    var group = groupsMap[groupData.gid + ""];
+                    if (!group.labels) {
+                        group.labels = [];
+                    }
+                    group.labels.push(labelData.name);
                 }
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群组成员成功",
@@ -2150,6 +2217,302 @@ groupManage.modifygroupcirclesequence = function (data, response) {
         });
     }
 }
+groupManage.creategrouplabel = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var gid = data.gid;
+    var label = data.label;
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
+    if (verifyEmpty.verifyEmpty(data, phone, gid, label, response)) {
+        checkLabel();
+    }
+    function checkLabel() {
+        var query = [
+            'MATCH (label:Label)',
+            'WHERE label.name={name}',
+            'RETURN label'
+        ].join('\n');
+        var params = {
+            name: label
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "创建群组标签失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                var labelData = {
+                    name: label
+                };
+                var query = [
+                    "MATCH(group:Group)",
+                    "WHERE group.gid={gid}",
+                    "CREATE UNIQUE group-[r:HAS_LABEL]->(label:Label{label})",
+                    "SET label.lid=ID(label)",
+                    "RETURN group,label"
+                ].join('\n');
+                var params = {
+                    gid: parseInt(gid),
+                    label: labelData
+                };
+                db.query(query, params, function (error, results) {
+                    if (error) {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "创建群组标签失败",
+                            "失败原因": "数据异常"
+                        }), response);
+                        console.error(error);
+                        return;
+                    } else if (results.length > 0) {
+//                        var pop = results.pop();
+//                        var groupData = pop.group.data;
+//                        var labelData = pop.label.data;
+//                        var lid = labelData.lid;
+//                        var gid = groupData.gid;
+                        created(results);
+                    } else {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "创建群组标签失败",
+                            "失败原因": "群组不存在"
+                        }), response);
+                        console.error("群组不存在");
+                    }
+                });
+            } else if (results.length > 0) {
+                var labelData = results.pop().label.data;
+                var lid = labelData.lid;
+                var query = [
+                    "MATCH(group:Group),(label:Label)",
+                    "WHERE group.gid={gid} AND label.lid={lid}",
+                    "CREATE UNIQUE group-[r:HAS_LABEL]->label",
+                    "RETURN group,label"
+                ].join('\n');
+                var params = {
+                    gid: parseInt(gid),
+                    lid: parseInt(lid)
+                };
+                db.query(query, params, function (error, results) {
+                    if (error) {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "创建群组标签失败",
+                            "失败原因": "数据异常"
+                        }), response);
+                        console.error(error);
+                        return;
+                    } else if (results.length > 0) {
+                        created(results);
+                    } else {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "创建群组标签失败",
+                            "失败原因": "群组不存在"
+                        }), response);
+                    }
+                });
+            }
+            function created(results) {
+                console.error("标签创建成功");
+                ResponseData(JSON.stringify({
+                    "提示信息": "创建群组标签成功"
+                }), response);
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_creatalabel",
+                    content: JSON.stringify({
+                        type: "group_creatalabel",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: label,
+                        eid: eid
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
+            }
+        });
+    }
+    ;
+}
+groupManage.deletegrouplabel = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var gid = data.gid;
+    var label = data.label;
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
+    if (verifyEmpty.verifyEmpty(data, phone, gid, label, response)) {
+        deleteLabel();
+    }
+    function deleteLabel() {
+        var query = [
+            "MATCH(group:Group)-[r:HAS_LABEL]->(label:Label)",
+            "WHERE group.gid={gid} AND label.name={name}",
+            "DELETE r",
+            "RETURN group,label"
+        ].join('\n');
+        var params = {
+            gid: parseInt(gid),
+            name: label
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除群组标签失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length > 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除群组标签成功"
+                }), response);
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_deletelabel",
+                    content: JSON.stringify({
+                        type: "group_deletelabel",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: label,
+                        eid: eid
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "删除群组标签失败",
+                    "失败原因": "群组不存在"
+                }), response);
+            }
+        });
+    }
+
+}
+groupManage.getgrouplabels = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var gid = data.gid;
+    if (verifyEmpty.verifyEmpty(data, phone, gid, response)) {
+        getlabels();
+    }
+    function getlabels() {
+        var query = [
+            "MATCH(group:Group)-[r:HAS_LABEL]->(label:Label)",
+            "WHERE group.gid={gid}",
+            "RETURN group,label"
+        ].join('\n');
+        var params = {
+            gid: parseInt(gid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群组标签失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length > 0) {
+                var labels = [];
+                for (var index in results) {
+                    var label = results[index].label.data;
+                    labels.push(label.name);
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群组标签成功",
+                    "gid": gid,
+                    "labels": labels
+                }), response);
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群组标签失败",
+                    "失败原因": "群组不存在"
+                }), response);
+            }
+        });
+    }
+}
+groupManage.getlabelsgroups = function (data, response) {
+    response.asynchronous = 1;
+    var labels = data.labels;
+    var labelsData = JSON.parse(labels);
+    if (verifyEmpty.verifyEmpty(data, labels, response)) {
+        getlabelsgroups();
+    }
+    function getlabelsgroups() {
+        var query = [
+            "MATCH(group:Group)-[r:HAS_LABEL]->(label:Label)",
+            "WHERE label.name IN {labels}",
+            "WITH group,count(DISTINCT  label) AS lenght ",
+            "WHERE lenght>={lenght}",
+            "RETURN group"
+        ].join('\n');
+        var params = {
+            labels: labels,
+            lenght: labelsData.length
+        };
+        db.query(query, params, function (error, results) {
+                if (error) {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "获取群组标签失败",
+                        "失败原因": "数据异常"
+                    }), response);
+                    console.error(error);
+                    return;
+                } else if (results.length >= 0) {
+                    var groups = [];
+                    var groupsMap = {};
+                    for (var index in results) {
+                        var groupData = results[index].group.data;
+                        var location = JSON.parse(groupData.location);
+                        if (!groupsMap[groupData.gid]) {
+                            groups.push(groupData.gid);
+                            var group = {gid: groupData.gid,
+                                icon: groupData.icon,
+                                name: groupData.name,
+                                notReadMessagesCount: 0,
+                                distance: 0,
+                                createTime: groupData.createTime,
+                                longitude: location.longitude || 0,
+                                latitude: location.latitude || 0,
+                                description: groupData.description,
+                                background: groupData.background,
+                                cover: groupData.cover || "",
+                                permission: groupData.permission || "",
+                                labels: []
+                            };
+                            groupsMap[groupData.gid] = group;
+                        }
+                    }
+                    ResponseData(JSON.stringify({
+                        "提示信息": "获取标签群组成功",
+                        "groups": groups,
+                        "groupsMap": groupsMap
+                    }), response);
+                }
+            }
+        )
+    }
+}
 function ResponseData(responseContent, response) {
     response.writeHead(200, {
         "Content-Type": "application/json; charset=UTF-8",
@@ -2164,4 +2527,5 @@ function ResponseData(responseContent, response) {
      response.addTrailers({'Content-MD5': "7895bf4b8828b55ceaf47747b4bca667"});
      response.end();*/
 }
+
 module.exports = groupManage;

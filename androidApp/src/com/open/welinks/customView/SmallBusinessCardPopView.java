@@ -319,7 +319,7 @@ public class SmallBusinessCardPopView {
 			}
 		}
 
-		boolean flag = true;
+		boolean flag = false;
 
 		public void setHot(boolean flag) {
 			this.flag = flag;
@@ -335,6 +335,13 @@ public class SmallBusinessCardPopView {
 		boolean isGetData = false;
 
 		private void setContent(boolean isChat, String sex, String age, String fileName, String nickName, String relation, String type, String key, String longitude, String latitude, String lastLoginTime) {
+			if (isChat) {
+				optionTwoView.setVisibility(View.VISIBLE);
+				singleButtonView.setVisibility(View.GONE);
+			} else {
+				optionTwoView.setVisibility(View.GONE);
+				singleButtonView.setVisibility(View.VISIBLE);
+			}
 			parser.check();
 			User user = data.userInformation.currentUser;
 			fileHandlers.getHeadImage(fileName, userHeadView, smallBusinessCardOptions);
@@ -353,13 +360,6 @@ public class SmallBusinessCardPopView {
 				lastLoginTimeView.setText(DateUtil.getTime(Long.valueOf(lastLoginTime)));
 			} else {
 				lastLoginTimeView.setText("");
-			}
-			if (isChat) {
-				optionTwoView.setVisibility(View.VISIBLE);
-				singleButtonView.setVisibility(View.GONE);
-			} else {
-				optionTwoView.setVisibility(View.GONE);
-				singleButtonView.setVisibility(View.VISIBLE);
 			}
 			if (type.equals(TYPE_POINT)) {
 				this.setting.setVisibility(View.GONE);
@@ -525,6 +525,11 @@ public class SmallBusinessCardPopView {
 						} else {
 							if (type.equals(TYPE_GROUP)) {
 								Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+								thisActivity.startActivity(intent);
+							} else if (type.equals(TYPE_POINT)) {
+								Intent intent = new Intent(thisActivity, NewChatActivity.class);
+								intent.putExtra("id", key);
+								intent.putExtra("type", type);
 								thisActivity.startActivity(intent);
 							}
 						}

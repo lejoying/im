@@ -599,11 +599,7 @@ public class ShareMessageDetailController {
 		data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 		data.boards.isModified = true;
 
-		if (data.relationship.squares.contains(key)) {
-			viewManage.mainView.squareSubView.showSquareMessages(true);
-		} else {
-			viewManage.mainView.shareSubView.showShareMessages();
-		}
+		viewManage.mainView.shareSubView.showShareMessages();
 
 		sendShareToServer(key, shareMessage.content, shareMessage.gsid);
 
@@ -739,7 +735,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void getShareMessageDetail() {
-		log.e(currentUser.phone + "::::::::::" + sid + "::::::::::::::::::::" + gsid);
+		// log.e(currentUser.phone + "::::::::::" + sid + "::::::::::::::::::::" + gsid);
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();

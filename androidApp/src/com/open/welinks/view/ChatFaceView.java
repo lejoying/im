@@ -81,6 +81,7 @@ public class ChatFaceView extends FrameLayout {
 	}
 
 	public void nodifyChatFace() {
+		faceList = data.userInformation.currentUser.faceList;
 		faceViewList.removeAllViews();
 		pagerViews.clear();
 		eachPageCountList.clear();

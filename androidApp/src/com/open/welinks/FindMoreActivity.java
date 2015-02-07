@@ -105,8 +105,8 @@ public class FindMoreActivity extends Activity {
 			layout_two.setVisibility(View.GONE);
 			layout_three.setVisibility(View.GONE);
 		} else if (selectType == 2) {
-			text_one.setText("附近的房间");
-			text_two.setText("查找房间");
+			text_one.setText("附近的群组");
+			text_two.setText("查找群组");
 			layout_two.setVisibility(View.GONE);
 			layout_three.setVisibility(View.GONE);
 		} else if (selectType == 3) {

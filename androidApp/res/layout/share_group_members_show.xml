@@ -52,11 +52,11 @@
             android:shadowDx="3"
             android:shadowDy="3"
             android:shadowRadius="0.01"
-            android:text="房间"
+            android:text="群组"
             android:textColor="#eeffffff"
             android:textSize="18sp"
             android:translationX="80dp"
-            android:translationY="162dp" />
+            android:translationY="142dp" />
 
         <com.open.lib.TouchTextView
             android:id="@+id/roomTime"

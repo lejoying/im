@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://192.168.0.105/";// http://www.we-links.com/
 
 	/**
 	 * http://images2.we-links.com/
@@ -97,6 +97,14 @@ public class API {
 	 * http://www.we-links.com/api2/group/movegroupcirclegroups
 	 */
 	public static String GROUP_MOVEGROUPCIRCLEGROUPS = API_DOMAIN + "api2/group/movegroupcirclegroups";
+	/**
+	 * http://www.we-links.com/api2/group/creategrouplabel
+	 */
+	public static String GROUP_CREATEGROUPLABEL = API_DOMAIN + "api2/group/creategrouplabel";
+	/**
+	 * http://www.we-links.com/api2/group/deletegrouplabel
+	 */
+	public static String GROUP_DELETEGROUPLABEL = API_DOMAIN + "api2/group/deletegrouplabel";
 
 	// share
 	/**

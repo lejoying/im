@@ -309,11 +309,28 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.movegroupcirclegroups(data, response);
         });
-    }else if(operation == "modifygroupcirclesequence"){
+    } else if (operation == "modifygroupcirclesequence") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.modifygroupcirclesequence(data, response);
         });
+    } else if (operation == "creategrouplabel") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.creategrouplabel(data, response);
+        });
+    } else if (operation == "deletegrouplabel") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.deletegrouplabel(data, response);
+        });
+    } else if (operation == "getgrouplabels") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getgrouplabels(data, response);
+        });
+    } else if (operation == "getlabelsgroups") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getlabelsgroups(data, response);
+        });
     }
+
 }
 var shareManage = require("./handlers/shareManage.js");
 requestHandlers.shareManage = function (request, response, pathObject, data) {

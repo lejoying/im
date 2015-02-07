@@ -353,7 +353,7 @@ public class MessagesSubView {
 				}
 				lastChatMessageView.setText(content);
 			} else if (i == -2) {// event_group
-				nickNameView.setText("房间动态");
+				nickNameView.setText("群组动态");
 
 				headView.setImageResource(R.drawable.msg_list_group_notice_icon);
 				lastChatTimeView.setText("");
@@ -373,7 +373,7 @@ public class MessagesSubView {
 				String content = "";
 				try {
 					if (data.event.groupEvents.size() == 0) {
-						lastChatMessageView.setText("暂无房间动态");
+						lastChatMessageView.setText("暂无群组动态");
 						return;
 					}
 					String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
