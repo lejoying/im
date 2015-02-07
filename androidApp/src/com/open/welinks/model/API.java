@@ -97,6 +97,14 @@ public class API {
 	 * http://www.we-links.com/api2/group/movegroupcirclegroups
 	 */
 	public static String GROUP_MOVEGROUPCIRCLEGROUPS = API_DOMAIN + "api2/group/movegroupcirclegroups";
+	/**
+	 * http://www.we-links.com/api2/group/creategrouplabel
+	 */
+	public static String GROUP_CREATEGROUPLABEL = API_DOMAIN + "api2/group/creategrouplabel";
+	/**
+	 * http://www.we-links.com/api2/group/deletegrouplabel
+	 */
+	public static String GROUP_DELETEGROUPLABEL = API_DOMAIN + "api2/group/deletegrouplabel";
 
 	// share
 	/**

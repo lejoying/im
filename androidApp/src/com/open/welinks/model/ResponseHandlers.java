@@ -1091,16 +1091,12 @@ public class ResponseHandlers {
 					group.boards = response.boards;
 					if (group.boards.size() > 0)
 						group.currentBoard = group.boards.get(0);
-					if (data.relationship.squares.contains(response.gid)) {
-						viewManage.squareSubView.thisController.getCurrentSquareShareMessages();
-					} else {
-						if (viewManage.shareSectionView != null) {
-							viewManage.shareSectionView.showGroupBoards();
-							viewManage.shareSectionView.showShareMessages();
-						}
-						viewManage.shareSubView.thisController.nowpage = 0;
-						viewManage.shareSubView.getCurrentGroupShareMessages();
-					}
+					// if (viewManage.shareSectionView != null) {
+					// viewManage.shareSectionView.showGroupBoards();
+					// viewManage.shareSectionView.showShareMessages();
+					// }
+					viewManage.shareSubView.thisController.nowpage = 0;
+					viewManage.shareSubView.getCurrentGroupShareMessages();
 				}
 			} else {
 				log.d(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -1118,10 +1114,8 @@ public class ResponseHandlers {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			try {
-				log.e(responseInfo.result);
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群组成员成功")) {
-					log.e("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!获取群组成员成功");
 					parser.check();
 					data.relationship.groups = response.relationship.groups;
 					Map<String, Group> groupsMap = response.relationship.groupsMap;
@@ -1141,6 +1135,10 @@ public class ResponseHandlers {
 							group.permission = currentGroup.permission;
 							group.members = currentGroup.members;
 							group.boards = currentGroup.boards;
+							group.labels = currentGroup.labels;
+							// for (String str : group.labels) {
+							// log.e(str + "::::::::::::::::::::::::标签");
+							// }
 						} else {
 							data.relationship.groupsMap.put(key, currentGroup);
 						}
@@ -1177,13 +1175,13 @@ public class ResponseHandlers {
 					data.relationship.groupCircles = response.relationship.groupCircles;
 					data.relationship.groupCirclesMap = response.relationship.groupCirclesMap;
 
-					if (response.relationship.groupCircles != null && response.relationship.groupCirclesMap != null) {
-						for (String str : response.relationship.groupCircles) {
-							log.e(str + ":::::::::::::");
-						}
-					} else {
-						log.e("null:::::::::::::");
-					}
+					// if (response.relationship.groupCircles != null && response.relationship.groupCirclesMap != null) {
+					// for (String str : response.relationship.groupCircles) {
+					// log.e(str + ":::::::::::::");
+					// }
+					// } else {
+					// log.e("null:::::::::::::");
+					// }
 
 					data.relationship.isModified = true;
 					// init current share
@@ -1373,6 +1371,7 @@ public class ResponseHandlers {
 					currentGroup.createTime = group.createTime;
 					currentGroup.background = group.background;
 					currentGroup.boards = group.boards;
+					currentGroup.labels = group.labels;
 					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
 					if (flag) {
 						boolean flag2 = group.cover.equals(currentGroup.cover);
@@ -1581,6 +1580,37 @@ public class ResponseHandlers {
 		};
 	};
 
+	public RequestCallBack<String> group_creategrouplabel = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("创建群组标签成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------创建群组标签成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public RequestCallBack<String> group_deletegrouplabel = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("删除群组标签成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------删除群组标签成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		};
+	};
+
 	// TODO Share
 
 	public class ResponseHandler2<T> extends ResponseHandler<T> {
@@ -1636,20 +1666,13 @@ public class ResponseHandlers {
 					data.localStatus.localData.shareReleaseSequeceMap.remove(ogsid);
 				}
 
-				if (data.relationship.squares.contains(gid)) {
-					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
-
-						viewManage.mainView.squareSubView.showSquareMessages(true);
+				if (viewManage.shareSectionView != null) {
+					if (viewManage.shareSectionView.currentBoard.sid.equals(sid)) {
+						viewManage.shareSectionView.showShareMessages();
 					}
 				} else {
-					if (viewManage.shareSectionView != null) {
-						if (viewManage.shareSectionView.currentBoard.sid.equals(sid)) {
-							viewManage.shareSectionView.showShareMessages();
-						}
-					} else {
-						if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-							viewManage.mainView.shareSubView.showShareMessages();
-						}
+					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+						viewManage.mainView.shareSubView.showShareMessages();
 					}
 				}
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送成功");
@@ -1666,19 +1689,13 @@ public class ResponseHandlers {
 				if (shareMessage != null) {
 					shareMessage.status = "failed";
 				}
-				if (data.relationship.squares.contains(gid)) {
-					if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
-						viewManage.mainView.squareSubView.showSquareMessages(true);
+				if (viewManage.shareSectionView != null) {
+					if (viewManage.shareSectionView.currentBoard.sid.equals(sid)) {
+						viewManage.shareSectionView.showShareMessages();
 					}
 				} else {
-					if (viewManage.shareSectionView != null) {
-						if (viewManage.shareSectionView.currentBoard.sid.equals(sid)) {
-							viewManage.shareSectionView.showShareMessages();
-						}
-					} else {
-						if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-							viewManage.mainView.shareSubView.showShareMessages();
-						}
+					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+						viewManage.mainView.shareSubView.showShareMessages();
 					}
 				}
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -1698,14 +1715,8 @@ public class ResponseHandlers {
 			if (shareMessage != null) {
 				shareMessage.status = "failed";
 			}
-			if (data.relationship.squares.contains(gid)) {
-				if (data.localStatus.localData.currentSelectedSquare.equals(gid)) {
-					viewManage.mainView.squareSubView.showSquareMessages(true);
-				}
-			} else {
-				if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-					viewManage.mainView.shareSubView.showShareMessages();
-				}
+			if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
+				viewManage.mainView.shareSubView.showShareMessages();
 			}
 			log.e(ViewManage.getErrorLineNumber() + msg);
 		};
@@ -1757,9 +1768,6 @@ public class ResponseHandlers {
 			if (viewManage.mainView.activityStatus.state == viewManage.mainView.activityStatus.SHARE) {
 				viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Failed;
 				viewManage.shareSubView.showRoomTime();
-			} else if (viewManage.mainView.activityStatus.state == viewManage.mainView.activityStatus.SQUARE) {
-				viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Failed;
-				viewManage.squareSubView.showRoomTime();
 			}
 		};
 	};
@@ -1856,17 +1864,7 @@ public class ResponseHandlers {
 			}
 		} else {
 			board.updateTime = new Date().getTime();
-			if ("Main".equals(type)) {
-				if (responsesShare.shareMessagesOrder.size() == 0) {
-					viewManage.squareSubView.thisController.nowpage--;
-				}
-				viewManage.squareSubView.thisController.reflashStatus.state = viewManage.squareSubView.thisController.reflashStatus.Normal;
-				if (response.nowpage == 0) {
-					viewManage.squareSubView.showSquareMessages(true);
-				} else {
-					viewManage.squareSubView.showSquareMessages(false);
-				}
-			} else if ("SectionPage".equals(type)) {
+			if ("SectionPage".equals(type)) {
 				if (responsesShare.shareMessagesOrder.size() == 0) {
 					viewManage.shareSectionView.thisController.nowpage--;
 				}

@@ -260,6 +260,7 @@
                     android:background="#aac0c0c0" />
 
                 <RelativeLayout
+                    android:id="@+id/labelLayout"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center_vertical"
@@ -279,7 +280,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:text="暂未开通"
                         android:textColor="#aa000000"
                         android:textSize="14sp"
                         android:translationX="-25dp" />

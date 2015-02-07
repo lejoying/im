@@ -29,6 +29,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.CreateGroupLocationActivity;
 import com.open.welinks.CropActivity;
+import com.open.welinks.GroupLabelActivity;
 import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.LocationActivity;
@@ -100,6 +101,10 @@ public class GroupInfoController {
 			if (currentGroup == null) {
 				thisActivity.finish();
 			} else {
+				log.e("members:::::::::::::::" + currentGroup.gid);
+				for (String str : currentGroup.members) {
+					log.e(str + ":::::::::::::::");
+				}
 				thisView.setData();
 				// thisView.showGroupMembers();
 			}
@@ -280,6 +285,10 @@ public class GroupInfoController {
 					intent.putExtra("type", "group");
 					intent.putExtra("key", currentGroup.gid + "");
 					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.labelLayout)) {
+					Intent intent = new Intent(thisActivity, GroupLabelActivity.class);
+					intent.putExtra("key", currentGroup.gid + "");
+					thisActivity.startActivity(intent);
 				}
 			}
 		};
@@ -453,6 +462,7 @@ public class GroupInfoController {
 		thisView.memberListTopView.setOnClickListener(mOnClickListener);
 		thisView.memberListView.setOnClickListener(mOnClickListener);
 		thisView.cardOptionView.setOnClickListener(mOnClickListener);
+		thisView.labelLayout.setOnClickListener(mOnClickListener);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {

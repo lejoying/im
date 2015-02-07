@@ -32,6 +32,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -489,7 +490,7 @@ public class NewChatController {
 					thisView.chatSend.setVisibility(View.VISIBLE);
 					thisView.chatRecord.setVisibility(View.GONE);
 					int selectionIndex = thisView.chatInput.getSelectionStart();
-					String afterContent = s.toString().trim();
+					String afterContent = s.toString();
 					if (!afterContent.equals(content)) {
 						SpannableString spannableString = ExpressionUtil.getExpressionString(thisActivity, afterContent, Constant.FACEREGX);
 						thisView.chatInput.setText(spannableString);

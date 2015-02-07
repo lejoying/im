@@ -400,7 +400,7 @@ public class BusinessCardController {
 					Group group = response.group;
 					if (group != null) {
 						Group currentGroup = null;
-						if (data.relationship.groups.contains(group.gid)) {
+						if (data.relationship.groups.contains(group.gid + "")) {
 							currentGroup = data.relationship.groupsMap.get(group.gid + "");
 						} else {
 							currentGroup = data.relationship.new Group();
@@ -525,7 +525,7 @@ public class BusinessCardController {
 			ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 			httpUtils.send(HttpMethod.POST, API.GROUP_ADDMEMBERS, params, responseHandlers.group_addmembers);
 		} else {
-			Alert.showMessage("已申请加入该房间");
+			Alert.showMessage("已申请加入该群组");
 		}
 	}
 

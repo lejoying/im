@@ -52,6 +52,7 @@ import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
@@ -351,13 +352,19 @@ public class ShareSubView {
 			log.e("return groups or localData");
 			return;
 		}
-		boolean flag0 = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.contains(data.localStatus.localData.currentSelectedGroup);
+		String gid = data.relationship.groupCircles.get(0);
+		GroupCircle groupCircle = data.relationship.groupCirclesMap.get(gid);
+		if (groupCircle == null || groupCircle.groups == null) {
+			log.e("return groups or localData");
+			return;
+		}
+		boolean flag0 = groupCircle.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		if (!flag0) {
-			if (data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.size() == 0) {
+			if (groupCircle.groups.size() == 0) {
 				data.localStatus.localData.currentSelectedGroup = "";
 				data.relationship.isModified = true;
 			} else {
-				data.localStatus.localData.currentSelectedGroup = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.get(0);
+				data.localStatus.localData.currentSelectedGroup = groupCircle.groups.get(0);
 			}
 		}
 
@@ -956,13 +963,19 @@ public class ShareSubView {
 			log.e("return groups or localData");
 			return;
 		}
-		boolean flag = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.contains(data.localStatus.localData.currentSelectedGroup);
+		String gid = data.relationship.groupCircles.get(0);
+		GroupCircle groupCircle = data.relationship.groupCirclesMap.get(gid);
+		if (groupCircle == null || groupCircle.groups == null) {
+			log.e("return groups or localData");
+			return;
+		}
+		boolean flag = groupCircle.groups.contains(data.localStatus.localData.currentSelectedGroup);
 		if (!flag) {
-			if (data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.size() == 0) {
+			if (groupCircle.groups.size() == 0) {
 				data.localStatus.localData.currentSelectedGroup = "";
 				data.relationship.isModified = true;
 			} else {
-				data.localStatus.localData.currentSelectedGroup = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.get(0);
+				data.localStatus.localData.currentSelectedGroup = groupCircle.groups.get(0);
 				getCurrentGroupShareMessages();
 			}
 		}
@@ -971,11 +984,11 @@ public class ShareSubView {
 			this.shareTopMenuGroupName.setText(group0.name);
 			this.setMenuNameBotton(group0.name);
 		} else {
-			this.shareTopMenuGroupName.setText("暂无房间");
-			this.setMenuNameBotton("暂无房间");
+			this.shareTopMenuGroupName.setText("暂无群组");
+			this.setMenuNameBotton("暂无群组");
 		}
 
-		List<String> groups = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups;
+		List<String> groups = groupCircle.groups;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
 		groupsDialogContent.removeAllViews();
 		this.groupListBody.containerView.removeAllViews();
@@ -1100,8 +1113,8 @@ public class ShareSubView {
 			shareTopMenuGroupName.setText(group.name);
 			this.setMenuNameBotton(group.name);
 		} else {
-			shareTopMenuGroupName.setText("暂无房间");
-			this.setMenuNameBotton("暂无房间");
+			shareTopMenuGroupName.setText("暂无群组");
+			this.setMenuNameBotton("暂无群组");
 			return;
 		}
 

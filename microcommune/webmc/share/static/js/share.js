@@ -3,7 +3,7 @@
     $.ajax({
         type: "POST",
         timeout: 32000,
-        url: "/api2/share/getboardshare",
+        url: "/api2/share/getoneshare",
         data: {
             sid: Request.QueryString("sid"),
             gsid: Request.QueryString("gsid")

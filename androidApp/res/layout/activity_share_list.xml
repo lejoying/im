@@ -14,7 +14,8 @@
         android:cacheColorHint="#0000"
         android:divider="#0000"
         android:dividerHeight="2dp"
-        android:listSelector="#0000" >
+        android:listSelector="#0000"
+        android:scrollbars="none" >
     </ListView>
 
 </LinearLayout>

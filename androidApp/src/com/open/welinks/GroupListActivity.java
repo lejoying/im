@@ -9,7 +9,6 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -39,7 +38,6 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.open.lib.MyLog;
-import com.open.welinks.ExpressionManageActivity.ListAdapter;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
@@ -54,7 +52,6 @@ import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.BaseDataUtils;
-import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.view.ViewManage;
 
 public class GroupListActivity extends Activity {
@@ -190,15 +187,27 @@ public class GroupListActivity extends Activity {
 			}
 			this.friends = friends.toArray(this.friends);
 		} else if (status == Status.group_circle) {
-			groups = data.relationship.groupCircles;
-			groupCirclesMap = data.relationship.groupCirclesMap;
+			if (data.relationship != null && data.relationship.groupCircles != null && data.relationship.groupCirclesMap != null) {
+				groups = data.relationship.groupCircles;
+				groupCirclesMap = data.relationship.groupCirclesMap;
+			} else {
+				finish();
+			}
 		} else {
 			if (status == Status.square) {
 				groups = data.relationship.squares;
 			} else if (status == Status.list_group) {
-				currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
-				groups = currentGroupCircle.groups;
-				showGroupCircles();
+				if (data.relationship != null && data.relationship.groupCirclesMap != null && data.relationship.groupCircles != null) {
+					currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+					if (currentGroupCircle != null && currentGroupCircle.groups != null) {
+						groups = currentGroupCircle.groups;
+						showGroupCircles();
+					} else {
+						finish();
+					}
+				} else {
+					finish();
+				}
 			} else {
 				groups = data.relationship.groups;
 			}
@@ -254,7 +263,11 @@ public class GroupListActivity extends Activity {
 			rightContainerLinearLayout.addView(moreView, infomationParams);
 			rightContainer.addView(rightContainerLinearLayout, lineParams);
 
-			currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+			if (data.relationship != null && data.relationship.groupCirclesMap != null && data.relationship.groupCircles != null) {
+				currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+			} else {
+				this.finish();
+			}
 
 			initializationGroupCirclesDialog();
 			// int dp_5 = (int) (5 * displayMetrics.density);
@@ -401,11 +414,11 @@ public class GroupListActivity extends Activity {
 		if (status == Status.friend) {
 			title += "分享给好友：【" + friendsMap.get(friends[position]).nickName + "】?";
 		} else if (status == Status.message_group) {
-			title += "分享给房间：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "分享给群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.square) {
 			title += "分享到社区：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.share_group) {
-			title += "分享到房间：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "分享到群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.card_friend) {
 			title += "发送名片给好友：【" + friendsMap.get(friends[position]).nickName + "】?";
 		} else if (status == Status.card_group) {

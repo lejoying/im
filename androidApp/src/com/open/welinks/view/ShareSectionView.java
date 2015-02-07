@@ -62,7 +62,7 @@ public class ShareSectionView {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareSectionView";
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 
 	public Context context;
 	public ShareSectionView thisView;
@@ -132,8 +132,6 @@ public class ShareSectionView {
 		this.backView = thisActivity.findViewById(R.id.backView);
 		this.backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
-		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		this.backTitleView.setText(currentGroup.name);
 		this.selectMenuView = thisActivity.findViewById(R.id.selectMenu);
 
 		shareMessageView = (ViewGroup) thisActivity.findViewById(R.id.groupShareMessageContent);
@@ -199,62 +197,53 @@ public class ShareSectionView {
 
 	public void showShareMessages() {
 		data = parser.check();
-		if (data.relationship.groups == null || data.localStatus.localData == null) {
+		if (currentGroup == null) {
 			log.e("return groups or localData");
 			return;
 		}
-		boolean flag0 = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
-		if (!flag0) {
-			if (data.relationship.groups.size() == 0) {
-				data.localStatus.localData.currentSelectedGroup = "";
-				data.relationship.isModified = true;
-			} else {
-				data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
-			}
-		}
 
-		boolean flag = data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup);
+		// boolean flag = data.relationship.groups.contains(currentGroup.gid + "");
 		SharesMessageBody sharesMessageBody0 = null;
-		if (flag) {
-			sharesMessageBody0 = (SharesMessageBody) shareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
-			this.shareMessageListBody.listItemsSequence.clear();
-			this.shareMessageListBody.containerView.removeAllViews();
-			shareMessageView.removeAllViews();
-			log.e("clear share list body.");
-			this.shareMessageListBody.height = 0;
-			if (sharesMessageBody0 == null) {
-				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
-				sharesMessageBody0.initialize(-1);
-				sharesMessageBody0.itemHeight = (280 - 48) * displayMetrics.density;
-			}
-			sharesMessageBody0.setContent(null, "", "", "", 0);
-			this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
-			this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
-			RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (250 * displayMetrics.density));
-			sharesMessageBody0.y = -48 * displayMetrics.density;
-			sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
-			// sharesMessageBody0.cardView.setX(0);
-			this.shareMessageListBody.height = this.shareMessageListBody.height + (215 - 48) * displayMetrics.density;
-			this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
-		} else {
-			this.shareMessageListBody.listItemsSequence.clear();
-			this.shareMessageListBody.containerView.removeAllViews();
-			shareMessageView.removeAllViews();
-			this.shareMessageListBody.height = 0;
-			log.e("clear share list body.");
-			return;
+		// if (flag) {
+		sharesMessageBody0 = (SharesMessageBody) shareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
+		this.shareMessageListBody.listItemsSequence.clear();
+		this.shareMessageListBody.containerView.removeAllViews();
+		shareMessageView.removeAllViews();
+		log.e("clear share list body.");
+		this.shareMessageListBody.height = 0;
+		if (sharesMessageBody0 == null) {
+			sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
+			sharesMessageBody0.initialize(-1);
+			sharesMessageBody0.itemHeight = (280 - 48) * displayMetrics.density;
 		}
+		sharesMessageBody0.setContent(null, "", "", "", 0);
+		this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
+		this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
+		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (250 * displayMetrics.density));
+		sharesMessageBody0.y = -48 * displayMetrics.density;
+		sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
+		// sharesMessageBody0.cardView.setX(0);
+		this.shareMessageListBody.height = this.shareMessageListBody.height + (215 - 48) * displayMetrics.density;
+		this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
+		// } else {
+		// this.shareMessageListBody.listItemsSequence.clear();
+		// this.shareMessageListBody.containerView.removeAllViews();
+		// shareMessageView.removeAllViews();
+		// this.shareMessageListBody.height = 0;
+		// log.e("clear share list body.");
+		// return;
+		// }
 
-		currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		// currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (currentBoard == null) {
 			currentBoard = data.boards.boardsMap.get(currentGroup.currentBoard);
+		}
+		if (currentBoard == null || currentGroup == null || currentGroup.boards == null) {
+			return;
 		}
 		if (!currentGroup.boards.contains(currentBoard.sid)) {
 			currentGroup.currentBoard = currentGroup.boards.get(0);
 			currentBoard = data.boards.boardsMap.get(currentGroup.currentBoard);
-		}
-		if (!flag || currentBoard == null) {
-			return;
 		}
 		setConver();
 		fileHandlers.getHeadImage(currentBoard.head, this.groupHeadView, viewManage.options56);
@@ -270,7 +259,7 @@ public class ShareSectionView {
 			sectionNameTextView.setText(boardName);
 			roomName.setText(boardName);
 		}
-
+		this.backTitleView.setText(currentGroup.name);
 		showRoomTime();
 
 		List<String> sharesOrder = currentBoard.shareMessagesOrder;
@@ -370,7 +359,13 @@ public class ShareSectionView {
 				// String content = textContent;
 				if (lineCount >= 5) {
 					lineCount = 4;
-					String firstContent = textContent.substring(0, 4 * lineTextCount);
+					int textContentLenth = 0;
+					if (textContent.length() >= 4 * lineTextCount) {
+						textContentLenth = 4 * lineTextCount;
+					} else {
+						textContentLenth = textContent.length();
+					}
+					String firstContent = textContent.substring(0, textContentLenth);
 					String[] n = firstContent.getBytes().toString().split("\n");
 					int subPosition = 4 * lineTextCount;
 					for (String str : n) {
@@ -837,7 +832,7 @@ public class ShareSectionView {
 
 	public void showGroupBoards() {
 		data = parser.check();
-		List<String> boards = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).boards;
+		List<String> boards = currentGroup.boards;
 		groupListBody.height = 0;
 		groupListBody.listItemsSequence.clear();
 		groupsDialogContent.removeAllViews();

@@ -223,8 +223,8 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			headFileName = group.icon;
 			sex_layout.setVisibility(View.GONE);
 			location_layout.setVisibility(View.GONE);
-			modify_title.setText("修改房间名片");
-			name_title.setText("房间名称");
+			modify_title.setText("修改群组名片");
+			name_title.setText("群组名称");
 			business_title.setText("主要业务");
 			lable_title.setText("标签");
 			name.setText(group.name);
