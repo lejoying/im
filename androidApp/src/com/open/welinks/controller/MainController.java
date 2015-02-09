@@ -70,6 +70,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
 import com.open.welinks.view.MainView;

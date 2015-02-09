@@ -39,6 +39,7 @@ import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.NearbyView;
 
 public class NearbyController {

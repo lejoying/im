@@ -12,21 +12,21 @@ import android.widget.TextView;
 public class StatementActivity extends Activity implements OnClickListener {
 
 	public View backView;
-	public TextView title, content;
+	public TextView titleView, contentView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_statement);
 		backView = findViewById(R.id.backView);
-		title = (TextView) findViewById(R.id.backTitleView);
-		content = (TextView) findViewById(R.id.content);
+		titleView = (TextView) findViewById(R.id.backTitleView);
+		contentView = (TextView) findViewById(R.id.content);
 		backView.setOnClickListener(this);
 		String type = getIntent().getStringExtra("type");
 		if ("disclaimer".equals(type)) {
-			title.setText("免责条款");
+			titleView.setText("免责条款");
 		} else if ("about".equals(type)) {
-			title.setText("关于“" + getString(R.string.app_name) + "”");
+			titleView.setText("关于“" + getString(R.string.app_name) + "”");
 		}
 		getFromAssets(type + ".txt");
 	}
@@ -39,7 +39,7 @@ public class StatementActivity extends Activity implements OnClickListener {
 			String Result = "";
 			while ((line = bufReader.readLine()) != null)
 				Result += line + "\n";
-			content.setText(Result);
+			contentView.setText(Result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

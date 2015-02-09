@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,12 +29,14 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ViewManage;
 
 public class CirclesListActivity extends Activity {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public String tag = "CirclesListActivity";
 
@@ -49,10 +48,6 @@ public class CirclesListActivity extends Activity {
 	public List<String> circles;
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
-
-	public Parser parser = Parser.getInstance();
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public LayoutInflater mInflater;
 
@@ -216,10 +211,6 @@ public class CirclesListActivity extends Activity {
 		int lineCount = 0;
 
 		public View initialize() {
-
-			Resources resources = getResources();
-			bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 			this.cardView = (TouchView) mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);

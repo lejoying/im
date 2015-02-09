@@ -50,6 +50,8 @@ import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.oss.UploadMultipart;
+import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareReleaseImageTextView;

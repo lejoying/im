@@ -34,11 +34,11 @@ public class ChangePasswordActivity extends Activity {
 
 	LayoutInflater mInflater;
 
-	View cp_rl_save;
-	View cp_rl_cancel;
-	EditText cp_et_initialpwd;
-	EditText cp_et_confirmpwd;
-	EditText cp_et_modifychangepwd;
+	View saveButton;
+	View cancleButton;
+	EditText initialPasswordView;
+	EditText confirmPasswordView;
+	EditText modifyChangePassword;
 	ImageView backCardView;
 
 	public RelativeLayout backView;
@@ -52,12 +52,12 @@ public class ChangePasswordActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		viewManage.changePasswordActivity = this;
 		setContentView(R.layout.activity_modifypassword);
 		initData();
 		initializeListeners();
 		bindEvent();
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -82,25 +82,26 @@ public class ChangePasswordActivity extends Activity {
 		backTitleView = (TextView) findViewById(R.id.backTitleView);
 		backTitleView.setText("修改密码");
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
-		cp_rl_save = findViewById(R.id.cp_rl_save);
-		cp_rl_cancel = findViewById(R.id.cp_rl_cancel);
-		cp_et_initialpwd = (EditText) findViewById(R.id.cp_et_initialpwd);
-		cp_et_confirmpwd = (EditText) findViewById(R.id.cp_et_confirmpwd);
-		cp_et_modifychangepwd = (EditText) findViewById(R.id.cp_et_modifychangepwd);
+		saveButton = findViewById(R.id.cp_rl_save);
+		cancleButton = findViewById(R.id.cp_rl_cancel);
+		initialPasswordView = (EditText) findViewById(R.id.cp_et_initialpwd);
+		confirmPasswordView = (EditText) findViewById(R.id.cp_et_confirmpwd);
+		modifyChangePassword = (EditText) findViewById(R.id.cp_et_modifychangepwd);
 		backCardView = (ImageView) findViewById(R.id.panel_right_button);
 	}
 
 	public void initializeListeners() {
 		mOnClickListener = new OnClickListener() {
 
-			@SuppressLint("DefaultLocale") @Override
+			@SuppressLint("DefaultLocale")
+			@Override
 			public void onClick(View view) {
 				if (view.equals(backView)) {
 					finish();
-				} else if (view.equals(cp_rl_save)) {
+				} else if (view.equals(saveButton)) {
 					// String initialpwd = cp_et_initialpwd.getText().toString().trim();
-					String changepwd = cp_et_modifychangepwd.getText().toString().trim();
-					String confirmpwd = cp_et_confirmpwd.getText().toString().trim();
+					String changepwd = modifyChangePassword.getText().toString().trim();
+					String confirmpwd = confirmPasswordView.getText().toString().trim();
 					if (!"".equals(changepwd) && !"".equals(confirmpwd)) {// !"".equals(initialpwd) &&
 						if (changepwd.equals(confirmpwd)) {
 							SHA1 sha1 = new SHA1();
@@ -111,7 +112,7 @@ public class ChangePasswordActivity extends Activity {
 					} else {
 						Toast.makeText(ChangePasswordActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
 					}
-				} else if (view.equals(cp_rl_cancel)) {
+				} else if (view.equals(cancleButton)) {
 					finish();
 				}
 			}
@@ -120,8 +121,8 @@ public class ChangePasswordActivity extends Activity {
 
 	public void bindEvent() {
 		this.backView.setOnClickListener(mOnClickListener);
-		this.cp_rl_save.setOnClickListener(mOnClickListener);
-		this.cp_rl_cancel.setOnClickListener(mOnClickListener);
+		this.saveButton.setOnClickListener(mOnClickListener);
+		this.cancleButton.setOnClickListener(mOnClickListener);
 	}
 
 	public void modifyPassword(String oldPassword, String newPassword) {

@@ -69,10 +69,10 @@ public class CreateGroupLocationActivity extends Activity {
 
 	public View backView;
 	public RelativeLayout rightContainer;
-	public TextView titleContent, location, commit;
-	public AutoCompleteTextView search;
+	public TextView titleContentView, locationView, commitView;
+	public AutoCompleteTextView searchView;
 	public MapView mapView;
-	public ListView groupList;
+	public ListView groupListView;
 
 	public LayoutInflater mInflater;
 
@@ -142,7 +142,7 @@ public class CreateGroupLocationActivity extends Activity {
 					if (rCode == 0) {
 						if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
 							address = result.getRegeocodeAddress().getFormatAddress() + "附近";
-							location.setText("当前地址：" + address);
+							locationView.setText("当前地址：" + address);
 						} else {
 						}
 					} else {
@@ -186,33 +186,33 @@ public class CreateGroupLocationActivity extends Activity {
 		this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		backView = findViewById(R.id.backView);
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
-		titleContent = (TextView) findViewById(R.id.backTitleView);
-		location = (TextView) findViewById(R.id.location);
-		search = (AutoCompleteTextView) findViewById(R.id.search);
+		titleContentView = (TextView) findViewById(R.id.backTitleView);
+		locationView = (TextView) findViewById(R.id.location);
+		searchView = (AutoCompleteTextView) findViewById(R.id.search);
 		mapView = (MapView) findViewById(R.id.mapView);
-		groupList = (ListView) findViewById(R.id.grouplist);
+		groupListView = (ListView) findViewById(R.id.grouplist);
 
 		mAMap = mapView.getMap();
 
-		commit = new TextView(this);
-		commit.setTextColor(Color.WHITE);
-		commit.setPadding((int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density), (int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density));
-		commit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-		commit.setGravity(Gravity.CENTER);
-		commit.setBackgroundResource(R.drawable.textview_bg);
-		commit.setText("完成");
+		commitView = new TextView(this);
+		commitView.setTextColor(Color.WHITE);
+		commitView.setPadding((int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density), (int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		commitView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		commitView.setGravity(Gravity.CENTER);
+		commitView.setBackgroundResource(R.drawable.textview_bg);
+		commitView.setText("完成");
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.CENTER_VERTICAL);
 
 		if (isScanAddress) {
-			titleContent.setText("群组位置");
+			titleContentView.setText("群组位置");
 		} else {
-			titleContent.setText("创建群组");
-			rightContainer.addView(commit, params);
+			titleContentView.setText("创建群组");
+			rightContainer.addView(commitView, params);
 		}
 
-		search.setAdapter(mTipsAdapter);
-		groupList.setAdapter(mGroupListAdapter);
+		searchView.setAdapter(mTipsAdapter);
+		groupListView.setAdapter(mGroupListAdapter);
 	}
 
 	public void initListener() {
@@ -231,12 +231,12 @@ public class CreateGroupLocationActivity extends Activity {
 					mGeocodeQuery = new GeocodeQuery(tip.getDistrict() + tip.getName(), tip.getAdcode());
 					mGeocodeSearch.getFromLocationNameAsyn(mGeocodeQuery);
 					String discription = tip.getDistrict() + tip.getName();
-					search.setText(discription);
-					search.setSelection(discription.length());
-					search.dismissDropDown();
+					searchView.setText(discription);
+					searchView.setSelection(discription.length());
+					searchView.dismissDropDown();
 				} else if (view.equals(backView)) {
 					finish();
-				} else if (view.equals(commit)) {
+				} else if (view.equals(commitView)) {
 					Intent intent = new Intent();
 					intent.putExtra("address", address);
 					intent.putExtra("latitude", String.valueOf(mLatLng.latitude));
@@ -273,7 +273,7 @@ public class CreateGroupLocationActivity extends Activity {
 						mLocationManagerProxy.destroy();
 						mOnLocationChangedListener.onLocationChanged(aMapLocation);
 						mAMap.clear();
-						location.setText("当前地址：" + aMapLocation.getAddress());
+						locationView.setText("当前地址：" + aMapLocation.getAddress());
 						address = aMapLocation.getAddress();
 						mLatLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
 						searchGroups();
@@ -305,7 +305,7 @@ public class CreateGroupLocationActivity extends Activity {
 				if (rCode == 0) {
 					if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
 						address = result.getRegeocodeAddress().getFormatAddress();
-						location.setText("当前地址：" + address);
+						locationView.setText("当前地址：" + address);
 					}
 				}
 
@@ -319,7 +319,7 @@ public class CreateGroupLocationActivity extends Activity {
 						mLatLng = new LatLng(point.getLatLonPoint().getLatitude(), point.getLatLonPoint().getLongitude());
 						mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
 						address = point.getFormatAddress();
-						location.setText("当前地址：" + address);
+						locationView.setText("当前地址：" + address);
 					}
 				}
 			}
@@ -364,7 +364,6 @@ public class CreateGroupLocationActivity extends Activity {
 
 		mLocationSource = new LocationSource() {
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public void activate(OnLocationChangedListener listener) {
 				mOnLocationChangedListener = listener;
@@ -373,7 +372,7 @@ public class CreateGroupLocationActivity extends Activity {
 				if (positioned) {
 					mLatLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
 					mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));
-					location.setText("当前地址：" + address);
+					locationView.setText("当前地址：" + address);
 					positioned = false;
 				} else {
 					mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 10, mAMapLocationListener);
@@ -431,8 +430,8 @@ public class CreateGroupLocationActivity extends Activity {
 			}
 		};
 		backView.setOnClickListener(mOnClickListener);
-		commit.setOnClickListener(mOnClickListener);
-		search.addTextChangedListener(mTextWatcher);
+		commitView.setOnClickListener(mOnClickListener);
+		searchView.addTextChangedListener(mTextWatcher);
 	}
 
 	public void requestMyLocation() {
@@ -444,7 +443,6 @@ public class CreateGroupLocationActivity extends Activity {
 
 		mGeocodeSearch = new GeocodeSearch(this);
 		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
-
 	}
 
 	public void searchGroups() {
@@ -561,8 +559,6 @@ public class CreateGroupLocationActivity extends Activity {
 					notifyDataSetInvalidated();
 				}
 			}
-
 		}
-
 	}
 }

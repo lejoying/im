@@ -20,18 +20,18 @@ import com.open.welinks.model.Parser;
 
 public class SettingActivity extends Activity implements OnClickListener {
 
-	public Data data = Data.getInstance();
-	public Parser parser = Parser.getInstance();
-
 	public String tag = "SettingActivity";
 	public MyLog log = new MyLog(tag, true);
+
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public RelativeLayout backView;
 	public RelativeLayout exitCurrentUserView;
 
 	public TextView titleContentView;
 
-	public View about, disclaimer, opinion;
+	public View aboutView, disclaimerView, opinionView;
 
 	public View maxView;
 
@@ -51,19 +51,17 @@ public class SettingActivity extends Activity implements OnClickListener {
 		exitCurrentUserView = (RelativeLayout) findViewById(R.id.rl_exitCurrentUser);
 		titleContentView = (TextView) findViewById(R.id.backTitleView);
 		titleContentView.setText("设置");
-		about = findViewById(R.id.about);
-		disclaimer = findViewById(R.id.disclaimer);
-		opinion = findViewById(R.id.opinion);
+		aboutView = findViewById(R.id.about);
+		disclaimerView = findViewById(R.id.disclaimer);
+		opinionView = findViewById(R.id.opinion);
 		maxView = findViewById(R.id.maxView);
 	}
 
 	private void initEvent() {
 		exitCurrentUserView.setOnClickListener(this);
-		about.setOnClickListener(this);
-		disclaimer.setOnClickListener(this);
-		// disclaimer.setOnTouchListener(this);
-		opinion.setOnClickListener(this);
-		// setOnTouch(exitCurrentUserView);
+		aboutView.setOnClickListener(this);
+		disclaimerView.setOnClickListener(this);
+		opinionView.setOnClickListener(this);
 		backView.setOnClickListener(this);
 	}
 

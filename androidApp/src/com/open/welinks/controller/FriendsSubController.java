@@ -34,6 +34,7 @@ import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.FriendsSubView;
@@ -328,8 +329,9 @@ public class FriendsSubController {
 
 					HttpUtils httpUtils = new HttpUtils();
 					RequestParams params = new RequestParams();
-					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					User currentUser = data.userInformation.currentUser;
+					params.addBodyParameter("phone", currentUser.phone);
+					params.addBodyParameter("accessKey", currentUser.accessKey);
 					params.addBodyParameter("rid", rid);
 
 					httpUtils.send(HttpMethod.POST, API.CIRCLE_DELETE, params, responseHandlers.circle_delete);
@@ -363,8 +365,9 @@ public class FriendsSubController {
 
 					HttpUtils httpUtils = new HttpUtils();
 					RequestParams params = new RequestParams();
-					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					User currentUser = data.userInformation.currentUser;
+					params.addBodyParameter("phone", currentUser.phone);
+					params.addBodyParameter("accessKey", currentUser.accessKey);
 					params.addBodyParameter("name", circleName);
 					params.addBodyParameter("rid", rid + "");
 

@@ -1,4 +1,4 @@
-package com.open.welinks.view;
+package com.open.welinks.customView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,12 +22,13 @@ import android.widget.TextView;
 
 import com.open.welinks.R;
 import com.open.welinks.R.color;
-import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.BaseDataUtils;
+import com.open.welinks.view.ViewManage;
 
 public class ChatFaceView extends FrameLayout {
 	private Data data = Data.getInstance();

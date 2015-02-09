@@ -24,10 +24,9 @@ import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupListActivity;
 import com.open.welinks.ModifyInformationActivity;
-import com.open.welinks.NewChatActivity;
+import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareListActivity;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -43,6 +42,8 @@ import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.view.BusinessCardView;
 import com.open.welinks.view.BusinessCardView.Status;
 import com.open.welinks.view.ViewManage;
@@ -52,20 +53,19 @@ public class BusinessCardController {
 	public String tag = "BusinessCardController";
 	public MyLog log = new MyLog(tag, true);
 
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public BusinessCardController thisController;
 	public BusinessCardView thisView;
 	public BusinessCardActivity thisActivity;
 
-	public Data data = Data.getInstance();
-	public Parser parser = Parser.getInstance();
-
-	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
-
 	public DownloadFile downloadFile;
 
 	public String key, type;
-	// public boolean isTemp;
 	public File file;
 
 	public OnClickListener mOnClickListener;
@@ -74,10 +74,6 @@ public class BusinessCardController {
 	public DisplayMetrics displayMetrics;
 
 	public GestureDetector backDetector;
-
-	// public Handler handler;
-
-	public ViewManage viewManage = ViewManage.getInstance();
 
 	public static final int REQUESTCODE_MODIFY = 0x1, REQUESTCODE_ADD = 0x2, REQUESTCODE_ADDGROUPCIRCLE = 0x3;
 
@@ -287,10 +283,10 @@ public class BusinessCardController {
 	}
 
 	public void startChat(String type) {
-		if (viewManage.newChatView != null && viewManage.newChatView.thisController.key.equals(key)) {
+		if (viewManage.chatView != null && viewManage.chatView.thisController.key.equals(key)) {
 			thisActivity.finish();
 		} else {
-			Intent intent = new Intent(thisActivity, NewChatActivity.class);
+			Intent intent = new Intent(thisActivity, ChatActivity.class);
 			intent.putExtra("id", key);
 			intent.putExtra("type", type);
 			thisActivity.startActivity(intent);

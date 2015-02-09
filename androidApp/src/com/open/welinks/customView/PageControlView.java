@@ -1,5 +1,4 @@
-package com.open.welinks.view;
-
+package com.open.welinks.customView;
 
 import com.open.welinks.R;
 
@@ -14,7 +13,8 @@ public class PageControlView extends LinearLayout {
 	private Context context;
 	private PageControlView thisView;
 	private Bitmap defaultImage, seleteImage;
-	private LinearLayout.LayoutParams params;
+
+	// private LinearLayout.LayoutParams params;
 
 	public PageControlView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -23,7 +23,7 @@ public class PageControlView extends LinearLayout {
 		thisView.setOrientation(LinearLayout.HORIZONTAL);
 		defaultImage = BitmapFactory.decodeResource(getResources(), R.drawable.dot_off);
 		seleteImage = BitmapFactory.decodeResource(getResources(), R.drawable.dot_on);
-		params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		// params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 	}
 
 	public void setCount(int count, int defaultItem) {

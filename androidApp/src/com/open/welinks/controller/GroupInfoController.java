@@ -27,7 +27,6 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.CreateGroupLocationActivity;
 import com.open.welinks.CropActivity;
 import com.open.welinks.GroupLabelActivity;
 import com.open.welinks.GroupMemberManageActivity;
@@ -47,6 +46,9 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.oss.UploadMultipart;
+import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
@@ -101,10 +103,6 @@ public class GroupInfoController {
 			if (currentGroup == null) {
 				thisActivity.finish();
 			} else {
-				log.e("members:::::::::::::::" + currentGroup.gid);
-				for (String str : currentGroup.members) {
-					log.e(str + ":::::::::::::::");
-				}
 				thisView.setData();
 				// thisView.showGroupMembers();
 			}
@@ -406,8 +404,9 @@ public class GroupInfoController {
 		}
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
 		params.addBodyParameter("sid", currentBoard.sid);
 		params.addBodyParameter("targetphones", gson.toJson(currentGroup.members));
@@ -440,8 +439,9 @@ public class GroupInfoController {
 	public void modifyGroupMembers(String url, String membersContentString, RequestCallBack<String> callBack) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
 		params.addBodyParameter("members", membersContentString);
 

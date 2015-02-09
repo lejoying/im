@@ -1,8 +1,4 @@
-package com.open.welinks.view;
-
-import com.open.welinks.R;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.utils.BaseDataUtils;
+package com.open.welinks.customView;
 
 import pl.droidsonroids.gif.GifImageView;
 import android.annotation.SuppressLint;
@@ -16,13 +12,17 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.PopupWindow;
 
+import com.open.welinks.R;
+import com.open.welinks.model.FileHandlers;
+import com.open.welinks.utils.BaseDataUtils;
+
 public class ChatFaceGridView extends GridView implements android.widget.AdapterView.OnItemClickListener, android.widget.AdapterView.OnItemLongClickListener, android.view.View.OnTouchListener {
 	private FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	private Context context;
 	private ChatFaceGridView thisView;
 	private ChatFaceView mChatFaceView;
-	private FaceViewPager parent;
+	private FaceViewPager parentPager;
 	private View currentView, popView;
 	private int row, line, viewHeight, viewWidth, lastposition = -1;
 	private float touchX, touchY;
@@ -35,7 +35,7 @@ public class ChatFaceGridView extends GridView implements android.widget.Adapter
 		super(context);
 		this.context = context;
 		this.mChatFaceView = mChatFaceView;
-		this.parent = parent;
+		this.parentPager = parent;
 		this.type = type;
 		this.thisView = this;
 		if (type.equals("default")) {
@@ -70,8 +70,8 @@ public class ChatFaceGridView extends GridView implements android.widget.Adapter
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		if (this.parent != null) {
-			this.parent.setTouchAble(false);
+		if (this.parentPager != null) {
+			this.parentPager.setTouchAble(false);
 		}
 		if (!"default".equals(type)) {
 			isLongClick = true;
@@ -95,8 +95,8 @@ public class ChatFaceGridView extends GridView implements android.widget.Adapter
 			if (mPopupWindow.isShowing()) {
 				mPopupWindow.dismiss();
 			}
-			if (parent != null) {
-				parent.setTouchAble(true);
+			if (parentPager != null) {
+				parentPager.setTouchAble(true);
 			}
 			if (currentView != null) {
 				currentView.setSelected(false);

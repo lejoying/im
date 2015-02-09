@@ -2,87 +2,80 @@ package com.open.welinks;
 
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.view.ChatView;
-import com.open.welinks.view.ViewManage;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.view.MotionEvent;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 
 public class ChatActivity extends Activity {
 
-	public String tag = "ChatActivity";
-
-	public ChatView chatView;
-	public ChatController chatController;
-	public Activity thisActivity;
-	public Context context;
-
-	public ViewManage viewManage = ViewManage.getInstance();
+	public ChatView thisView;
+	public ChatController thisController;
+	public ChatActivity thisActivity;
+	public LayoutInflater mInflater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		linkViewController();
-	}
+		this.thisActivity = this;
+		this.mInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.thisView = new ChatView(thisActivity);
+		this.thisController = new ChatController(thisActivity);
 
-	private void linkViewController() {
-		thisActivity = this;
-		context = this;
-		chatView = new ChatView(this);
-		chatController = new ChatController(this);
+		this.thisView.thisController = this.thisController;
+		this.thisController.thisView = this.thisView;
 
-		chatView.thisController = chatController;
-		chatController.thisView = chatView;
+		thisController.viewManage.chatView = thisView;
 
-		chatView.initViews();
-		viewManage.chatView = chatView;
+		this.thisController.onCreate();
+		this.thisView.initViews();
+		this.thisController.initData();
+		this.thisView.fillData();
 
-		chatController.initializeListeners();
-		chatController.onCreate();
-		chatController.bindEvent();
-
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		chatController.onActivityResult(requestCode, resultCode, data);
+		thisView.locationMapView.onCreate(savedInstanceState);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		chatController.onResume();
+		this.thisController.onResume();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		chatController.onPause();
+		this.thisController.onPause();
 	}
 
 	@Override
-	protected void onDestroy() {
-		chatController.onDestroy();
-		super.onDestroy();
+	protected void onSaveInstanceState(Bundle outState) {
+		this.thisController.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		this.thisController.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
 	public void finish() {
-		chatController.finish();
+		this.thisController.finish();
 		super.finish();
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		return chatController.onTouchEvent(event);
+	protected void onDestroy() {
+		this.thisController.onDestroy();
+		super.onDestroy();
 	}
 
 	@Override
 	public void onBackPressed() {
-		chatController.onBackPressed();
-		super.onBackPressed();
+		this.thisController.onBackPressed();
 	}
+
 }

@@ -3,18 +3,15 @@ package com.open.welinks.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.open.welinks.model.Constant;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
-import android.util.Log;
+
+import com.open.welinks.model.Constant;
 
 public class ExpressionUtil {
 	/**

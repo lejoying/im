@@ -36,9 +36,11 @@ import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.CirclesManageView;
@@ -740,8 +742,9 @@ public class CirclesManageController {
 	public void modifyFriendRid(String phone, String rid) {
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("rid", rid);
 		params.addBodyParameter("targetphones", "[\"" + phone + "\"]");
 
@@ -751,8 +754,9 @@ public class CirclesManageController {
 	public void modifyGroupSequence(String circleSequence) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("sequence", circleSequence);
 
 		httpUtils.send(HttpMethod.POST, API.RELATION_MODIFYCIRCLESEQUENCE, params, responseHandlers.modifyCircleSequenceCallBack);
@@ -773,8 +777,9 @@ public class CirclesManageController {
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("name", inputContent);
 		params.addBodyParameter("rid", String.valueOf(circle.rid));
 
@@ -782,9 +787,9 @@ public class CirclesManageController {
 	}
 
 	public void deleteCircle(final String rid) {
-		if (!rid.equals("8888888") && !rid.equals("9999999")) {
+		if (!rid.equals(Constant.DEFAULTCIRCLEID + "") && !rid.equals(Constant.defaultContactId + "")) {
 			data = parser.check();
-			final Circle defaultCircle = data.relationship.circlesMap.get("8888888");
+			final Circle defaultCircle = data.relationship.circlesMap.get(Constant.DEFAULTCIRCLEID + "");
 			final Circle deleteCircle = data.relationship.circlesMap.get(rid);
 			if (deleteCircle == null) {
 				Toast.makeText(thisActivity, "该分组不存在.", Toast.LENGTH_SHORT).show();
@@ -802,8 +807,9 @@ public class CirclesManageController {
 
 					HttpUtils httpUtils = new HttpUtils();
 					RequestParams params = new RequestParams();
-					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					User currentUser = data.userInformation.currentUser;
+					params.addBodyParameter("phone", currentUser.phone);
+					params.addBodyParameter("accessKey", currentUser.accessKey);
 					params.addBodyParameter("rid", rid);
 
 					httpUtils.send(HttpMethod.POST, API.CIRCLE_DELETE, params, responseHandlers.circle_delete);
@@ -837,13 +843,13 @@ public class CirclesManageController {
 
 					HttpUtils httpUtils = new HttpUtils();
 					RequestParams params = new RequestParams();
-					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					User currentUser = data.userInformation.currentUser;
+					params.addBodyParameter("phone", currentUser.phone);
+					params.addBodyParameter("accessKey", currentUser.accessKey);
 					params.addBodyParameter("name", circleName);
 					params.addBodyParameter("rid", rid + "");
 
 					httpUtils.send(HttpMethod.POST, API.CIRCLE_ADDCIRCLE, params, responseHandlers.circle_addcircle);
-
 				} else {
 
 				}

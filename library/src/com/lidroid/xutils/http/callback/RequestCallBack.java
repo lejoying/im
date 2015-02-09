@@ -16,7 +16,6 @@
 package com.lidroid.xutils.http.callback;
 
 import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -50,6 +49,7 @@ public abstract class RequestCallBack<T> {
 		this.userTag = userTag;
 	}
 
+	// progress回调的频率或间隔
 	private int rate;
 
 	public final int getRate() {

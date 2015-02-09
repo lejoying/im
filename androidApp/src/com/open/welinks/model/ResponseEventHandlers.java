@@ -680,13 +680,13 @@ public class ResponseEventHandlers {
 			} else {
 				modifyMessagesSubView(message);
 			}
-		} else if (viewManage.newChatView != null) {
-			String key = viewManage.newChatView.thisController.key;
+		} else if (viewManage.chatView != null) {
+			String key = viewManage.chatView.thisController.key;
 			if (key.equals(message.phone) || key.equals(message.gid)) {
-				viewManage.newChatView.thisController.handler.post(new Runnable() {
+				viewManage.chatView.thisController.handler.post(new Runnable() {
 					@Override
 					public void run() {
-						viewManage.newChatView.mChatAdapter.notifyDataSetChanged();
+						viewManage.chatView.mChatAdapter.notifyDataSetChanged();
 					}
 				});
 			} else {
@@ -700,8 +700,8 @@ public class ResponseEventHandlers {
 
 	public void modifyMessagesSubView(Message message) {
 		if ("point".equals(message.sendType)) {
-			if (viewManage.newChatView != null) {
-				String key = viewManage.newChatView.thisController.key;
+			if (viewManage.chatView != null) {
+				String key = viewManage.chatView.thisController.key;
 				if (!key.equals(message.phone)) {
 					data.relationship.friendsMap.get(message.phone).notReadMessagesCount++;
 				}
@@ -709,8 +709,8 @@ public class ResponseEventHandlers {
 				data.relationship.friendsMap.get(message.phone).notReadMessagesCount++;
 			}
 		} else if ("group".equals(message.sendType)) {
-			if (viewManage.newChatView != null) {
-				String key = viewManage.newChatView.thisController.key;
+			if (viewManage.chatView != null) {
+				String key = viewManage.chatView.thisController.key;
 				if (!key.equals(message.gid)) {
 					data.relationship.groupsMap.get(message.gid).notReadMessagesCount++;
 				}
