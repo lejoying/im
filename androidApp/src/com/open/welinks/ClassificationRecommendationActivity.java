@@ -19,9 +19,11 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.view.ViewManage;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
@@ -123,7 +125,6 @@ public class ClassificationRecommendationActivity extends Activity {
 		mOnClickListener = new MyOnClickListener() {
 			@Override
 			public void onClickEffective(View view) {
-				log.e("click:::::::::::::");
 				if (view.equals(backView)) {
 					finish();
 				} else if (view.equals(searchImage)) {
@@ -218,7 +219,7 @@ public class ClassificationRecommendationActivity extends Activity {
 
 	private void fillData(List<String> labels) {
 		for (String label : labels) {
-			int color = Color.parseColor("#" + colors[random.nextInt(colors.length - 1)]);
+			int color = colors[random.nextInt(colors.length)];
 			TextView textView = new TextView(this);
 			setTextAttribute(textView, label, color, "normal");
 			textView.setTag(R.id.tag_class, "label");
@@ -238,7 +239,10 @@ public class ClassificationRecommendationActivity extends Activity {
 			textView.setBackgroundDrawable(drawableDown);
 			textView.setTextColor(Color.WHITE);
 		} else if ("normal".equals(status)) {
-			textView.setBackgroundDrawable(createStateListDrawable(color));
+			// GradientDrawable drawableUp = (GradientDrawable) getResources().getDrawable(R.drawable.selector_label);
+			// drawableUp.setStroke((int) BaseDataUtils.dpToPx(0.75f), color);
+			// drawableUp.setColor(Color.TRANSPARENT);
+			textView.setBackgroundDrawable(createDrawable(color));
 			textView.setTextColor(createColorStateList(color));
 		}
 		if (!"".equals(content)) {
@@ -257,23 +261,31 @@ public class ClassificationRecommendationActivity extends Activity {
 		return textView;
 	}
 
-	public StateListDrawable createStateListDrawable(int color) {
-		StateListDrawable stateListDrawable = new StateListDrawable();
-		GradientDrawable drawableUp = (GradientDrawable) getResources().getDrawable(R.drawable.shape_grouplabel_item);
-		drawableUp.setStroke((int) BaseDataUtils.dpToPx(0.75f), color);
-		drawableUp.setColor(Color.TRANSPARENT);
-
-		GradientDrawable drawableDown = (GradientDrawable) getResources().getDrawable(R.drawable.shape_grouplabel_item);
-		drawableDown.setStroke((int) BaseDataUtils.dpToPx(0.75f), color);
-		drawableDown.setColor(color);
-
-		stateListDrawable.addState(new int[] { android.R.attr.state_pressed, android.R.attr.state_enabled }, drawableDown);
-		stateListDrawable.addState(new int[] { android.R.attr.state_enabled, android.R.attr.state_focused }, drawableDown);
-		stateListDrawable.addState(new int[] { android.R.attr.state_enabled }, drawableUp);
-		stateListDrawable.addState(new int[] { android.R.attr.state_focused }, drawableDown);
-		stateListDrawable.addState(new int[] { android.R.attr.state_window_focused }, drawableUp);
-		stateListDrawable.addState(new int[] {}, drawableUp);
-		return stateListDrawable;
+	public Drawable createDrawable(int color) {
+		Drawable drawable = null;
+		if (color == colors[0]) {
+			log.e("0:::::::::::");
+			drawable = getResources().getDrawable(R.drawable.selector_label_one);
+		} else if (color == colors[1]) {
+			log.e("1:::::::::::");
+			drawable = getResources().getDrawable(R.drawable.selector_label_two);
+		} else if (color == colors[2]) {
+			log.e("2:::::::::::");
+			drawable = getResources().getDrawable(R.drawable.selector_label_three);
+		} else if (color == colors[3]) {
+			log.e("3:::::::::::");
+			drawable = getResources().getDrawable(R.drawable.selector_label_four);
+		} else if (color == colors[4]) {
+			log.e("4:::::::::::");
+			drawable = getResources().getDrawable(R.drawable.selector_label_five);
+		} else if (color == colors[5]) {
+			log.e("5:::::::::::");
+			drawable = getResources().getDrawable(R.drawable.selector_label_six);
+		} else if (color == colors[6]) {
+			log.e("6:::::::::::");
+			drawable = getResources().getDrawable(R.drawable.selector_label_seven);
+		}
+		return drawable;
 	}
 
 	public ColorStateList createColorStateList(int color) {
@@ -303,7 +315,7 @@ public class ClassificationRecommendationActivity extends Activity {
 						labelViews.add(0, seleteView);
 						createSeletedLabel(label, color);
 					} else {
-						createSeletedLabel(label, Color.parseColor("#" + colors[random.nextInt(colors.length - 1)]));
+						createSeletedLabel(label, colors[random.nextInt(colors.length)]);
 					}
 				}
 			}
@@ -398,5 +410,5 @@ public class ClassificationRecommendationActivity extends Activity {
 		}
 	}
 
-	public String[] colors = { "ff64c151", "ff8982d3", "fffd8963", "ff4ed0c7", "ff7eb9f1", "fffdb859", "fffd6b7b" };
+	public int[] colors = { Color.parseColor("#ff64c151"), Color.parseColor("#ff8982d3"), Color.parseColor("#fffd8963"), Color.parseColor("#ff4ed0c7"), Color.parseColor("#ff7eb9f1"), Color.parseColor("#fffdb859"), Color.parseColor("#fffd6b7b") };
 }

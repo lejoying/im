@@ -18,6 +18,7 @@ import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.utils.BaseDataUtils;
 
 public class SquareSubView {
 
@@ -77,7 +78,7 @@ public class SquareSubView {
 		button1Params.topMargin = 20;
 		RelativeLayout.LayoutParams button2Params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		button2Params.topMargin = 20;
-		button2Params.leftMargin = 120;
+		button2Params.leftMargin = BaseDataUtils.dpToPxint(120);
 		squareMessageView.addView(button1, button1Params);
 		squareMessageView.addView(button2, button2Params);
 

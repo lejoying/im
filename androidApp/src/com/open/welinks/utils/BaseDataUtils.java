@@ -43,13 +43,13 @@ public class BaseDataUtils {
 	}
 
 	public static float dpToPx(int dp) {
-		// return dp * data.baseData.density;
-		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, data.baseData.metrics);
+		return dp * data.baseData.density;
+		// return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, data.baseData.metrics);
 	}
 
 	public static int dpToPxint(int dp) {
-		// return dp * data.baseData.density;
-		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, data.baseData.metrics);
+		return (int) (dp * data.baseData.density);
+		// return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, data.baseData.metrics);
 	}
 
 	public static float pxToDp(int px) {
@@ -57,7 +57,8 @@ public class BaseDataUtils {
 	}
 
 	public static float dpToPx(float dp) {
-		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, data.baseData.metrics);
+		return dp * data.baseData.density;
+		// return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, data.baseData.metrics);
 	}
 
 	public static float pxToDp(float px) {
