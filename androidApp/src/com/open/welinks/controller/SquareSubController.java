@@ -2,15 +2,13 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
 import com.google.gson.Gson;
-import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.welinks.ClassificationRecommendationActivity;
-import com.open.welinks.ShareSectionActivity;
+import com.open.welinks.R;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
@@ -20,12 +18,12 @@ import com.open.welinks.view.SquareSubView;
 public class SquareSubController {
 
 	public Data data = Data.getInstance();
-	public String tag = "ShareSubController";
-	public MyLog log = new MyLog(tag, true);
 	public Parser parser = Parser.getInstance();
 
+	public String tag = "ShareSubController";
+	public MyLog log = new MyLog(tag, true);
+
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public HttpClient httpClient = HttpClient.getInstance();
 
 	public SquareSubView thisView;
 	public Context context;
@@ -44,26 +42,115 @@ public class SquareSubController {
 		this.mainController = mainController;
 	}
 
+	public View onTouchDownView;
+
+	public boolean isTouchDown = false;
+
 	public void initializeListeners() {
+
+		this.mOnTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				int action = event.getAction();
+				if (action == MotionEvent.ACTION_DOWN) {
+					if (isTouchDown) {
+						return false;
+					}
+					String view_class = (String) view.getTag(R.id.tag_class);
+					if (view_class.equals("SelectBody")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						log.e("mOnTouchListener onTouch");
+						if (thisView.dialogSpring.getCurrentValue() == 1d) {
+							thisView.targetView = view;
+							thisView.dialogSpring.addListener(thisView.dialogSpringListener);
+							thisView.dialogSpring.setCurrentValue(1);
+							thisView.dialogSpring.setEndValue(0.9);
+						}
+					}
+				}
+				return false;
+			}
+		};
 
 		mOnClickListener = new MyOnClickListener() {
 			@Override
 			public void onClickEffective(View view) {
-				if (view.equals(thisView.button1)) {
-					thisActivity.startActivity(new Intent(thisActivity, ClassificationRecommendationActivity.class));
-				} else if (view.equals(thisView.button2)) {
-					Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
-					intent.putExtra("key", "91");
-					thisActivity.startActivity(intent);
+				if (view.getTag(R.id.tag_class) != null) {
+					String view_class = (String) view.getTag(R.id.tag_class);
+					if (view_class.equals("SelectBody")) {
+
+						int id = (Integer) view.getTag(R.id.tag_first);
+						if (onTouchDownView != null) {
+							thisView.dialogSpring.setCurrentValue(0.9);
+							thisView.dialogSpringListener.id = id;
+							thisView.dialogSpring.setEndValue(1);
+						}
+						// if (id == R.drawable.sidebar_icon_discover_normal) {
+						// Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+						// intent.putExtra("key", "91");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_days_normal) {
+						// Intent intent = new Intent(thisActivity, NearbyActivity.class);
+						// intent.putExtra("type", "square");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_group_normal) {
+						// Intent intent = new Intent(thisActivity, NearbyActivity.class);
+						// intent.putExtra("type", "group");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_category_normal) {
+						// Intent intent = new Intent(thisActivity, ClassificationRecommendationActivity.class);
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_test_normal) {
+						// Intent intent = new Intent(thisActivity, NearbyActivity.class);
+						// intent.putExtra("type", "account");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_beauty_normal) {
+						// Intent intent = new Intent(thisActivity, ShareListActivity.class);
+						// intent.putExtra("key", data.userInformation.currentUser.phone);
+						// thisActivity.startActivity(intent);
+						// }
+					}
 				}
 			}
 		};
-
 	}
 
 	public void bindEvent() {
-		thisView.button1.setOnClickListener(mOnClickListener);
-		thisView.button2.setOnClickListener(mOnClickListener);
 	}
 
+	public void onSingleTapUp(MotionEvent event) {
+		log.e("onSingleTapUp");
+		if (this.onTouchDownView != null) {
+			String view_class = (String) this.onTouchDownView.getTag(R.id.tag_class);
+			if (view_class.equals("SelectBody")) {
+				int id = (Integer) this.onTouchDownView.getTag(R.id.tag_first);
+				if (id == R.drawable.sidebar_icon_discover_normal) {
+					onTouchDownView.performClick();
+				} else if (id == R.drawable.sidebar_icon_days_normal) {
+					onTouchDownView.performClick();
+				} else if (id == R.drawable.sidebar_icon_group_normal) {
+					onTouchDownView.performClick();
+				} else if (id == R.drawable.sidebar_icon_category_normal) {
+					onTouchDownView.performClick();
+				} else if (id == R.drawable.sidebar_icon_test_normal) {
+					onTouchDownView.performClick();
+				} else if (id == R.drawable.sidebar_icon_beauty_normal) {
+					onTouchDownView.performClick();
+				}
+			}
+			onTouchDownView = null;
+		}
+		isTouchDown = false;
+	}
+
+	public void onScroll() {
+		if (onTouchDownView != null) {
+			thisView.dialogSpring.setCurrentValue(0.9);
+			thisView.dialogSpring.setEndValue(1);
+		}
+		// isTouchDown = false;
+		onTouchDownView = null;
+	}
 }

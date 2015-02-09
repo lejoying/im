@@ -28,10 +28,10 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <instrumentation
-        android:name="android.test.InstrumentationTestRunner"
-        android:label="Tests for My App"
-        android:targetPackage="com.open.welinks" />
+    <!-- <instrumentation -->
+    <!-- android:name="android.test.InstrumentationTestRunner" -->
+    <!-- android:label="Tests for My App" -->
+    <!-- android:targetPackage="com.open.welinks" /> -->
 
     <application
         android:name="com.open.welinks.model.MainApplication"

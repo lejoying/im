@@ -2407,6 +2407,40 @@ groupManage.deletegrouplabel = function (data, response) {
     }
 
 }
+
+groupManage.modifygrouplabel = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var gid = data.gid;
+    var labels = data.labels;
+    if (verifyEmpty.verifyEmpty(data, labels, gid, response)) {
+        labels = JSON.parse(labels);
+        modify();
+    }
+    function modify() {
+        var query = [
+            "MATCH(group:Group)-[r:HAS_LABEL]->(label:Label)",
+            "WHERE group.gid={gid}",
+            "RETURN label"
+        ].join('\n');
+        var params = {
+            gid: parseInt(gid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组标签失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else {
+
+            }
+        });
+    }
+}
+
 groupManage.getgrouplabels = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;

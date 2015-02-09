@@ -19,13 +19,11 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.view.ViewManage;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -99,7 +97,7 @@ public class ClassificationRecommendationActivity extends Activity {
 		backImageView = (ImageView) findViewById(R.id.backImageView);
 		backTitleView = (TextView) findViewById(R.id.backTitleView);
 		content = (ListView) findViewById(R.id.content);
-		// backMaxView.setBackgroundColor(Color.WHITE);
+		backMaxView.setBackgroundColor(Color.parseColor("#02242f"));
 		// backTitleView.setTextColor(Color.parseColor("#0099cd"));
 		// backImageView.setColorFilter(Color.parseColor("#0099cd"));
 
@@ -211,7 +209,6 @@ public class ClassificationRecommendationActivity extends Activity {
 		labelViews = new ArrayList<View>();
 		labelViewsMap = new HashMap<String, View>();
 		labels = new ArrayList<String>(Arrays.asList(Constant.LABELS));
-		labels.remove(0);
 		fillData(labels);
 		mAdapter = new GroupAdapter();
 		content.setAdapter(mAdapter);
@@ -251,10 +248,10 @@ public class ClassificationRecommendationActivity extends Activity {
 			textView.setPadding(BaseDataUtils.dpToPxint(22), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(22), BaseDataUtils.dpToPxint(5));
 			textView.setGravity(Gravity.CENTER);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			params.bottomMargin = BaseDataUtils.dpToPxint(10);
+			params.bottomMargin = BaseDataUtils.dpToPxint(7);
 			params.topMargin = BaseDataUtils.dpToPxint(7);
 			params.leftMargin = BaseDataUtils.dpToPxint(7);
-			params.rightMargin = BaseDataUtils.dpToPxint(10);
+			params.rightMargin = BaseDataUtils.dpToPxint(7);
 			textView.setLayoutParams(params);
 			textView.setOnClickListener(mOnClickListener);
 		}
@@ -264,25 +261,18 @@ public class ClassificationRecommendationActivity extends Activity {
 	public Drawable createDrawable(int color) {
 		Drawable drawable = null;
 		if (color == colors[0]) {
-			log.e("0:::::::::::");
 			drawable = getResources().getDrawable(R.drawable.selector_label_one);
 		} else if (color == colors[1]) {
-			log.e("1:::::::::::");
 			drawable = getResources().getDrawable(R.drawable.selector_label_two);
 		} else if (color == colors[2]) {
-			log.e("2:::::::::::");
 			drawable = getResources().getDrawable(R.drawable.selector_label_three);
 		} else if (color == colors[3]) {
-			log.e("3:::::::::::");
 			drawable = getResources().getDrawable(R.drawable.selector_label_four);
 		} else if (color == colors[4]) {
-			log.e("4:::::::::::");
 			drawable = getResources().getDrawable(R.drawable.selector_label_five);
 		} else if (color == colors[5]) {
-			log.e("5:::::::::::");
 			drawable = getResources().getDrawable(R.drawable.selector_label_six);
 		} else if (color == colors[6]) {
-			log.e("6:::::::::::");
 			drawable = getResources().getDrawable(R.drawable.selector_label_seven);
 		}
 		return drawable;

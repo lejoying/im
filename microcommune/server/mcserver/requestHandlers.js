@@ -313,13 +313,9 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.modifygroupcirclesequence(data, response);
         });
-    } else if (operation == "creategrouplabel") {
+    } else if (operation == "modifygrouplabel") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.creategrouplabel(data, response);
-        });
-    } else if (operation == "deletegrouplabel") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.deletegrouplabel(data, response);
+            groupManage.modifygrouplabel(data, response);
         });
     } else if (operation == "getgrouplabels") {
         oauth6(data.phone, data.accessKey, response, function () {
