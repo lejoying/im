@@ -34,12 +34,12 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 	public MyLog log = new MyLog(tag, true);
 
 	public View backView;
-	public ImageView send;
+	public ImageView sendButton;
 	public TextView titleContentView;
 	public RelativeLayout rightContainer;
 
-	public TextView num;
-	public EditText opinion;
+	public TextView textNumberView;
+	public EditText opinionView;
 
 	public String content = "";
 	public InputMethodManager inputMethodManager;
@@ -57,32 +57,32 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 		titleContentView = (TextView) findViewById(R.id.backTitleView);
 		titleContentView.setText("意见反馈");
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
-		send = new ImageView(this);
-		send.setImageResource(R.drawable.mark_stone);
-		send.setPadding((int) (10 * dm.density), (int) (5 * dm.density), (int) (10 * dm.density), (int) (5 * dm.density));
+		sendButton = new ImageView(this);
+		sendButton.setImageResource(R.drawable.mark_stone);
+		sendButton.setPadding((int) (10 * dm.density), (int) (5 * dm.density), (int) (10 * dm.density), (int) (5 * dm.density));
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
 
-		rightContainer.addView(send, layoutParams);
+		rightContainer.addView(sendButton, layoutParams);
 		RelativeLayout.LayoutParams rightContainerParams = (LayoutParams) rightContainer.getLayoutParams();
 		rightContainerParams.rightMargin = 0;
 
-		num = (TextView) findViewById(R.id.num);
-		opinion = (EditText) findViewById(R.id.opinion);
+		textNumberView = (TextView) findViewById(R.id.num);
+		opinionView = (EditText) findViewById(R.id.opinion);
 
 		inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		backView.setOnClickListener(this);
-		send.setOnClickListener(this);
-		opinion.addTextChangedListener(this);
+		sendButton.setOnClickListener(this);
+		opinionView.addTextChangedListener(this);
 
-		inputMethodManager.showSoftInput(opinion, InputMethodManager.SHOW_FORCED);
+		inputMethodManager.showSoftInput(opinionView, InputMethodManager.SHOW_FORCED);
 	}
 
 	@Override
 	public void onClick(View view) {
-		if (view.equals(send)) {
-			String content = opinion.getText().toString().trim();
+		if (view.equals(sendButton)) {
+			String content = opinionView.getText().toString().trim();
 			if ("".equals(content)) {
 				return;
 			}
@@ -113,7 +113,7 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 
 	@Override
 	public void afterTextChanged(Editable s) {
-		num.setText(String.valueOf(300 - s.toString().length()));
+		textNumberView.setText(String.valueOf(300 - s.toString().length()));
 	}
 
 	@Override
@@ -123,6 +123,5 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int count, int after) {
-
 	}
 }

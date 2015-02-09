@@ -13,6 +13,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 
@@ -24,11 +25,11 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 
-	public View backview;
-	public EditText message;
-	public Button send;
+	public View backView;
+	public EditText messageEditText;
+	public Button sendButton;
 
-	public String phoneto;
+	public String phoneTo;
 
 	public String addFriendMessage = "";
 
@@ -36,7 +37,7 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_friend);
-		phoneto = getIntent().getStringExtra("key");
+		phoneTo = getIntent().getStringExtra("key");
 		parser.check();
 		if (data.localStatus.localData != null) {
 			if (data.localStatus.localData.addFriendMessage != null) {
@@ -48,32 +49,27 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 	}
 
 	private void initView() {
-		backview = findViewById(R.id.backview);
-		message = (EditText) findViewById(R.id.message);
-		send = (Button) findViewById(R.id.send);
+		backView = findViewById(R.id.backview);
+		messageEditText = (EditText) findViewById(R.id.message);
+		sendButton = (Button) findViewById(R.id.send);
 
-		message.setText(this.addFriendMessage);
+		messageEditText.setText(this.addFriendMessage);
 
-		backview.setOnClickListener(this);
-		send.setOnClickListener(this);
+		backView.setOnClickListener(this);
+		sendButton.setOnClickListener(this);
 
 	}
 
 	@Override
 	public void onClick(View view) {
-		if (view.equals(backview)) {
+		if (view.equals(backView)) {
 			finish();
-		} else if (view.equals(send)) {
-			String addMessage = message.getText().toString();
-			// if (!"".equals(addMessage)) {
+		} else if (view.equals(sendButton)) {
+			String addMessage = messageEditText.getText().toString();
 			addFriend(addMessage);
 			setResult(Activity.RESULT_OK);
 			finish();
-			// } else {
-			// Alert.showMessage("请输入验证信息");
-			// }
 		}
-
 	}
 
 	public void addFriend(String addMessage) {
@@ -84,9 +80,10 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 		}
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("target", phoneto);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("target", phoneTo);
 		params.addBodyParameter("message", addMessage);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.RELATION_FOLLOW, params, responseHandlers.relation_addfriend);

@@ -35,6 +35,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.MyGson;
 import com.open.welinks.view.ShareListView;
 
@@ -97,14 +98,12 @@ public class ShareListController {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if (position != 0) {
-					// if (view.getTag(R.id.tag_third) == null) {
 					ShareMessage message = sharesMap.get(shares.get(position - 1));
 					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 					intent.putExtra("gid", message.gid);
 					intent.putExtra("sid", message.sid);
 					intent.putExtra("gsid", message.gsid);
 					thisActivity.startActivityForResult(intent, resultCodeDetail);
-					// }
 				}
 			}
 		};
@@ -231,13 +230,6 @@ public class ShareListController {
 								}
 							});
 						}
-						// thisView.fileHandlers.handler.post(new Runnable() {
-						//
-						// @Override
-						// public void run() {
-						// thisView.listView.removeFooterView(thisView.footerView);
-						// }
-						// });
 						loadfinish = true;
 					} else {
 						log.e(response.失败原因);

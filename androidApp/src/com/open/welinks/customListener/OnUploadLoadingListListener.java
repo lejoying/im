@@ -1,7 +1,7 @@
 package com.open.welinks.customListener;
 
-import com.open.welinks.controller.UploadMultipart;
 import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.oss.UploadMultipart;
 
 public class OnUploadLoadingListListener {
 

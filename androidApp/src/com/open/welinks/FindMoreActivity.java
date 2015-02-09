@@ -16,9 +16,9 @@ import android.widget.TextView;
 public class FindMoreActivity extends Activity {
 
 	public View backView;
-	public TextView title, text_one, text_two, text_three;
+	public TextView backTitleView, textOneView, textTwoView, textThreeView;
 	public RelativeLayout rightContainer;
-	public LinearLayout layout_one, layout_two, layout_three;
+	public LinearLayout layoutOneVIew, layoutTwoView, layoutThreeView;
 	public ThreeChoicesView threeChoicesView;
 	public OnClickListener mOnClickListener;
 	public OnItemClickListener mOnItemClickListener;
@@ -39,13 +39,13 @@ public class FindMoreActivity extends Activity {
 	private void initView() {
 		backView = findViewById(R.id.backView);
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
-		layout_one = (LinearLayout) findViewById(R.id.layout_one);
-		layout_two = (LinearLayout) findViewById(R.id.layout_two);
-		layout_three = (LinearLayout) findViewById(R.id.layout_three);
-		title = (TextView) findViewById(R.id.backTitleView);
-		text_one = (TextView) findViewById(R.id.text_one);
-		text_two = (TextView) findViewById(R.id.text_two);
-		text_three = (TextView) findViewById(R.id.text_three);
+		layoutOneVIew = (LinearLayout) findViewById(R.id.layout_one);
+		layoutTwoView = (LinearLayout) findViewById(R.id.layout_two);
+		layoutThreeView = (LinearLayout) findViewById(R.id.layout_three);
+		backTitleView = (TextView) findViewById(R.id.backTitleView);
+		textOneView = (TextView) findViewById(R.id.text_one);
+		textTwoView = (TextView) findViewById(R.id.text_two);
+		textThreeView = (TextView) findViewById(R.id.text_three);
 
 		threeChoicesView = new ThreeChoicesView(this, selectType);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -62,16 +62,14 @@ public class FindMoreActivity extends Activity {
 			public void onClick(View view) {
 				if (view.equals(backView)) {
 					finish();
-				} else if (view.equals(layout_one)) {
+				} else if (view.equals(layoutOneVIew)) {
 					skipActivity(selectType, 1);
-				} else if (view.equals(layout_two)) {
+				} else if (view.equals(layoutTwoView)) {
 					skipActivity(selectType, 2);
-				} else if (view.equals(layout_three)) {
+				} else if (view.equals(layoutThreeView)) {
 					skipActivity(selectType, 3);
 				}
-
 			}
-
 		};
 		mOnItemClickListener = threeChoicesView.new OnItemClickListener() {
 			@Override
@@ -81,42 +79,40 @@ public class FindMoreActivity extends Activity {
 			}
 		};
 		bindEvent();
-
 	}
 
 	private void bindEvent() {
 		threeChoicesView.setOnItemClickListener(mOnItemClickListener);
 		backView.setOnClickListener(mOnClickListener);
-		layout_one.setOnClickListener(mOnClickListener);
-		layout_two.setOnClickListener(mOnClickListener);
-		layout_three.setOnClickListener(mOnClickListener);
+		layoutOneVIew.setOnClickListener(mOnClickListener);
+		layoutTwoView.setOnClickListener(mOnClickListener);
+		layoutThreeView.setOnClickListener(mOnClickListener);
 		fillData();
 	}
 
 	private void fillData() {
-		title.setText("查找更多");
+		backTitleView.setText("查找更多");
 		changData(selectType);
 	}
 
 	private void changData(int selectType) {
 		if (selectType == 1) {
-			text_one.setText("附近的社区");
-			text_two.setText("查找社区");
-			layout_two.setVisibility(View.GONE);
-			layout_three.setVisibility(View.GONE);
+			textOneView.setText("附近的社区");
+			textTwoView.setText("查找社区");
+			layoutTwoView.setVisibility(View.GONE);
+			layoutThreeView.setVisibility(View.GONE);
 		} else if (selectType == 2) {
-			text_one.setText("附近的群组");
-			text_two.setText("查找群组");
-			layout_two.setVisibility(View.GONE);
-			layout_three.setVisibility(View.GONE);
+			textOneView.setText("附近的群组");
+			textTwoView.setText("查找群组");
+			layoutTwoView.setVisibility(View.GONE);
+			layoutThreeView.setVisibility(View.GONE);
 		} else if (selectType == 3) {
-			text_one.setText("附近的人");
-			text_two.setText("查找好友");
-			text_three.setText("推荐好友");
-			layout_three.setVisibility(View.GONE);
-			layout_two.setVisibility(View.VISIBLE);
+			textOneView.setText("附近的人");
+			textTwoView.setText("查找好友");
+			textThreeView.setText("推荐好友");
+			layoutThreeView.setVisibility(View.GONE);
+			layoutTwoView.setVisibility(View.VISIBLE);
 		}
-
 	}
 
 	private void skipActivity(int selectType, int selectItem) {
@@ -135,7 +131,5 @@ public class FindMoreActivity extends Activity {
 		} else if (selectItem == 2) {
 			startActivity(new Intent(FindMoreActivity.this, SearchFriendActivity.class));
 		}
-
 	}
-
 }

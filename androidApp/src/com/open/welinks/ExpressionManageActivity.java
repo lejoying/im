@@ -16,14 +16,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.open.welinks.controller.DownloadFile;
-import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
@@ -33,20 +32,20 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.view.ViewManage;
-import com.mobeta.android.dslv.DragSortListView;
-import com.mobeta.android.dslv.DragSortController;
 
 public class ExpressionManageActivity extends Activity {
-	Data data = Data.getInstance();
-	FileHandlers fileHandlers = FileHandlers.getInstance();
-	ViewManage mViewManage = ViewManage.getInstance();
-	DownloadFileList downloadFileList = DownloadFileList.getInstance();
+
+	private Data data = Data.getInstance();
+	private FileHandlers fileHandlers = FileHandlers.getInstance();
+	private ViewManage mViewManage = ViewManage.getInstance();
+	private DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	private View backView;
-	private RelativeLayout rightContainer;
-	private TextView titleText, delete;
-	private DragSortListView expressionList;
+	private TextView titleTextView;
+	private DragSortListView expressionListView;
 
 	private ListController expressionListController;
 	private MyOnClickListener mOnClickListener;
@@ -54,7 +53,7 @@ public class ExpressionManageActivity extends Activity {
 	private OnDialogClickListener mConfirmOnDialogClickListener, mCancelOnDialogClickListener;
 	private SimpleImageLoadingListener mSimpleImageLoadingListener;
 
-	private ListAdapter adapter;
+	private ListAdapter listAdapter;
 	private LayoutInflater mInflater;
 	private List<String> allExpression, ownedExpression, unownedExpression;
 
@@ -66,7 +65,6 @@ public class ExpressionManageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		initViews();
 		initData();
-
 	}
 
 	@Override
@@ -85,13 +83,8 @@ public class ExpressionManageActivity extends Activity {
 	private void initViews() {
 		setContentView(R.layout.activity_manage_expression);
 		backView = this.findViewById(R.id.backView);
-		rightContainer = (RelativeLayout) this.findViewById(R.id.rightContainer);
-		titleText = (TextView) this.findViewById(R.id.titleText);
-		expressionList = (DragSortListView) this.findViewById(R.id.expressionList);
-		delete = new TextView(this);
-		delete.setText("批量删除");
-		delete.setTextColor(getResources().getColor(R.color.red));
-		// rightContainer.addView(delete);
+		titleTextView = (TextView) this.findViewById(R.id.titleText);
+		expressionListView = (DragSortListView) this.findViewById(R.id.expressionList);
 		initListener();
 	}
 
@@ -111,8 +104,6 @@ public class ExpressionManageActivity extends Activity {
 					}
 				} else if (view.equals(backView)) {
 					finish();
-				} else if (view.equals(delete)) {
-
 				}
 			}
 		};
@@ -143,14 +134,14 @@ public class ExpressionManageActivity extends Activity {
 					unownedExpression.add(name);
 				}
 				expressionListController.mDivPos = ownedExpression.size();
-				adapter.notifyDataSetChanged();
+				listAdapter.notifyDataSetChanged();
 			}
 		};
 		mCancelOnDialogClickListener = new OnDialogClickListener() {
 
 			@Override
 			public void onClick(AlertInputDialog dialog) {
-				adapter.notifyDataSetChanged();
+				listAdapter.notifyDataSetChanged();
 
 			}
 		};
@@ -168,14 +159,13 @@ public class ExpressionManageActivity extends Activity {
 
 	private void bindEvent() {
 		backView.setOnClickListener(mOnClickListener);
-		delete.setOnClickListener(mOnClickListener);
 		dialog.setOnConfirmClickListener(mConfirmOnDialogClickListener);
 		dialog.setOnCancelClickListener(mCancelOnDialogClickListener);
 
-		expressionList.setDropListener(expressionListController);
-		expressionList.setRemoveListener(expressionListController);
-		expressionList.setFloatViewManager(expressionListController);
-		expressionList.setOnTouchListener(expressionListController);
+		expressionListView.setDropListener(expressionListController);
+		expressionListView.setRemoveListener(expressionListController);
+		expressionListView.setFloatViewManager(expressionListController);
+		expressionListView.setOnTouchListener(expressionListController);
 	}
 
 	private void initData() {
@@ -191,10 +181,10 @@ public class ExpressionManageActivity extends Activity {
 			if (!ownedExpression.contains(face))
 				unownedExpression.add(face);
 		}
-		titleText.setText(getString(R.string.expressionManage));
-		adapter = new ListAdapter();
-		expressionListController = new ListController(expressionList, adapter);
-		expressionList.setAdapter(adapter);
+		titleTextView.setText(getString(R.string.expressionManage));
+		listAdapter = new ListAdapter();
+		expressionListController = new ListController(expressionListView, listAdapter);
+		expressionListView.setAdapter(listAdapter);
 		bindEvent();
 	}
 
@@ -202,7 +192,6 @@ public class ExpressionManageActivity extends Activity {
 		private int OWNED = 0x1, UNOWNED = 0x2, TYPECOUNT = 0x3;
 
 		public ListAdapter() {
-
 		}
 
 		@Override
@@ -243,7 +232,6 @@ public class ExpressionManageActivity extends Activity {
 			return TYPECOUNT;
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Holder holder = new Holder();
@@ -251,41 +239,41 @@ public class ExpressionManageActivity extends Activity {
 			int type = getItemViewType(position);
 			convertView = mInflater.inflate(R.layout.expression_manage_item, null);
 			holder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
-			holder.image = (ImageView) convertView.findViewById(R.id.image);
-			holder.name = (TextView) convertView.findViewById(R.id.name);
-			holder.status = (TextView) convertView.findViewById(R.id.status);
+			holder.imageView = (ImageView) convertView.findViewById(R.id.image);
+			holder.nameView = (TextView) convertView.findViewById(R.id.name);
+			holder.statusView = (TextView) convertView.findViewById(R.id.status);
 			convertView.setTag(holder);
 			if (type == OWNED) {
 				exressionName = ownedExpression.get(position);
-				holder.status.setBackgroundDrawable(getResources().getDrawable(R.drawable.expression_manager_button_off));
-				holder.status.setText("已下载");
+				holder.statusView.setBackgroundResource(R.drawable.expression_manager_button_off);
+				holder.statusView.setText("已下载");
 			} else if (type == UNOWNED) {
 				exressionName = unownedExpression.get(position - ownedExpression.size());
-				holder.status.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_exprission_item_status));
-				holder.status.setText("下载");
-				holder.status.setTag(R.id.tag_first, exressionName);
-				holder.status.setOnClickListener(mOnClickListener);
+				holder.statusView.setBackgroundResource(R.drawable.selector_exprission_item_status);
+				holder.statusView.setText("下载");
+				holder.statusView.setTag(R.id.tag_first, exressionName);
+				holder.statusView.setOnClickListener(mOnClickListener);
 			}
-			getCoverImage(Constant.FACE_RESOURCES_MAP.get(exressionName)[0], holder.image);
-			holder.name.setText(getExpressionName(exressionName));
+			getCoverImage(Constant.FACE_RESOURCES_MAP.get(exressionName)[0], holder.imageView);
+			holder.nameView.setText(getExpressionName(exressionName));
 			return convertView;
 		}
 
 		class Holder {
-			ImageView image;
-			TextView name, status;
+			ImageView imageView;
+			TextView nameView, statusView;
 			ProgressBar progressBar;
 		}
 	}
 
 	private class ListController extends DragSortController implements DragSortListView.DropListener, DragSortListView.RemoveListener {
-		private ListAdapter adapter;
+		private ListAdapter listAdapter;
 		private int mPos;
 		private int mDivPos;
 
 		public ListController(DragSortListView dslv, ListAdapter adapter) {
 			super(dslv);
-			this.adapter = adapter;
+			this.listAdapter = adapter;
 			setRemoveMode(DragSortController.FLING_REMOVE);
 			setDragInitMode(DragSortController.ON_LONG_PRESS);
 		}
@@ -295,13 +283,13 @@ public class ExpressionManageActivity extends Activity {
 			if (from != to) {
 				String data = ownedExpression.remove(from);
 				ownedExpression.add(to, data);
-				adapter.notifyDataSetChanged();
+				listAdapter.notifyDataSetChanged();
 			}
 		}
 
 		@Override
 		public void remove(final int which) {
-			String name = (String) adapter.getItem(which);
+			String name = (String) listAdapter.getItem(which);
 			removeExpression(name);
 		}
 
@@ -327,20 +315,19 @@ public class ExpressionManageActivity extends Activity {
 			}
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public View onCreateFloatView(int position) {
 			mPos = position;
-			View view = adapter.getView(position, null, expressionList);
-			view.setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_expression_float_view));
+			View view = listAdapter.getView(position, null, expressionListView);
+			view.setBackgroundResource(R.drawable.chat_expression_float_view);
 			return view;
 		}
 
 		@Override
 		public void onDragFloatView(View floatView, Point position, Point touch) {
-			final int first = expressionList.getFirstVisiblePosition();
-			final int lvDivHeight = expressionList.getDividerHeight();
-			View div = expressionList.getChildAt(mDivPos - first);
+			final int first = expressionListView.getFirstVisiblePosition();
+			final int lvDivHeight = expressionListView.getDividerHeight();
+			View div = expressionListView.getChildAt(mDivPos - first);
 			if (div != null) {
 				if (mPos > mDivPos) {
 					final int limit = div.getBottom() + lvDivHeight;
@@ -391,7 +378,7 @@ public class ExpressionManageActivity extends Activity {
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
-							adapter.notifyDataSetChanged();
+							listAdapter.notifyDataSetChanged();
 						}
 					});
 				}
@@ -410,7 +397,7 @@ public class ExpressionManageActivity extends Activity {
 		String excessivePath = file.getAbsolutePath();
 		String excessiveUrl = API.DOMAIN_COMMONIMAGE + "gifs/" + fileName;
 		if (file.exists()) {
-			fileHandlers.imageLoader.displayImage("file:/" + excessivePath, imageView, mViewManage.options, mSimpleImageLoadingListener);
+			fileHandlers.imageLoader.displayImage("file://" + excessivePath, imageView, mViewManage.options, mSimpleImageLoadingListener);
 		} else {
 			downLoadCoverImage(excessiveUrl, excessivePath, imageView);
 		}

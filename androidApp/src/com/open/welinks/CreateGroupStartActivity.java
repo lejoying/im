@@ -28,10 +28,11 @@ import com.open.welinks.view.ViewManage;
 
 public class CreateGroupStartActivity extends Activity {
 
-	public Data data = Data.getInstance();
-	public Parser parser = Parser.getInstance();
 	public String tag = "CreateGroupStartActivity";
 	public MyLog log = new MyLog(tag, false);
+
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public ViewManage viewManage = ViewManage.getInstance();
 

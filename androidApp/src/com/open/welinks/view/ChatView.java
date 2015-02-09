@@ -1,41 +1,55 @@
 package com.open.welinks.view;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import android.app.Activity;
-import android.content.Context;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+import android.content.res.Resources.NotFoundException;
+import android.graphics.Color;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.amap.api.maps2d.MapView;
+import com.google.gson.reflect.TypeToken;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
+import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.ChatController;
+import com.open.welinks.customView.ChatFaceView;
 import com.open.welinks.customView.SmallBusinessCardPopView;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
@@ -43,165 +57,226 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.DataHandlers;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.model.Parser;
+import com.open.welinks.model.SubData.CardMessageContent;
+import com.open.welinks.model.SubData.LocationMessageContent;
 import com.open.welinks.model.SubData.MessageShareContent;
+import com.open.welinks.model.SubData.SpecialGifMessageContent;
+import com.open.welinks.model.SubData.VoiceMessageContent;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.utils.ExpressionUtil;
 import com.open.welinks.utils.MyGson;
 
 public class ChatView {
-	public Data data = Data.getInstance();
-	public Parser parser = Parser.getInstance();
-	public String tag = "ChatView";
+
+	public String tag = "NewChatView";
 	public MyLog log = new MyLog(tag, true);
 
-	public DisplayMetrics displayMetrics;
-	public LayoutInflater mInflater;
-
-	public ChatController thisController;
-	public Activity thisActivity;
-	public Context context;
 	public ChatView thisView;
+	public ChatController thisController;
+	public ChatActivity thisActivity;
 
-	public RelativeLayout backView;
-	public TextView backNameView;
-	public ImageView infomation;
-	public ListView chatContentListView;
-	public RelativeLayout chat_bottom_bar;
-	public ImageView sendMessageView;
-	public ImageView moreOptions;
-	public EditText inputMessageContentView;
-	public RelativeLayout chat_bottom_bar_selected;
-	public RelativeLayout infomation_layout;
-	public RelativeLayout selectedFaceview;
-	public RelativeLayout selectPictureView;
-	public RelativeLayout makeAudioView;
-	public ImageView moreSelectedView;
-
-	public ChatAdapter mChatAdapter;
-
-	public int imageWidth;
-	public int imageHeight;
-
-	public View maxView;
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public ChatView(Activity thisActivity) {
-		this.thisActivity = thisActivity;
-		context = thisActivity;
-		thisView = this;
-	}
+	public View backMaxView, currentVoiceView, chatContentHeaderView, chatBottomLayout, chatLayout, backView, chatMenuLayout, textLayout, voiceLayout, chatAddLayout, takePhoto, ablum, location, voicePop;
+	public RelativeLayout rightContainer;
+	public TextView backTitleView, chatSend, voicePopTime, voicePopPrompt;
+	public ListView chatContent;
+	public ImageView chatAdd, chatSmily, chatRecord, titleImage, chatMenuBackground, voicePopImage, backImageView;
+	public EditText chatInput;
+	public GridView chatMenu;
+	public MapView locationMapView;
+	public ChatFaceView faceLayout;
 
 	public SmallBusinessCardPopView businessCardPopView;
 
-	public void initViews() {
+	public ChatAdapter mChatAdapter;
+	public ChatMenuAdapter mChatMenuAdapter;
 
-		mInflater = thisActivity.getLayoutInflater();
-		displayMetrics = new DisplayMetrics();
-		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+	public Animation chatContentAddInRotateAnimation, chatContentAddOutRotateAnimation, chatContentAddInTranslateAnimation, chatContentAddOutTranslateAnimation, chatContentSamilyInTranslateAnimation, chatContentSamilyOutTranslateAnimation, menuInTranslateAnimation, menuInAlphaAnimation, menuOutTranslateAnimation, samilyInTranslateAnimation, samilyOutTranslateAnimation, recoredInAlphAnimation, recoredOutAlphAnimation, addInTranslateAnimation, addOutTranslateAnimation;
 
-		imageWidth = (int) (178 * thisView.displayMetrics.density + 0.5f);
-		imageHeight = (int) (106 * thisView.displayMetrics.density + 0.5f);
+	private DisplayImageOptions locationOptions;
 
-		thisActivity.setContentView(R.layout.activity_chat);
+	public Timer voiceTimer;
+	public int voiceTimerTimes;
 
-		maxView = thisActivity.findViewById(R.id.maxView);
-
-		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		backNameView = (TextView) thisActivity.findViewById(R.id.backTitleView);
-		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
-		RelativeLayout.LayoutParams layoutParams = (LayoutParams) infomation_layout.getLayoutParams();
-		layoutParams.rightMargin = 0;
-		// infomation = (ImageView) thisActivity.findViewById(R.id.infomation);
-		infomation = new ImageView(context);
-		infomation.setPadding((int) (10 * displayMetrics.density), 0, (int) (10 * displayMetrics.density), 0);
-		infomation.setImageResource(R.drawable.share_to_group_icon);
-		RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (60 * displayMetrics.density), (int) (40 * displayMetrics.density));
-		infomationParams.addRule(RelativeLayout.CENTER_VERTICAL);
-		infomation_layout.addView(infomation, infomationParams);
-
-		chatContentListView = (ListView) thisActivity.findViewById(R.id.chat_content);
-		chat_bottom_bar = (RelativeLayout) thisActivity.findViewById(R.id.chat_bottom_bar);
-		sendMessageView = (ImageView) thisActivity.findViewById(R.id.send);
-		moreOptions = (ImageView) thisActivity.findViewById(R.id.more);
-		inputMessageContentView = (EditText) thisActivity.findViewById(R.id.input);
-		chat_bottom_bar_selected = (RelativeLayout) thisActivity.findViewById(R.id.chat_bottom_bar_selected);
-		selectedFaceview = (RelativeLayout) thisActivity.findViewById(R.id.selectedface);
-		selectPictureView = (RelativeLayout) thisActivity.findViewById(R.id.selectpicture);
-		makeAudioView = (RelativeLayout) thisActivity.findViewById(R.id.makeaudio);
-		moreSelectedView = (ImageView) thisActivity.findViewById(R.id.more_selected);
-
-		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
+	public ChatView(ChatActivity activity) {
+		thisView = this;
+		thisActivity = activity;
 	}
 
-	public void showChatViews() {
+	@SuppressWarnings("deprecation")
+	@SuppressLint("HandlerLeak")
+	public void initViews() {
+		thisActivity.setContentView(R.layout.activity_chat);
+		backView = thisActivity.findViewById(R.id.backView);
+		chatMenuLayout = thisActivity.findViewById(R.id.chatMenuLayout);
+		textLayout = thisActivity.findViewById(R.id.textLayout);
+		voiceLayout = thisActivity.findViewById(R.id.voiceLayout);
+		chatAddLayout = thisActivity.findViewById(R.id.chatAddLayout);
+		takePhoto = thisActivity.findViewById(R.id.takePhoto);
+		ablum = thisActivity.findViewById(R.id.ablum);
+		location = thisActivity.findViewById(R.id.location);
+		voicePop = thisActivity.findViewById(R.id.voicePop);
+		chatLayout = thisActivity.findViewById(R.id.chatLayout);
+		chatBottomLayout = thisActivity.findViewById(R.id.chatBottomLayout);
+		backMaxView = thisActivity.findViewById(R.id.backMaxView);
+		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		chatSend = (TextView) thisActivity.findViewById(R.id.chatSend);
+		voicePopTime = (TextView) thisActivity.findViewById(R.id.voicePopTime);
+		voicePopPrompt = (TextView) thisActivity.findViewById(R.id.voicePopPrompt);
+		chatContent = (ListView) thisActivity.findViewById(R.id.chatContent);
+		chatAdd = (ImageView) thisActivity.findViewById(R.id.chatAdd);
+		chatSmily = (ImageView) thisActivity.findViewById(R.id.chatSmily);
+		chatRecord = (ImageView) thisActivity.findViewById(R.id.chatRecord);
+		chatMenuBackground = (ImageView) thisActivity.findViewById(R.id.chatMenuBackground);
+		voicePopImage = (ImageView) thisActivity.findViewById(R.id.voicePopImage);
+		backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
+		chatInput = (EditText) thisActivity.findViewById(R.id.chatInput);
+		chatMenu = (GridView) thisActivity.findViewById(R.id.chatMenu);
+		faceLayout = (ChatFaceView) thisActivity.findViewById(R.id.faceLayout);
+		locationMapView = (MapView) thisActivity.findViewById(R.id.locationMapView);
+
+		businessCardPopView = new SmallBusinessCardPopView(thisActivity, thisActivity.findViewById(R.id.chatMainView));
+
+		chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_record));
+		chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
+
+		titleImage = new ImageView(thisActivity);
+		titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
+		titleImage.setColorFilter(Color.parseColor("#0099cd"));
+		RelativeLayout.LayoutParams rightParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) BaseDataUtils.dpToPx(30));
+		titleImage.setLayoutParams(rightParams);
+		rightContainer.addView(titleImage);
+
+		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) BaseDataUtils.dpToPx(30))).build();
+
+		mChatMenuAdapter = new ChatMenuAdapter();
+		chatMenu.setAdapter(mChatMenuAdapter);
+
+		thisController.mAMap = locationMapView.getMap();
+		thisController.mAMap.getUiSettings().setZoomControlsEnabled(false);
+
+		backMaxView.setBackgroundColor(Color.WHITE);
+		backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
+		backTitleView.setTextColor(Color.parseColor("#0099cd"));
+		backTitleView.setTextSize(18);
+		backImageView.setColorFilter(Color.parseColor("#0099cd"));
+
+		initAnimations();
+
+	}
+
+	private void initAnimations() {
+		menuInTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in);
+		menuOutTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_out);
+		menuInAlphaAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_menu_in_alpha);
+		samilyInTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_samily_in);
+		samilyOutTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_samily_out);
+		recoredInAlphAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_chat_alpha_in);
+		recoredOutAlphAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_chat_alpha_out);
+		addInTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_add_in);
+		addOutTranslateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_add_out);
+		chatContentAddInRotateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_add_rotate_in);
+		chatContentAddOutRotateAnimation = AnimationUtils.loadAnimation(thisActivity, R.anim.chat_add_rotate_out);
+
+		// TODO init animation
+
+		chatContentAddInTranslateAnimation = new TranslateAnimation(0, 0, BaseDataUtils.dpToPx(101), 0);
+		chatContentAddOutTranslateAnimation = new TranslateAnimation(0, 0, -BaseDataUtils.dpToPx(101), 0);
+		chatContentSamilyInTranslateAnimation = new TranslateAnimation(0, 0, 0, -BaseDataUtils.dpToPx(200));
+		chatContentSamilyOutTranslateAnimation = new TranslateAnimation(0, 0, BaseDataUtils.dpToPx(200), 0);
+		chatContentAddInTranslateAnimation.setDuration(250);
+		chatContentAddOutTranslateAnimation.setDuration(250);
+		chatContentSamilyInTranslateAnimation.setDuration(2000);
+		chatContentSamilyOutTranslateAnimation.setDuration(2000);
+
+	}
+
+	public void fillData() {
+		if (thisController.data.localStatus.localData.notSentMessagesMap != null) {
+			String content = thisController.data.localStatus.localData.notSentMessagesMap.remove(thisController.type + thisController.key);
+			if (content != null) {
+				thisView.chatInput.setText(content);
+			}
+		}
 		String type = thisController.type, key = thisController.key;
 		ArrayList<Message> messages = null;
-		parser.check();
+		thisController.parser.check();
 		if ("group".equals(type)) {
-			messages = data.messages.groupMessageMap.get("g" + key);
+			messages = thisController.data.messages.groupMessageMap.get("g" + key);
 			if (messages == null) {
 				messages = new ArrayList<Data.Messages.Message>();
-				data.messages.groupMessageMap.put("g" + key, messages);
+				thisController.data.messages.groupMessageMap.put("g" + key, messages);
 			}
-			Group group = data.relationship.groupsMap.get(key);
+			Group group = thisController.data.relationship.groupsMap.get(key);
 			if (group != null) {
 				group.notReadMessagesCount = 0;
-				backNameView.setText(group.name + "(" + group.members.size() + ")");
+				backTitleView.setText(group.name + "(" + group.members.size() + ")");
 			} else {
-				backNameView.setText("Group");
+				backTitleView.setText("Group");
 			}
+			log.e("current:::" + thisController.data.relationship.groupsMap.get(key).members.size());
 		} else if ("point".equals(type)) {
-			messages = data.messages.friendMessageMap.get("p" + key);
+			messages = thisController.data.messages.friendMessageMap.get("p" + key);
 			if (messages == null) {
 				messages = new ArrayList<Data.Messages.Message>();
-				data.messages.friendMessageMap.put("p" + key, messages);
+				thisController.data.messages.friendMessageMap.put("p" + key, messages);
 			}
-			Friend friend = data.relationship.friendsMap.get(key);
+			Friend friend = thisController.data.relationship.friendsMap.get(key);
 			if (friend != null) {
 				friend.notReadMessagesCount = 0;
-				fileHandlers.getHeadImage(friend.head, infomation, viewManage.options40);
 				if ("".equals(friend.alias)) {
-					backNameView.setText(friend.nickName);
+					backTitleView.setText(friend.nickName);
 				} else {
-					backNameView.setText(friend.alias);
+					backTitleView.setText(friend.alias);
 				}
 			} else {
-				backNameView.setText("Name");
-				fileHandlers.getHeadImage("", infomation, viewManage.options40);
+				backTitleView.setText("Name");
 			}
 		}
-		data.relationship.isModified = true;
+		thisController.data.relationship.isModified = true;
 		mChatAdapter = new ChatAdapter(messages);
-		chatContentListView.setAdapter(mChatAdapter);
-		chatContentListView.setSelection(mChatAdapter.getCount());
+		chatContent.addHeaderView(initHeaderView());
+		chatContent.setAdapter(mChatAdapter);
+		if (thisController.showChatCounts >= thisView.mChatAdapter.messages.size()) {
+			thisView.chatContentHeaderView.setVisibility(View.GONE);
+		} else {
+			thisView.chatContentHeaderView.setVisibility(View.VISIBLE);
+		}
+		changeChatList();
 	}
 
-	ViewManage viewManage = ViewManage.getInstance();
-
 	public class ChatAdapter extends BaseAdapter {
-
 		public ArrayList<Message> messages;
-		public User currentUser = data.userInformation.currentUser;
-
-		public int TYPECOUNT = 4;
+		public User currentUser = thisController.data.userInformation.currentUser;
+		public int TYPECOUNT = 8;
 		public int TYPE_SELF = 0x01;
-		public int TYPE_OTHER = 0x02;
-		public int TYPE_EVENT = 0x03;
-
-		@Override
-		public void notifyDataSetChanged() {
-			super.notifyDataSetChanged();
-			chatContentListView.setSelection(this.getCount());
-		}
+		public int TYPE_SELF_FIRST = 0x02;
+		public int TYPE_OTHER_MALE = 0x03;
+		public int TYPE_OTHER_FEMALE = 0x04;
+		public int TYPE_OTHER_MALE_FIRST = 0x05;
+		public int TYPE_OTHER_FEMALE_FIRST = 0x06;
+		public int TYPE_EVENT = 0x07;
 
 		public ChatAdapter(ArrayList<Message> messages) {
 			this.messages = messages;
 		}
 
 		@Override
+		public void notifyDataSetChanged() {
+			super.notifyDataSetChanged();
+			chatContent.setSelection(chatContent.getBottom());
+		}
+
+		@Override
 		public int getCount() {
+			// int size;
+			// if (messages.size() > thisController.showChatCounts) {
+			// size = thisController.showChatCounts;
+			// } else {
+			// size = messages.size();
+			// }
 			return messages.size();
 		}
 
@@ -212,19 +287,47 @@ public class ChatView {
 
 		@Override
 		public long getItemId(int position) {
+			// int id;
+			// if (messages.size() > thisController.showChatCounts) {
+			// id = messages.size() - thisController.showChatCounts + position;
+			// } else {
+			// id = position;
+			// }
 			return position;
 		}
 
 		@Override
 		public int getItemViewType(int position) {
-			Message message = messages.get(position);
+			Message message = messages.get((int) getItemId(position));
+			Message message2 = null;
+			Friend friend;
+			if ((int) getItemId(position) != 0) {
+				message2 = messages.get((int) getItemId(position) - 1);
+			}
 			if ("event".equals(message.sendType)) {
 				return TYPE_EVENT;
 			} else {
 				if (message.phone.equals(currentUser.phone)) {
-					return TYPE_SELF;
+					if (message2 != null && message2.phone != null && message2.phone.equals(message.phone)) {
+						return TYPE_SELF;
+					} else {
+						return TYPE_SELF_FIRST;
+					}
 				} else {
-					return TYPE_OTHER;
+					friend = thisController.data.relationship.friendsMap.get(message.phone);
+					if (friend.sex.equals("male") || friend.sex.equals("男")) {
+						if (message2 != null && message2.phone != null && message2.phone.equals(message.phone)) {
+							return TYPE_OTHER_MALE;
+						} else {
+							return TYPE_OTHER_MALE_FIRST;
+						}
+					} else {
+						if (message2 != null && message2.phone != null && message2.phone.equals(message.phone)) {
+							return TYPE_OTHER_FEMALE;
+						} else {
+							return TYPE_OTHER_FEMALE_FIRST;
+						}
+					}
 				}
 			}
 		}
@@ -236,196 +339,128 @@ public class ChatView {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			Message message = messages.get(position);
-			ChatHolder chatHolder = null;
+			ChatHolder holder = null;
+			Friend friend = null;
 			int type = getItemViewType(position);
+			Message message = messages.get((int) getItemId(position));
+			if (message != null) {
+				friend = thisController.data.relationship.friendsMap.get(message.phone);
+			}
+			String messageHead = "";
 			if (convertView == null) {
-				chatHolder = new ChatHolder();
+				holder = new ChatHolder();
 				if (type == TYPE_SELF) {
-					convertView = mInflater.inflate(R.layout.chat_item_send, null);
-				} else if (type == TYPE_OTHER) {
-					convertView = mInflater.inflate(R.layout.chat_item_receive, null);
+					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_send, null);
+				} else if (type == TYPE_SELF_FIRST) {
+					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_send, null);
+				} else if (type == TYPE_OTHER_MALE) {
+					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
+				} else if (type == TYPE_OTHER_MALE_FIRST) {
+					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
+				} else if (type == TYPE_OTHER_FEMALE) {
+					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
+				} else if (type == TYPE_OTHER_FEMALE_FIRST) {
+					convertView = thisActivity.mInflater.inflate(R.layout.f_new_chat_item_receive, null);
 				} else if (type == TYPE_EVENT) {
-					convertView = mInflater.inflate(R.layout.chat_item_event, null);
+					convertView = thisActivity.mInflater.inflate(R.layout.chat_item_event, null);
 				}
 
 				if (type == TYPE_EVENT) {
-					chatHolder.character = (TextView) convertView.findViewById(R.id.character);
+					holder.character = (TextView) convertView.findViewById(R.id.character);
 				} else {
-					chatHolder.time = (TextView) convertView.findViewById(R.id.time);
-					chatHolder.character = (TextView) convertView.findViewById(R.id.character);
-					chatHolder.image = (ImageView) convertView.findViewById(R.id.image);
-					chatHolder.images_layout = convertView.findViewById(R.id.images_layout);
-					chatHolder.images = (ImageView) convertView.findViewById(R.id.images);
-					chatHolder.images_count = (TextView) convertView.findViewById(R.id.images_count);
-					chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
-					chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
-					chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
-					chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
-					chatHolder.share = convertView.findViewById(R.id.share);
-					chatHolder.share_text = (TextView) convertView.findViewById(R.id.share_text);
-					chatHolder.share_image = (ImageView) convertView.findViewById(R.id.share_image);
-					if (type == TYPE_SELF) {
-						chatHolder.message_status = (ImageView) convertView.findViewById(R.id.message_status);
-					}
+					holder.chatLayout = convertView.findViewById(R.id.chatLayout);
+					holder.voice = convertView.findViewById(R.id.voice);
+					holder.imagesLayout = convertView.findViewById(R.id.imagesLayout);
+					holder.cardLayout = convertView.findViewById(R.id.cardLayout);
+					holder.share = convertView.findViewById(R.id.share);
+					holder.image = (ImageView) convertView.findViewById(R.id.image);
+					holder.images = (ImageView) convertView.findViewById(R.id.images);
+					holder.head = (ImageView) convertView.findViewById(R.id.head);
+					holder.status = (ImageView) convertView.findViewById(R.id.status);
+					holder.shareImage = (ImageView) convertView.findViewById(R.id.shareImage);
+					holder.locationImage = (ImageView) convertView.findViewById(R.id.locationImage);
+					holder.cardTitleImage = (ImageView) convertView.findViewById(R.id.cardTitleImage);
+					holder.cardHead = (ImageView) convertView.findViewById(R.id.cardHead);
+					holder.time = (TextView) convertView.findViewById(R.id.time);
+					holder.character = (TextView) convertView.findViewById(R.id.character);
+					holder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
+					holder.imagesCount = (TextView) convertView.findViewById(R.id.imagesCount);
+					holder.shareTitle = (TextView) convertView.findViewById(R.id.shareTitle);
+					holder.shareText = (TextView) convertView.findViewById(R.id.shareText);
+					holder.cardTitleText = (TextView) convertView.findViewById(R.id.cardTitleText);
+					holder.cardName = (TextView) convertView.findViewById(R.id.cardName);
+					holder.cardMainBusiness = (TextView) convertView.findViewById(R.id.cardMainBusiness);
+					holder.gif = (GifImageView) convertView.findViewById(R.id.gif);
+					holder.voiceGif = (ImageView) convertView.findViewById(R.id.voiceGif);
+					holder.specialGifLayout = convertView.findViewById(R.id.specialGifLayout);
+					holder.specialGifText = (TextView) convertView.findViewById(R.id.specialGifText);
+					holder.specialGif = (GifImageView) convertView.findViewById(R.id.specialGif);
 				}
-
-				convertView.setTag(chatHolder);
+				if (type == TYPE_SELF) {
+					holder.chatLayout.setBackgroundResource(R.drawable.myself_chat_order_bg);
+				} else if (type == TYPE_SELF_FIRST) {
+					holder.chatLayout.setBackgroundResource(R.drawable.myself_chat_bg);
+				} else if (type == TYPE_OTHER_MALE) {
+					holder.chatLayout.setBackgroundResource(R.drawable.male_chat_from_order_bg);
+				} else if (type == TYPE_OTHER_MALE_FIRST) {
+					holder.chatLayout.setBackgroundResource(R.drawable.male_chat_from_bg);
+				} else if (type == TYPE_OTHER_FEMALE) {
+					holder.chatLayout.setBackgroundResource(R.drawable.female_chat_from_order_bg);
+				} else if (type == TYPE_OTHER_FEMALE_FIRST) {
+					holder.chatLayout.setBackgroundResource(R.drawable.female_chat_from_bg);
+				}
+				convertView.setTag(holder);
 			} else {
-				chatHolder = (ChatHolder) convertView.getTag();
+				holder = (ChatHolder) convertView.getTag();
 			}
+
 			if (type == TYPE_EVENT) {
 				MyGson gson = new MyGson();
 				EventMessage event = gson.fromJson(message.content, EventMessage.class);
 				String content = DataHandlers.switchChatMessageEvent(event);
-				chatHolder.character.setText(content);
+				holder.character.setText(content);
 			} else {
+				if (type == TYPE_SELF_FIRST) {
+					messageHead = currentUser.head;
+				} else if (type == TYPE_OTHER_MALE_FIRST || type == TYPE_OTHER_FEMALE_FIRST) {
+					messageHead = friend.head;
+				}
+				if (!"".equals(messageHead)) {
+					thisController.fileHandlers.getHeadImage(messageHead, holder.head, thisController.viewManage.options40);
+					holder.head.setTag(R.id.tag_first, "head");
+					holder.head.setTag(R.id.tag_second, message.phone);
+					holder.head.setOnTouchListener(thisController.mOnTouchListener);
+				} else {
+					holder.head.setVisibility(View.GONE);
+				}
+
 				String contentType = message.contentType;
 				if (type == TYPE_SELF) {
-					chatHolder.message_status.setVisibility(View.VISIBLE);
+					holder.status.setVisibility(View.VISIBLE);
 					if ("sending".equals(message.status)) {
 						long currentLong = System.currentTimeMillis();
 						long cha = (currentLong - Long.valueOf(message.time)) / 1000;
 						if (cha > 60) {
 							message.status = "failed";
-							chatHolder.message_status.setImageResource(R.drawable.message_resend);
-							chatHolder.message_status.setTag(R.id.tag_class, "resend_message");
-							chatHolder.message_status.setTag(R.id.tag_first, position);
-							chatHolder.message_status.setOnClickListener(thisController.mOnClickListener);
+							this.notifyDataSetChanged();
 						} else {
-							chatHolder.message_status.setImageResource(R.drawable.message_send);
+							holder.status.setImageResource(R.drawable.message_send);
 						}
 					} else if ("sent".equals(message.status)) {
-						chatHolder.message_status.setVisibility(View.GONE);
+						holder.status.setVisibility(View.GONE);
 					} else if ("failed".equals(message.status)) {
-						chatHolder.message_status.setImageResource(R.drawable.message_resend);
-						chatHolder.message_status.setTag(R.id.tag_class, "resend_message");
-						chatHolder.message_status.setTag(R.id.tag_first, position);
-						chatHolder.message_status.setOnClickListener(thisController.mOnClickListener);
+						holder.status.setImageResource(R.drawable.message_resend);
+						holder.status.setTag(R.id.tag_first, "resend");
+						holder.status.setTag(R.id.tag_second, position);
+						holder.status.setOnClickListener(thisController.mOnClickListener);
 					} else {
-						chatHolder.message_status.setImageResource(R.drawable.message_failed);
-						chatHolder.message_status.setVisibility(View.GONE);
+						holder.status.setImageResource(R.drawable.message_failed);
+						holder.status.setVisibility(View.GONE);
 					}
+					// TODO resend current message
+					holder.status.setVisibility(View.GONE);
 				}
-				// TODO
-				// log.e(contentType);
-				if ("text".equals(contentType)) {
-					chatHolder.character.setVisibility(View.VISIBLE);
-					chatHolder.image.setVisibility(View.GONE);
-					chatHolder.voice.setVisibility(View.GONE);
-					chatHolder.share.setVisibility(View.GONE);
-					chatHolder.images_layout.setVisibility(View.GONE);
-					chatHolder.character.setText(message.content);
-					chatHolder.character.setAutoLinkMask(Linkify.WEB_URLS);
-					chatHolder.character.setMovementMethod(LinkMovementMethod.getInstance());
-					URLSpan[] urls = chatHolder.character.getUrls();
-					String contentString = message.content;
-					SpannableStringBuilder style = new SpannableStringBuilder(message.content);
-					Map<String, Integer> positionMap = new HashMap<String, Integer>();
-					if (urls.length > 0) {
-						Log.e(tag, "Url length:" + urls.length);
-						for (int i = 0; i < urls.length; i++) {
-							String str = urls[i].getURL();
-							Log.e(tag, "Url content:" + str);
-							int start = 0;
-							int end = 0;
-							if (positionMap.get(str) == null) {
-								start = contentString.indexOf(str);
-								end = start + str.length();
-							} else {
-								start = positionMap.get(str);
-								start = contentString.indexOf(str, start);
-								end = start + str.length();
-							}
-							MyURLSpan myURLSpan = new MyURLSpan(str);
-							if (start == -1 || end > contentString.length()) {
-								continue;
-							} else {
-								positionMap.put(str, end);
-								style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-								// style.setSpan(new ForegroundColorSpan(Color.MAGENTA), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-							}
-						}
-					}
-					chatHolder.character.setText(style);
-				} else if ("image".equals(contentType)) {
-					chatHolder.character.setVisibility(View.GONE);
-					chatHolder.image.setVisibility(View.VISIBLE);
-					chatHolder.voice.setVisibility(View.GONE);
-					chatHolder.share.setVisibility(View.GONE);
-					List<String> images = null;
-					try {
-						images = thisController.getImageFromJson(message.content);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					if (images == null) {
-						chatHolder.character.setVisibility(View.VISIBLE);
-						chatHolder.character.setText("数据结构错误");
-						chatHolder.images_layout.setVisibility(View.GONE);
-						chatHolder.image.setVisibility(View.GONE);
-						return convertView;
-					}
-					String image = images.get(0);
-					// log.e(image);
-					if (images.size() == 1) {
-						chatHolder.images_layout.setVisibility(View.GONE);
-						chatHolder.image.setVisibility(View.VISIBLE);
-						chatHolder.image.setTag(R.id.tag_first, images);
-						// chatHolder.image.setImageResource(R.drawable.login_background_1);
-						// thisController.setImageThumbnail(image, chatHolder.image, 178, 106);
-						RelativeLayout.LayoutParams params = (LayoutParams) chatHolder.image.getLayoutParams();
-						params.height = imageHeight;
-						params.width = imageWidth;
-						fileHandlers.getThumbleImage(image, chatHolder.image, (int) imageWidth / 2, (int) imageHeight / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT, null);
-						chatHolder.image.setOnClickListener(thisController.mOnClickListener);
-					} else {
-						chatHolder.image.setVisibility(View.GONE);
-						chatHolder.images_layout.setVisibility(View.VISIBLE);
-						chatHolder.images_count.setText(String.valueOf(images.size()));
-						chatHolder.images_layout.setTag(R.id.tag_first, images);
-						// thisController.setImageThumbnail(image, chatHolder.images, 178, 106);
-						FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) chatHolder.images.getLayoutParams();
-						params.height = (int) (imageHeight + 40 * displayMetrics.density + 0.5f);
-						params.width = imageWidth;
-						fileHandlers.getThumbleImage(image, chatHolder.images, (int) (178 * displayMetrics.density + 0.5f) / 2, (int) (params.height) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT, null);
-						chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
-					}
-				} else if ("voice".equals(contentType)) {
-					chatHolder.character.setVisibility(View.GONE);
-					chatHolder.image.setVisibility(View.GONE);
-					chatHolder.share.setVisibility(View.GONE);
-					chatHolder.voice.setVisibility(View.VISIBLE);
-					Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_receive_item_voice);
-					if (type == TYPE_SELF) {
-						Matrix mMatrix = new Matrix();
-						mMatrix.setRotate(180);
-						bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, true);
-					}
-					chatHolder.voice_icon.setImageBitmap(bitmap);
-					chatHolder.voicetime.setText("");
-				} else if ("share".equals(contentType)) {
-					if (chatHolder.message_status != null) {
-						chatHolder.message_status.setVisibility(View.GONE);
-					}
-					chatHolder.character.setVisibility(View.GONE);
-					chatHolder.image.setVisibility(View.GONE);
-					chatHolder.share.setVisibility(View.VISIBLE);
-					chatHolder.voice.setVisibility(View.GONE);
 
-					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
-					chatHolder.share_text.setText(messageContent.text);
-					if (messageContent.image != null && !"".equals(messageContent.image)) {
-						fileHandlers.getThumbleImage(messageContent.image, chatHolder.share_image, (int) (50 * displayMetrics.density + 0.5f) / 2, (int) (50 * thisView.displayMetrics.density + 0.5f) / 2, thisController.options, fileHandlers.THUMBLE_TYEP_CHAT, null);
-						// thisController.setImageThumbnail(messageContent.image, chatHolder.share_image, 50, 50);
-					} else {
-						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, chatHolder.share_image, thisController.options);
-					}
-					chatHolder.share.setTag(R.id.tag_second, messageContent.gid);
-					chatHolder.share.setTag(R.id.tag_third, messageContent.gsid);
-					chatHolder.share.setTag(R.id.tag_fourth, messageContent.sid);
-					chatHolder.share.setOnClickListener(thisController.mOnClickListener);
-				}
 				if (position != 0) {
 					Message beforeMessage = messages.get(position - 1);
 					String beforeTime = "";
@@ -444,9 +479,9 @@ public class ChatView {
 						String beroreTime = DateUtil.getChatMessageListTime(Long.valueOf(beforeTime));
 						String currentTime = DateUtil.getChatMessageListTime(Long.valueOf(time));
 						if (!beroreTime.equals(currentTime)) {
-							chatHolder.time.setText(currentTime);
+							holder.time.setText(currentTime);
 						} else {
-							chatHolder.time.setText("");
+							holder.time.setText("");
 						}
 					}
 				} else {
@@ -456,35 +491,626 @@ public class ChatView {
 					} else {
 						time = message.time;
 					}
-					chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(time)));
+					holder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(time)));
 				}
-				String fileName = "";
-				String phone = "";
-				if (message.phone.equals(currentUser.phone)) {
-					fileName = currentUser.head;
-					phone = currentUser.phone;
-				} else {
-					Friend friend = data.relationship.friendsMap.get(message.phone);
-					if (friend != null) {
-						fileName = friend.head;
-						phone = friend.phone;
+
+				if (contentType.equals("text")) {
+					holder.chatLayout.setVisibility(View.VISIBLE);
+					holder.character.setVisibility(View.VISIBLE);
+					holder.voice.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
+					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.character.setText(message.content);
+					holder.character.setAutoLinkMask(Linkify.WEB_URLS);
+					holder.character.setMovementMethod(LinkMovementMethod.getInstance());
+					URLSpan[] urls = holder.character.getUrls();
+					String contentString = message.content;
+					SpannableString spannableString = ExpressionUtil.getExpressionString(thisActivity, contentString, Constant.FACEREGX);
+					SpannableStringBuilder style = new SpannableStringBuilder(spannableString);
+					Map<String, Integer> positionMap = new HashMap<String, Integer>();
+					if (urls.length > 0) {
+						for (int i = 0; i < urls.length; i++) {
+							String str = urls[i].getURL();
+							int start = 0;
+							int end = 0;
+							if (positionMap.get(str) == null) {
+								start = contentString.indexOf(str);
+								end = start + str.length();
+							} else {
+								start = positionMap.get(str);
+								start = contentString.indexOf(str, start);
+								end = start + str.length();
+							}
+							MyURLSpan myURLSpan = new MyURLSpan(str);
+							if (start == -1 || end > contentString.length()) {
+								continue;
+							} else {
+								positionMap.put(str, end);
+								style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+							}
+						}
 					}
+					holder.character.setText(style);
+				} else if (contentType.equals("voice")) {
+					holder.chatLayout.setVisibility(View.VISIBLE);
+					holder.character.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.VISIBLE);
+					holder.image.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+
+					VoiceMessageContent messageContent = null;
+					try {
+						messageContent = thisController.gson.fromJson(message.content, VoiceMessageContent.class);
+					} catch (Exception e) {
+						Log.e("NewChatView", message.content);
+					}
+					if (messageContent == null) {
+						holder.voicetime.setText("数据结构错误");
+					} else {
+						holder.voicetime.setText(messageContent.time + "s");
+						thisController.audiohandlers.prepareVoice(messageContent.fileName, Integer.valueOf(messageContent.recordReadSize));
+						holder.voice.setTag(R.id.tag_first, contentType);
+						holder.voice.setTag(R.id.tag_second, messageContent.fileName);
+						holder.voice.setTag(R.id.tag_third, messageContent.recordReadSize);
+						holder.voice.setTag(R.id.tag_fourth, type);
+						holder.voice.setOnClickListener(thisController.mOnClickListener);
+					}
+				} else if (contentType.equals("image")) {
+					holder.chatLayout.setVisibility(View.GONE);
+					holder.character.setVisibility(View.GONE);
+					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.VISIBLE);
+
+					List<String> images = null;
+					try {
+						images = thisController.gson.fromJson(message.content, new TypeToken<List<String>>() {
+						}.getType());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (images == null) {
+						holder.chatLayout.setVisibility(View.VISIBLE);
+						holder.character.setVisibility(View.VISIBLE);
+						holder.character.setText("数据结构错误");
+						holder.imagesLayout.setVisibility(View.GONE);
+					} else {
+						LayoutParams imagePrams = (LayoutParams) holder.imagesLayout.getLayoutParams();
+						imagePrams.width = (int) BaseDataUtils.dpToPx(228);
+						// new RelativeLayout.LayoutParams((int) BaseDataUtils.dpToPx(228), LayoutParams.WRAP_CONTENT);
+						// imagePrams.setMargins((int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10), (int) BaseDataUtils.dpToPx(10));
+						String image = images.get(0);
+						holder.imagesCount.setText(String.valueOf(images.size()));
+						holder.imagesLayout.setTag(R.id.tag_first, contentType);
+						holder.imagesLayout.setTag(R.id.tag_second, images);
+						holder.imagesLayout.setOnClickListener(thisController.mOnClickListener);
+						holder.imagesLayout.setLayoutParams(imagePrams);
+						thisController.fileHandlers.getThumbleImage(image, holder.images, (int) BaseDataUtils.dpToPx(228), (int) BaseDataUtils.dpToPx(146), thisController.viewManage.options, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+						if (images.size() == 1) {
+							holder.imagesCount.setVisibility(View.GONE);
+						} else {
+							holder.imagesCount.setVisibility(View.VISIBLE);
+						}
+					}
+				} else if (contentType.equals("gif")) {
+					holder.chatLayout.setVisibility(View.GONE);
+					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.VISIBLE);
+					RelativeLayout.LayoutParams layoutParams = (LayoutParams) holder.gif.getLayoutParams();
+					layoutParams.width = (int) (thisController.data.baseData.density / 1.5f * 150);
+					layoutParams.height = (int) (thisController.data.baseData.density / 1.5f * 150);
+					if ("poke".equals(message.content)) {
+						GifDrawable drawable = null;
+						try {
+							if (type == TYPE_SELF || type == TYPE_SELF_FIRST) {
+								drawable = new GifDrawable(thisActivity.getResources(), R.drawable.poke_to);
+							} else {
+								drawable = new GifDrawable(thisActivity.getResources(), R.drawable.poke_from);
+							}
+							holder.gif.setImageDrawable(drawable);
+						} catch (NotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else {
+						thisController.fileHandlers.getGifImage(message.content, holder.gif);
+					}
+				} else if (contentType.equals("specialGif")) {
+					holder.chatLayout.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.specialGifLayout.setVisibility(View.VISIBLE);
+
+					SpecialGifMessageContent messageContent = thisController.gson.fromJson(message.content, SpecialGifMessageContent.class);
+					String name = "";
+					GifDrawable gifDrawable = null;
+					if (messageContent != null) {
+						if (messageContent.phone.equals(thisController.data.userInformation.currentUser.phone)) {
+							name = thisController.data.userInformation.currentUser.nickName;
+						} else {
+							Friend gifFriend = thisController.data.relationship.friendsMap.get(messageContent.phone);
+							if (gifFriend != null)
+								name = gifFriend.nickName;
+						}
+
+						if (type == TYPE_SELF || type == TYPE_SELF_FIRST) {
+							holder.specialGifText.setBackgroundResource(R.drawable.chat_special_self);
+						} else if (type == TYPE_OTHER_FEMALE || type == TYPE_OTHER_FEMALE_FIRST) {
+							holder.specialGifText.setBackgroundResource(R.drawable.chat_special_female);
+						} else if (type == TYPE_OTHER_MALE || type == TYPE_OTHER_MALE_FIRST) {
+							holder.specialGifText.setBackgroundResource(R.drawable.chat_special_male);
+						}
+
+						try {
+							if (messageContent.content.equals(thisActivity.getString(R.string.specialGifMessageString))) {
+								gifDrawable = new GifDrawable(thisActivity.getResources(), R.drawable.pinch);
+							} else {
+								gifDrawable = new GifDrawable(thisActivity.getResources(), R.drawable.shake);
+							}
+						} catch (NotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						holder.specialGifText.setText(name + "," + messageContent.content);
+						holder.specialGif.setImageDrawable(gifDrawable);
+					} else {
+						holder.character.setVisibility(View.VISIBLE);
+						holder.character.setText("数据结构错误");
+						holder.specialGifLayout.setVisibility(View.GONE);
+					}
+
+				} else if (contentType.equals("share")) {
+					holder.chatLayout.setVisibility(View.VISIBLE);
+					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.character.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
+					holder.share.setVisibility(View.VISIBLE);
+
+					MessageShareContent messageContent = thisController.gson.fromJson(message.content, MessageShareContent.class);
+					holder.shareText.setText(messageContent.text);
+					if (messageContent.image != null && !"".equals(messageContent.image)) {
+						thisController.fileHandlers.getThumbleImage(messageContent.image, holder.shareImage, (int) BaseDataUtils.dpToPx(50), (int) BaseDataUtils.dpToPx(50), thisController.viewManage.options40, thisController.fileHandlers.THUMBLE_TYEP_CHAT, null);
+					} else {
+						thisController.imageLoader.displayImage("drawable://" + R.drawable.icon, holder.shareImage, thisController.viewManage.options40);
+					}
+					holder.share.setTag(R.id.tag_first, contentType);
+					holder.share.setTag(R.id.tag_second, messageContent.gid);
+					holder.share.setTag(R.id.tag_third, messageContent.gsid);
+					holder.share.setTag(R.id.tag_fourth, messageContent.sid);
+					holder.share.setOnClickListener(thisController.mOnClickListener);
+				} else if (contentType.equals("location")) {
+					holder.chatLayout.setVisibility(View.VISIBLE);
+					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.character.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.VISIBLE);
+					if (!"".equals(message.content)) {
+						LocationMessageContent messageContent = thisController.gson.fromJson(message.content, LocationMessageContent.class);
+						if (messageContent != null) {
+							if ("".equals(messageContent.imageFileName)) {
+								thisController.imageLoader.displayImage("drawable://" + R.drawable.chat_location_searching, holder.shareImage, thisController.viewManage.options);
+							} else {
+								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) BaseDataUtils.dpToPx(150), (int) BaseDataUtils.dpToPx(100));
+								thisController.fileHandlers.getImage(messageContent.imageFileName, holder.locationImage, params, DownloadFile.TYPE_IMAGE, locationOptions);
+								holder.locationImage.setTag(R.id.tag_first, contentType);
+								holder.locationImage.setTag(R.id.tag_second, messageContent.latitude);
+								holder.locationImage.setTag(R.id.tag_third, messageContent.longitude);
+								holder.locationImage.setTag(R.id.tag_fifth, params);
+								holder.locationImage.setOnClickListener(thisController.mOnClickListener);
+							}
+						} else {
+							holder.character.setVisibility(View.VISIBLE);
+							holder.character.setText("数据结构错误");
+							holder.locationImage.setVisibility(View.GONE);
+						}
+					} else {
+						thisController.imageLoader.displayImage("drawable://" + R.drawable.chat_location_searching, holder.shareImage, thisController.viewManage.options);
+					}
+				} else if (contentType.equals("card")) {
+					holder.chatLayout.setVisibility(View.VISIBLE);
+					holder.specialGifLayout.setVisibility(View.GONE);
+					holder.character.setVisibility(View.GONE);
+					holder.voice.setVisibility(View.GONE);
+					holder.image.setVisibility(View.GONE);
+					holder.imagesLayout.setVisibility(View.GONE);
+					holder.share.setVisibility(View.GONE);
+					holder.gif.setVisibility(View.GONE);
+					holder.locationImage.setVisibility(View.GONE);
+					holder.cardLayout.setVisibility(View.VISIBLE);
+
+					CardMessageContent messageContent = thisController.gson.fromJson(message.content, CardMessageContent.class);
+					if ("point".equals(messageContent.type)) {
+						holder.cardTitleText.setText(thisActivity.getString(R.string.personCard));
+						holder.cardTitleImage.setImageResource(R.drawable.person_card_icon);
+					} else if ("group".equals(messageContent.type)) {
+						holder.cardTitleText.setText(thisActivity.getString(R.string.groupCard));
+						holder.cardTitleImage.setImageResource(R.drawable.group_card_icon);
+					}
+					holder.cardName.setText(messageContent.name);
+					holder.cardMainBusiness.setText(BaseDataUtils.generateMainBusiness(messageContent.type, messageContent.mainBusiness));
+					thisController.fileHandlers.getHeadImage(messageContent.head, holder.cardHead, thisController.viewManage.options40);
+					holder.cardLayout.setTag(R.id.tag_first, contentType);
+					holder.cardLayout.setTag(R.id.tag_second, messageContent.type);
+					holder.cardLayout.setTag(R.id.tag_third, messageContent.key);
+					holder.cardLayout.setOnClickListener(thisController.mOnClickListener);
 				}
-				fileHandlers.getHeadImage(fileName, chatHolder.head, viewManage.options40);
-
-				chatHolder.head.setTag(R.id.tag_class, "head_click");
-				chatHolder.head.setTag(R.id.tag_first, phone);
-				chatHolder.head.setOnClickListener(thisController.mOnClickListener);
 			}
-
 			return convertView;
 		}
 
 		class ChatHolder {
-			public View images_layout, share;
-			public RelativeLayout voice;
-			public TextView time, character, voicetime, images_count, share_text, share_title;
-			public ImageView voice_icon, head, image, images, share_image, message_status;
+			View voice, share, chatLayout, imagesLayout, cardLayout, specialGifLayout;
+			ImageView voiceIcon, image, head, status, images, shareImage, locationImage, cardTitleImage, cardHead, voiceGif;
+			TextView time, character, voicetime, imagesCount, shareTitle, shareText, cardTitleText, cardName, cardMainBusiness, specialGifText;
+			GifImageView gif, specialGif;
+		}
+
+	}
+
+	@SuppressLint("ViewHolder")
+	public class ChatMenuAdapter extends BaseAdapter {
+		public List<String> menuString;
+		public List<Integer> menuImage;
+
+		public ChatMenuAdapter() {
+			menuString = new ArrayList<String>();
+			menuImage = new ArrayList<Integer>();
+			if (thisController.type.equals("group")) {
+				menuString.add(thisActivity.getString(R.string.groupDetails));
+				menuString.add(thisActivity.getString(R.string.groupMembers));
+				// menuString.add(thisActivity.getString(R.string.groupAlbum));
+				// menuString.add(thisActivity.getString(R.string.closeNotice));
+				// menuString.add(thisActivity.getString(R.string.share));
+				menuString.add(thisActivity.getString(R.string.sendCard));
+				// menuString.add(thisActivity.getString(R.string.tureOff));
+				menuString.add(thisActivity.getString(R.string.setting));
+				menuImage.add(R.drawable.chat_menu_item_details);
+				menuImage.add(R.drawable.chat_menu_item_members);
+				// menuImage.add(R.drawable.chat_menu_item_albums);
+				// menuImage.add(R.drawable.chat_menu_item_tips_on);
+				// menuImage.add(R.drawable.chat_menu_item_share);
+				menuImage.add(R.drawable.chat_menu_item_send);
+				// menuImage.add(R.drawable.chat_menu_item_light);
+				menuImage.add(R.drawable.chat_menu_item_settings);
+			} else {
+				menuString.add(thisActivity.getString(R.string.personalAlbum));
+				menuString.add(thisActivity.getString(R.string.personalDetails));
+				// menuString.add(thisActivity.getString(R.string.closeNotice));
+				menuString.add(thisActivity.getString(R.string.sendCard));
+				menuImage.add(R.drawable.chat_menu_item_albums);
+				menuImage.add(R.drawable.chat_menu_item_details);
+				// menuImage.add(R.drawable.chat_menu_item_tips_on);
+				menuImage.add(R.drawable.chat_menu_item_send);
+			}
+		}
+
+		@Override
+		public int getCount() {
+			return menuString.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			convertView = thisActivity.mInflater.inflate(R.layout.chat_menu_item, null);
+			ImageView image = (ImageView) convertView.findViewById(R.id.item_image);
+			TextView text = (TextView) convertView.findViewById(R.id.item_text);
+			image.setImageResource(menuImage.get(position));
+			text.setText(menuString.get(position));
+			convertView.setTag(menuString.get(position));
+			if (position == 0 && thisController.type.equals("point")) {
+				convertView.setVisibility(View.INVISIBLE);
+			}
+			return convertView;
+		}
+
+	}
+
+	public void changeVoice() {
+		thisController.handler.post(new Runnable() {
+			@Override
+			public void run() {
+				String time = thisView.voicePopTime.getText().toString(), seconds = thisActivity.getText(R.string.seconds).toString();
+				if (seconds.equals(time)) {
+					thisView.voicePopTime.setText("0" + seconds);
+				} else {
+					thisView.voicePopTime.setText((Integer.valueOf(time.substring(0, time.lastIndexOf(seconds))) + 1) + seconds);
+				}
+
+			}
+		});
+	}
+
+	public void changeVoice(final View view) {
+		if (this.currentVoiceView != null && this.currentVoiceView.equals(view)) {
+			if (thisController.audiohandlers.isPlaying()) {
+				thisController.postHandler(thisController.HANDLER_CHAT_STOPPLAY);
+				thisView.showVoiceMoive(false);
+				thisController.audiohandlers.stopPlay();
+			} else {
+				thisController.postHandler(thisController.HANDLER_CHAT_STARTPLAY);
+				thisController.audiohandlers.prepareVoice((String) view.getTag(R.id.tag_second), Integer.valueOf((String) view.getTag(R.id.tag_third)), true);
+				thisView.showVoiceMoive(true);
+			}
+		} else {
+			if (thisController.audiohandlers.isPlaying()) {
+				thisController.handler.post(new Runnable() {
+					@Override
+					public void run() {
+						thisView.currentVoiceView.findViewById(R.id.voiceGif).setVisibility(View.INVISIBLE);
+						thisView.showVoiceMoive(false);
+						thisController.continuePlay = true;
+						thisView.currentVoiceView = view;
+						thisController.audiohandlers.stopPlay();
+					}
+				});
+			} else {
+				thisController.postHandler(thisController.HANDLER_CHAT_STARTPLAY);
+				thisController.audiohandlers.prepareVoice((String) view.getTag(R.id.tag_second), Integer.valueOf((String) view.getTag(R.id.tag_third)), true);
+				this.currentVoiceView = view;
+				thisView.showVoiceMoive(true);
+			}
+		}
+	}
+
+	public void changeVoice(final int resourceId) {
+		thisController.handler.post(new Runnable() {
+			@Override
+			public void run() {
+				thisView.voicePopImage.setImageResource(resourceId);
+
+			}
+		});
+	}
+
+	public void changeVoice(boolean weather) {
+		if (weather) {
+			this.voicePopPrompt.setText(thisActivity.getString(R.string.slideFingers));
+		} else {
+			this.voicePopImage.setImageResource(R.drawable.image_chat_voice_cancel);
+			this.voicePopPrompt.setText(thisActivity.getString(R.string.loosenFingers));
+		}
+		if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+			thisView.titleImage.performClick();
+	}
+
+	public void changeChatMenu() {
+		if (this.chatMenuLayout.getVisibility() == View.GONE) {
+			this.titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_up));
+			this.chatMenuLayout.startAnimation(menuInTranslateAnimation);
+			this.chatMenuLayout.setVisibility(View.VISIBLE);
+			this.chatMenuBackground.startAnimation(menuInAlphaAnimation);
+			this.chatMenuBackground.setVisibility(View.VISIBLE);
+			if (thisController.inputManager.isActive(chatInput))
+				thisController.inputManager.hide(chatInput);
+			if (this.faceLayout.getVisibility() == View.VISIBLE)
+				this.chatSmily.performClick();
+			if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
+				this.chatAdd.performClick();
+			}
+		} else {
+			this.titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
+			this.chatMenuLayout.startAnimation(menuOutTranslateAnimation);
+			this.chatMenuLayout.setVisibility(View.GONE);
+			this.chatMenuBackground.setVisibility(View.GONE);
+		}
+	}
+
+	public void changeChatRecord() {
+		if (this.textLayout.getVisibility() == View.VISIBLE) {
+			if (this.faceLayout.getVisibility() == View.VISIBLE)
+				this.chatSmily.performClick();
+			if (thisController.inputManager.isActive(chatInput))
+				thisController.inputManager.hide(chatInput);
+			this.textLayout.startAnimation(recoredOutAlphAnimation);
+			this.textLayout.setVisibility(View.GONE);
+			this.voiceLayout.setVisibility(View.VISIBLE);
+			this.voiceLayout.startAnimation(recoredInAlphAnimation);
+			this.chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_keyboard));
+		} else if (this.voiceLayout.getVisibility() == View.VISIBLE) {
+			this.voiceLayout.startAnimation(recoredOutAlphAnimation);
+			this.voiceLayout.setVisibility(View.GONE);
+			this.textLayout.setVisibility(View.VISIBLE);
+			this.textLayout.startAnimation(recoredInAlphAnimation);
+			this.chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_record));
+			this.chatInput.requestFocus();
+		}
+		if (this.chatAddLayout.getVisibility() == View.VISIBLE)
+			this.chatAdd.performClick();
+		if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+			this.titleImage.performClick();
+	}
+
+	public void changeChatAdd() {
+		// TODO animation
+		if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
+			this.chatAdd.startAnimation(chatContentAddOutRotateAnimation);
+			// this.chatBottomLayout.startAnimation(addOutTranslateAnimation);
+			// this.chatContent.startAnimation(chatContentAddOutTranslateAnimation);
+		} else {
+			this.chatAdd.startAnimation(chatContentAddInRotateAnimation);
+			if (thisController.inputManager.isActive(chatInput))
+				thisController.inputManager.hide(chatInput);
+			if (this.faceLayout.getVisibility() == View.VISIBLE)
+				this.chatSmily.performClick();
+			if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+				this.titleImage.performClick();
+			// this.chatContent.getLayoutParams().height = (int) (thisController.data.baseData.appHeight - BaseDataUtils.dpToPx(106));
+			// this.chatBottomLayout.startAnimation(addInTranslateAnimation);
+			// this.chatContent.startAnimation(chatContentAddInTranslateAnimation);
+		}
+	}
+
+	public void changeChatSmily() {
+		// TODO animation
+		if (this.faceLayout.getVisibility() == View.VISIBLE) {
+			faceLayout.setVisibility(View.GONE);
+			// chatBottomLayout.startAnimation(samilyOutTranslateAnimation);
+		} else {
+			if (thisController.inputManager.isActive(chatInput))
+				thisController.inputManager.hide(chatInput);
+			if (this.chatAddLayout.getVisibility() == View.VISIBLE)
+				this.chatAdd.performClick();
+			if (this.chatMenuLayout.getVisibility() == View.VISIBLE)
+				thisView.titleImage.performClick();
+			faceLayout.setVisibility(View.VISIBLE);
+			changeChatList();
+			// chatBottomLayout.startAnimation(samilyInTranslateAnimation);
+		}
+	}
+
+	public void changeChatInput() {
+		if (this.faceLayout.getVisibility() == View.VISIBLE) {
+			this.chatSmily.performClick();
+		}
+		if (this.chatAddLayout.getVisibility() == View.VISIBLE) {
+			this.chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
+			this.chatAddLayout.setVisibility(View.GONE);
+		}
+		if (this.faceLayout.getVisibility() == View.VISIBLE) {
+			this.faceLayout.setVisibility(View.GONE);
+		}
+		changeChatList();
+	}
+
+	public void changeChatList() {
+		new Thread() {
+			public void run() {
+				try {
+					sleep(250);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if (thisController.chatContentRunnable == null) {
+					thisController.chatContentRunnable = new Runnable() {
+						@Override
+						public void run() {
+							chatContent.setSelection(chatContent.getBottom());
+						}
+					};
+
+				}
+				thisController.handler.post(thisController.chatContentRunnable);
+			};
+		}.start();
+	}
+
+	public void showVoiceMoive(boolean weather) {
+		if (currentVoiceView != null) {
+			if (weather) {
+				if (currentVoiceView != null) {
+					int i = (Integer) currentVoiceView.getTag(R.id.tag_fourth), drawableId = 0;
+					if (i == mChatAdapter.TYPE_SELF || i == mChatAdapter.TYPE_SELF_FIRST) {
+						drawableId = R.drawable.personal_chat_sound1;
+					} else {
+						drawableId = R.drawable.others_chat_sound1;
+					}
+					final int id = drawableId;
+					thisController.handler.post(new Runnable() {
+						@Override
+						public void run() {
+							if (id != 0) {
+								((ImageView) currentVoiceView.findViewById(R.id.voiceGif)).setImageResource(id);
+							}
+						}
+					});
+				}
+				voiceTimer = new Timer();
+				voiceTimerTimes = 0;
+				voiceTimer.schedule(new VoiceMoiveTimerTask(), new Date(), 500);
+			} else {
+				if (voiceTimer != null)
+					voiceTimer.cancel();
+				voiceTimerTimes = 0;
+				voiceTimer = null;
+			}
+		}
+	}
+
+	private View initHeaderView() {
+		chatContentHeaderView = thisActivity.mInflater.inflate(R.layout.chat_list_header_view, null);
+		chatContentHeaderView.setOnClickListener(thisController.mOnClickListener);
+		return chatContentHeaderView;
+	}
+
+	private class VoiceMoiveTimerTask extends TimerTask {
+
+		@Override
+		public void run() {
+			if (currentVoiceView != null) {
+				int i = (Integer) currentVoiceView.getTag(R.id.tag_fourth), drawableId = 0;
+				if (i == mChatAdapter.TYPE_SELF || i == mChatAdapter.TYPE_SELF_FIRST) {
+					if (voiceTimerTimes % 3 == 0) {
+						drawableId = R.drawable.personal_chat_sound1;
+					} else if (voiceTimerTimes % 3 == 1) {
+						drawableId = R.drawable.personal_chat_sound2;
+					} else if (voiceTimerTimes % 3 == 2) {
+						drawableId = R.drawable.personal_chat_sound3;
+					}
+				} else {
+					if (voiceTimerTimes % 3 == 0) {
+						drawableId = R.drawable.others_chat_sound1;
+					} else if (voiceTimerTimes % 3 == 1) {
+						drawableId = R.drawable.others_chat_sound2;
+					} else if (voiceTimerTimes % 3 == 2) {
+						drawableId = R.drawable.others_chat_sound3;
+					}
+				}
+				final int id = drawableId;
+				thisController.handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (id != 0) {
+							((ImageView) currentVoiceView.findViewById(R.id.voiceGif)).setImageResource(id);
+						}
+					}
+				});
+				voiceTimerTimes++;
+			}
+
 		}
 	}
 

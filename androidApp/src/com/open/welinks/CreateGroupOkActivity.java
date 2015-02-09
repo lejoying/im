@@ -13,10 +13,11 @@ import android.widget.TextView;
 
 public class CreateGroupOkActivity extends Activity {
 
-	public Data data = Data.getInstance();
-	public Parser parser = Parser.getInstance();
 	public String tag = "CreateGroupOkActivity";
 	public MyLog log = new MyLog(tag, false);
+
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public RelativeLayout backView;
 	public TextView backTitileView;

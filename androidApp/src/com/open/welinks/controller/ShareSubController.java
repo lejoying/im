@@ -31,12 +31,11 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
-import com.open.welinks.ChatActivity;
 import com.open.welinks.CreateGroupStartActivity;
 import com.open.welinks.FindMoreActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.GroupListActivity;
-import com.open.welinks.NewChatActivity;
+import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -51,6 +50,7 @@ import com.open.welinks.model.DataHandlers;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
@@ -345,7 +345,7 @@ public class ShareSubController {
 
 					thisView.showReleaseShareDialogView();
 				} else if (view.equals(thisView.groupMembersListContentView)) {
-					Intent intent = new Intent(thisActivity, NewChatActivity.class);
+					Intent intent = new Intent(thisActivity, ChatActivity.class);
 					intent.putExtra("type", "group");
 					intent.putExtra("id", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivityForResult(intent, R.id.tag_second);
@@ -525,8 +525,9 @@ public class ShareSubController {
 	public void modifyPraiseusersToMessage(boolean option, String gid, String sid, String gsid) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("gsid", gsid);
@@ -538,8 +539,9 @@ public class ShareSubController {
 	public void modifyGroupSequence(String sequenceListString, String rid) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("sequence", sequenceListString);
 		params.addBodyParameter("rid", rid);
 
@@ -553,8 +555,9 @@ public class ShareSubController {
 		}
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
 		params.addBodyParameter("sid", thisView.currentGroup.currentBoard);
 		params.addBodyParameter("nowpage", nowpage + "");
@@ -566,8 +569,9 @@ public class ShareSubController {
 	public void getUserCurrentAllGroup() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}

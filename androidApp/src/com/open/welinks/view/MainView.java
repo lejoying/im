@@ -20,10 +20,10 @@ import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.PagerBody;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.MainController;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;
+import com.open.welinks.oss.DownloadFileList;
 
 public class MainView {
 

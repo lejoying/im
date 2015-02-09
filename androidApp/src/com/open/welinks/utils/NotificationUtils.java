@@ -23,7 +23,6 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.TaskContainer_Share.GetShares;
 
 public final class NotificationUtils {
 

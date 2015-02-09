@@ -70,7 +70,7 @@ public class GroupListActivity extends Activity {
 	public RelativeLayout rightContainer, maxView;
 	public LinearLayout rightContainerLinearLayout;
 
-	public TextView createGroupButton, sectionNameTextView;
+	public TextView sectionNameTextView;
 
 	public ImageView moreView;
 
@@ -232,7 +232,7 @@ public class GroupListActivity extends Activity {
 		this.rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 
 		this.groupListContainer = (ListView) findViewById(R.id.groupListContainer);
-		this.createGroupButton = new TextView(this);
+		// this.createGroupButton = new TextView(this);
 		this.threeChoicesView = new ThreeChoicesView(this);
 		this.threeChoicesView.setTwoChoice();
 
@@ -245,11 +245,9 @@ public class GroupListActivity extends Activity {
 			rightContainerLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
 			RelativeLayout.LayoutParams rightParams = (android.widget.RelativeLayout.LayoutParams) rightContainer.getLayoutParams();
 			rightParams.rightMargin = 0;
-			// rightContainer.setPadding(0, 0, (int) BaseDataUtils.dpToPx(20), 0);
 			moreView = new ImageView(this);
 			moreView.setTranslationY((int) (30 * displayMetrics.density));
 			moreView.setImageResource(R.drawable.subscript_triangle);
-			// moreView.setColorFilter(Color.parseColor("#0099cd"));
 			RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (7 * displayMetrics.density), (int) (7 * displayMetrics.density));
 
 			sectionNameTextView = new TextView(this);
@@ -270,17 +268,6 @@ public class GroupListActivity extends Activity {
 			}
 
 			initializationGroupCirclesDialog();
-			// int dp_5 = (int) (5 * displayMetrics.density);
-			// this.createGroupButton.setGravity(Gravity.CENTER);
-			// this.createGroupButton.setTextColor(Color.WHITE);
-			// this.createGroupButton.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
-			// this.createGroupButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-			// this.createGroupButton.setText("创建群组");
-			// this.createGroupButton.setBackgroundResource(R.drawable.textview_bg);
-			// RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			// layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
-			// layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-			// this.rightContainer.addView(this.createGroupButton, layoutParams);
 		} else if (status == Status.card_friend) {
 			this.backTitileView.setText("发送名片");
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -308,10 +295,7 @@ public class GroupListActivity extends Activity {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(createGroupButton)) {
-					Intent intent = new Intent(GroupListActivity.this, CreateGroupStartActivity.class);
-					startActivity(intent);
-				} else if (view.equals(backView)) {
+				if (view.equals(backView)) {
 					finish();
 				} else if (view.equals(rightContainerLinearLayout)) {
 					changePopupWindow();
@@ -396,9 +380,7 @@ public class GroupListActivity extends Activity {
 	private void bindEvent() {
 		this.threeChoicesView.setOnItemClickListener(mOnThreeChoiceItemClickListener);
 		this.groupListContainer.setOnItemClickListener(mOnItemClickListener);
-		this.createGroupButton.setOnClickListener(mOnClickListener);
 		this.backView.setOnClickListener(mOnClickListener);
-
 		if (rightContainerLinearLayout != null)
 			this.rightContainerLinearLayout.setOnClickListener(mOnClickListener);
 		if (buttonOne != null)
@@ -435,6 +417,7 @@ public class GroupListActivity extends Activity {
 		return title;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void initializationGroupCirclesDialog() {
 		dialogView = mInflater.inflate(R.layout.dialog_listview, null);
 		groupCircleList = (DragSortListView) dialogView.findViewById(R.id.content);
@@ -530,12 +513,13 @@ public class GroupListActivity extends Activity {
 
 	public class ListController extends DragSortController implements DragSortListView.DropListener, DragSortListView.RemoveListener, android.widget.AdapterView.OnItemClickListener {
 		private GroupCircleDialogAdapter adapter;
-		private DragSortListView listView;
+
+		// private DragSortListView listView;
 
 		public ListController(DragSortListView dslv, GroupCircleDialogAdapter dialogAdapter) {
 			super(dslv);
 			this.adapter = dialogAdapter;
-			this.listView = dslv;
+			// this.listView = dslv;
 			setRemoveEnabled(true);
 			setRemoveMode(DragSortController.FLING_REMOVE);
 			setDragInitMode(DragSortController.ON_LONG_PRESS);
@@ -574,7 +558,6 @@ public class GroupListActivity extends Activity {
 			return super.dragHandleHitPosition(ev);
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public View onCreateFloatView(int position) {
 			Vibrator vibrator = (Vibrator) GroupListActivity.this.getSystemService(Service.VIBRATOR_SERVICE);
@@ -582,7 +565,7 @@ public class GroupListActivity extends Activity {
 			vibrator.vibrate(pattern, -1);
 
 			View view = adapter.getView(position, null, groupCircleList);
-			view.setBackgroundDrawable(getResources().getDrawable(R.drawable.card_login_background_press));
+			view.setBackgroundResource(R.drawable.card_login_background_press);
 			return view;
 		}
 
@@ -654,7 +637,7 @@ public class GroupListActivity extends Activity {
 					currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
 				}
 				for (String gid : data.relationship.groupCirclesMap.get(String.valueOf(groupCircle.rid)).groups) {
-					data.relationship.groupCirclesMap.get("8888888").groups.add(gid);
+					data.relationship.groupCirclesMap.get(Constant.DEFAULTCIRCLEID + "").groups.add(gid);
 				}
 				showGroupCircles();
 
@@ -750,7 +733,6 @@ public class GroupListActivity extends Activity {
 			}
 			if (status == Status.friend || status == Status.card_friend) {
 				Friend friend = friendsMap.get(friends[position]);
-				// holder.headView.setImageBitmap(bitmap);
 				fileHandlers.getHeadImage(friend.head, holder.headView, viewManage.options50);
 				if (friend.alias != null && !friend.alias.equals("")) {
 					holder.nameView.setText(friend.alias + "(" + friend.nickName + ")");
@@ -766,7 +748,6 @@ public class GroupListActivity extends Activity {
 					fileHandlers.getHeadImage(group.icon, holder.headView, viewManage.options50);
 			} else {
 				Group group = groupsMap.get(groups.get(position));
-				// holder.headView.setImageBitmap(bitmap);
 				fileHandlers.getHeadImage(group.icon, holder.headView, viewManage.options50);
 				holder.nameView.setText(group.name);
 				holder.descriptionView.setText(group.description);

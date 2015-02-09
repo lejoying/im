@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
-import com.open.welinks.ChatActivity;
 import com.open.welinks.DynamicListActivity;
-import com.open.welinks.NewChatActivity;
+import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
@@ -73,7 +72,7 @@ public class MessagesSubController {
 							} else if ("g".equals(type)) {
 								type = "group";
 							}
-							Intent intent = new Intent(thisView.mainView.thisActivity, NewChatActivity.class);
+							Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
 							intent.putExtra("id", value);
 							intent.putExtra("type", type);
 							thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);

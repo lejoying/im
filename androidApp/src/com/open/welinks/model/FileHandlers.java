@@ -27,10 +27,10 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFile;
-import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.ThumbleListener;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ViewManage;
 
@@ -386,8 +386,8 @@ public class FileHandlers {
 					e.printStackTrace();
 				}
 				((GifImageView) instance.view).setImageDrawable(gifFromFile);
-				if (viewManage.newChatView != null) {
-					viewManage.newChatView.mChatAdapter.notifyDataSetChanged();
+				if (viewManage.chatView != null) {
+					viewManage.chatView.mChatAdapter.notifyDataSetChanged();
 				}
 			}
 

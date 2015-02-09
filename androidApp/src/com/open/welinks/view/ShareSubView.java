@@ -38,8 +38,6 @@ import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFile;
-import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.ScrollListBody;
@@ -58,6 +56,8 @@ import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.utils.DateUtil;
 
 public class ShareSubView {

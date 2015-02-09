@@ -13,11 +13,11 @@ import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.oss.DownloadFileList;
 
 public class SquareSubView {
 

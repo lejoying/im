@@ -37,7 +37,6 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
-import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
@@ -62,6 +61,8 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.view.ShareMessageDetailView;
 import com.open.welinks.view.ViewManage;
 
@@ -134,7 +135,7 @@ public class ShareMessageDetailController {
 
 		if (sid == null || "".equals(sid)) {
 			log.e(ViewManage.getErrorLineNumber() + "少传参数了");
-			// return;
+			throw new IllegalArgumentException(ViewManage.getErrorLineNumber() + "少传参数了");
 		}
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
@@ -143,20 +144,16 @@ public class ShareMessageDetailController {
 				board = data.boards.boardsMap.get(sid);
 				shareMessage = data.boards.shareMessagesMap.get(gsid);
 				getShareMessageDetail();
-				// log.e("1");
 			} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
 				board = data.boards.new Board();
 				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
 				getShareMessageDetail();
-				// log.e("2");
 			} else {
 				board = data.boards.new Board();
 				// getShareFromServer(gid, gsid);
 				getShareMessageDetail();
-				// log.e("3");
 			}
 		}
-		// log.e(gid + "!---!" + gsid);
 	}
 
 	public void initShareListener() {
@@ -267,7 +264,6 @@ public class ShareMessageDetailController {
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
-
 			}
 		};
 		textWatcher = new TextWatcher() {
@@ -472,8 +468,9 @@ public class ShareMessageDetailController {
 					public void onClick(AlertInputDialog dialog) {
 						RequestParams params = new RequestParams();
 						HttpUtils httpUtils = new HttpUtils();
-						params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-						params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+						User currentUser = data.userInformation.currentUser;
+						params.addBodyParameter("phone", currentUser.phone);
+						params.addBodyParameter("accessKey", currentUser.accessKey);
 						params.addBodyParameter("gid", gid);
 						params.addBodyParameter("gsid", gsid);
 
@@ -503,8 +500,9 @@ public class ShareMessageDetailController {
 	public void modifyPraiseusersToMessage(boolean option) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("gsid", shareMessage.gsid);
@@ -780,6 +778,7 @@ public class ShareMessageDetailController {
 						}
 					});
 				} else {
+					log.e(response.失败原因);
 					getShareMessageDetail2();
 				}
 			};

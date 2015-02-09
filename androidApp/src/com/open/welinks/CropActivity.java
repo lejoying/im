@@ -15,11 +15,19 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.open.lib.MyLog;
 import com.open.welinks.customView.ClipImageLayout;
 
 public class CropActivity extends Activity implements OnClickListener {
 
+	public String tag = "CropActivity";
+	public MyLog log = new MyLog(tag, true);
+
 	public ClipImageLayout mClipImageLayout;
+
+	public RelativeLayout rightContainerView;
+	public View backView;
+	public TextView backTitleView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +41,6 @@ public class CropActivity extends Activity implements OnClickListener {
 		mClipImageLayout.setImage(path);
 	}
 
-	public RelativeLayout rightContainerView;
-	public View backView;
-	public TextView backTitleView;
-
 	private void initView() {
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -46,16 +50,16 @@ public class CropActivity extends Activity implements OnClickListener {
 		rightContainerView = (RelativeLayout) findViewById(R.id.rightContainer);
 
 		int dp_5 = (int) (5 * displayMetrics.density);
-		TextView mConfirm = new TextView(this);
-		mConfirm.setGravity(Gravity.CENTER);
-		mConfirm.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
-		mConfirm.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-		mConfirm.setText("完成");
-		mConfirm.setBackgroundResource(R.drawable.textview_bg);
+		TextView mConfirmView = new TextView(this);
+		mConfirmView.setGravity(Gravity.CENTER);
+		mConfirmView.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
+		mConfirmView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		mConfirmView.setText("完成");
+		mConfirmView.setBackgroundResource(R.drawable.textview_bg);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		rightContainerView.addView(mConfirm, layoutParams);
+		rightContainerView.addView(mConfirmView, layoutParams);
 		rightContainerView.setOnClickListener(this);
 		backView.setOnClickListener(this);
 	}

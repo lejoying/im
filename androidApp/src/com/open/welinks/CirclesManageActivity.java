@@ -27,7 +27,6 @@ public class CirclesManageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		linkViewController();
-
 	}
 
 	public void linkViewController() {

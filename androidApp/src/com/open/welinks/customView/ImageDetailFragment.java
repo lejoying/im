@@ -24,11 +24,11 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFile;
-import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.oss.DownloadFileList;
 
 public class ImageDetailFragment extends Fragment {
 	// private static final String IMAGE_DATA_EXTRA = "resId";

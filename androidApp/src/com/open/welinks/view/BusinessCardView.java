@@ -1,7 +1,5 @@
 package com.open.welinks.view;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -16,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.R;
@@ -35,6 +34,14 @@ public class BusinessCardView {
 	public MyLog log = new MyLog(tag, true);
 
 	public Data data = Data.getInstance();
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+
+	public ViewManage viewManage = ViewManage.getInstance();
 
 	public String GROUPCARDTYPE = "groupcard";
 	public String USERCARDTYPE = "usercard";
@@ -57,10 +64,6 @@ public class BusinessCardView {
 	public TextView shareTxView;
 
 	public BusinessCard businessCard;
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
 
 	public DisplayMetrics displayMetrics;
 
@@ -312,8 +315,7 @@ public class BusinessCardView {
 			}
 		}
 		if (businessCard.icon.equals("Head") || "".equals(businessCard.icon)) {
-			Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man), true, 5, Color.WHITE);
-			thisView.head.setImageBitmap(bitmap);
+			imageLoader.displayImage("drawable://" + R.drawable.face_man, thisView.head, viewManage.options45);
 		} else {
 			fileHandlers.getHeadImage(businessCard.icon, this.head, viewManage.options45);
 			// thisController.setHeadImage(businessCard.icon, thisView.head);
@@ -321,8 +323,6 @@ public class BusinessCardView {
 		qrCodeView.setScaleType(ScaleType.FIT_CENTER);
 		setData(businessCard);
 	}
-
-	ViewManage viewManage = ViewManage.getInstance();
 
 	public void setData(BusinessCard businessCard) {
 		// log.e("createTime--------：" + businessCard.creattime);

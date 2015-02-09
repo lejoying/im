@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.open.lib.MyLog;
 import com.open.welinks.controller.SharePraiseusersController;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.SharePraiseusersView;
 
 public class SharePraiseusersActivity extends Activity {
 
-	public Data data = Data.getInstance();
 	public String tag = "SharePraiseusersActivity";
+	public MyLog log = new MyLog(tag, true);
+
+	public Data data = Data.getInstance();
 
 	public Context context;
 	public SharePraiseusersView thisView;
@@ -37,9 +40,10 @@ public class SharePraiseusersActivity extends Activity {
 		thisView.initView();
 		thisController.bindEvent();
 	}
+
 	@Override
 	protected void onResume() {
-		if(thisController!=null){
+		if (thisController != null) {
 			thisController.onResume();
 		}
 		super.onResume();

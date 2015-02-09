@@ -1,6 +1,6 @@
 package com.open.welinks.customListener;
 
-import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.oss.DownloadFile;
 
 public class OnDownloadListener {
 	

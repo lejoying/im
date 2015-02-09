@@ -51,6 +51,12 @@ public class DynamicListActivity extends Activity {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public RelativeLayout backView;
 	public TextView backTitleView;
 	public RelativeLayout rightContainerView;
@@ -63,23 +69,17 @@ public class DynamicListActivity extends Activity {
 
 	public LayoutInflater mInflater;
 
-	// public UserEventListAdapter squareEventListAdapter;
 	public GroupEventListAdapter groupEventListAdapter;
 	public UserEventListAdapter userEventListAdapter;
-
-	public ViewManage viewManage = ViewManage.getInstance();
 
 	public List<String> groupEventMessages = new ArrayList<String>();
 	public List<String> userEventMessages = new ArrayList<String>();
 	public Map<String, Friend> friendsMap;
 	public Gson gson = new Gson();
 
-	// public Bitmap bitmap;
 	public int selectType = 3;
 	public ThreeChoicesView threeChoicesView;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
 	public DisplayMetrics displayMetrics;
 
 	public View maxView;

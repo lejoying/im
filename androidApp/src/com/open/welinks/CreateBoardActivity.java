@@ -7,12 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.welinks.controller.UploadMultipart;
-import com.open.welinks.controller.UploadMultipartList;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
@@ -21,26 +30,18 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.oss.UploadMultipart;
+import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ViewManage;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 public class CreateBoardActivity extends Activity implements OnClickListener {
+
 	private Data data = Data.getInstance();
 	private FileHandlers fileHandlers = FileHandlers.getInstance();
 	private ViewManage viewManage = ViewManage.getInstance();
@@ -51,8 +52,8 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 	private OnUploadLoadingListener uploadLoadingListener;
 
 	private View backView;
-	private ImageView boardHead, boardCover;
-	private EditText boardName, boardDescribe;
+	private ImageView boardHeadView, boardCoverView;
+	private EditText boardNameView, boardDescribeView;
 	private TextView okButton, backTitleView;
 	private String imageHeadPath = "", imageCoverPath = "";
 
@@ -76,10 +77,10 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 	private void initViews() {
 		setContentView(R.layout.activity_create_board);
 		backView = this.findViewById(R.id.backView);
-		boardHead = (ImageView) this.findViewById(R.id.boardHead);
-		boardCover = (ImageView) this.findViewById(R.id.boardCover);
-		boardName = (EditText) this.findViewById(R.id.boardName);
-		boardDescribe = (EditText) this.findViewById(R.id.boardDescribe);
+		boardHeadView = (ImageView) this.findViewById(R.id.boardHead);
+		boardCoverView = (ImageView) this.findViewById(R.id.boardCover);
+		boardNameView = (EditText) this.findViewById(R.id.boardName);
+		boardDescribeView = (EditText) this.findViewById(R.id.boardDescribe);
 		okButton = (TextView) this.findViewById(R.id.okButton);
 		backTitleView = (TextView) this.findViewById(R.id.backTitleView);
 
@@ -87,20 +88,20 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 	}
 
 	private void bindEvent() {
-		boardHead.setOnClickListener(this);
-		boardCover.setOnClickListener(this);
+		boardHeadView.setOnClickListener(this);
+		boardCoverView.setOnClickListener(this);
 		okButton.setOnClickListener(this);
 		backView.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View view) {
-		if (view.equals(boardHead)) {
+		if (view.equals(boardHeadView)) {
 			data.tempData.selectedImageList = null;
 			Intent intent = new Intent(this, ImagesDirectoryActivity.class);
 			intent.putExtra("max", 1);
 			startActivityForResult(intent, REQUESTCODE_ABLUM_HEAD);
-		} else if (view.equals(boardCover)) {
+		} else if (view.equals(boardCoverView)) {
 			data.tempData.selectedImageList = null;
 			Intent intent = new Intent(this, ImagesDirectoryActivity.class);
 			intent.putExtra("max", 1);
@@ -124,8 +125,8 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 		board.sid = String.valueOf(board.updateTime);
 		board.head = imageHeadPath;
 		board.cover = imageCoverPath;
-		board.name = boardName.getText().toString().trim();
-		board.description = boardDescribe.getText().toString().trim();
+		board.name = boardNameView.getText().toString().trim();
+		board.description = boardDescribeView.getText().toString().trim();
 
 		data.boards.boardsMap.put(board.sid, board);
 		List<String> boards = data.relationship.groupsMap.get(board.gid).boards;
@@ -133,25 +134,26 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 			boards = new ArrayList<String>();
 		boards.add(board.sid);
 
-		String targetphones = "";
+		String targetPhones = "";
 		Group group = data.relationship.groupsMap.get(board.gid);
 		if (group != null)
-			targetphones = gson.toJson(group.members);
+			targetPhones = gson.toJson(group.members);
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", board.gid);
 		params.addBodyParameter("name", board.name);
 		params.addBodyParameter("osid", board.sid);
-		params.addBodyParameter("targetphones", targetphones);
+		params.addBodyParameter("targetphones", targetPhones);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.SHARE_ADDBOARD, params, responseHandlers.share_addBoard);
 	}
 
 	private void mFinish() {
-		if ("".equals(imageCoverPath) && "".equals(imageHeadPath) && "".equals(boardName.getText().toString().trim()) && "".equals(boardDescribe.getText().toString().trim())) {
+		if ("".equals(imageCoverPath) && "".equals(imageHeadPath) && "".equals(boardNameView.getText().toString().trim()) && "".equals(boardDescribeView.getText().toString().trim())) {
 			this.finish();
 		} else {
 			Alert.createDialog(this).setTitle("您还有信息尚未提交，是否退出？").setOnConfirmClickListener(new OnDialogClickListener() {
@@ -173,7 +175,7 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 		} else if (requestCode == REQUESTCODE_CAT_HEAD && resultCode == Activity.RESULT_OK) {
 			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), fileHandlers.sdcardHeadImageFolder);
 			imageHeadPath = (String) map.get("fileName");
-			fileHandlers.getHeadImage(imageHeadPath, boardHead, viewManage.options45);
+			fileHandlers.getHeadImage(imageHeadPath, boardHeadView, viewManage.options45);
 			uploadFile(tempFile.getAbsolutePath(), imageHeadPath, (byte[]) map.get("bytes"), UploadMultipart.UPLOAD_TYPE_HEAD);
 		} else if (requestCode == REQUESTCODE_CAT_COVER) {
 			byte[] bytes = intent.getByteArrayExtra("bitmap");
@@ -186,7 +188,7 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 			uploadFile(file.getAbsolutePath(), imageCoverPath, bytes, UploadMultipart.UPLOAD_TYPE_BACKGROUND);
-			fileHandlers.getBackImage(imageCoverPath, boardCover, viewManage.options);
+			fileHandlers.getBackImage(imageCoverPath, boardCoverView, viewManage.options);
 		}
 	}
 

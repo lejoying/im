@@ -106,7 +106,6 @@ public class ImageScanActivity extends FragmentActivity {
 		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true).displayer(new FadeInBitmapDisplayer(300)).build();
 
 		imageNumberView.setText("浏览  (" + (currentPosition + 1) + "/" + imagesBrowseList.size() + ")");
-		// titleView.setText("浏览");
 		backView.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_back_transparent));
 		backMaxView.setBackgroundColor(Color.parseColor("#00000000"));
 		imageNumberView.setTextColor(Color.WHITE);

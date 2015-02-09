@@ -36,9 +36,8 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfoActivity;
-import com.open.welinks.NewChatActivity;
+import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.model.API;
@@ -50,7 +49,6 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.view.ViewManage;
 
@@ -502,12 +500,12 @@ public class SmallBusinessCardPopView {
 							intent.putExtra("type", type);
 							thisActivity.startActivity(intent);
 						} else if (type.equals(TYPE_GROUP)) {
-							Intent intent = new Intent(thisActivity, NewChatActivity.class);
+							Intent intent = new Intent(thisActivity, ChatActivity.class);
 							intent.putExtra("id", key);
 							intent.putExtra("type", type);
 							thisActivity.startActivityForResult(intent, R.id.tag_second);
 						} else if (type.equals(TYPE_BOARD)) {
-							Intent intent = new Intent(thisActivity, NewChatActivity.class);
+							Intent intent = new Intent(thisActivity, ChatActivity.class);
 							Board board = data.boards.boardsMap.get(key);
 							intent.putExtra("id", board.gid);
 							intent.putExtra("type", "group");
@@ -520,14 +518,14 @@ public class SmallBusinessCardPopView {
 						}
 					} else if (view.equals(goChatView)) {
 						// String phone = (String) view.getTag(R.id.tag_first);
-						if (mViewManage.newChatView != null && key.equals(mViewManage.newChatView.thisController.key)) {
+						if (mViewManage.chatView != null && key.equals(mViewManage.chatView.thisController.key)) {
 							dismissUserCardDialogView();
 						} else {
 							if (type.equals(TYPE_GROUP)) {
 								Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
 								thisActivity.startActivity(intent);
 							} else if (type.equals(TYPE_POINT)) {
-								Intent intent = new Intent(thisActivity, NewChatActivity.class);
+								Intent intent = new Intent(thisActivity, ChatActivity.class);
 								intent.putExtra("id", key);
 								intent.putExtra("type", type);
 								thisActivity.startActivity(intent);

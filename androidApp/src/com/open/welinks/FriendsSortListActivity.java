@@ -50,14 +50,18 @@ public class FriendsSortListActivity extends Activity {
 	public Data data = Data.getInstance();
 	public String tag = "FriendsSortListActivity";
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public static int INVITA_FRIEND_GROUP = 0x01;// Invite friends to add to the group
 	public static int RECOMMEND_FRIEND_GROUP = 0x02;// Recommend group to friends
 	public static int FORWARD_MESSAGE_FRIEND = 0x03;// Forwarding messages to friends
 
 	private ListView sortListView;
 	private SideBar sideBar;
-	private TextView dialog;
-	private SortAdapter adapter;
+	private TextView dialogView;
+	private SortAdapter sortAdapter;
 	private ClearEditText mClearEditText;
 
 	private CharacterParser characterParser;
@@ -67,21 +71,21 @@ public class FriendsSortListActivity extends Activity {
 	public int currentOperationType = 0;
 	public Group currentGroup;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
 	public List<String> friends = new ArrayList<String>();
 
 	public ArrayList<String> invitaFriends = new ArrayList<String>();
 	public OnClickListener mOnClickListener;
 	public RelativeLayout backView;
-	public TextView mConfirm;
-
 	public RelativeLayout rightContainerView;
-
 	public TextView backTitleView;
+	public TextView mConfirmView;
+
+	public LinearLayout alreadyListContainer;
+	public FrameLayout mainContainer;
+
 	public Handler handler = new Handler();
 
-	public ViewManage viewManage = ViewManage.getInstance();
+	public DisplayMetrics displayMetrics;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +123,7 @@ public class FriendsSortListActivity extends Activity {
 				if (view.equals(backView)) {
 					setResult(Activity.RESULT_CANCELED);
 					finish();
-				} else if (view.equals(mConfirm)) {
+				} else if (view.equals(mConfirmView)) {
 					if (currentOperationType == INVITA_FRIEND_GROUP) {
 						Intent intent = new Intent();
 						intent.putStringArrayListExtra("invitaFriends", invitaFriends);
@@ -132,11 +136,7 @@ public class FriendsSortListActivity extends Activity {
 						String phone = (String) view.getTag(R.id.tag_first);
 						invitaFriends.remove(phone);
 						alreadyListContainer.removeView(view);
-						adapter.notifyDataSetChanged();
-						// if (invitaFriends.size() == 0) {
-						// FrameLayout.LayoutParams layoutParams = (android.widget.FrameLayout.LayoutParams) mainContainer.getLayoutParams();
-						// layoutParams.bottomMargin = 0;
-						// }
+						sortAdapter.notifyDataSetChanged();
 					}
 				}
 			}
@@ -145,7 +145,7 @@ public class FriendsSortListActivity extends Activity {
 
 	public void bindEvent() {
 		this.backView.setOnClickListener(mOnClickListener);
-		this.mConfirm.setOnClickListener(mOnClickListener);
+		this.mConfirmView.setOnClickListener(mOnClickListener);
 	}
 
 	private void initData() {
@@ -163,8 +163,6 @@ public class FriendsSortListActivity extends Activity {
 
 		SourceDateList = filledData(list);
 	}
-
-	DisplayMetrics displayMetrics;
 
 	public void showAlreayList() {
 		int width = (int) (40 * displayMetrics.density);
@@ -184,9 +182,6 @@ public class FriendsSortListActivity extends Activity {
 		}
 	}
 
-	public LinearLayout alreadyListContainer;
-	public FrameLayout mainContainer;
-
 	private void initViews() {
 		displayMetrics = new DisplayMetrics();
 
@@ -199,28 +194,28 @@ public class FriendsSortListActivity extends Activity {
 		backTitleView.setText("选择好友");
 		rightContainerView = (RelativeLayout) findViewById(R.id.rightContainer);
 		sideBar = (SideBar) findViewById(R.id.sidrbar);
-		dialog = (TextView) findViewById(R.id.dialog);
-		sideBar.setTextView(dialog);
+		dialogView = (TextView) findViewById(R.id.dialog);
+		sideBar.setTextView(dialogView);
 		sortListView = (ListView) findViewById(R.id.country_lvcountry);
 
 		int dp_5 = (int) (5 * displayMetrics.density);
-		mConfirm = new TextView(this);
-		mConfirm.setGravity(Gravity.CENTER);
-		mConfirm.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
-		mConfirm.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-		mConfirm.setText("完成");
-		mConfirm.setTextColor(Color.WHITE);
-		mConfirm.setBackgroundResource(R.drawable.textview_bg);
+		mConfirmView = new TextView(this);
+		mConfirmView.setGravity(Gravity.CENTER);
+		mConfirmView.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
+		mConfirmView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		mConfirmView.setText("完成");
+		mConfirmView.setTextColor(Color.WHITE);
+		mConfirmView.setBackgroundResource(R.drawable.textview_bg);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		rightContainerView.addView(mConfirm, layoutParams);
+		rightContainerView.addView(mConfirmView, layoutParams);
 
 		sideBar.setOnTouchingLetterChangedListener(new OnTouchingLetterChangedListener() {
 
 			@Override
 			public void onTouchingLetterChanged(String s) {
-				int position = adapter.getPositionForSection(s.charAt(0));
+				int position = sortAdapter.getPositionForSection(s.charAt(0));
 				if (position != -1) {
 					sortListView.setSelection(position);
 				}
@@ -229,8 +224,8 @@ public class FriendsSortListActivity extends Activity {
 		});
 
 		Collections.sort(SourceDateList, pinyinComparator);
-		adapter = new SortAdapter(this, SourceDateList);
-		sortListView.setAdapter(adapter);
+		sortAdapter = new SortAdapter(this, SourceDateList);
+		sortListView.setAdapter(sortAdapter);
 
 		mClearEditText = (ClearEditText) findViewById(R.id.filter_edit);
 
@@ -292,7 +287,7 @@ public class FriendsSortListActivity extends Activity {
 		}
 
 		Collections.sort(filterDateList, pinyinComparator);
-		adapter.updateListView(filterDateList);
+		sortAdapter.updateListView(filterDateList);
 	}
 
 	class SortAdapter extends BaseAdapter implements SectionIndexer {
@@ -327,12 +322,12 @@ public class FriendsSortListActivity extends Activity {
 			if (view == null) {
 				viewHolder = new ViewHolder();
 				view = LayoutInflater.from(mContext).inflate(R.layout.activity_friendlist_sort_item, null);
-				viewHolder.tvTitle = (TextView) view.findViewById(R.id.tv_friendNickName);
-				viewHolder.tvLetter = (TextView) view.findViewById(R.id.tv_nickNameFirst);
-				viewHolder.tvLetterParent = (LinearLayout) view.findViewById(R.id.ll_nickNameType);
+				viewHolder.textTitleView = (TextView) view.findViewById(R.id.tv_friendNickName);
+				viewHolder.textLetterView = (TextView) view.findViewById(R.id.tv_nickNameFirst);
+				viewHolder.tvLetterParentView = (LinearLayout) view.findViewById(R.id.ll_nickNameType);
 				viewHolder.headView = (ImageView) view.findViewById(R.id.iv_friendHead);
 				viewHolder.friendInfoLLView = (LinearLayout) view.findViewById(R.id.ll_friendinfo);
-				viewHolder.friendHeadStatus = (ImageView) view.findViewById(R.id.iv_friendHeadStatus);
+				viewHolder.friendHeadStatusView = (ImageView) view.findViewById(R.id.iv_friendHeadStatus);
 				view.setTag(viewHolder);
 			} else {
 				viewHolder = (ViewHolder) view.getTag();
@@ -349,18 +344,18 @@ public class FriendsSortListActivity extends Activity {
 			int section = getSectionForPosition(position);
 
 			if (position == getPositionForSection(section)) {
-				viewHolder.tvLetterParent.setVisibility(View.VISIBLE);
-				viewHolder.tvLetter.setText(mContent.getSortLetters());
+				viewHolder.tvLetterParentView.setVisibility(View.VISIBLE);
+				viewHolder.textLetterView.setText(mContent.getSortLetters());
 			} else {
-				viewHolder.tvLetterParent.setVisibility(View.GONE);
+				viewHolder.tvLetterParentView.setVisibility(View.GONE);
 			}
 
-			viewHolder.tvTitle.setText(name2);
+			viewHolder.textTitleView.setText(name2);
 
 			if (invitaFriends.contains(friend.phone)) {
-				viewHolder.friendHeadStatus.setVisibility(View.VISIBLE);
+				viewHolder.friendHeadStatusView.setVisibility(View.VISIBLE);
 			} else {
-				viewHolder.friendHeadStatus.setVisibility(View.GONE);
+				viewHolder.friendHeadStatusView.setVisibility(View.GONE);
 			}
 
 			final ViewHolder viewHolder0 = viewHolder;
@@ -368,8 +363,8 @@ public class FriendsSortListActivity extends Activity {
 
 				@Override
 				public void onClick(View v) {
-					if (viewHolder0.friendHeadStatus.getVisibility() == View.GONE) {
-						viewHolder0.friendHeadStatus.setVisibility(View.VISIBLE);
+					if (viewHolder0.friendHeadStatusView.getVisibility() == View.GONE) {
+						viewHolder0.friendHeadStatusView.setVisibility(View.VISIBLE);
 						invitaFriends.add(friend.phone);
 						handler.post(new Runnable() {
 
@@ -380,7 +375,7 @@ public class FriendsSortListActivity extends Activity {
 						});
 
 					} else {
-						viewHolder0.friendHeadStatus.setVisibility(View.GONE);
+						viewHolder0.friendHeadStatusView.setVisibility(View.GONE);
 						invitaFriends.remove(friend.phone);
 						handler.post(new Runnable() {
 
@@ -396,11 +391,11 @@ public class FriendsSortListActivity extends Activity {
 		}
 
 		class ViewHolder {
-			TextView tvLetter;
-			TextView tvTitle;
-			LinearLayout tvLetterParent;
+			TextView textLetterView;
+			TextView textTitleView;
+			LinearLayout tvLetterParentView;
 			ImageView headView;
-			ImageView friendHeadStatus;
+			ImageView friendHeadStatusView;
 			LinearLayout friendInfoLLView;
 		}
 
@@ -419,15 +414,6 @@ public class FriendsSortListActivity extends Activity {
 			}
 			return -1;
 		}
-
-		// private String getAlpha(String str) {
-		// String sortStr = str.trim().substring(0, 1).toUpperCase();
-		// if (sortStr.matches("[A-Z]")) {
-		// return sortStr;
-		// } else {
-		// return "#";
-		// }
-		// }
 
 		@Override
 		public Object[] getSections() {

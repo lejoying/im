@@ -1,14 +1,11 @@
 package com.open.welinks.utils;
 
-import android.annotation.SuppressLint;
-
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+
+import android.annotation.SuppressLint;
 
 @SuppressLint("SimpleDateFormat")
 public class DateUtil {
@@ -42,35 +39,6 @@ public class DateUtil {
 			result[0] = dataStr.substring(0, dataStr.indexOf("#"));
 			result[1] = dataStr.substring(dataStr.indexOf("#") + 1);
 		}
-		return result;
-	}
-
-	@SuppressLint("SimpleDateFormat")
-	public static String formatTime(long timeMillis) {
-		long currentTime = System.currentTimeMillis();
-		long differenceTime = currentTime - timeMillis;
-		differenceTime = differenceTime / 1000;
-		String result = "";
-		if (differenceTime <= 0) {
-			result = "刚刚";
-		} else if (differenceTime >= 0 && differenceTime < 60) {
-			result = differenceTime + "秒前";
-		} else if (differenceTime > 60 && differenceTime < 60 * 60) {
-			result = differenceTime / 60 + "分钟前";
-		} else if (differenceTime > 60 * 60 && differenceTime < 24 * 60 * 60) {
-			result = differenceTime / (60 * 60) + "小时前";
-		} else if (differenceTime > 24 * 60 * 60 && differenceTime < 2 * 24 * 60 * 60) {
-			result = "昨天   " + formatHourMinute(timeMillis);
-		} else if (differenceTime > 2 * 24 * 60 * 60 && differenceTime < 3 * 24 * 60 * 60) {
-			result = "前天   " + formatHourMinute(timeMillis);
-		} else if (differenceTime > 3 * 24 * 60 * 60 && differenceTime < 365 * 24 * 60 * 60) {
-			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
-			result = sdf.format(timeMillis);
-		} else {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			result = sdf.format(timeMillis);
-		}
-
 		return result;
 	}
 
@@ -131,20 +99,6 @@ public class DateUtil {
 		Date date = new Date(Long.valueOf(timeMillis));
 		String mTime = simpleDateFormat.format(date);
 		return mTime;
-	}
-
-	public static String getGMTDate() {
-		return getGMTDate(new Date());
-	}
-
-	public static String getGMTDate(Date date) {
-		if (date == null) {
-			return null;
-		}
-		DateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
-		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-		String dateStr = dateFormat.format(date);
-		return dateStr;
 	}
 
 	@SuppressLint("SimpleDateFormat")
@@ -237,7 +191,6 @@ public class DateUtil {
 		String time = null;
 		try {
 			// java.util.Date currentdate = new java.util.Date();// 当前时间
-
 			// long i = (currentdate.getTime() / 1000 - timestamp) / (60);
 			// Timestamp now = new Timestamp(System.currentTimeMillis());// 获取系统当前时间
 

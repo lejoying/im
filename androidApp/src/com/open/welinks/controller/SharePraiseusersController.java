@@ -17,6 +17,7 @@ import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.MyGson;
 import com.open.welinks.view.SharePraiseusersView;
@@ -87,8 +88,9 @@ public class SharePraiseusersController {
 	public void getUsersData() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("target", gson.toJson(praiseusersList));
 
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {

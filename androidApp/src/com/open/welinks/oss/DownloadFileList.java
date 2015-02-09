@@ -1,4 +1,4 @@
-package com.open.welinks.controller;
+package com.open.welinks.oss;
 
 import java.util.ArrayList;
 import java.util.HashMap;

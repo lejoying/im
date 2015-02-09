@@ -25,11 +25,11 @@ public class SearchFriendActivity extends Activity {
 	public ViewManage viewManage = ViewManage.getInstance();
 	public Handler handler;
 
-	public Button scanBusinessCard, search;
-	public EditText phoneText;
-	public TextView errorText;
-	public RelativeLayout backview;
-	public TextView name;
+	public Button scanBusinessCardButton, searchButton;
+	public EditText phoneTextView;
+	public TextView errorTextView;
+	public RelativeLayout backView;
+	public TextView nameView;
 
 	public OnClickListener mOnClickListener;
 
@@ -54,8 +54,8 @@ public class SearchFriendActivity extends Activity {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(search)) {
-					String phone = phoneText.getText().toString().trim();
+				if (view.equals(searchButton)) {
+					String phone = phoneTextView.getText().toString().trim();
 					if ("".equals(phone)) {
 						showError("请输入手机号");
 					} else if (data.userInformation.currentUser.phone.equals(phone)) {
@@ -67,25 +67,25 @@ public class SearchFriendActivity extends Activity {
 					} else {
 						searchFriend(phone);
 					}
-				} else if (view.equals(backview)) {
+				} else if (view.equals(backView)) {
 					finish();
 				}
 			}
 
 		};
-		search.setOnClickListener(mOnClickListener);
-		backview.setOnClickListener(mOnClickListener);
+		searchButton.setOnClickListener(mOnClickListener);
+		backView.setOnClickListener(mOnClickListener);
 	}
 
 	private void initView() {
-		scanBusinessCard = (Button) findViewById(R.id.scanBusinessCard);
-		search = (Button) findViewById(R.id.search);
-		phoneText = (EditText) findViewById(R.id.phone);
-		errorText = (TextView) findViewById(R.id.error);
-		backview = (RelativeLayout) findViewById(R.id.backView);
-		name = (TextView) findViewById(R.id.backTitleView);
+		scanBusinessCardButton = (Button) findViewById(R.id.scanBusinessCard);
+		searchButton = (Button) findViewById(R.id.search);
+		phoneTextView = (EditText) findViewById(R.id.phone);
+		errorTextView = (TextView) findViewById(R.id.error);
+		backView = (RelativeLayout) findViewById(R.id.backView);
+		nameView = (TextView) findViewById(R.id.backTitleView);
 
-		name.setText("查找好友");
+		nameView.setText("查找好友");
 	}
 
 	private void searchFriend(String phone) {
@@ -113,7 +113,7 @@ public class SearchFriendActivity extends Activity {
 	}
 
 	public void showError(String error) {
-		errorText.setText(error);
+		errorTextView.setText(error);
 		new Thread() {
 			public void run() {
 				try {
@@ -122,7 +122,7 @@ public class SearchFriendActivity extends Activity {
 
 						@Override
 						public void run() {
-							errorText.setText("");
+							errorTextView.setText("");
 						}
 					});
 				} catch (InterruptedException e) {

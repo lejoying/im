@@ -24,7 +24,6 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.CreateBoardActivity;
@@ -35,18 +34,19 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.Relationship.GroupCircle;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.TaskContainer_Share.GetShares;
 import com.open.welinks.model.TaskContainer_Share.Praise;
 import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.ShareSectionView;
-import com.open.welinks.view.ViewManage;
 import com.open.welinks.view.ShareSectionView.BoardDialogItem;
+import com.open.welinks.view.ViewManage;
 
 public class ShareSectionController {
 
@@ -183,11 +183,6 @@ public class ShareSectionController {
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.rightContainer)) {
-					// if (thisView.selectMenuView.getVisibility() == View.VISIBLE) {
-					// thisView.selectMenuView.setVisibility(View.GONE);
-					// } else {
-					// thisView.selectMenuView.setVisibility(View.VISIBLE);
-					// }
 					if (thisView.isShowGroupDialog) {
 						thisView.dismissGroupBoardsDialog();
 					} else {
@@ -243,9 +238,9 @@ public class ShareSectionController {
 					thisActivity.startActivityForResult(new Intent(thisActivity, CreateBoardActivity.class), REQUESTCODE_CREATE);
 				} else if (view.equals(thisView.createGroupButtonView)) {
 					if (data.relationship.groupCircles != null) {
-						for (String str : data.relationship.groupCircles) {
-							GroupCircle a = data.relationship.groupCirclesMap.get(str);
-						}
+						// for (String str : data.relationship.groupCircles) {
+						// GroupCircle a = data.relationship.groupCirclesMap.get(str);
+						// }
 					} else {
 					}
 
@@ -503,8 +498,9 @@ public class ShareSectionController {
 		}
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", thisView.currentGroup.gid + "");
 		params.addBodyParameter("sid", thisView.currentBoard.sid);
 		params.addBodyParameter("nowpage", nowpage + "");
@@ -516,8 +512,9 @@ public class ShareSectionController {
 	public void modifyBoardsSequence(String sequenceListString) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", thisView.currentGroup.gid + "");
 		params.addBodyParameter("boardsequence", sequenceListString);
 		params.addBodyParameter("targetphones", gson.toJson(thisView.currentGroup.members));
@@ -528,8 +525,9 @@ public class ShareSectionController {
 	public void getGroup(String gid) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("type", "group");
 
@@ -573,8 +571,9 @@ public class ShareSectionController {
 	private void getBoards() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", thisView.currentGroup.gid + "");
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, httpClient.new ResponseHandler<String>() {
