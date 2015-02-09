@@ -3,6 +3,7 @@ package com.open.welinks.view;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -29,7 +30,11 @@ import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
+import com.open.welinks.ClassificationRecommendationActivity;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
+import com.open.welinks.ShareListActivity;
+import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -256,7 +261,7 @@ public class SquareSubView {
 	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
 	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
 
-	private class DialogShowSpringListener extends SimpleSpringListener {
+	public class DialogShowSpringListener extends SimpleSpringListener {
 		@Override
 		public void onSpringUpdate(Spring spring) {
 			float mappedValue = (float) spring.getCurrentValue();
@@ -264,11 +269,37 @@ public class SquareSubView {
 			targetView.setScaleY(mappedValue);
 		}
 
+		public int id;
+
 		@Override
 		public void onSpringAtRest(Spring spring) {
 			// if (spring.getCurrentValue() == 1) {
 			// thisController.isTouchDown = false;
 			// }
+			if (id == R.drawable.sidebar_icon_discover_normal) {
+				Intent intent = new Intent(thisController.thisActivity, ShareSectionActivity.class);
+				intent.putExtra("key", "91");
+				thisController.thisActivity.startActivity(intent);
+			} else if (id == R.drawable.sidebar_icon_days_normal) {
+				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				intent.putExtra("type", "square");
+				thisController.thisActivity.startActivity(intent);
+			} else if (id == R.drawable.sidebar_icon_group_normal) {
+				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				intent.putExtra("type", "group");
+				thisController.thisActivity.startActivity(intent);
+			} else if (id == R.drawable.sidebar_icon_category_normal) {
+				Intent intent = new Intent(thisController.thisActivity, ClassificationRecommendationActivity.class);
+				thisController.thisActivity.startActivity(intent);
+			} else if (id == R.drawable.sidebar_icon_test_normal) {
+				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				intent.putExtra("type", "account");
+				thisController.thisActivity.startActivity(intent);
+			} else if (id == R.drawable.sidebar_icon_beauty_normal) {
+				Intent intent = new Intent(thisController.thisActivity, ShareListActivity.class);
+				intent.putExtra("key", data.userInformation.currentUser.phone);
+				thisController.thisActivity.startActivity(intent);
+			}
 		}
 	}
 }

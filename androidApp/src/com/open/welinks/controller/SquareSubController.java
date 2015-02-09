@@ -80,29 +80,41 @@ public class SquareSubController {
 				if (view.getTag(R.id.tag_class) != null) {
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("SelectBody")) {
+
 						int id = (Integer) view.getTag(R.id.tag_first);
-						if (id == R.drawable.sidebar_icon_discover_normal) {
-							log.e("1");
-						} else if (id == R.drawable.sidebar_icon_days_normal) {
-							log.e("2");
-						} else if (id == R.drawable.sidebar_icon_group_normal) {
-							log.e("3");
-						} else if (id == R.drawable.sidebar_icon_category_normal) {
-							log.e("4");
-						} else if (id == R.drawable.sidebar_icon_test_normal) {
-							log.e("5");
-						} else if (id == R.drawable.sidebar_icon_beauty_normal) {
-							log.e("6");
-						}
 						if (onTouchDownView != null) {
 							thisView.dialogSpring.setCurrentValue(0.9);
+							thisView.dialogSpringListener.id = id;
 							thisView.dialogSpring.setEndValue(1);
 						}
+						// if (id == R.drawable.sidebar_icon_discover_normal) {
+						// Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+						// intent.putExtra("key", "91");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_days_normal) {
+						// Intent intent = new Intent(thisActivity, NearbyActivity.class);
+						// intent.putExtra("type", "square");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_group_normal) {
+						// Intent intent = new Intent(thisActivity, NearbyActivity.class);
+						// intent.putExtra("type", "group");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_category_normal) {
+						// Intent intent = new Intent(thisActivity, ClassificationRecommendationActivity.class);
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_test_normal) {
+						// Intent intent = new Intent(thisActivity, NearbyActivity.class);
+						// intent.putExtra("type", "account");
+						// thisActivity.startActivity(intent);
+						// } else if (id == R.drawable.sidebar_icon_beauty_normal) {
+						// Intent intent = new Intent(thisActivity, ShareListActivity.class);
+						// intent.putExtra("key", data.userInformation.currentUser.phone);
+						// thisActivity.startActivity(intent);
+						// }
 					}
 				}
 			}
 		};
-
 	}
 
 	public void bindEvent() {
