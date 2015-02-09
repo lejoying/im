@@ -59,26 +59,6 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:background="@drawable/backview_background"
-            android:translationX="-58dp" >
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:clickable="false"
-                android:gravity="center"
-                android:padding="5dp"
-                android:src="@drawable/group"
-                android:tint="@color/icon_color" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/square_menu_view"
-            android:layout_width="44dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/backview_background"
             android:translationX="-106dp" >
 
             <ImageView
@@ -89,7 +69,27 @@
                 android:clickable="false"
                 android:gravity="center"
                 android:padding="5dp"
-                android:src="@drawable/square1"
+                android:src="@drawable/group1"
+                android:tint="@color/icon_color" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/square_menu_view"
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/backview_background"
+            android:translationX="-58dp" >
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:clickable="false"
+                android:gravity="center"
+                android:padding="5dp"
+                android:src="@drawable/square"
                 android:tint="@color/icon_color" />
         </RelativeLayout>
     </RelativeLayout>

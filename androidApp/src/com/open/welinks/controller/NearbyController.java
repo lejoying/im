@@ -200,6 +200,7 @@ public class NearbyController {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void onCloudSearched(CloudResult result, int rCode) {
+				log.e("*************"+rCode);
 				if (rCode == 0) {
 					if (result != null && result.getQuery() != null) {
 						if (result.getQuery().equals(mQuery)) {
@@ -207,6 +208,8 @@ public class NearbyController {
 							if (mAmapLocation == null) {
 								return;
 							}
+							log.e("Latitude：>>>>>>>" + mAmapLocation.getLatitude());
+							log.e("Longitude：>>>>>>>" + mAmapLocation.getLongitude());
 							LatLng point = new LatLng(mAmapLocation.getLatitude(), mAmapLocation.getLongitude());
 							if (nowpage == 0) {
 								mInfomations.clear();
@@ -265,8 +268,11 @@ public class NearbyController {
 			public void onLocationChanged(AMapLocation amapLocation) {
 				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
 				mLocationManagerProxy.destroy();
+				log.e("。。。。。。。。。。。。。。。");
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
 					mAmapLocation = amapLocation;
+					log.e("Latitude：>>>>>>>《《" + mAmapLocation.getLatitude());
+					log.e("Longitude：>>>>>>>《《" + mAmapLocation.getLongitude());
 					// searchNearby(amapLocation);
 					searchNearByPolygon(0);
 				} else {

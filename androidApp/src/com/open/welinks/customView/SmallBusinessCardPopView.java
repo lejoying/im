@@ -366,6 +366,7 @@ public class SmallBusinessCardPopView {
 					singleButtonView.setText("个人资料");
 				} else if (data.relationship.friends.contains(key)) {
 					goInfomationView.setText("好友资料");
+					goChatView.setText("聊天");
 				} else {
 					singleButtonView.setText("用户资料");
 				}

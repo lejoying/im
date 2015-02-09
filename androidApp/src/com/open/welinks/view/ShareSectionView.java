@@ -116,7 +116,6 @@ public class ShareSectionView {
 
 	public TextView sectionNameTextView;
 
-	@SuppressWarnings("deprecation")
 	public void initView() {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -127,7 +126,7 @@ public class ShareSectionView {
 		this.maxView = (RelativeLayout) thisActivity.findViewById(R.id.maxView);
 
 		this.backView = thisActivity.findViewById(R.id.backView);
-		this.backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
+		this.backView.setBackgroundResource(R.drawable.selector_back_white);
 		this.backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		this.selectMenuView = thisActivity.findViewById(R.id.selectMenu);
 
@@ -637,12 +636,12 @@ public class ShareSectionView {
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
-				if (file.exists()) {
-					fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
-				} else {
-					imageLoader.displayImage("file://" + fileHandlers.sdcardImageFolder.getAbsolutePath() + "/" + imageContent, shareImageContentView);
-				}
+				// File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
+				// if (file.exists()) {
+				fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
+				// } else {
+				// imageLoader.displayImage("file://" + fileHandlers.sdcardImageFolder.getAbsolutePath() + "/" + imageContent, shareImageContentView);
+				// }
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;
