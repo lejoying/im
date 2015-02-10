@@ -76,7 +76,7 @@ public class GroupLabelActivity extends Activity {
 
 	public Random random = new Random();
 
-	public int labelCount = 4;
+	public int labelCount = 4, nowpage = 0, pagesize = 10;
 
 	public int[] colors = { Color.parseColor("#ff64c151"), Color.parseColor("#ff8982d3"), Color.parseColor("#fffd8963"), Color.parseColor("#ff4ed0c7"), Color.parseColor("#ff7eb9f1"), Color.parseColor("#fffdb859"), Color.parseColor("#fffd6b7b") };
 	public int[] drawables = { R.drawable.selector_label_one, R.drawable.selector_label_two, R.drawable.selector_label_three, R.drawable.selector_label_four, R.drawable.selector_label_five, R.drawable.selector_label_six, R.drawable.selector_label_seven };
@@ -86,6 +86,32 @@ public class GroupLabelActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		initViews();
 		initData();
+	}
+
+	@Override
+	public void onBackPressed() {
+		mFinish();
+	}
+
+	public void mFinish() {
+		if (save.getVisibility() == View.VISIBLE) {
+			Alert.createDialog(this).setTitle("您还有编辑尚未提交，是否保存？").setOnConfirmClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					modifyGroupLabels();
+					finish();
+				}
+			}).setOnCancelClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					finish();
+				}
+			}).show();
+		} else {
+			finish();
+		}
 	}
 
 	private void initData() {
@@ -154,9 +180,11 @@ public class GroupLabelActivity extends Activity {
 			@Override
 			public void onClickEffective(View view) {
 				if (view.equals(backView)) {
-					finish();
+					mFinish();
 				} else if (view.equals(addLabel)) {
 					creataCustomLabel();
+				} else if (view.equals(save)) {
+					modifyGroupLabels();
 				} else {
 					String tag = (String) view.getTag(R.id.tag_class);
 					if ("seleted".equals(tag)) {
@@ -177,14 +205,21 @@ public class GroupLabelActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				String label = (String) mAdapter.getItem(position);
 				int color = colors[labelColorsMap.get(label)];
-				if (label.equals("更多")) {
-
+				if (label.equals("更多") && position == mAdapter.labels.size() - 1) {
+					getHotLabels();
 				} else {
-					if (!seletedLabel.contains(label))
+					if (!seletedLabel.contains(label)) {
 						labels.addView(createSeletedLabel(color, label), 1);
+					} else {
+						int index = seletedLabel.indexOf(label);
+						seletedLabel.remove(index);
+						labels.removeViewAt(index + 1);
+						mAdapter.notifyDataSetChanged();
+					}
 					checkSave();
 				}
 			}
+
 		};
 		bindEvent();
 	}
@@ -192,23 +227,21 @@ public class GroupLabelActivity extends Activity {
 	private void bindEvent() {
 		backView.setOnClickListener(mOnClickListener);
 		addLabel.setOnClickListener(mOnClickListener);
+		save.setOnClickListener(mOnClickListener);
 		grid.setOnItemClickListener(mOnItemClickListener);
 	}
 
 	private void fillLabels() {
 		labels.removeAllViews();
 		labels.addView(addLabel, 0);
-		seletedLabel.clear();
-		seletedLabel.add("音乐");
-		seletedLabel.add("游戏");
-		seletedLabel.add("动漫");
-		seletedLabel.add("绘画");
 		for (String label : seletedLabel) {
 			int color = 0;
 			if (labelColorsMap.containsKey(label)) {
 				color = colors[labelColorsMap.get(label)];
 			} else {
-				color = colors[random.nextInt(colors.length)];
+				int index = random.nextInt(colors.length);
+				color = colors[index];
+				labelColorsMap.put(label, index);
 			}
 			labels.addView(createSeletedLabel(color, label));
 		}
@@ -244,11 +277,11 @@ public class GroupLabelActivity extends Activity {
 	}
 
 	class GridAdapter extends BaseAdapter {
-		private List<String> labels;
+		public List<String> labels;
 
 		public GridAdapter() {
 			labels = new ArrayList<String>(Arrays.asList(Constant.LABELS));
-			// labels.add("更多");
+			labels.add("更多");
 		}
 
 		@Override
@@ -331,9 +364,11 @@ public class GroupLabelActivity extends Activity {
 						if (!seletedLabel.contains(label)) {
 							int color = 0;
 							if (labelColorsMap.containsKey(label)) {
-								color = labelColorsMap.get(label);
+								color = colors[labelColorsMap.get(label)];
 							} else {
-								color = colors[random.nextInt(colors.length)];
+								int index = random.nextInt(colors.length);
+								color = colors[index];
+								labelColorsMap.put(label, index);
 							}
 							labels.addView(createSeletedLabel(color, label), 1);
 						}
@@ -363,6 +398,68 @@ public class GroupLabelActivity extends Activity {
 		} else {
 			save.setVisibility(View.VISIBLE);
 		}
+	}
+
+	private void getHotLabels() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("nowpage", nowpage + "");
+		params.addBodyParameter("pagesize", pagesize + "");
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETHOTLABELS, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+				public List<String> labels;
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取热门标签成功")) {
+					for (String label : response.labels) {
+						if (!mAdapter.labels.contains(label)) {
+							mAdapter.labels.add(mAdapter.labels.size() - 2, label);
+						}
+					}
+					nowpage++;
+					mAdapter.notifyDataSetChanged();
+				} else {
+					log.e(response.失败原因);
+				}
+			}
+		});
+	}
+
+	private void modifyGroupLabels() {
+		currentGroup.labels.clear();
+		currentGroup.labels.addAll(seletedLabel);
+		data.relationship.isModified = true;
+		checkSave();
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", currentGroup.gid + "");
+		params.addBodyParameter("labels", gson.toJson(currentGroup.labels));
+		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFYGROUPLABEL, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("创建群组标签成功")) {
+					log.e("创建群组标签成功");
+				} else {
+					log.e(response.失败原因);
+				}
+			}
+
+		});
 	}
 
 	private void getGroupLabels() {

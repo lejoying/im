@@ -210,13 +210,13 @@ public class ChatView {
 				thisController.data.messages.groupMessageMap.put("g" + key, messages);
 			}
 			Group group = thisController.data.relationship.groupsMap.get(key);
-			if (group != null) {
+			if (group != null && group.members != null) {
 				group.notReadMessagesCount = 0;
 				backTitleView.setText(group.name + "(" + group.members.size() + ")");
 			} else {
 				backTitleView.setText("Group");
 			}
-			log.e("current:::" + thisController.data.relationship.groupsMap.get(key).members.size());
+			// log.e("current:::" + thisController.data.relationship.groupsMap.get(key).members.size());
 		} else if ("point".equals(type)) {
 			messages = thisController.data.messages.friendMessageMap.get("p" + key);
 			if (messages == null) {

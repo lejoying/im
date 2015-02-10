@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://192.168.0.105/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/ 192.168.1.14 192.168.0.105
 
 	/**
 	 * http://images2.we-links.com/
@@ -105,6 +105,14 @@ public class API {
 	 * http://www.we-links.com/api2/group/getgrouplabels
 	 */
 	public static String GROUP_GETGROUPLABELS = API_DOMAIN + "api2/group/getgrouplabels";
+	/**
+	 * http://www.we-links.com/api2/group/gethotlabels
+	 */
+	public static String GROUP_GETHOTLABELS = API_DOMAIN + "api2/group/gethotlabels";
+	/**
+	 * http://www.we-links.com/api2/group/getlabelsgroups
+	 */
+	public static String GROUP_GETLABELSGROUPS = API_DOMAIN + "api2/group/getlabelsgroups";
 
 	// share
 	/**
