@@ -66,7 +66,6 @@ public class GroupListActivity extends Activity {
 
 	public RelativeLayout backView;
 	public TextView backTitileView;
-	public TextView titleView;
 	public RelativeLayout rightContainer, maxView;
 	public LinearLayout rightContainerLinearLayout;
 
@@ -228,7 +227,6 @@ public class GroupListActivity extends Activity {
 		this.maxView = (RelativeLayout) findViewById(R.id.maxView);
 		this.backView = (RelativeLayout) findViewById(R.id.backView);
 		this.backTitileView = (TextView) findViewById(R.id.backTitleView);
-		this.titleView = (TextView) findViewById(R.id.titleContent);
 		this.rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 
 		this.groupListContainer = (ListView) findViewById(R.id.groupListContainer);

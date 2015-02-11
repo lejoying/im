@@ -58,7 +58,6 @@ public class ImageScanActivity extends FragmentActivity {
 	// top bar view
 	public RelativeLayout backView;
 	public TextView imageNumberView;
-	public TextView titleView;
 	// public ImageView choiceCoverView;
 	public ImageView deleteButtonView;
 
@@ -100,7 +99,6 @@ public class ImageScanActivity extends FragmentActivity {
 		shareOptionsView = (RelativeLayout) findViewById(R.id.shareOption);
 		backView = (RelativeLayout) findViewById(R.id.backView);
 		imageNumberView = (TextView) findViewById(R.id.backTitleView);
-		titleView = (TextView) findViewById(R.id.titleContent);
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 		backImageView = (ImageView) findViewById(R.id.backImageView);
 		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true).displayer(new FadeInBitmapDisplayer(300)).build();

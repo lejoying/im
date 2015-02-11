@@ -51,6 +51,14 @@
             android:textSize="16sp" />
 
         <RelativeLayout
+            android:id="@+id/centerContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center" >
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/rightContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

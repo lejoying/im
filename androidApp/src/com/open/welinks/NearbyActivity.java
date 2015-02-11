@@ -23,6 +23,7 @@ public class NearbyActivity extends Activity {
 		thisController.thisView = thisView;
 
 		thisView.initView();
+		thisView.mapView.onCreate(savedInstanceState);
 		thisController.onCreate();
 		thisView.fillData();
 	}
@@ -31,5 +32,23 @@ public class NearbyActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		thisView.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		thisView.onPause();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		thisView.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		thisView.onDestroy();
 	}
 }
