@@ -416,7 +416,7 @@ public class TaskContainer_Share {
 				String fileName = "";
 				File fromFile = new File(key);
 				byte[] bytes = null;
-				bytes = fileHandlers.getImageFileBytes(fromFile, viewManage.screenWidth, viewManage.screenHeight);
+				bytes = fileHandlers.getImageFileBytes(null, fromFile, viewManage.screenWidth, viewManage.screenHeight);
 				int fileLength = bytes.length;
 				myFile.length = fileLength;
 				String sha1FileName = sha1.getDigestOfString(bytes);

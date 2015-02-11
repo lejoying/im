@@ -21,7 +21,6 @@ public class CreateGroupOkActivity extends Activity {
 
 	public RelativeLayout backView;
 	public TextView backTitileView;
-	public TextView titleView;
 
 	public TextView createGroupOKView;
 
@@ -60,7 +59,6 @@ public class CreateGroupOkActivity extends Activity {
 		this.backView = (RelativeLayout) findViewById(R.id.backView);
 		this.backTitileView = (TextView) findViewById(R.id.backTitleView);
 		this.backTitileView.setText("邀请好友");
-		this.titleView = (TextView) findViewById(R.id.titleContent);
 		this.createGroupOKView = (TextView) findViewById(R.id.createGroupOK);
 	}
 }

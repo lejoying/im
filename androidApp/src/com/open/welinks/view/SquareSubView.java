@@ -88,7 +88,8 @@ public class SquareSubView {
 		this.locationListBody.initialize(this.displayMetrics, this.squareMessageView);
 
 		thisController.bindEvent();
-
+		dialogSpring.setCurrentValue(1);
+		dialogSpring.setEndValue(1);
 		showLocationList();
 	}
 
@@ -267,8 +268,10 @@ public class SquareSubView {
 		@Override
 		public void onSpringUpdate(Spring spring) {
 			float mappedValue = (float) spring.getCurrentValue();
-			targetView.setScaleX(mappedValue);
-			targetView.setScaleY(mappedValue);
+			if (targetView != null) {
+				targetView.setScaleX(mappedValue);
+				targetView.setScaleY(mappedValue);
+			}
 		}
 
 		public int id;

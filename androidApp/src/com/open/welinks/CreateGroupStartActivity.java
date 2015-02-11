@@ -38,7 +38,6 @@ public class CreateGroupStartActivity extends Activity {
 
 	public RelativeLayout backView;
 	public TextView backTitileView;
-	public TextView titleView;
 
 	public EditText groupNameView;
 	public TextView groupPositionView;
@@ -82,7 +81,6 @@ public class CreateGroupStartActivity extends Activity {
 		this.backView = (RelativeLayout) findViewById(R.id.backView);
 		this.backTitileView = (TextView) findViewById(R.id.backTitleView);
 		this.backTitileView.setText("创建群组");
-		this.titleView = (TextView) findViewById(R.id.titleContent);
 
 		this.groupNameView = (EditText) findViewById(R.id.groupName);
 		this.groupPositionView = (TextView) findViewById(R.id.groupPosition);

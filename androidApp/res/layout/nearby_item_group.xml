@@ -11,7 +11,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="2.5dp"
-            android:background="#99ffffff" />
+            android:background="#99000000" />
 
         <TextView
             android:id="@+id/address"
@@ -20,7 +20,7 @@
             android:layout_marginRight="25dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="#fff"
+            android:textColor="#99000000"
             android:textSize="16sp" />
 
         <TextView
@@ -29,18 +29,18 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textColor="#fff" />
+            android:textColor="#99000000" />
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#66ffffff" />
+            android:background="#99000000" />
     </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="2.5dp"
-        android:background="#99ffffff" />
+        android:background="#99000000" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
-                android:textColor="#fff"
+                android:textColor="#99000000"
                 android:textSize="18sp" />
 
             <LinearLayout
@@ -83,7 +83,7 @@
                     android:id="@+id/chatNum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#fff" />
+                    android:textColor="#99000000" />
             </LinearLayout>
 
             <TextView
@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:textColor="#fff" />
+                android:textColor="#99000000" />
         </LinearLayout>
 
         <TextView
@@ -107,7 +107,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#66ffffff" />
+        android:background="#99000000" />
 
     <ImageView
         android:layout_width="match_parent"

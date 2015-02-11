@@ -1,21 +1,143 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/maxView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background_1"
-    android:id="@+id/maxView"
     tools:context=".NearbyActivity" >
 
     <include layout="@layout/view_back_view" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="48dp"
+        android:background="#f0f0f0" >
+
+        <RelativeLayout
+            android:id="@+id/position"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_address_background" >
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="3dp"
+                android:src="@drawable/square1"
+                android:tint="#0099cd" />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="80dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:text="河北省秦皇岛市山海关区海韵丁香"
+                android:textColor="#99000000"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="80dp"
+            android:layout_marginTop="10dp"
+            android:background="#c8c8c8" />
+
+        <TextView
+            android:id="@+id/sort"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/button_address_background"
+            android:gravity="center"
+            android:text="排序筛选"
+            android:textColor="#99000000"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/lbsmap"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="88dp" >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <com.amap.api.maps2d.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </com.amap.api.maps2d.MapView>
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/lbs_point"
+            android:translationY="-15dp" />
+
+        <ImageView
+            android:id="@+id/search"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/button_lbs_background"
+            android:padding="5dp"
+            android:src="@drawable/search_input"
+            android:tint="#666666" />
+
+        <ImageView
+            android:id="@+id/location"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="60dp"
+            android:background="@drawable/button_lbs_background"
+            android:padding="8dp"
+            android:src="@drawable/navi_idle_gps_unlocked" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#99666666" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="87dp"
+        android:background="#99666666"
+        android:visibility="visible" />
 
     <ListView
         android:id="@+id/nearby"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="288dp"
+        android:background="#f1f2f5"
         android:cacheColorHint="#0000"
         android:divider="#0000"
-        android:dividerHeight="20dp"
+        android:dividerHeight="0dp"
         android:fadingEdge="none"
         android:listSelector="#0000"
         android:scrollbars="none" >

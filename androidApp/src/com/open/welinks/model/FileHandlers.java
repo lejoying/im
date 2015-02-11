@@ -29,6 +29,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.ThumbleListener;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.utils.StreamParser;
@@ -317,7 +318,7 @@ public class FileHandlers {
 			// imageLoader.displayImage("drawable://" + R.drawable.icon, imageView);
 			return;
 		}
-		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + width + "w_" + height + "h_1c_1e_100q";
+		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + width + "w_" + height + "h_1c_1e_80q";
 		File file = null;
 		if (thumbleType == THUMBLE_TYEP_SQUARE) {
 			file = new File(sdcardSquareThumbnailFolder, fileName);
@@ -451,7 +452,7 @@ public class FileHandlers {
 		return inSampleSize;
 	}
 
-	public ByteArrayOutputStream decodeSampledBitmapFromFileInputStream(File file, int reqWidth, int reqHeight) throws FileNotFoundException {
+	public ByteArrayOutputStream decodeSampledBitmapFromFileInputStream(ShareContentItem shareContentItem, File file, int reqWidth, int reqHeight) throws FileNotFoundException {
 		FileInputStream fileInputStream = new FileInputStream(file);
 
 		BitmapFactory.Options options = new BitmapFactory.Options();
@@ -463,6 +464,9 @@ public class FileHandlers {
 			fileInputStream.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+		}
+		if (shareContentItem != null) {
+			shareContentItem.ratio = (float) options.outHeight / (float) options.outWidth;
 		}
 
 		BitmapFactory.Options options2 = new BitmapFactory.Options();
@@ -528,15 +532,23 @@ public class FileHandlers {
 
 	// public byte[] bytes;
 
-	public byte[] getImageFileBytes(File fromFile, int width, int height) {
+	public byte[] getImageFileBytes(ShareContentItem shareContentItem, File fromFile, int width, int height) {
 		long fileLength = fromFile.length();
 		try {
 			byte[] bytes;
 			if (fileLength > 400 * 1024) {
-				ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, width, height);
+				ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(shareContentItem, fromFile, width, height);
 				bytes = byteArrayOutputStream.toByteArray();
 				byteArrayOutputStream.close();
 			} else {
+				FileInputStream fileInputStream0 = new FileInputStream(fromFile);
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = true;
+				BitmapFactory.decodeStream(fileInputStream0, null, options);
+				fileInputStream0.close();
+				if (shareContentItem != null) {
+					shareContentItem.ratio = (float) options.outHeight / (float) options.outWidth;
+				}
 				FileInputStream fileInputStream = new FileInputStream(fromFile);
 				bytes = StreamParser.parseToByteArray(fileInputStream);
 				fileInputStream.close();
