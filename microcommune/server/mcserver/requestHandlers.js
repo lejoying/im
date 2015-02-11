@@ -329,6 +329,10 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.gethotlabels(data, response);
         });
+    } else if (operation == "movegroupstocircle") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.movegroupstocircle(data, response);
+        });
     }
 
 }

@@ -250,8 +250,9 @@ public class BusinessCardView {
 			businessCard.lable = thisActivity.getString(R.string.business_not_label);
 			businessCard.creattime = group.createTime;
 			businessCard.button_one = thisActivity.getString(R.string.business_chat_room);
-			businessCard.button_two = thisActivity.getString(R.string.business_add_to_groupcircle);
+			businessCard.button_two = "";
 			businessCard.button_three = "";
+			buttonTwo.setVisibility(View.GONE);
 			buttonThree.setVisibility(View.GONE);
 			qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
 		} else if (status.equals(Status.NOTJOINGROUP)) {

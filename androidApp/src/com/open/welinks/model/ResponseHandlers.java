@@ -1527,7 +1527,7 @@ public class ResponseHandlers {
 				data.relationship.groupCircles.add(String.valueOf(response.groupCircle.rid));
 				data.relationship.groupCirclesMap.put(String.valueOf(response.groupCircle.rid), response.groupCircle);
 				if (viewManage.groupListActivity != null) {
-					viewManage.groupListActivity.showGroupCircles();
+					viewManage.groupListActivity.thisView.showGroupCircles();
 				}
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
@@ -1579,7 +1579,21 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> group_movegroupstocircle = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
 
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("移动群组到分组成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------移动群组到分组成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		}
+	};
 	public RequestCallBack<String> group_creategrouplabel = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;

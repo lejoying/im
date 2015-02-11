@@ -115,7 +115,7 @@ public class ViewManage {
 			}
 		} else if (viewName.equals("GroupListActivity")) {
 			if (groupListActivity != null) {
-				groupListActivity.groupListAdapter.notifyDataSetChanged();
+				groupListActivity.thisView.groupListAdapter.notifyDataSetChanged();
 			}
 		} else if (viewName.equals("ShareSubView")) {
 			if (mainView.shareSubView != null) {

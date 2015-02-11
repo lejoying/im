@@ -113,6 +113,10 @@ public class API {
 	 * http://www.we-links.com/api2/group/getlabelsgroups
 	 */
 	public static String GROUP_GETLABELSGROUPS = API_DOMAIN + "api2/group/getlabelsgroups";
+	/**
+	 * http://www.we-links.com/api2/group/movegroupstocircle
+	 */
+	public static String GROUP_MOVEGROUPSTOCIRCLE = API_DOMAIN + "api2/group/movegroupstocircle";
 
 	// share
 	/**

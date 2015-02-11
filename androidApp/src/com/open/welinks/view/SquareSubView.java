@@ -40,7 +40,6 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.oss.DownloadFileList;
 
 public class SquareSubView {
@@ -226,32 +225,34 @@ public class SquareSubView {
 
 	public void setConver(ImageView imageView) {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
-		if (group.cover == null || "".equals(group.cover)) {
-			imageLoader.displayImage("drawable://" + R.drawable.tempicon, imageView);
-			return;
-		}
-		final String path = file.getAbsolutePath();
-		if (file.exists()) {
-			imageLoader.displayImage("file://" + path, imageView, new SimpleImageLoadingListener() {
-				@Override
-				public void onLoadingStarted(String imageUri, View view) {
-				}
-
-				@Override
-				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					// downloadConver(group.cover, path);
-				}
-
-				@Override
-				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-				}
-			});
-		} else {
-			if (group.cover != null) {
-				// downloadConver(group.cover, path);
-			} else {
+		if (group != null) {
+			File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
+			if (group.cover == null || "".equals(group.cover)) {
 				imageLoader.displayImage("drawable://" + R.drawable.tempicon, imageView);
+				return;
+			}
+			final String path = file.getAbsolutePath();
+			if (file.exists()) {
+				imageLoader.displayImage("file://" + path, imageView, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						// downloadConver(group.cover, path);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					}
+				});
+			} else {
+				if (group.cover != null) {
+					// downloadConver(group.cover, path);
+				} else {
+					imageLoader.displayImage("drawable://" + R.drawable.tempicon, imageView);
+				}
 			}
 		}
 	}

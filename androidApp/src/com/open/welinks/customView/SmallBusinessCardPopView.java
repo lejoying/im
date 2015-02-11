@@ -501,7 +501,7 @@ public class SmallBusinessCardPopView {
 							intent.putExtra("type", type);
 							thisActivity.startActivity(intent);
 						} else if (type.equals(TYPE_GROUP)) {
-							Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+							Intent intent = new Intent(thisActivity, ChatActivity.class);
 							intent.putExtra("id", key);
 							intent.putExtra("type", type);
 							thisActivity.startActivityForResult(intent, R.id.tag_second);

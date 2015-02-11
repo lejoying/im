@@ -2,8 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/maxView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/main_background" >
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
+        android:background="@color/gray80" />
 
     <include layout="@layout/view_back_view" />
 
@@ -11,15 +16,50 @@
         android:id="@+id/groupListContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="53dp"
+        android:layout_above="@+id/groupEditor"
+        android:layout_marginTop="48dp"
+        android:background="@color/white"
         android:cacheColorHint="#0000"
-        android:divider="#00c0c0c0"
-        android:dividerHeight="5dp"
+        android:divider="#ffc0c0c0"
+        android:dividerHeight="0.5dp"
         android:listSelector="#0000"
         android:scrollbars="none" >
     </ListView>
+
+    <LinearLayout
+        android:id="@+id/groupEditor"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="1dp"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="取消"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:background="@color/gray80" />
+
+        <TextView
+            android:id="@+id/confirm"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="移动到..."
+            android:textColor="@color/gray80"
+            android:textSize="16sp" />
+    </LinearLayout>
 
 </RelativeLayout>
