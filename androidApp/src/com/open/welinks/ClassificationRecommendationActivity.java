@@ -7,11 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.customView.MyHorizontalScrollView;
+import com.open.welinks.customView.MyHorizontalScrollView.ScrollEndListener;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -22,8 +32,8 @@ import com.open.welinks.view.ViewManage;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -34,6 +44,8 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -48,6 +60,8 @@ public class ClassificationRecommendationActivity extends Activity {
 	public Data data = Data.getInstance();
 	public FileHandlers mFileHandlers = FileHandlers.getInstance();
 	public ViewManage mViewManage = ViewManage.getInstance();
+	public HttpClient httpClient = HttpClient.getInstance();
+	public Gson gson = new Gson();
 
 	public LayoutInflater mInflater;
 
@@ -55,12 +69,13 @@ public class ClassificationRecommendationActivity extends Activity {
 
 	public ViewGroup seletedLabelParentView, labelParents, lineOne, lineTwo, lineThree, lineFour;
 	public HorizontalScrollView seletedScrollView;
-	public View backView, backMaxView;
+	public MyHorizontalScrollView labelParentsScrollView;
+	public View mainView, backView, backMaxView;
 	public ImageView backImageView, searchImage;
 	public TextView backTitleView;
 	public ListView content;
 
-	public int measure;
+	public int measure, groupNowPage = 0, groupPageSize = 5, labelNowPage = 0, labelPageSize = 10;
 
 	public List<String> seletedLabel;
 	public List<String> labels;
@@ -70,9 +85,12 @@ public class ClassificationRecommendationActivity extends Activity {
 	public MyOnClickListener mOnClickListener;
 	public OnScrollListener mOnScrollListener;
 	public OnTouchListener OnTouchListener;
+	public ScrollEndListener mScrollEndListener;
+	public OnItemClickListener mOnItemClickListener;
 
 	public GroupAdapter mAdapter;
-	public List<String> groups;
+
+	public SmallBusinessCardPopView businessCardPopView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +103,7 @@ public class ClassificationRecommendationActivity extends Activity {
 	private void initViews() {
 		setContentView(R.layout.activity_classificationrecommendation);
 		mInflater = getLayoutInflater();
+		mainView = findViewById(R.id.mainView);
 		labelParents = (ViewGroup) findViewById(R.id.labelParents);
 		seletedLabelParentView = (ViewGroup) findViewById(R.id.seletedLabels);
 		lineOne = (ViewGroup) findViewById(R.id.lineOne);
@@ -94,12 +113,11 @@ public class ClassificationRecommendationActivity extends Activity {
 		backView = findViewById(R.id.backView);
 		backMaxView = findViewById(R.id.backMaxView);
 		seletedScrollView = (HorizontalScrollView) findViewById(R.id.ScrollViewOne);
+		labelParentsScrollView = (MyHorizontalScrollView) findViewById(R.id.ScrollViewTwo);
 		backImageView = (ImageView) findViewById(R.id.backImageView);
 		backTitleView = (TextView) findViewById(R.id.backTitleView);
 		content = (ListView) findViewById(R.id.content);
-		// backMaxView.setBackgroundColor(Color.WHITE);
-		// backTitleView.setTextColor(Color.parseColor("#0099cd"));
-		// backImageView.setColorFilter(Color.parseColor("#0099cd"));
+		backMaxView.setBackgroundColor(Color.parseColor("#02242f"));
 
 		searchImage = new ImageView(this);
 		searchImage.setImageResource(R.drawable.dialog_search);
@@ -109,13 +127,15 @@ public class ClassificationRecommendationActivity extends Activity {
 		searchImage.setBackgroundDrawable(drawable);
 		searchImage.setPadding(BaseDataUtils.dpToPxint(22), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(22), BaseDataUtils.dpToPxint(5));
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, BaseDataUtils.dpToPxint(29));
-		params.bottomMargin = BaseDataUtils.dpToPxint(10);
-		params.topMargin = BaseDataUtils.dpToPxint(7);
+		params.rightMargin = BaseDataUtils.dpToPxint(7);
 		params.leftMargin = BaseDataUtils.dpToPxint(7);
-		params.rightMargin = BaseDataUtils.dpToPxint(10);
+		params.gravity = Gravity.CENTER;
 		searchImage.setLayoutParams(params);
 		seletedLabelParentView.addView(searchImage, 0);
 		backTitleView.setText("分类推荐");
+
+		businessCardPopView = new SmallBusinessCardPopView(this, mainView);
+		businessCardPopView.cardView.setHot(false);
 		initListener();
 	}
 
@@ -123,7 +143,6 @@ public class ClassificationRecommendationActivity extends Activity {
 		mOnClickListener = new MyOnClickListener() {
 			@Override
 			public void onClickEffective(View view) {
-				log.e("click:::::::::::::");
 				if (view.equals(backView)) {
 					finish();
 				} else if (view.equals(searchImage)) {
@@ -142,20 +161,13 @@ public class ClassificationRecommendationActivity extends Activity {
 							setTextAttribute((TextView) view, "", color, "seleted");
 							labelViews.add(0, view);
 							createSeletedLabel(label, color);
+						} else {
+							removeSeletedLabel(label);
 						}
 					} else if ("seleted".equals(tag)) {
 						String label = ((TextView) view).getText().toString();
 						if (seletedLabel.contains(label)) {
-							int index = seletedLabel.indexOf(label);
-							seletedLabelParentView.removeViewAt(index + 1);
-							seletedLabel.remove(label);
-							View normalView = labelViews.get(index);
-							if (normalView != null)
-								setTextAttribute((TextView) normalView, "", (Integer) normalView.getTag(R.id.tag_first), "normal");
-							labelViews.remove(index);
-							if (labelParents.getVisibility() == View.GONE) {
-								labelParents.setVisibility(View.VISIBLE);
-							}
+							removeSeletedLabel(label);
 						}
 					}
 				}
@@ -184,11 +196,30 @@ public class ClassificationRecommendationActivity extends Activity {
 				if (labelParents.getVisibility() == View.VISIBLE) {
 					labelParents.setVisibility(View.GONE);
 				}
+				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE && view.getLastVisiblePosition() == (view.getCount() - 1)) {
+					getLabelsGroups(false);
+				}
 			}
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
+			}
+		};
+		mScrollEndListener = new ScrollEndListener() {
+
+			@Override
+			public void scrollEnd() {
+				getHotLabels();
+			}
+		};
+		mOnItemClickListener = new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				String key = (String) mAdapter.getItem(position);
+				businessCardPopView.cardView.setSmallBusinessCardContent(businessCardPopView.cardView.TYPE_GROUP, key);
+				businessCardPopView.showUserCardDialogView();
 			}
 		};
 		bindEvent();
@@ -199,8 +230,10 @@ public class ClassificationRecommendationActivity extends Activity {
 		searchImage.setOnClickListener(mOnClickListener);
 
 		seletedScrollView.setOnTouchListener(OnTouchListener);
+		labelParentsScrollView.setOnScrollEndListener(mScrollEndListener);
 
 		content.setOnScrollListener(mOnScrollListener);
+		content.setOnItemClickListener(mOnItemClickListener);
 	}
 
 	private void initData() {
@@ -210,7 +243,6 @@ public class ClassificationRecommendationActivity extends Activity {
 		labelViews = new ArrayList<View>();
 		labelViewsMap = new HashMap<String, View>();
 		labels = new ArrayList<String>(Arrays.asList(Constant.LABELS));
-		labels.remove(0);
 		fillData(labels);
 		mAdapter = new GroupAdapter();
 		content.setAdapter(mAdapter);
@@ -218,7 +250,18 @@ public class ClassificationRecommendationActivity extends Activity {
 
 	private void fillData(List<String> labels) {
 		for (String label : labels) {
-			int color = Color.parseColor("#" + colors[random.nextInt(colors.length - 1)]);
+			int color = 0;
+			if (seletedLabel.contains(label)) {
+				for (int i = 1; i < seletedLabelParentView.getChildCount(); i++) {
+					TextView text = (TextView) seletedLabelParentView.getChildAt(i);
+					if (text.getText().toString().equals(label)) {
+						color = (Integer) text.getTag(R.id.tag_first);
+						break;
+					}
+				}
+			} else {
+				color = colors[random.nextInt(colors.length)];
+			}
 			TextView textView = new TextView(this);
 			setTextAttribute(textView, label, color, "normal");
 			textView.setTag(R.id.tag_class, "label");
@@ -238,7 +281,10 @@ public class ClassificationRecommendationActivity extends Activity {
 			textView.setBackgroundDrawable(drawableDown);
 			textView.setTextColor(Color.WHITE);
 		} else if ("normal".equals(status)) {
-			textView.setBackgroundDrawable(createStateListDrawable(color));
+			// GradientDrawable drawableUp = (GradientDrawable) getResources().getDrawable(R.drawable.selector_label);
+			// drawableUp.setStroke((int) BaseDataUtils.dpToPx(0.75f), color);
+			// drawableUp.setColor(Color.TRANSPARENT);
+			textView.setBackgroundDrawable(createDrawable(color));
 			textView.setTextColor(createColorStateList(color));
 		}
 		if (!"".equals(content)) {
@@ -247,33 +293,34 @@ public class ClassificationRecommendationActivity extends Activity {
 			textView.setPadding(BaseDataUtils.dpToPxint(22), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(22), BaseDataUtils.dpToPxint(5));
 			textView.setGravity(Gravity.CENTER);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			params.bottomMargin = BaseDataUtils.dpToPxint(10);
+			params.bottomMargin = BaseDataUtils.dpToPxint(7);
 			params.topMargin = BaseDataUtils.dpToPxint(7);
 			params.leftMargin = BaseDataUtils.dpToPxint(7);
-			params.rightMargin = BaseDataUtils.dpToPxint(10);
+			params.rightMargin = BaseDataUtils.dpToPxint(7);
 			textView.setLayoutParams(params);
 			textView.setOnClickListener(mOnClickListener);
 		}
 		return textView;
 	}
 
-	public StateListDrawable createStateListDrawable(int color) {
-		StateListDrawable stateListDrawable = new StateListDrawable();
-		GradientDrawable drawableUp = (GradientDrawable) getResources().getDrawable(R.drawable.shape_grouplabel_item);
-		drawableUp.setStroke((int) BaseDataUtils.dpToPx(0.75f), color);
-		drawableUp.setColor(Color.TRANSPARENT);
-
-		GradientDrawable drawableDown = (GradientDrawable) getResources().getDrawable(R.drawable.shape_grouplabel_item);
-		drawableDown.setStroke((int) BaseDataUtils.dpToPx(0.75f), color);
-		drawableDown.setColor(color);
-
-		stateListDrawable.addState(new int[] { android.R.attr.state_pressed, android.R.attr.state_enabled }, drawableDown);
-		stateListDrawable.addState(new int[] { android.R.attr.state_enabled, android.R.attr.state_focused }, drawableDown);
-		stateListDrawable.addState(new int[] { android.R.attr.state_enabled }, drawableUp);
-		stateListDrawable.addState(new int[] { android.R.attr.state_focused }, drawableDown);
-		stateListDrawable.addState(new int[] { android.R.attr.state_window_focused }, drawableUp);
-		stateListDrawable.addState(new int[] {}, drawableUp);
-		return stateListDrawable;
+	public Drawable createDrawable(int color) {
+		Drawable drawable = null;
+		if (color == colors[0]) {
+			drawable = getResources().getDrawable(R.drawable.selector_label_one);
+		} else if (color == colors[1]) {
+			drawable = getResources().getDrawable(R.drawable.selector_label_two);
+		} else if (color == colors[2]) {
+			drawable = getResources().getDrawable(R.drawable.selector_label_three);
+		} else if (color == colors[3]) {
+			drawable = getResources().getDrawable(R.drawable.selector_label_four);
+		} else if (color == colors[4]) {
+			drawable = getResources().getDrawable(R.drawable.selector_label_five);
+		} else if (color == colors[5]) {
+			drawable = getResources().getDrawable(R.drawable.selector_label_six);
+		} else if (color == colors[6]) {
+			drawable = getResources().getDrawable(R.drawable.selector_label_seven);
+		}
+		return drawable;
 	}
 
 	public ColorStateList createColorStateList(int color) {
@@ -303,7 +350,7 @@ public class ClassificationRecommendationActivity extends Activity {
 						labelViews.add(0, seleteView);
 						createSeletedLabel(label, color);
 					} else {
-						createSeletedLabel(label, Color.parseColor("#" + colors[random.nextInt(colors.length - 1)]));
+						createSeletedLabel(label, colors[random.nextInt(colors.length)]);
 					}
 				}
 			}
@@ -326,6 +373,26 @@ public class ClassificationRecommendationActivity extends Activity {
 				setTextAttribute((TextView) normalView, "", (Integer) normalView.getTag(R.id.tag_first), "normal");
 			labelViews.remove(4);
 		}
+		getLabelsGroups(true);
+	}
+
+	public void removeSeletedLabel(String label) {
+		int index = seletedLabel.indexOf(label);
+		seletedLabelParentView.removeViewAt(index + 1);
+		seletedLabel.remove(label);
+		View normalView = labelViews.get(index);
+		if (normalView != null)
+			setTextAttribute((TextView) normalView, "", (Integer) normalView.getTag(R.id.tag_first), "normal");
+		labelViews.remove(index);
+		if (labelParents.getVisibility() == View.GONE) {
+			labelParents.setVisibility(View.VISIBLE);
+		}
+		if (seletedLabel.size() > 0) {
+			getLabelsGroups(true);
+		} else {
+			mAdapter.groups.clear();
+			mAdapter.notifyDataSetChanged();
+		}
 	}
 
 	public View compareViews(View... views) {
@@ -343,10 +410,90 @@ public class ClassificationRecommendationActivity extends Activity {
 		return minWidthView;
 	}
 
+	public void getLabelsGroups(final boolean isClear) {
+		if (isClear)
+			groupNowPage = 0;
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("labels", gson.toJson(seletedLabel));
+		params.addBodyParameter("nowpage", groupNowPage + "");
+		params.addBodyParameter("pagesize", groupPageSize + "");
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETLABELSGROUPS, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+				public List<String> groups;
+				public Map<String, Group> groupsMap;
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取标签群组成功")) {
+					for (Group group : response.groupsMap.values()) {
+						if (!data.relationship.groupsMap.containsKey(group.gid + "")) {
+							data.relationship.groupsMap.put(group.gid + "", group);
+						}
+					}
+					if (isClear)
+						mAdapter.groups.clear();
+					for (String group : response.groups) {
+						if (!mAdapter.groups.contains(group)) {
+							mAdapter.groups.add(group);
+						}
+					}
+					groupNowPage++;
+					mAdapter.notifyDataSetChanged();
+				} else {
+					log.e(response.失败原因);
+				}
+			}
+
+		});
+	}
+
+	public void getHotLabels() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("nowpage", labelNowPage + "");
+		params.addBodyParameter("pagesize", labelPageSize + "");
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETHOTLABELS, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+				public List<String> labels;
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取热门标签成功")) {
+					List<String> notHaveLabels = new ArrayList<String>();
+					for (String label : response.labels) {
+						if (!labels.contains(label)) {
+							notHaveLabels.add(label);
+							labels.add(label);
+						}
+					}
+					fillData(notHaveLabels);
+					labelNowPage++;
+				} else {
+					log.e(response.失败原因);
+				}
+			}
+		});
+	}
+
 	class GroupAdapter extends BaseAdapter {
 
+		public List<String> groups;
+
 		public GroupAdapter() {
-			groups = data.relationship.groups;
+			groups = new ArrayList<String>();
 		}
 
 		@Override
@@ -398,5 +545,5 @@ public class ClassificationRecommendationActivity extends Activity {
 		}
 	}
 
-	public String[] colors = { "ff64c151", "ff8982d3", "fffd8963", "ff4ed0c7", "ff7eb9f1", "fffdb859", "fffd6b7b" };
+	public int[] colors = { Color.parseColor("#ff64c151"), Color.parseColor("#ff8982d3"), Color.parseColor("#fffd8963"), Color.parseColor("#ff4ed0c7"), Color.parseColor("#ff7eb9f1"), Color.parseColor("#fffdb859"), Color.parseColor("#fffd6b7b") };
 }

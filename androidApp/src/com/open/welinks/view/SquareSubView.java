@@ -40,6 +40,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.oss.DownloadFileList;
 
 public class SquareSubView {

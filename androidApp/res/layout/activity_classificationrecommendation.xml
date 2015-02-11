@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray95"
@@ -16,9 +17,9 @@
         <LinearLayout
             android:id="@+id/seletedLabels"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:gravity="center_horizontal"
+            android:gravity="center_vertical"
             android:orientation="horizontal" >
         </LinearLayout>
     </HorizontalScrollView>
@@ -28,7 +29,7 @@
         android:layout_height="0.5dp"
         android:background="@color/gray50" />
 
-    <HorizontalScrollView
+    <com.open.welinks.customView.MyHorizontalScrollView
         android:id="@+id/ScrollViewTwo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,7 +74,7 @@
                 android:layout_height="0.5dp"
                 android:background="@color/gray50" />
         </LinearLayout>
-    </HorizontalScrollView>
+    </com.open.welinks.customView.MyHorizontalScrollView>
 
     <ListView
         android:id="@+id/content"
