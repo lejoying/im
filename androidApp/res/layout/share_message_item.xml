@@ -57,6 +57,17 @@
             android:translationX="75dp"
             android:translationY="30dp" />
 
+        <com.open.lib.TouchImageView
+            android:id="@+id/num_picker_decrement"
+            android:layout_width="47dp"
+            android:layout_height="47dp"
+            android:layout_gravity="right"
+            android:padding="15dp"
+            android:src="@drawable/num_picker_decrement"
+            android:tint="#c8c8c8"
+            android:translationX="-105dp"
+            android:translationY="7dp" />
+
         <ImageView
             android:id="@+id/share_praise_icon"
             android:layout_width="27dp"
@@ -64,18 +75,31 @@
             android:layout_gravity="right"
             android:src="@drawable/praise_icon"
             android:tint="@color/icon_color"
-            android:translationX="-35dp"
-            android:translationY="15dp" />
+            android:translationX="-57dp"
+            android:translationY="15dp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/share_praise"
-            android:layout_width="20dp"
-            android:layout_height="26dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="0"
-            android:textColor="@color/text_color_black_2"
-            android:translationX="-10dp"
-            android:translationY="17dp" />
+            android:text="999"
+            android:textColor="#0099cd"
+            android:textSize="24sp"
+            android:translationX="-62dp"
+            android:translationY="11dp" />
+
+        <com.open.lib.TouchImageView
+            android:id="@+id/num_picker_increment"
+            android:layout_width="47dp"
+            android:layout_height="47dp"
+            android:layout_gravity="right"
+            android:padding="15dp"
+            android:src="@drawable/num_picker_increment"
+            android:tint="#c8c8c8"
+            android:translationX="-12dp"
+            android:translationY="7dp" />
 
         <ImageView
             android:id="@+id/share_comment_icon"
@@ -138,8 +162,60 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="210dp"
-            android:text="分享内容"
+            android:text=""
             android:textColor="@color/text_color_black" />
     </RelativeLayout>
+
+    <com.open.lib.TouchView
+        android:id="@+id/commentBoard"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:translationY="200dp" >
+
+        <com.open.lib.TouchTextView
+            android:id="@+id/commentContent"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_comment_background"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="#99000000" />
+
+        <com.open.lib.TouchImageView
+            android:id="@+id/commentsPoint"
+            android:layout_width="22dp"
+            android:layout_height="45dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="left|top"
+            android:src="@drawable/abc_spinner_mtrl_am_alpha"
+            android:tint="#c8c8c8"
+            android:translationX="20dp"
+            android:translationY="28dp" >
+        </com.open.lib.TouchImageView>
+
+        <com.open.lib.TouchView
+            android:id="@+id/commentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:translationY="50dp" >
+        </com.open.lib.TouchView>
+
+        <com.open.lib.TouchImageView
+            android:id="@+id/commentControl"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_gravity="right|bottom"
+            android:paddingBottom="16dp"
+            android:paddingLeft="32dp"
+            android:paddingRight="12dp"
+            android:paddingTop="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/beauty_detail_comment_total_icon"
+            android:tint="#0099cd" />
+    </com.open.lib.TouchView>
 
 </com.open.lib.TouchView>

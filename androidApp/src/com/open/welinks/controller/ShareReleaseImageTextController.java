@@ -185,7 +185,7 @@ public class ShareReleaseImageTextController {
 					}
 				}
 				final double currentPrecent = currentLength / totalLength;
-//				log.e("currentPrecent：" + currentPrecent);
+				// log.e("currentPrecent：" + currentPrecent);
 				fileHandlers.handler.post(new Runnable() {
 
 					@Override
@@ -445,7 +445,7 @@ public class ShareReleaseImageTextController {
 				}
 
 				String content = gson.toJson(shareContent.shareContentItems);
-//				Log.e(tag, content);
+				// Log.e(tag, content);
 				shareMessage.content = content;
 
 				// To add data to the data
@@ -512,10 +512,11 @@ public class ShareReleaseImageTextController {
 				suffixName = ".osp";
 			}
 			try {
+				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 				String fileName = "";
 				File fromFile = new File(key);
 				byte[] bytes = null;
-				bytes = fileHandlers.getImageFileBytes(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+				bytes = fileHandlers.getImageFileBytes(shareContentItem, fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
 				int fileLength = bytes.length;
 				totalLength += fileLength;
 				fileTotalLengthMap.put(key, fileLength);
@@ -527,12 +528,12 @@ public class ShareReleaseImageTextController {
 				StreamParser.parseToFile(bytes, fileOutputStream);
 
 				if (i == 0) {
-					int showImageWidth = (int) (thisView.displayMetrics.widthPixels - 20 * thisView.displayMetrics.density - 0.5f);
+					int showImageWidth = (int) (thisView.displayMetrics.widthPixels - 20 * thisView.displayMetrics.density);
+					int showImageHeight = (int) (showImageWidth * shareContentItem.ratio);
 					File toSnapFile = new File(sdcardThumbnailFolder, fileName);
-					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, thisView.showImageHeight, toSnapFile, fileName);
+					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, showImageHeight, toSnapFile, fileName);
 				}
 
-				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 				shareContentItem.type = "image";
 				shareContentItem.detail = fileName;
 				shareContentItems.add(shareContentItem);

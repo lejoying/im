@@ -32,6 +32,7 @@ public class SubData {
 		public class ShareContentItem {
 			public String type;// text image
 			public String detail;
+			public float ratio = 0;
 		}
 	}
 

@@ -9,8 +9,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginLeft="10dp"
-        android:padding="5dp"
-        android:src="@drawable/t1" />
+        android:padding="5dp" />
 
     <TextView
         android:id="@+id/content"

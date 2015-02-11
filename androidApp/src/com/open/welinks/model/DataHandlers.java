@@ -420,8 +420,9 @@ public class DataHandlers {
 					return;
 				}
 				byte[] bytes = null;
+				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 
-				bytes = fileHandlers.getImageFileBytes(fromFile, viewManage.mainView.displayMetrics.heightPixels, viewManage.mainView.displayMetrics.heightPixels);
+				bytes = fileHandlers.getImageFileBytes(shareContentItem,fromFile, viewManage.mainView.displayMetrics.heightPixels, viewManage.mainView.displayMetrics.heightPixels);
 				// int fileLength = bytes.length;
 				// totalLength += fileLength;
 				// fileTotalLengthMap.put(key, fileLength);
@@ -439,7 +440,6 @@ public class DataHandlers {
 					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, showImageHeight, toSnapFile, fileName);
 				}
 
-				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 				shareContentItem.type = "image";
 				shareContentItem.detail = fileName;
 				shareContentItems.add(shareContentItem);

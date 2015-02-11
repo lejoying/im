@@ -1234,7 +1234,7 @@ public class ChatController {
 		}
 		String fileName = "";
 		File fromFile = new File(filePath);
-		byte[] bytes = fileHandlers.getImageFileBytes(fromFile, (int) data.baseData.screenWidth, (int) data.baseData.screenHeight);
+		byte[] bytes = fileHandlers.getImageFileBytes(null, fromFile, (int) data.baseData.screenWidth, (int) data.baseData.screenHeight);
 		map.put("bytes", bytes);
 		String sha1FileName = sha1.getDigestOfString(bytes);
 		fileName = sha1FileName + suffixName;

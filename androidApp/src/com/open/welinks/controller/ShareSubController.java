@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -43,6 +44,7 @@ import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -288,6 +290,25 @@ public class ShareSubController {
 							view.setTag(R.id.tag_first, currentTime);
 						}
 						onTouchDownView = view;
+					} else if (view_class.equals("TopView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+					} else if (view_class.equals("DecrementView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+						// float alpha = onTouchDownView.getAlpha();
+					} else if (view_class.equals("IncrementView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+					} else if (view_class.equals("CommentControlView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+					} else if (view_class.equals("CommentHeadView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					}
 					if (view.equals(thisView.groupDialogView)) {
 						Log.i(tag, "ACTION_DOWN---groupDialogView");
@@ -466,6 +487,56 @@ public class ShareSubController {
 
 						modifyPraiseusersToMessage(option, data.localStatus.localData.currentSelectedGroup, thisView.currentGroup.currentBoard, shareMessage.gsid);
 						view.setTag(R.id.time, null);
+					} else if ("DecrementView".equals(type)) {
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+						SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+						String number = sharesMessageBody.sharePraiseNumberView.getText().toString();
+						int num = Integer.valueOf(number);
+						num--;
+						sharesMessageBody.sharePraiseNumberView.setText(num + "");
+						if (num < 10 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-75 * thisView.displayMetrics.density);
+						} else if (num < 100 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * thisView.displayMetrics.density);
+						} else if (num < 1000 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setText("999");
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-62 * thisView.displayMetrics.density);
+						} else if (num < 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#00a800"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * thisView.displayMetrics.density);
+						}
+					} else if ("IncrementView".equals(type)) {
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+						SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+						String number = sharesMessageBody.sharePraiseNumberView.getText().toString();
+						int num = Integer.valueOf(number);
+						num++;
+						sharesMessageBody.sharePraiseNumberView.setText(num + "");
+						if (num < 10 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-75 * thisView.displayMetrics.density);
+						} else if (num < 100 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * thisView.displayMetrics.density);
+						} else if (num < 1000 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setText("999");
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-62 * thisView.displayMetrics.density);
+						} else if (num < 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#00a800"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * thisView.displayMetrics.density);
+						}
+						// float alpha = sharesMessageBody.incrementView.getAlpha();
+					} else if ("CommentControlView".equals(type)) {
+					} else if ("CommentHeadView".equals(type)) {
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+						SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+						List<Comment> comments = shareMessage.comments;
+						int i = (Integer) view.getTag(R.id.tag_first);
+						sharesMessageBody.commentContentView.setText(comments.get(i).content);
 					}
 				}
 				onTouchDownView = null;
@@ -577,6 +648,16 @@ public class ShareSubController {
 	}
 
 	public void onScroll() {
+		if (onTouchDownView != null) {
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			if (view_class.equals("DecrementView")) {
+				onTouchDownView.setAlpha(0.125f);
+			} else if (view_class.equals("IncrementView")) {
+				onTouchDownView.setAlpha(0.125f);
+			} else if (view_class.equals("CommentControlView")) {
+				onTouchDownView.setAlpha(0.5f);
+			}
+		}
 		onTouchDownView = null;
 		// isTouchDown = false;
 	}
@@ -634,6 +715,17 @@ public class ShareSubController {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("share_praise")) {
 				onTouchDownView.performClick();
+			} else if (view_class.equals("DecrementView")) {
+				onTouchDownView.setAlpha(0.125f);
+				onTouchDownView.performClick();
+			} else if (view_class.equals("IncrementView")) {
+				onTouchDownView.setAlpha(0.125f);
+				onTouchDownView.performClick();
+			} else if (view_class.equals("CommentControlView")) {
+				onTouchDownView.setAlpha(0.5f);
+				onTouchDownView.performClick();
+			} else if (view_class.equals("CommentHeadView")) {
+				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;
 		}
@@ -648,7 +740,7 @@ public class ShareSubController {
 						SharesMessageBody body = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
 						if (body != null) {
 							log.e(body.textContent);
-							body.setContent(body.message, body.fileName, body.imageContent, body.textContent, body.totalHeight);
+							body.setContent(body.message, body.fileName, body.imageContent, body.textContent, body.totalHeight, body.imageHeight, body.lineCount);
 						}
 					}
 				}
