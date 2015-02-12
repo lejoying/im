@@ -1784,13 +1784,12 @@ shareManage.score = function (data, response) {
                             score.positive++;
                             totalScore++;
                             shareData.totalScore = totalScore;
-                            shareData.scores = JSON.stringify(socres);
+                            shareData.scores = JSON.stringify(scores);
                             shareNode.save(function (err, node) {
                             });
                             var share = {
                                 comments: JSON.parse(shareData.comments),
                                 content: shareData.content,
-                                //praiseusers: JSON.parse(shareData.praises),
                                 gsid: shareData.gsid,
                                 type: shareData.type,
                                 time: shareData.time,
@@ -1813,7 +1812,6 @@ shareManage.score = function (data, response) {
                             var share = {
                                 comments: JSON.parse(shareData.comments),
                                 content: shareData.content,
-                                //praiseusers: JSON.parse(shareData.praises),
                                 gsid: shareData.gsid,
                                 type: shareData.type,
                                 time: shareData.time,
