@@ -326,7 +326,7 @@ public class Data {
 			public long time;
 			public int positive;
 			public int negative;
-			public int remainNumber = 0;
+			public int remainNumber = 1;
 		}
 	}
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/background_white_radius"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/line_0099cd"
+            android:hint="请输入评论内容"
+            android:paddingBottom="4dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="4dp"
+            android:textColor="#000"
+            android:textColorHint="#ccc"
+            android:textCursorDrawable="@null"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/confirm"
+            android:layout_width="60dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:background="#ff0099cd"
+            android:text="发送"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            android:translationX="-65dp" />
+    </LinearLayout>
+
+</RelativeLayout>

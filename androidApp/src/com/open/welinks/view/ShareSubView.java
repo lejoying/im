@@ -53,6 +53,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.Comment;
+import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -512,6 +513,12 @@ public class ShareSubView {
 			}
 			int height10dp = (int) (10 * displayMetrics.density + 0.5f);
 			int totalHeight = 0;
+			// isExists = false;
+
+			if (shareMessage.comments != null && sharesMessageBody.commentContentView.getVisibility() == View.GONE && shareMessage.comments.size() > 0) {
+				isExists = false;
+			}
+
 			if (!isExists) {
 				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
 				String textContent = "";
@@ -587,7 +594,7 @@ public class ShareSubView {
 						lineCount = sharesMessageBody.shareTextContentView.getLineCount();
 					}
 				}
-				log.e("ratio:" + ratio);
+				// log.e("ratio:" + ratio);
 				int lineHeight = sharesMessageBody.shareTextContentView.getLineHeight();
 				int imageHeight = shareImageHeight;
 				if ("".equals(imageContent)) {
@@ -791,15 +798,6 @@ public class ShareSubView {
 
 		public int lineCount;
 
-		/**
-		 * @param shareMessage
-		 * @param fileName
-		 * @param imageContent
-		 * @param textContent
-		 * @param totalHeight
-		 * @param imageHeight
-		 * @param lineCount
-		 */
 		public void setContent(ShareMessage shareMessage, String fileName, String imageContent, String textContent, int totalHeight, int imageHeight, int lineCount) {
 			data = parser.check();
 			if (i == -1) {
@@ -937,16 +935,18 @@ public class ShareSubView {
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, imageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				File file = new File(fileHandlers.sdcardImageFolder, imageContent);
-				if (file.exists()) {
-					imageLoader.displayImage("file://" + file.getAbsolutePath(), shareImageContentView);
-				} else {
-					fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth * 2 / 3, imageHeight * 2 / 3, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
+				if (!"".equals(imageContent)) {
+					File file = new File(fileHandlers.sdcardImageFolder, imageContent);
+					if (file.exists()) {
+						imageLoader.displayImage("file://" + file.getAbsolutePath(), shareImageContentView);
+					} else {
+						fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth * 2 / 3, imageHeight * 2 / 3, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
+					}
 				}
 				if (shareMessage.scores == null) {
 					shareMessage.scores = new HashMap<String, Data.Boards.Score>();
 				}
-				this.sharePraiseNumberView.setText(shareMessage.scores.size() + "");
+				this.sharePraiseNumberView.setText(shareMessage.totalScore + "");
 				Typeface face = Typeface.createFromAsset(thisController.thisActivity.getAssets(), "fonts/avenirroman.ttf");
 				this.sharePraiseNumberView.setTypeface(face);
 				// this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
@@ -966,13 +966,19 @@ public class ShareSubView {
 
 				this.incrementView.setColorFilter(Color.parseColor("#0099cd"));
 				this.incrementView.setAlpha(0.125f);
-				if (shareMessage.scores.size() < 10) {
+				if (shareMessage.totalScore < 10 && shareMessage.totalScore >= 0) {
+					sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
 					this.sharePraiseNumberView.setTranslationX(-75 * displayMetrics.density);
-				} else if (shareMessage.scores.size() < 100) {
-					this.sharePraiseNumberView.setTranslationX(-69 * displayMetrics.density);
-				} else {
+				} else if (shareMessage.totalScore < 100 && shareMessage.totalScore >= 0) {
+					sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+					this.sharePraiseNumberView.setTranslationX(-71 * displayMetrics.density);
+				} else if (shareMessage.totalScore < 1000 && shareMessage.totalScore >= 0) {
+					sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
 					this.sharePraiseNumberView.setText("999");
 					this.sharePraiseNumberView.setTranslationX(-62 * displayMetrics.density);
+				} else if (shareMessage.totalScore < 0) {
+					sharePraiseNumberView.setTextColor(Color.parseColor("#00a800"));
+					this.sharePraiseNumberView.setTranslationX(-71 * displayMetrics.density);
 				}
 
 				this.decrementView.setTag("DecrementView#" + shareMessage.gsid);
@@ -985,6 +991,18 @@ public class ShareSubView {
 				this.incrementView.setOnTouchListener(thisController.mOnTouchListener);
 				this.incrementView.setOnClickListener(thisController.mOnClickListener);
 
+				Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
+				if (score != null) {
+					if (score.positive > 0) {
+						this.incrementView.setAlpha(1f);
+					}
+					if (score.negative > 0) {
+						this.decrementView.setAlpha(1f);
+					}
+				} else {
+					this.incrementView.setAlpha(0.125f);
+					this.decrementView.setAlpha(0.125f);
+				}
 				this.topView.setTag("TopView#NONE");
 				this.topView.setTag(R.id.tag_class, "TopView");
 				this.topView.setOnTouchListener(thisController.mOnTouchListener);
@@ -1001,44 +1019,48 @@ public class ShareSubView {
 					this.commentContentView.setVisibility(View.GONE);
 					this.commentsPointView.setVisibility(View.GONE);
 				} else {
+					this.commentContentView.setVisibility(View.VISIBLE);
+					this.commentsPointView.setVisibility(View.VISIBLE);
 					this.commentsPointView.setX(18 * displayMetrics.density);
 				}
 
-				this.commentContainer.removeAllViews();
-				int index = 0;
-				for (int i = comments.size() - 1; i >= 0; i--) {
-					Comment comment = comments.get(i);
-					TouchImageView imageView = new TouchImageView(thisController.thisActivity);
-					int padding = (int) (6 * displayMetrics.density);
-					imageView.setPadding(padding, padding, padding, padding);
-					int width = (int) (45 * displayMetrics.density);
-					FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(width, width);
-					fileHandlers.getHeadImage(comment.head, imageView, viewManage.options40);
-					this.commentContainer.addView(imageView, params2);
-					imageView.setX(index * 45 * displayMetrics.density + 6 * displayMetrics.density);
-					index++;
-					imageView.setTag("CommentHeadView#" + shareMessage.gsid);
-					imageView.setTag(R.id.tag_class, "CommentHeadView");
-					imageView.setTag(R.id.tag_first, i);
-					imageView.setOnTouchListener(thisController.mOnTouchListener);
-					imageView.setOnClickListener(thisController.mOnClickListener);
-					if (i < comments.size() - 4) {
-						break;
+				if (commentContainer.getChildCount() != comments.size()) {
+					this.commentContainer.removeAllViews();
+					int index = 0;
+					for (int i = comments.size() - 1; i >= 0; i--) {
+						Comment comment = comments.get(i);
+						TouchImageView imageView = new TouchImageView(thisController.thisActivity);
+						int padding = (int) (6 * displayMetrics.density);
+						imageView.setPadding(padding, padding, padding, padding);
+						int width = (int) (45 * displayMetrics.density);
+						FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(width, width);
+						fileHandlers.getHeadImage(comment.head, imageView, viewManage.options40);
+						this.commentContainer.addView(imageView, params2);
+						imageView.setX(index * 45 * displayMetrics.density + 6 * displayMetrics.density);
+						index++;
+						imageView.setTag("CommentHeadView#" + shareMessage.gsid);
+						imageView.setTag(R.id.tag_class, "CommentHeadView");
+						imageView.setTag(R.id.tag_first, i);
+						imageView.setOnTouchListener(thisController.mOnTouchListener);
+						imageView.setOnClickListener(thisController.mOnClickListener);
+						if (i < comments.size() - 4) {
+							break;
+						}
+						if (i == comments.size() - 1) {
+							this.commentContentView.setText(comment.content);
+						}
 					}
-					if (i == comments.size() - 1) {
-						this.commentContentView.setText(comment.content);
+					if (comments.size() > 5) {
+						TextView textView = new TextView(thisController.thisActivity);
+						textView.setTextColor(Color.parseColor("#33000000"));
+						textView.setGravity(Gravity.CENTER);
+						textView.setText("" + comments.size() + " 条...");
+						int width = (int) (45 * displayMetrics.density);
+						FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(width, width);
+						this.commentContainer.addView(textView, params2);
+						textView.setX(5 * 45 * displayMetrics.density + 10 * displayMetrics.density);
+						textView.setY(4 * displayMetrics.density);
 					}
-				}
-				if (comments.size() > 5) {
-					TextView textView = new TextView(thisController.thisActivity);
-					textView.setTextColor(Color.parseColor("#33000000"));
-					textView.setGravity(Gravity.CENTER);
-					textView.setText("" + comments.size() + " 条...");
-					int width = (int) (45 * displayMetrics.density);
-					FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(width, width);
-					this.commentContainer.addView(textView, params2);
-					textView.setX(5 * 45 * displayMetrics.density + 10 * displayMetrics.density);
-					textView.setY(4 * displayMetrics.density);
 				}
 			}
 		}

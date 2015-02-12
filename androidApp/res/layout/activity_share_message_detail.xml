@@ -55,6 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:background="#26ffffff"
+                        android:visibility="gone"
                         android:orientation="horizontal" >
 
                         <TextView
@@ -117,6 +118,7 @@
                             android:layout_width="54dp"
                             android:layout_height="50dp"
                             android:padding="12dp"
+                            android:visibility="gone"
                             android:src="@drawable/praise_icon" />
 
                         <ImageView
