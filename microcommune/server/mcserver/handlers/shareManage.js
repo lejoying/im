@@ -236,6 +236,7 @@ shareManage.getshares = function (data, response) {
         });
     }
 }
+
 /***************************************
  *     URL：/api2/share/addpraise
  ***************************************/
@@ -785,6 +786,8 @@ shareManage.getgroupshares = function (data, response) {
                         type: shareData.type,
                         time: shareData.time,
                         phone: shareData.phone,
+                        totalScore: shareData.totalScore || 0,
+                        scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                         status: "sent"
                     };
                     sharesOrder.push(share.gsid + "");
@@ -854,6 +857,8 @@ shareManage.getusershares = function (data, response) {
                             phone: shareData.phone,
                             sid: sharesData.sid,
                             gid: groupData.gid,
+                            totalScore: shareData.totalScore || 0,
+                            scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                             status: "sent"
                         };
                         shares.push(shareData.gsid);
@@ -932,12 +937,14 @@ shareManage.sendboardshare = function (data, response) {
             share: {
                 phone: phone,
                 nickName: nickName,
-                praises: "[]",
+                //praises: "[]",
                 comments: "[]",
                 type: message.type,
                 nodeType: "Share",
                 sid: sid,
                 content: message.content,
+                totalScore: 0,
+                scores: "{}",
                 time: new Date().getTime()
             }
         };
@@ -1032,6 +1039,8 @@ shareManage.getboardshares = function (data, response) {
                         type: shareData.type,
                         time: shareData.time,
                         phone: shareData.phone,
+                        totalScore: shareData.totalScore || 0,
+                        scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                         status: "sent"
                     };
                     shares.push(share.gsid + "");
@@ -1703,6 +1712,8 @@ shareManage.getboardshare = function (data, response) {
                     type: shareData.type,
                     time: shareData.time,
                     phone: shareData.phone,
+                    totalScore: shareData.totalScore || 0,
+                    scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                     status: "sent"
                 };
                 response.write(JSON.stringify({
@@ -1714,6 +1725,129 @@ shareManage.getboardshare = function (data, response) {
         });
     }
 }
+
+shareManage.score = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var option = data.option;
+    var gsid = data.gsid;
+    if (verifyEmpty.verifyEmpty(data, [phone, option, gsid], response)) {
+        modifyShareNode();
+    }
+
+    function modifyShareNode() {
+        var query = [
+            "MATCH (share:Share)",
+            "WHERE share.gsid={gsid}",
+            "RETURN share"
+        ].join("\n");
+        var params = {
+            gsid: parseInt(gsid)
+        };
+        db.query(query, params, function (error, results) {
+                if (error) {
+                    console.log(error);
+                    ResponseData(JSON.stringify({
+                        "提示信息": "评分失败",
+                        "失败原因": "数据异常",
+                        gsid: gsid
+                    }), response);
+                } else if (results.length == 0) {
+                    ResponseData(JSON.stringify({
+                        "提示信息": "评分失败",
+                        "失败原因": "分享数据不存在",
+                        gsid: gsid
+                    }), response);
+                } else {
+                    var shareNode = results.pop().share;
+                    var shareData = shareNode.data;
+                    var totalScore = shareData.totalScore;
+                    if (!totalScore) {
+                        totalScore = 0;
+                    }
+                    var scores = shareData.scores;
+                    if (!scores) {
+                        scores = {};
+                    } else {
+                        scores = JSON.parse(scores);
+                    }
+                    var score = scores[phone];
+                    if (!score) {
+                        score = {
+                            phone: phone,
+                            time: new Date().getTime(),
+                            positive: 0,
+                            negative: 0,
+                            remainNumber: 1
+                        }
+                        scores[phone] = score;
+                    }
+                    if (score.remainNumber > 0) {
+                        score.remainNumber--;
+                        if (option == true || option == "true") {
+                            score.positive++;
+                            totalScore++;
+                            shareData.totalScore = totalScore;
+                            shareData.scores = JSON.stringify(scores);
+                            shareNode.save(function (err, node) {
+                            });
+                            var share = {
+                                comments: JSON.parse(shareData.comments),
+                                content: shareData.content,
+                                gsid: shareData.gsid,
+                                type: shareData.type,
+                                time: shareData.time,
+                                phone: shareData.phone,
+                                totalScore: shareData.totalScore || 0,
+                                scores: shareData.scores ? JSON.parse(shareData.scores) : {},
+                                status: "sent"
+                            };
+                            ResponseData(JSON.stringify({
+                                "提示信息": "评分成功",
+                                share: share
+                            }), response);
+                        } else if (option == false || option == "false") {
+                            score.negative++;
+                            totalScore--;
+                            shareData.totalScore = totalScore;
+                            shareData.scores = JSON.stringify(scores);
+                            shareNode.save(function (err, node) {
+                            });
+                            var share = {
+                                comments: JSON.parse(shareData.comments),
+                                content: shareData.content,
+                                gsid: shareData.gsid,
+                                type: shareData.type,
+                                time: shareData.time,
+                                phone: shareData.phone,
+                                totalScore: shareData.totalScore || 0,
+                                scores: shareData.scores ? JSON.parse(shareData.scores) : {},
+                                status: "sent"
+                            };
+                            ResponseData(JSON.stringify({
+                                "提示信息": "评分成功",
+                                share: share
+                            }), response);
+                        } else {
+                            ResponseData(JSON.stringify({
+                                "提示信息": "评分失败",
+                                "失败原因": "option参数不正确",
+                                gsid: gsid
+                            }), response);
+                        }
+                    } else {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "评分失败",
+                            "失败原因": "评分次数已达上限",
+                            gsid: gsid
+                        }), response);
+                    }
+                }
+            }
+        )
+    }
+}
+
 //处理数据库数据
 //getGroups();
 function getGroups() {

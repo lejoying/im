@@ -48,6 +48,9 @@ public class FindMoreActivity extends Activity {
 		textThreeView = (TextView) findViewById(R.id.text_three);
 
 		threeChoicesView = new ThreeChoicesView(this, selectType);
+		threeChoicesView.setButtonOneText("最新");
+		threeChoicesView.setButtonTwoText("最热");
+		threeChoicesView.setButtonThreeText("关注");
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainer.addView(threeChoicesView, params);
@@ -97,17 +100,17 @@ public class FindMoreActivity extends Activity {
 
 	private void changData(int selectType) {
 		if (selectType == 1) {
-			textOneView.setText("附近的社区");
+			textOneView.setText("附近的最新分享");
 			textTwoView.setText("查找社区");
 			layoutTwoView.setVisibility(View.GONE);
 			layoutThreeView.setVisibility(View.GONE);
 		} else if (selectType == 2) {
-			textOneView.setText("附近的群组");
+			textOneView.setText("附近的最热分享");
 			textTwoView.setText("查找群组");
 			layoutTwoView.setVisibility(View.GONE);
 			layoutThreeView.setVisibility(View.GONE);
 		} else if (selectType == 3) {
-			textOneView.setText("附近的人");
+			textOneView.setText("附近的关注分享");
 			textTwoView.setText("查找好友");
 			textThreeView.setText("推荐好友");
 			layoutThreeView.setVisibility(View.GONE);

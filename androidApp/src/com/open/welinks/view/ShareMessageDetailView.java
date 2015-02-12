@@ -20,7 +20,6 @@ import android.text.util.Linkify;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,7 +48,6 @@ import com.open.welinks.customView.ShareView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
@@ -386,16 +384,15 @@ public class ShareMessageDetailView {
 			textView.setText(style);
 		}
 
-		if (thisController.shareMessage.praiseusers.contains(thisController.currentUser.phone)) {
-			praiseIconView.setImageResource(R.drawable.praised_icon);
-		} else {
-			praiseIconView.setImageResource(R.drawable.praise_icon);
-		}
+		// if (thisController.shareMessage.praiseusers.contains(thisController.currentUser.phone)) {
+		// praiseIconView.setImageResource(R.drawable.praised_icon);
+		// } else {
+		// praiseIconView.setImageResource(R.drawable.praise_icon);
+		// }
 		shareView.phone = data.userInformation.currentUser.phone;
 		shareView.sid = thisController.sid;
 		shareView.gsid = thisController.gsid;
 		shareView.content = thisController.textContent;
-		showPraiseUsersContent();
 		notifyShareMessageComments();
 	}
 
@@ -415,55 +412,10 @@ public class ShareMessageDetailView {
 		}
 	}
 
-	public void showPraiseUsersContent() {
-		// TODO
-		praiseUserContentView.removeAllViews();
-
-		// praiseUserContentView.setBackgroundColor(Color.RED);
-		List<String> praiseUsers = thisController.shareMessage.praiseusers;
-
-		int headWidth = (int) (((screenWidth - 40 * screenDensity) / 2.7) * 2.2) / 5;// praiseUserContentView.getWidth()
-																						// /
-																						// 5
-																						// -
-																						// 5;
-		int headHeight = (int) (40 * screenDensity);
-		int padding = (int) (5 * screenDensity);
-		praiseusersNumView.setText("共获得" + praiseUsers.size() + "个赞");
-		ImageView iv = new ImageView(thisActivity);
-		LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT);
-		param.weight = 1;
-		iv.setLayoutParams(param);
-		praiseUserContentView.addView(iv);
-		User user = data.userInformation.currentUser;
-		for (int i = 0; i < praiseUsers.size(); i++) {
-			String key = praiseUsers.get(i);
-			final ImageView view = new ImageView(thisActivity);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(headWidth, headHeight);
-			params.gravity = Gravity.CENTER;
-			view.setPadding(padding, 0, padding, 0);
-			view.setLayoutParams(params);
-			// view.setImageBitmap(bitmap);
-			String fileName = "";
-			Friend friend = data.relationship.friendsMap.get(key);
-			if (friend != null) {
-				fileName = friend.head;
-			}
-			if (user.phone.equals(key)) {
-				fileName = user.head;
-			}
-			fileHandlers.getHeadImage(fileName, view, viewManage.options40);
-			// view.setBackgroundColor(Color.GREEN);
-			praiseUserContentView.addView(view);
-			if (i == 5) {
-				break;
-			}
-		}
-	}
+	public HashMap<String, CommentBody> commentBodysMap = new HashMap<String, CommentBody>();
 
 	public void notifyShareMessageComments() {
 		List<Comment> comments = thisController.shareMessage.comments;
-		// Log.e(tag, comments.size() + "---------------size");
 		commentIconView.setImageResource(R.drawable.comment_icon);
 		for (Comment comment : comments) {
 			if (comment.phone.equals(thisController.currentUser.phone)) {
@@ -473,31 +425,63 @@ public class ShareMessageDetailView {
 		}
 		commentNumberView.setText("查看全部" + comments.size() + "条评论...");
 		commentContentView.removeAllViews();
-		for (final Comment comment : comments) {
-			View view = mInflater.inflate(R.layout.groupshare_commentchild, null);
+
+		for (int i = comments.size() - 1; i >= 0; i--) {
+			final Comment comment = comments.get(i);
+			String key = comment.phone + "_" + comment.time + "_" + comment.content;
+			CommentBody body = this.commentBodysMap.get(key);
+			if (body == null) {
+				body = new CommentBody();
+				body.initialize();
+				this.commentBodysMap.put(key, body);
+			}
+			body.setContent(comment);
+			commentContentView.addView(body.cardView);
+		}
+	}
+
+	public class CommentBody {
+
+		public View cardView;
+
+		public TextView timeView;
+		public TextView contentView;
+		public TextView replyView;
+		public TextView receiveView;
+		public TextView receivedView;
+		public ImageView headView;
+
+		public Comment comment;
+
+		public void initialize() {
+			this.cardView = mInflater.inflate(R.layout.groupshare_commentchild, null);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			params.setMargins((int) (10 * screenDensity), 0, (int) (10 * screenDensity), 0);
-			view.setLayoutParams(params);
-			TextView time = (TextView) view.findViewById(R.id.time);
-			TextView content = (TextView) view.findViewById(R.id.content);
-			TextView reply = (TextView) view.findViewById(R.id.reply);
-			TextView receive = (TextView) view.findViewById(R.id.receive);
-			TextView received = (TextView) view.findViewById(R.id.received);
-			final ImageView head = (ImageView) view.findViewById(R.id.head);
-			content.setText(comment.content);
-			time.setText(DateUtil.getTime(comment.time));
-			receive.setText(comment.nickName);
-			received.setText(comment.nickNameTo);
+			this.cardView.setLayoutParams(params);
+			timeView = (TextView) this.cardView.findViewById(R.id.time);
+			contentView = (TextView) this.cardView.findViewById(R.id.content);
+			replyView = (TextView) this.cardView.findViewById(R.id.reply);
+			receiveView = (TextView) this.cardView.findViewById(R.id.receive);
+			receivedView = (TextView) this.cardView.findViewById(R.id.received);
+			headView = (ImageView) this.cardView.findViewById(R.id.head);
+		}
+
+		public void setContent(Comment comment2) {
+			this.comment = comment2;
+			this.contentView.setText(comment.content);
+			this.timeView.setText(DateUtil.getTime(comment.time));
+			this.receiveView.setText(comment.nickName);
+			this.receivedView.setText(comment.nickNameTo);
 
 			if ("".equals(comment.nickNameTo)) {
-				reply.setVisibility(View.GONE);
-				received.setVisibility(View.GONE);
+				this.replyView.setVisibility(View.GONE);
+				this.receivedView.setVisibility(View.GONE);
 			}
-			fileHandlers.getHeadImage(comment.head, head, viewManage.options40);
-			view.setTag("ShareComment#" + comment.phone);
-			view.setTag(R.id.commentEditTextView, comment);
+			fileHandlers.getHeadImage(comment.head, this.headView, viewManage.options40);
+			this.cardView.setTag("ShareComment#" + comment.phone);
+			this.cardView.setTag(R.id.commentEditTextView, comment);
 
-			view.setOnClickListener(new OnClickListener() {
+			this.cardView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -521,7 +505,6 @@ public class ShareMessageDetailView {
 					}
 				}
 			});
-			commentContentView.addView(view);
 		}
 	}
 

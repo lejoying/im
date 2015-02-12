@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -642,14 +643,17 @@ public class ShareSectionView {
 				// } else {
 				// imageLoader.displayImage("file://" + fileHandlers.sdcardImageFolder.getAbsolutePath() + "/" + imageContent, shareImageContentView);
 				// }
-				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+				if (shareMessage.scores == null) {
+					shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+				}
+				this.sharePraiseNumberView.setText(shareMessage.totalScore + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;
-				if (shareMessage.praiseusers.contains(userPhone)) {
-					this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-				} else {
-					this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-				}
+				// if (shareMessage.praiseusers.contains(userPhone)) {
+				// this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+				// } else {
+				// this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+				// }
 				this.sharePraiseIconView.setTag("SharePraise#" + shareMessage.gsid);
 				this.sharePraiseIconView.setTag(R.id.tag_class, "share_praise");
 				this.sharePraiseIconView.setOnClickListener(thisController.mOnClickListener);

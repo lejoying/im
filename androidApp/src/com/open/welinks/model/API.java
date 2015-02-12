@@ -144,6 +144,10 @@ public class API {
 	 */
 	public static String SHARE_ADDPRAISE = API_DOMAIN + "api2/share/addpraise";
 	/**
+	 * http://www.we-links.com/api2/share/score
+	 */
+	public static String SHARE_SCORE = API_DOMAIN + "api2/share/score";
+	/**
 	 * http://www.we-links.com/api2/share/addcomment
 	 */
 	public static String SHARE_ADDCOMMENT = API_DOMAIN + "api2/share/addcomment";

@@ -306,6 +306,7 @@ public class SquareSubView {
 				intent.putExtra("key", data.userInformation.currentUser.phone);
 				thisController.thisActivity.startActivity(intent);
 			}
+			id = 0;
 		}
 	}
 }

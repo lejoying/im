@@ -11,6 +11,8 @@ import java.util.Set;
 
 import org.apache.http.Header;
 
+import android.graphics.Color;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -25,6 +27,7 @@ import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.FriendsSubController.Circle2;
 import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
@@ -34,6 +37,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
+import com.open.welinks.view.ShareSubView.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
 public class ResponseHandlers {
@@ -1888,6 +1892,91 @@ public class ResponseHandlers {
 			}
 		}
 	}
+
+	public class Share_scoreCallBack extends com.open.lib.ResponseHandler<String> {
+
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public ShareMessage share;
+			public String gsid;
+		}
+
+		public boolean option;
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			parser.check();
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("评分成功")) {
+				ShareMessage serverShare = response.share;
+				ShareMessage localShare = data.boards.shareMessagesMap.get(serverShare.gsid);
+				if (localShare == null) {
+					data.boards.shareMessagesMap.put(serverShare.gsid, serverShare);
+				} else {
+					localShare.scores.clear();
+					localShare.scores.putAll(serverShare.scores);
+					localShare.totalScore = serverShare.totalScore;
+				}
+				log.e("评分成功");
+				SharesMessageBody sharesMessageBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get("message#" + serverShare.gsid);
+				int num = serverShare.totalScore;
+				if (sharesMessageBody == null) {
+					return;
+				}
+				sharesMessageBody.sharePraiseNumberView.setText(num + "");
+				if (num < 10 && num >= 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-75 * viewManage.displayMetrics.density);
+				} else if (num < 100 && num >= 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * viewManage.displayMetrics.density);
+				} else if (num < 1000 && num >= 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+					sharesMessageBody.sharePraiseNumberView.setText("999");
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-62 * viewManage.displayMetrics.density);
+				} else if (num < 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#00a800"));
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * viewManage.displayMetrics.density);
+				}
+			} else if (response.提示信息.equals("评分失败")) {
+				ShareMessage localShare = data.boards.shareMessagesMap.get(response.gsid);
+				SharesMessageBody sharesMessageBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get("message#" + localShare.gsid);
+				if (option) {
+					localShare.totalScore = localShare.totalScore - 1;
+					Score score = localShare.scores.get(data.userInformation.currentUser.phone);
+					score.positive--;
+					score.remainNumber++;
+				} else {
+					localShare.totalScore = localShare.totalScore + 1;
+					Score score = localShare.scores.get(data.userInformation.currentUser.phone);
+					score.negative--;
+					score.remainNumber++;
+				}
+				int num = localShare.totalScore;
+				if (sharesMessageBody == null) {
+					return;
+				}
+				sharesMessageBody.sharePraiseNumberView.setText(num + "");
+				if (num < 10 && num >= 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-75 * viewManage.displayMetrics.density);
+				} else if (num < 100 && num >= 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * viewManage.displayMetrics.density);
+				} else if (num < 1000 && num >= 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+					sharesMessageBody.sharePraiseNumberView.setText("999");
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-62 * viewManage.displayMetrics.density);
+				} else if (num < 0) {
+					sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#00a800"));
+					sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * viewManage.displayMetrics.density);
+				}
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------评分失败：" + response.失败原因);
+			}
+			// data.shares.isModified = true;
+		};
+	};
 
 	public ResponseHandler<String> share_modifyPraiseusersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {

@@ -726,7 +726,7 @@ public class MainController {
 		}
 
 		public boolean onDoubleTap(MotionEvent event) {
-
+			// log.e("onDoubleTap");
 			return false;
 		}
 

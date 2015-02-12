@@ -40,7 +40,6 @@ import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
-import com.open.welinks.SharePraiseusersActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
@@ -320,33 +319,6 @@ public class ShareMessageDetailController {
 			public void onClick(View view) {
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
-				} else if (view.equals(thisView.praiseIconView)) {
-					boolean option = false;
-					if (!shareMessage.praiseusers.contains(currentUser.phone)) {
-						option = true;
-						boolean flag = false;
-						for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-							if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-								flag = true;
-								break;
-							}
-						}
-						if (!flag) {
-							shareMessage.praiseusers.add(currentUser.phone);
-						}
-						thisView.praiseIconView.setImageResource(R.drawable.praised_icon);
-					} else {
-						ArrayList<String> list = new ArrayList<String>();
-						for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-							if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-								list.add(shareMessage.praiseusers.get(i));
-							}
-						}
-						shareMessage.praiseusers.removeAll(list);
-						thisView.praiseIconView.setImageResource(R.drawable.praise_icon);
-					}
-					thisView.showPraiseUsersContent();
-					modifyPraiseusersToMessage(option);
 				} else if (view.equals(thisView.commentIconView)) {
 					if (thisView.commentInputView.getVisibility() == View.GONE) {
 						thisView.commentInputView.setVisibility(View.VISIBLE);
@@ -358,9 +330,9 @@ public class ShareMessageDetailController {
 				} else if (view.equals(thisView.praiseUserContentView)) {
 					// Toast.makeText(thisActivity, "praiseUserContentView",
 					// Toast.LENGTH_SHORT).show();
-					Intent intent = new Intent(thisActivity, SharePraiseusersActivity.class);
-					data.tempData.praiseusersList = shareMessage.praiseusers;
-					thisActivity.startActivity(intent);
+					// Intent intent = new Intent(thisActivity, SharePraiseusersActivity.class);
+					// data.tempData.praiseusersList = shareMessage.praiseusers;
+					// thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.menuImage)) {
 					if (thisView.menuOptionsView.getVisibility() == View.GONE) {
 						thisView.menuOptionsView.setVisibility(View.VISIBLE);
@@ -744,6 +716,7 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("gsid", gsid);
+		// params.addBodyParameter("sid", gsid);
 
 		HttpClient httpClient = HttpClient.getInstance();
 
@@ -773,7 +746,6 @@ public class ShareMessageDetailController {
 					thisView.fileHandlers.handler.post(new Runnable() {
 						public void run() {
 							if (flag0) {
-								thisView.showPraiseUsersContent();
 								thisView.notifyShareMessageComments();
 							} else {
 								thisView.showShareMessageDetails();
@@ -823,7 +795,6 @@ public class ShareMessageDetailController {
 					thisView.fileHandlers.handler.post(new Runnable() {
 						public void run() {
 							if (flag0) {
-								thisView.showPraiseUsersContent();
 								thisView.notifyShareMessageComments();
 							} else {
 								thisView.showShareMessageDetails();

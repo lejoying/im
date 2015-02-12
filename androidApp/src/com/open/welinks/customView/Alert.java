@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface.OnCancelListener;
 import android.graphics.PixelFormat;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -13,12 +15,14 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.open.welinks.R;
-import com.open.welinks.utils.InputMethodManagerUtils;
+import com.open.welinks.view.ViewManage;
 
 public class Alert {
 
@@ -331,6 +335,145 @@ public class Alert {
 						cancel();
 						if (cancelListener != null) {
 							cancelListener.onClick(AlertInputDialog.this);
+						}
+					}
+				});
+			}
+		}
+	}
+
+	public static AlertInputCommentDialog createInputCommentDialog(Context context) {
+		AlertInputCommentDialog dialog = new AlertInputCommentDialog(context);
+		dialog.showInput();
+		return dialog;
+	}
+
+	public static class AlertInputCommentDialog {
+
+		CommonDialog dialog;
+
+		public AlertInputCommentDialog(Context context) {
+			this.context = context;
+			dialog = new CommonDialog(context);
+		}
+
+		public AlertInputCommentDialog setOnConfirmClickListener(OnDialogClickListener l) {
+			dialog.confirmListener = l;
+			return this;
+		}
+
+		public AlertInputCommentDialog setOnCancelClickListener(OnDialogClickListener l) {
+			dialog.cancelListener = l;
+			return this;
+		}
+
+		public AlertInputCommentDialog setOnCancelListener(OnCancelListener listener) {
+			dialog.setOnCancelListener(listener);
+			return this;
+		}
+
+		public AlertInputCommentDialog show() {
+			dialog.show();
+			return this;
+		}
+
+		public String getInputText() {
+			return dialog.input.getText().toString();
+		}
+
+		public AlertInputCommentDialog setInputHint(String text) {
+			dialog.input.setHint(text);
+			return this;
+		}
+
+		public AlertInputCommentDialog setInputText(String text) {
+			dialog.input.setText(text);
+			dialog.input.setSelection(dialog.input.getText().toString().length());
+			return this;
+		}
+
+		public AlertInputCommentDialog setLeftButtonText(String text) {
+			((Button) (dialog.confirmView)).setText(text);
+			return this;
+		}
+
+		void hideInput() {
+			dialog.input.setVisibility(View.GONE);
+		}
+
+		void showInput() {
+			dialog.input.setVisibility(View.VISIBLE);
+		}
+
+		public interface OnDialogClickListener {
+			public void onClick(AlertInputCommentDialog dialog);
+		}
+
+		public AlertInputCommentDialog requestFocus() {
+			dialog.input.requestFocus();
+			InputMethodManager m = (InputMethodManager) dialog.getContext().getSystemService(dialog.getContext().INPUT_METHOD_SERVICE);
+			m.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			// m.showSoftInput(dialog.input, InputMethodManager.SHOW_FORCED);
+			// InputMethodManagerUtils inputMethodManagerUtils = new InputMethodManagerUtils(context);
+			// inputMethodManagerUtils.show(dialog.input);
+			return this;
+		}
+
+		public Context context;
+
+		class CommonDialog extends Dialog {
+
+			AlertInputCommentDialog.OnDialogClickListener confirmListener, cancelListener;
+			EditText input;
+			View confirmView;
+
+			public CommonDialog(Context context) {
+				super(context, R.style.AlertInputDialog);
+				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View content = inflater.inflate(R.layout.widget_alert_comment_input, null);
+				input = (EditText) content.findViewById(R.id.input);
+				confirmView = content.findViewById(R.id.confirm);
+				setContentView(content, new ViewGroup.LayoutParams(context.getResources().getDisplayMetrics().widthPixels, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+				setCanceledOnTouchOutside(true);
+				final ViewManage viewManage = ViewManage.getInstance();
+				int height = (int) (45 * viewManage.displayMetrics.density);
+				LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) input.getLayoutParams();
+				params.height = height;
+
+				input.addTextChangedListener(new TextWatcher() {
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						int lineCount = input.getLineCount();
+						if (lineCount == 1) {
+							int height = (int) (45 * viewManage.displayMetrics.density);
+							LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) input.getLayoutParams();
+							params.height = height;
+							input.setLayoutParams(params);
+						} else {
+							LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) input.getLayoutParams();
+							params.height = android.widget.LinearLayout.LayoutParams.WRAP_CONTENT;
+							input.setLayoutParams(params);
+						}
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+				});
+				// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
+
+				confirmView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						cancel();
+						if (confirmListener != null) {
+							confirmListener.onClick(AlertInputCommentDialog.this);
 						}
 					}
 				});
