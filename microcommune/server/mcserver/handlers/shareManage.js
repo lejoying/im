@@ -781,7 +781,7 @@ shareManage.getgroupshares = function (data, response) {
                     var share = {
                         comments: JSON.parse(shareData.comments),
                         content: shareData.content,
-                        //praiseusers: JSON.parse(shareData.praises),
+                        praiseusers: JSON.parse(shareData.praises),
                         gsid: shareData.gsid,
                         type: shareData.type,
                         time: shareData.time,
@@ -849,7 +849,7 @@ shareManage.getusershares = function (data, response) {
                         var share = {
                             comments: JSON.parse(shareData.comments),
                             content: shareData.content,
-                            //praiseusers: JSON.parse(shareData.praises),
+                            praiseusers: JSON.parse(shareData.praises),
                             gsid: shareData.gsid,
                             type: shareData.type,
                             time: shareData.time,
@@ -1032,7 +1032,7 @@ shareManage.getboardshares = function (data, response) {
                     var share = {
                         comments: JSON.parse(shareData.comments),
                         content: shareData.content,
-                        //praiseusers: JSON.parse(shareData.praises),
+                        praiseusers: JSON.parse(shareData.praises),
                         gsid: shareData.gsid,
                         type: shareData.type,
                         time: shareData.time,
@@ -1705,7 +1705,7 @@ shareManage.getboardshare = function (data, response) {
                 var share = {
                     comments: JSON.parse(shareData.comments),
                     content: shareData.content,
-                    //praiseusers: JSON.parse(shareData.praises),
+                    praiseusers: JSON.parse(shareData.praises),
                     gsid: shareData.gsid,
                     type: shareData.type,
                     time: shareData.time,
