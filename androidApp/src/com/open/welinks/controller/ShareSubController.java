@@ -439,6 +439,7 @@ public class ShareSubController {
 							thisView.showTopMenuRoomName();
 							thisView.shareMessageListBody.y = 0;
 							thisView.shareMessageListBody.setChildrenPosition();
+							thisView.viewManage.squareSubView.setConver();
 						}
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);

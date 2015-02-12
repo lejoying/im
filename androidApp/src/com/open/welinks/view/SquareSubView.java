@@ -70,6 +70,7 @@ public class SquareSubView {
 	public LayoutInflater mInflater;
 
 	public ListBody1 locationListBody;
+	public SelectBody selectBody;
 
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -117,13 +118,13 @@ public class SquareSubView {
 			}
 		};
 		this.locationListBody.height = 0 * this.displayMetrics.density;
-		SelectBody body0 = new SelectBody(locationListBody);
-		body0.initialize(0);
+		selectBody = new SelectBody(locationListBody);
+		selectBody.initialize(0);
 		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.MATCH_PARENT, (int) (190 * this.displayMetrics.density));
-		this.locationListBody.containerView.addView(body0.cardView, layoutParams0);
+		this.locationListBody.containerView.addView(selectBody.cardView, layoutParams0);
 		this.locationListBody.height += 190 * this.displayMetrics.density;
-		body0.y = 0 * displayMetrics.density;
-		body0.cardView.setY(body0.y);
+		selectBody.y = 0 * displayMetrics.density;
+		selectBody.cardView.setY(selectBody.y);
 
 		float width = (this.displayMetrics.widthPixels - 30 * this.displayMetrics.density) / 2;
 
@@ -210,7 +211,7 @@ public class SquareSubView {
 			} else if (type == 0) {
 				this.cardView = (TouchView) mInflater.inflate(R.layout.view_location_imageview, null);
 				this.coverView = (TouchImageView) this.cardView.findViewById(R.id.cover);
-				setConver(this.coverView);
+				setConver();
 			}
 			return this.cardView;
 		}
@@ -224,17 +225,17 @@ public class SquareSubView {
 		}
 	}
 
-	public void setConver(ImageView imageView) {
+	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group != null) {
 			File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
 			if (group.cover == null || "".equals(group.cover)) {
-				imageLoader.displayImage("drawable://" + R.drawable.tempicon, imageView);
+				imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
 				return;
 			}
 			final String path = file.getAbsolutePath();
 			if (file.exists()) {
-				imageLoader.displayImage("file://" + path, imageView, new SimpleImageLoadingListener() {
+				imageLoader.displayImage("file://" + path, selectBody.coverView, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
 					}
@@ -252,7 +253,7 @@ public class SquareSubView {
 				if (group.cover != null) {
 					// downloadConver(group.cover, path);
 				} else {
-					imageLoader.displayImage("drawable://" + R.drawable.tempicon, imageView);
+					imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
 				}
 			}
 		}

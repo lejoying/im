@@ -524,6 +524,7 @@ public class SmallBusinessCardPopView {
 						} else {
 							if (type.equals(TYPE_GROUP)) {
 								Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+								intent.putExtra("key", key);
 								thisActivity.startActivity(intent);
 							} else if (type.equals(TYPE_POINT)) {
 								Intent intent = new Intent(thisActivity, ChatActivity.class);

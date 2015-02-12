@@ -103,6 +103,7 @@ public class ShareListController {
 					intent.putExtra("gid", message.gid);
 					intent.putExtra("sid", message.sid);
 					intent.putExtra("gsid", message.gsid);
+					log.e(thisController.gson.toJson(message));
 					thisActivity.startActivityForResult(intent, resultCodeDetail);
 				}
 			}
@@ -180,7 +181,7 @@ public class ShareListController {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", key);
-		params.addBodyParameter("accessKey", "lejoying");
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 		HttpClient httpClient = new HttpClient();

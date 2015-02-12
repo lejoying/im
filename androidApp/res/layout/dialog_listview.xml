@@ -19,7 +19,7 @@
             android:id="@+id/content"
             android:layout_width="300dp"
             android:layout_height="match_parent"
-            android:layout_above="@+id/manage"
+            android:layout_marginBottom="51dp"
             android:layout_marginTop="20dp"
             android:background="@color/Transparent"
             android:cacheColorHint="@color/Transparent"
@@ -87,6 +87,49 @@
                     android:textColor="#99000000"
                     android:textSize="16sp" />
             </FrameLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/rditorLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/groupEditor"
+            android:background="@color/gray80"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/groupEditor"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/Transparent"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:gravity="center"
+                android:text="取消"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="50dp"
+                android:background="@color/gray80" />
+
+            <TextView
+                android:id="@+id/confirm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:gravity="center"
+                android:text="确定"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <FrameLayout

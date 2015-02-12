@@ -140,6 +140,8 @@ public class ShareSubView {
 	// first share View Animation true or false
 	public boolean isShowFirstMessageAnimation = false;
 
+	public GroupCircle currentGroupCircle;
+
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
 		viewManage.shareSubView = this;
@@ -357,8 +359,11 @@ public class ShareSubView {
 			log.e("return groups or localData");
 			return;
 		}
-		String gid = data.relationship.groupCircles.get(0);
-		GroupCircle groupCircle = data.relationship.groupCirclesMap.get(gid);
+		GroupCircle groupCircle = currentGroupCircle;
+		if (groupCircle == null) {
+			String gid = data.relationship.groupCircles.get(0);
+			groupCircle = data.relationship.groupCirclesMap.get(gid);
+		}
 		if (groupCircle == null || groupCircle.groups == null) {
 			log.e("return groups or localData");
 			return;
@@ -1102,7 +1107,7 @@ public class ShareSubView {
 		mainContentView.setLayoutParams(mainContentParams);
 		groupListBody = new ListBody1();
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
-		setGroupsDialogContent();
+		setGroupsDialogContent(null);
 		// groupsDialogContent.setOnClickListener(thisController.mOnClickListener);
 		// groupsDialogContent.setOnTouchListener(thisController.mOnTouchListener);
 	}
@@ -1143,14 +1148,17 @@ public class ShareSubView {
 		}
 	}
 
-	public void setGroupsDialogContent() {
+	public void setGroupsDialogContent(GroupCircle groupCircle) {
 		data = parser.check();
 		if (data.relationship == null || data.relationship.groupCircles == null || data.relationship.groupCirclesMap == null || data.localStatus == null || data.localStatus.localData == null) {
 			log.e("return groups or localData");
 			return;
 		}
-		String gid = data.relationship.groupCircles.get(0);
-		GroupCircle groupCircle = data.relationship.groupCirclesMap.get(gid);
+		if (groupCircle == null) {
+			String gid = data.relationship.groupCircles.get(0);
+			groupCircle = data.relationship.groupCirclesMap.get(gid);
+		}
+		currentGroupCircle = groupCircle;
 		if (groupCircle == null || groupCircle.groups == null) {
 			log.e("return groups or localData");
 			return;

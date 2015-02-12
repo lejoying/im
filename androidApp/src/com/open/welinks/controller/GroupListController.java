@@ -1,7 +1,6 @@
 package com.open.welinks.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -73,6 +71,7 @@ public class GroupListController {
 	public String gid;
 
 	public boolean isGroupEditor = false;
+	public int seletedRid = 0;
 
 	public GroupCircle currentGroupCircle, onTouchDownGroupCircle;
 
@@ -141,7 +140,11 @@ public class GroupListController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.backView)) {
-					thisActivity.finish();
+					if (isGroupEditor) {
+						cancelEditor();
+					} else {
+						thisActivity.finish();
+					}
 				} else if (view.equals(thisView.rightContainerLinearLayout)) {
 					thisView.changePopupWindow(false);
 				} else if (view.equals(thisView.manage)) {
@@ -154,22 +157,19 @@ public class GroupListController {
 					thisView.changePopupWindow(false);
 				} else if (view.equals(thisView.groupEditorConfirm)) {
 					if (editorGroups.size() > 0) {
+						seletedRid = 0;
 						thisView.changePopupWindow(true);
 					}
+				} else if (view.equals(thisView.dialogGroupEditorConfirm)) {
+					moveGroupsToCircle();
 				} else if (view.equals(thisView.groupEditorCancel)) {
-					isGroupEditor = false;
-					editorGroups.clear();
-					thisView.groupEditor.setVisibility(View.GONE);
-					thisView.groupListAdapter.notifyDataSetChanged();
+					cancelEditor();
 				} else if (view.equals(thisView.buttonOne)) {
 					createGroupCircle();
 				} else if (view.equals(thisView.buttonTwo)) {
-					if (thisView.groupEditor.getVisibility() == View.VISIBLE) {
-						thisView.groupEditor.setVisibility(View.GONE);
-					} else {
-						thisView.groupEditor.setVisibility(View.VISIBLE);
-
-					}
+					modifyGroupCircleName();
+				} else if (view.equals(thisView.buttonThree)) {
+					removeGroupCircle(currentGroupCircle);
 				}
 			}
 
@@ -276,12 +276,15 @@ public class GroupListController {
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.groupEditorConfirm.setOnClickListener(mOnClickListener);
 		thisView.groupEditorCancel.setOnClickListener(mOnClickListener);
+		thisView.dialogGroupEditorConfirm.setOnClickListener(mOnClickListener);
 		if (thisView.rightContainerLinearLayout != null)
 			thisView.rightContainerLinearLayout.setOnClickListener(mOnClickListener);
 		if (thisView.buttonOne != null)
 			thisView.buttonOne.setOnClickListener(mOnClickListener);
 		if (thisView.buttonTwo != null)
 			thisView.buttonTwo.setOnClickListener(mOnClickListener);
+		if (thisView.buttonThree != null)
+			thisView.buttonThree.setOnClickListener(mOnClickListener);
 		if (thisView.manage != null)
 			thisView.manage.setOnClickListener(mOnClickListener);
 		if (thisView.background != null)
@@ -307,8 +310,9 @@ public class GroupListController {
 			if (from != to) {
 				String groupCircle = data.relationship.groupCircles.remove(from);
 				data.relationship.groupCircles.add(to, groupCircle);
+				data.relationship.isModified = true;
 				adapter.notifyDataSetChanged();
-				modifyGroupCirclesSequence(gson.toJson(data.relationship.groupCircles));
+				modifyGroupCirclesSequence(gson.toJson(data.relationship.groupCircles), 0, "");
 			}
 		}
 
@@ -320,6 +324,8 @@ public class GroupListController {
 
 		@Override
 		public boolean onDown(MotionEvent ev) {
+			if (isGroupEditor)
+				return false;
 			int res = super.dragHandleHitPosition(ev);
 			if (res != -1) {
 				GroupCircle groupCircle = (GroupCircle) adapter.getItem(res);
@@ -353,28 +359,16 @@ public class GroupListController {
 			GroupCircle groupCircle = (GroupCircle) adapter.getItem(position);
 			if (groupCircle != null) {
 				if (isGroupEditor && thisView.manage.getVisibility() == View.GONE) {
-					GroupCircle nowCircle = data.relationship.groupCirclesMap.get(currentGroupCircle.rid + "");
-					for (String gid : editorGroups) {
-						nowCircle.groups.remove(gid);
-						groupCircle.groups.add(gid);
+					if (seletedRid != groupCircle.rid) {
+						seletedRid = groupCircle.rid;
+						thisView.dialogAdapter.notifyDataSetChanged();
 					}
-					moveGroupsToCircle(editorGroups, nowCircle.rid, groupCircle.rid, nowCircle.groups, groupCircle.groups);
-					currentGroupCircle = nowCircle;
-					isGroupEditor = false;
-					thisView.groupEditor.setVisibility(View.GONE);
-					thisView.groupListAdapter.notifyDataSetChanged();
 				} else {
-					if (isGroupEditor) {
-						isGroupEditor = false;
-						editorGroups.clear();
-						thisView.groupEditor.setVisibility(View.GONE);
-						thisView.groupListAdapter.notifyDataSetChanged();
-					}
 					currentGroupCircle = groupCircle;
 					thisView.showGroupCircles();
+					thisView.changePopupWindow(false);
 				}
 			}
-			thisView.changePopupWindow(false);
 		}
 	}
 
@@ -394,6 +388,13 @@ public class GroupListController {
 			title += "发送名片到群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		}
 		return title;
+	}
+
+	public void cancelEditor() {
+		isGroupEditor = false;
+		editorGroups.clear();
+		thisView.groupEditor.setVisibility(View.GONE);
+		thisView.showGroupCircles();
 	}
 
 	public void createGroupCircle() {
@@ -421,6 +422,26 @@ public class GroupListController {
 				}
 			}
 
+		}).show();
+
+	}
+
+	public void modifyGroupCircleName() {
+		Alert.createInputDialog(thisActivity).setTitle("修改分组名称").setInputHint("请输入名称").setInputText(currentGroupCircle.name).setOnConfirmClickListener(new OnDialogClickListener() {
+
+			@Override
+			public void onClick(AlertInputDialog dialog) {
+				String name = dialog.getInputText().trim();
+				if (!"".equals(name) && !currentGroupCircle.name.equals(name)) {
+					GroupCircle circle = data.relationship.groupCirclesMap.get(currentGroupCircle.rid + "");
+					circle.name = name;
+					currentGroupCircle = circle;
+					thisView.showGroupCircles();
+					data.relationship.isModified = true;
+					modifyGroupCirclesSequence("", circle.rid, name);
+				}
+
+			}
 		}).show();
 
 	}
@@ -456,6 +477,36 @@ public class GroupListController {
 		}).show();
 	}
 
+	public void moveGroupsToCircle() {
+		for (GroupCircle circle : data.relationship.groupCirclesMap.values()) {
+			if (circle.rid == seletedRid) {
+				for (String gid : editorGroups) {
+					if (!circle.groups.contains(gid))
+						circle.groups.add(gid);
+				}
+			} else {
+				for (String gid : editorGroups) {
+					circle.groups.remove(gid);
+				}
+			}
+		}
+		data.relationship.isModified = true;
+		thisView.changePopupWindow(false);
+
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("groups", gson.toJson(editorGroups));
+		params.addBodyParameter("groupCircles", gson.toJson(data.relationship.groupCircles));
+		params.addBodyParameter("groupCirclesMap", gson.toJson(data.relationship.groupCirclesMap));
+		params.addBodyParameter("rid", seletedRid + "");
+		thisActivity.log.e(gson.toJson(data.relationship.groupCirclesMap));
+		httpUtils.send(HttpMethod.POST, API.GROUP_MOVEGROUPSTOCIRCLE, params, responseHandlers.group_movegroupstocircle);
+
+		cancelEditor();
+	}
+
 	public void moveGroupsToCircle(List<String> groups, int fromRid, int toRid, List<String> fromGroups, List<String> toGroups) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -470,12 +521,14 @@ public class GroupListController {
 		httpUtils.send(HttpMethod.POST, API.GROUP_MOVEGROUPSTOCIRCLE, params, responseHandlers.group_movegroupstocircle);
 	}
 
-	public void modifyGroupCirclesSequence(String sequenceListString) {
+	public void modifyGroupCirclesSequence(String sequenceListString, int rid, String name) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("groupCircles", sequenceListString);
+		params.addBodyParameter("name", name);
+		params.addBodyParameter("rid", rid + "");
 
 		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFYGROUPCIRCLE, params, responseHandlers.group_modifygroupcircle);
 
@@ -494,10 +547,7 @@ public class GroupListController {
 		if (thisView.popDialogView.isShowing()) {
 			thisView.changePopupWindow(false);
 		} else if (isGroupEditor) {
-			isGroupEditor = false;
-			editorGroups.clear();
-			thisView.groupEditor.setVisibility(View.GONE);
-			thisView.groupListAdapter.notifyDataSetChanged();
+			cancelEditor();
 		} else {
 			thisActivity.finish();
 		}
@@ -505,7 +555,7 @@ public class GroupListController {
 
 	public void finish() {
 		if (thisView.mViewManage.shareSubView != null) {
-			thisView.mViewManage.shareSubView.setGroupsDialogContent();
+			thisView.mViewManage.shareSubView.setGroupsDialogContent(currentGroupCircle);
 			thisView.mViewManage.shareSubView.showShareMessages();
 		}
 

@@ -22,6 +22,10 @@ public class InputMethodManagerUtils {
 		mInputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
+	public void toggleSoftInput() {
+		mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+	}
+
 	public boolean isActive() {
 		return mInputMethodManager.isActive();
 	}

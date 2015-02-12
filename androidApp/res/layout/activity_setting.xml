@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="10dp"
-                    android:text="关于学生来吐槽"
+                    android:text="关于微型社区"
                     android:textColor="#fff"
                     android:textSize="16sp" />
 

@@ -119,7 +119,7 @@ public class ViewManage {
 			}
 		} else if (viewName.equals("ShareSubView")) {
 			if (mainView.shareSubView != null) {
-				mainView.shareSubView.setGroupsDialogContent();
+				mainView.shareSubView.setGroupsDialogContent(null);
 			}
 		} else if (viewName.equals("ShareSubViewMessage")) {
 			if (mainView.shareSubView != null) {

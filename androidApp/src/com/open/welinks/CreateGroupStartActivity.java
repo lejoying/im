@@ -180,7 +180,7 @@ public class CreateGroupStartActivity extends Activity {
 		data.relationship.groupsMap.put(key, group);
 		data.relationship.isModified = true;
 
-		viewManage.mainView.shareSubView.setGroupsDialogContent();
+		viewManage.mainView.shareSubView.setGroupsDialogContent(null);
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.GROUP_CREATE, params, responseHandlers.group_create);

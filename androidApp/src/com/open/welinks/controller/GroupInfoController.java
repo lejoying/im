@@ -418,7 +418,7 @@ public class GroupInfoController {
 		String gid = data.localStatus.localData.currentSelectedGroup;
 		data.relationship.groups.remove(gid);
 		data.localStatus.localData.currentSelectedGroup = "";
-		viewManage.shareSubView.setGroupsDialogContent();
+		viewManage.shareSubView.setGroupsDialogContent(null);
 		if (data.relationship.groups.size() != 0) {
 			data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
 			viewManage.shareSubView.shareTopMenuGroupName.setText(data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).name);

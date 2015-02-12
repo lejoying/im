@@ -135,7 +135,10 @@ public class ShareMessageDetailController {
 
 		if (sid == null || "".equals(sid)) {
 			log.e(ViewManage.getErrorLineNumber() + "少传参数了");
-			throw new IllegalArgumentException(ViewManage.getErrorLineNumber() + "少传参数了");
+			Toast.makeText(thisActivity, "参数缺失，分享不存在", Toast.LENGTH_SHORT).show();
+			thisActivity.finish();
+			return;
+			// throw new IllegalArgumentException(ViewManage.getErrorLineNumber() + "少传参数了");
 		}
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {

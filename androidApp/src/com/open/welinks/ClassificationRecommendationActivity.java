@@ -75,7 +75,7 @@ public class ClassificationRecommendationActivity extends Activity {
 	public TextView backTitleView;
 	public ListView content;
 
-	public int measure, groupNowPage = 0, groupPageSize = 5, labelNowPage = 0, labelPageSize = 10;
+	public int measure, groupNowPage = 0, groupPageSize = 10, labelNowPage = 0, labelPageSize = 30;
 
 	public List<String> seletedLabel;
 	public List<String> labels;
@@ -242,8 +242,8 @@ public class ClassificationRecommendationActivity extends Activity {
 		seletedLabel = new ArrayList<String>();
 		labelViews = new ArrayList<View>();
 		labelViewsMap = new HashMap<String, View>();
-		labels = new ArrayList<String>(Arrays.asList(Constant.LABELS));
-		fillData(labels);
+		labels = new ArrayList<String>();
+		getHotLabels();
 		mAdapter = new GroupAdapter();
 		content.setAdapter(mAdapter);
 	}
@@ -281,9 +281,6 @@ public class ClassificationRecommendationActivity extends Activity {
 			textView.setBackgroundDrawable(drawableDown);
 			textView.setTextColor(Color.WHITE);
 		} else if ("normal".equals(status)) {
-			// GradientDrawable drawableUp = (GradientDrawable) getResources().getDrawable(R.drawable.selector_label);
-			// drawableUp.setStroke((int) BaseDataUtils.dpToPx(0.75f), color);
-			// drawableUp.setColor(Color.TRANSPARENT);
 			textView.setBackgroundDrawable(createDrawable(color));
 			textView.setTextColor(createColorStateList(color));
 		}

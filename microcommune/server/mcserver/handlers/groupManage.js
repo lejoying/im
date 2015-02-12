@@ -1907,6 +1907,7 @@ groupManage.deletegroupcircle = function (data, response) {
         var query = [
             'MATCH (account:Account)<-[r:HAS_MEMBER]-(group:Group)',
             'WHERE account.phone={phone} AND r.rid={rid}',
+            "SET r.rid=8888888",
             'RETURN account,group,r'
         ].join("\n");
         var params = {
@@ -1920,20 +1921,7 @@ groupManage.deletegroupcircle = function (data, response) {
                     "失败原因": "数据异常1"
                 }), response);
                 console.error(error);
-            } else if (results.length > 0) {
-                var accountNode;
-                var accountData;
-                for (var index in results) {
-                    if (index == 0) {
-                        accountNode = results[index].account;
-                        accountData = accountNode.data;
-                    }
-                    var rNode = results[index].r;
-                    var rData = rNode.data;
-                    rData.rid = 8888888;
-                    rNode.save(function (err, node) {
-                    });
-                }
+            } else if (results.length >= 0) {
                 deleteAccountGroupCircle();
             } else {
                 ResponseData(JSON.stringify({
@@ -1967,7 +1955,7 @@ groupManage.deletegroupcircle = function (data, response) {
                     var deleteGroupCircle;
                     for (var index in groupCirclesOrderString) {
                         var groupCircle = groupCirclesOrderString[index];
-                        if (groupCircle.rid != rid) {
+                        if ((groupCircle.rid + "") != rid) {
                             newGroupCirclesOrderString.push(groupCircle);
                         } else {
                             deleteGroupCircle = groupCircle;
@@ -2004,7 +1992,7 @@ groupManage.modifygroupcircle = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var name = data.name;
-    var rid = data.rid;
+    var dataRid = data.rid;
     var groupCircles = data.groupCircles;
     if (verifyEmpty.verifyEmpty(data, phone, response)) {
         modifyGroupCircle();
@@ -2048,11 +2036,12 @@ groupManage.modifygroupcircle = function (data, response) {
                     groupCirclesOrderString = newGroupCirclesOrderString;
                     accountData.groupCirclesOrderString = JSON.stringify(newGroupCirclesOrderString);
                 }
-                if (rid != undefined && rid != null && rid != "" && name != undefined && name != null && name != "") {
+                console.log(rid + name);
+                if (dataRid != undefined && dataRid != null && dataRid != "" && name != undefined && name != null && name != "") {
                     newGroupCirclesOrderString = [];
                     for (var index in groupCirclesOrderString) {
                         var groupCircle = groupCirclesOrderString[index];
-                        if (groupCircle.rid = rid) {
+                        if ((groupCircle.rid + "") == dataRid) {
                             groupCircle.name = name;
                         }
                         newGroupCirclesOrderString.push(groupCircle);
@@ -2484,11 +2473,10 @@ groupManage.movegroupstocircle = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var groups = JSON.parse(data.groups);
-    var fromRid = data.fromRid;
-    var toRid = data.toRid;
-    var fromGroups = data.fromGroups;
-    var toGroups = data.toGroups;
-    var arr = [phone, groups, fromRid, toRid, fromGroups, toGroups];
+    var groupCircles = JSON.parse(data.groupCircles);
+    var groupCirclesMap = JSON.parse(data.groupCirclesMap);
+    var rid = data.rid;
+    var arr = [phone, groups, groupCircles, groupCirclesMap, rid];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         var gids = [];
         for (var index in groups) {
@@ -2507,7 +2495,7 @@ groupManage.movegroupstocircle = function (data, response) {
         var params = {
             phone: phone,
             groups: groups,
-            rid: parseInt(toRid)
+            rid: parseInt(rid)
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -2520,36 +2508,18 @@ groupManage.movegroupstocircle = function (data, response) {
             } else if (results.length > 0) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
-                var groupCircles = JSON.parse(accountData.groupCirclesOrderString);
-                if (fromRid != "8888888") {
-                    fromRid = parseInt(fromRid);
-                }
-                if (toRid != "8888888") {
-                    toRid = parseInt(toRid);
-                }
-                fromGroups = JSON.parse(fromGroups);
-                toGroups = JSON.parse(toGroups);
-                var dbFromGroups = [], dbToGroups = [];
-                for (var index in fromGroups) {
-                    var gid = fromGroups[index];
-                    dbFromGroups.push(parseInt(gid));
-                }
-                for (var index in toGroups) {
-                    var gid = toGroups[index];
-                    dbToGroups.push(parseInt(gid));
-                }
-                console.log(groupCircles);
+                var newGroupCircles = [];
                 for (var index in groupCircles) {
-                    var groupCircle = groupCircles[index];
-                    if (groupCircle.rid == fromRid) {
-                        groupCircle.groups = dbFromGroups;
+                    var groupCircle = groupCirclesMap[groupCircles[index]];
+                    var newGroups = [];
+                    for (var index1 in groupCircle.groups) {
+                        var gid = groupCircle.groups[index1];
+                        newGroups.push(parseInt(gid));
                     }
-                    if (groupCircle.rid == toRid) {
-                        groupCircle.groups = dbToGroups;
-                    }
+                    groupCircle.groups = newGroups;
+                    newGroupCircles.push(groupCircle);
                 }
-                console.log(groupCircles);
-                accountData.groupCirclesOrderString = JSON.stringify(groupCircles);
+                accountData.groupCirclesOrderString = JSON.stringify(newGroupCircles);
                 accountNode.save(function (err, node) {
                     if (err) {
                         console.info(err);

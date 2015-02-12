@@ -40,10 +40,10 @@ public class GroupListView {
 	public LayoutInflater mInflater;
 
 	public RelativeLayout backView, rightContainer, maxView;
-	public TextView groupEditorConfirm, groupEditorCancel, backTitileView, titleView, sectionNameTextView, buttonOneText, buttonTwoText, buttonThreeText;
+	public TextView dialogGroupEditorConfirm, dialogGroupEditorCancel, groupEditorConfirm, groupEditorCancel, backTitileView, titleView, sectionNameTextView, buttonOneText, buttonTwoText, buttonThreeText;
 	public LinearLayout rightContainerLinearLayout;
-	public ImageView moreView;
-	public View groupEditor, dialogView, buttons, manage, buttonOne, buttonTwo, buttonThree, background, onTouchDownView, onLongPressView;
+	public ImageView moreView, rditorLine;
+	public View groupEditor, dialogGroupEditor, dialogView, buttons, manage, buttonOne, buttonTwo, buttonThree, background, onTouchDownView, onLongPressView;
 	public PopupWindow popDialogView;
 	public ListView groupListContainer;
 	public ThreeChoicesView threeChoicesView;
@@ -89,7 +89,7 @@ public class GroupListView {
 		businessCardPopView.cardView.setHot(false);
 
 		if (thisController.status == Status.list_group) {
-			this.backTitileView.setText("群组列表");
+			this.backTitileView.setText("分组管理");
 
 			rightContainerLinearLayout = new LinearLayout(thisActivity);
 			rightContainerLinearLayout.setPadding((int) (10 * displayMetrics.density), 0, (int) (20 * displayMetrics.density), 0);
@@ -150,13 +150,16 @@ public class GroupListView {
 		buttonOne = dialogView.findViewById(R.id.buttonOne);
 		buttonTwo = dialogView.findViewById(R.id.buttonTwo);
 		buttonThree = dialogView.findViewById(R.id.buttonThree);
+		dialogGroupEditor = dialogView.findViewById(R.id.groupEditor);
+		rditorLine = (ImageView) dialogView.findViewById(R.id.rditorLine);
 		buttonOneText = (TextView) dialogView.findViewById(R.id.buttonOneText);
 		buttonTwoText = (TextView) dialogView.findViewById(R.id.buttonTwoText);
 		buttonThreeText = (TextView) dialogView.findViewById(R.id.buttonThreeText);
+		dialogGroupEditorConfirm = (TextView) dialogView.findViewById(R.id.confirm);
+		dialogGroupEditorCancel = (TextView) dialogView.findViewById(R.id.cancel);
 		buttonOneText.setText("新建分组");
-		buttonTwoText.setText("测试");
-		buttonTwo.setVisibility(View.GONE);
-		buttonThree.setVisibility(View.GONE);
+		buttonTwoText.setText("修改组名");
+		buttonThreeText.setText("删除分组");
 
 		popDialogView = new PopupWindow(dialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		popDialogView.setBackgroundDrawable(new BitmapDrawable());
@@ -170,9 +173,20 @@ public class GroupListView {
 			if (buttons.getVisibility() == View.VISIBLE)
 				buttons.setVisibility(View.GONE);
 			if (isEditor) {
+				dialogGroupEditor.setVisibility(View.VISIBLE);
+				rditorLine.setVisibility(View.VISIBLE);
 				manage.setVisibility(View.GONE);
 			} else {
+				dialogGroupEditor.setVisibility(View.GONE);
+				rditorLine.setVisibility(View.GONE);
 				manage.setVisibility(View.VISIBLE);
+			}
+			if (thisController.currentGroupCircle.rid == 8888888) {
+				buttonTwo.setVisibility(View.GONE);
+				buttonThree.setVisibility(View.GONE);
+			} else {
+				buttonTwo.setVisibility(View.VISIBLE);
+				buttonThree.setVisibility(View.VISIBLE);
 			}
 			popDialogView.showAtLocation(maxView, Gravity.CENTER, 0, 0);
 		}
@@ -252,6 +266,7 @@ public class GroupListView {
 				holder.checkBox = (ImageView) convertView.findViewById(R.id.checkBox);
 				holder.nameView = (TextView) convertView.findViewById(R.id.title);
 				holder.descriptionView = (TextView) convertView.findViewById(R.id.description);
+				((RelativeLayout.LayoutParams) holder.checkBox.getLayoutParams()).rightMargin = BaseDataUtils.dpToPxint(25);
 				convertView.setTag(holder);
 			} else {
 				holder = (GroupHolder) convertView.getTag();
@@ -300,6 +315,7 @@ public class GroupListView {
 
 		@Override
 		public void notifyDataSetChanged() {
+			groupCircles = thisController.data.relationship.groupCircles;
 			groupListAdapter.notifyDataSetChanged();
 			super.notifyDataSetChanged();
 		}
@@ -324,31 +340,39 @@ public class GroupListView {
 			Holder holder = null;
 			if (convertView == null) {
 				holder = new Holder();
-				convertView = mInflater.inflate(R.layout.share_group_select_dialog_item, null, false);
-				holder.iconView = (ImageView) convertView.findViewById(R.id.groupIcon);
-				holder.selectedStatusView = (ImageView) convertView.findViewById(R.id.groupSelectedStatus);
-				holder.cardBackground = (ImageView) convertView.findViewById(R.id.grip_card_background);
-				holder.nameView = (TextView) convertView.findViewById(R.id.groupName);
-				holder.selectedStatusView.getLayoutParams().width = (int) BaseDataUtils.dpToPx(350);
+				convertView = mInflater.inflate(R.layout.group_list_dialog_item, null, false);
+				holder.selectedStatus = (ImageView) convertView.findViewById(R.id.selectedStatus);
+				holder.status = (ImageView) convertView.findViewById(R.id.status);
+				holder.name = (TextView) convertView.findViewById(R.id.name);
 				convertView.setTag(holder);
 			} else {
 				holder = (Holder) convertView.getTag();
 			}
 			GroupCircle groupCircle = (GroupCircle) getItem(position);
 			if (groupCircle != null) {
-				holder.nameView.setText(groupCircle.name);
+				holder.name.setText(groupCircle.name);
 				if (thisController.currentGroupCircle != null && thisController.currentGroupCircle.rid == groupCircle.rid) {
-					holder.selectedStatusView.setVisibility(View.VISIBLE);
+					holder.selectedStatus.setVisibility(View.VISIBLE);
 				} else {
-					holder.selectedStatusView.setVisibility(View.INVISIBLE);
+					holder.selectedStatus.setVisibility(View.INVISIBLE);
+				}
+				if (thisController.isGroupEditor && manage.getVisibility() == View.GONE) {
+					holder.status.setVisibility(View.VISIBLE);
+					if (groupCircle.rid == thisController.seletedRid) {
+						holder.status.setImageResource(R.drawable.icon_checkbox_checked);
+					} else {
+						holder.status.setImageResource(R.drawable.icon_checkbox);
+					}
+				} else {
+					holder.status.setVisibility(View.GONE);
 				}
 			}
 			return convertView;
 		}
 
 		class Holder {
-			public ImageView iconView, selectedStatusView, cardBackground;
-			public TextView nameView;
+			public ImageView status, selectedStatus;
+			public TextView name;
 		}
 
 	}

@@ -817,7 +817,7 @@ shareManage.getusershares = function (data, response) {
         var query = [
             "MATCH (group:Group)-->(shares:Shares)-->(share:Share)",
             "WHERE  share.phone={phone}",
-            "RETURN group,share",
+            "RETURN group,share,shares",
             "ORDER BY share.time DESC",
             "SKIP {start}",
             "LIMIT {pagesize}"
@@ -843,6 +843,7 @@ shareManage.getusershares = function (data, response) {
                     for (var index in results) {
                         var groupData = results[index].group.data;
                         var shareData = results[index].share.data;
+                        var sharesData = results[index].shares.data;
                         var share = {
                             comments: JSON.parse(shareData.comments),
                             content: shareData.content,
@@ -851,6 +852,7 @@ shareManage.getusershares = function (data, response) {
                             type: shareData.type,
                             time: shareData.time,
                             phone: shareData.phone,
+                            sid: sharesData.sid,
                             gid: groupData.gid,
                             status: "sent"
                         };

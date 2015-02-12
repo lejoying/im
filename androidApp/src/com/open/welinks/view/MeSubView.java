@@ -73,6 +73,7 @@ public class MeSubView {
 		if (user != null) {
 			fileHandlers.getHeadImage(user.head, this.userHeadImageView, viewManage.options60);
 			this.userNickNameView.setText(user.nickName);
+			mainView.userTopbarNameView.setText(user.nickName);
 			this.userBusinessView.setText(user.mainBusiness);
 			if (data.event.userNotReadMessage || data.event.groupNotReadMessage) {
 				dynamicListStatusView.setVisibility(View.VISIBLE);

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">学生来吐槽</string>
-    <string name="description_image">微型公社new</string>
+    <string name="app_name">微型社区</string>
+    <string name="description_image">微型社区NEW</string>
     <string name="image_text">图文</string>
     <string name="voice_text">语音</string>
     <string name="vote_text">投票</string>

@@ -145,7 +145,7 @@ public class ResponseHandlers {
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
 							}
-							viewManage.mainView.shareSubView.setGroupsDialogContent();
+							viewManage.mainView.shareSubView.setGroupsDialogContent(null);
 							viewManage.postNotifyView("GroupListActivity");
 						}
 					} else {
@@ -157,7 +157,7 @@ public class ResponseHandlers {
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
 							}
-							viewManage.mainView.shareSubView.setGroupsDialogContent();
+							viewManage.mainView.shareSubView.setGroupsDialogContent(null);
 							viewManage.postNotifyView("GroupListActivity");
 						}
 					}
@@ -1062,7 +1062,7 @@ public class ResponseHandlers {
 				}
 				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
 				data.relationship.isModified = true;
-				viewManage.shareSubView.setGroupsDialogContent();
+				viewManage.shareSubView.setGroupsDialogContent(null);
 			} else {
 				log.d(ViewManage.getErrorLineNumber() + "创建群组失败===================" + response.失败原因);
 
@@ -1244,7 +1244,8 @@ public class ResponseHandlers {
 						}
 						log.e(ViewManage.getErrorLineNumber() + "board:" + group.currentBoard);
 					}
-					viewManage.mainView.shareSubView.setGroupsDialogContent();
+					viewManage.mainView.shareSubView.setGroupsDialogContent(null);
+					viewManage.squareSubView.setConver();
 					viewManage.postNotifyView("GroupListActivity");
 					DataHandlers.clearInvalidGroupMessages();
 				} else {
