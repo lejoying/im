@@ -785,7 +785,7 @@ public class ShareSubView {
 				this.commentContentView = (TouchTextView) this.cardView.findViewById(R.id.commentContent);
 				this.commentContainer = (TouchView) this.cardView.findViewById(R.id.commentContainer);
 				this.commentControlView = (TouchImageView) this.cardView.findViewById(R.id.commentControl);
-
+				this.commentControlView.setAlpha(0.5f);
 				this.commentsPointView = (TouchImageView) this.cardView.findViewById(R.id.commentsPoint);
 				this.commentsPointView.setAlpha(0.5f);
 

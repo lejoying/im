@@ -89,7 +89,7 @@ public class GroupListView {
 		businessCardPopView.cardView.setHot(false);
 
 		if (thisController.status == Status.list_group) {
-			this.backTitileView.setText("分组管理");
+			this.backTitileView.setText("群组列表");
 
 			rightContainerLinearLayout = new LinearLayout(thisActivity);
 			rightContainerLinearLayout.setPadding((int) (10 * displayMetrics.density), 0, (int) (20 * displayMetrics.density), 0);

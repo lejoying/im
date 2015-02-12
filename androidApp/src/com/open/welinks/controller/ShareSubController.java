@@ -516,6 +516,7 @@ public class ShareSubController {
 								view.setAlpha(0.125f);
 							}
 							if (score.remainNumber == 0) {
+								Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
 								return;
 							}
 						}
@@ -567,6 +568,7 @@ public class ShareSubController {
 								view.setAlpha(0.125f);
 							}
 							if (score.remainNumber == 0) {
+								Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
 								return;
 							}
 						}

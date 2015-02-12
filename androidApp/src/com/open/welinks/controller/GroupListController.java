@@ -116,7 +116,12 @@ public class GroupListController {
 				groups = data.relationship.squares;
 			} else if (status == Status.list_group) {
 				if (data.relationship != null && data.relationship.groupCirclesMap != null && data.relationship.groupCircles != null) {
-					currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+					if (thisView.mViewManage.shareSubView.currentGroupCircle != null) {
+						currentGroupCircle = data.relationship.groupCirclesMap.get(thisView.mViewManage.shareSubView.currentGroupCircle.rid + "");
+
+					} else {
+						currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+					}
 					if (currentGroupCircle != null && currentGroupCircle.groups != null) {
 						groups = currentGroupCircle.groups;
 						thisView.showGroupCircles();
@@ -254,6 +259,7 @@ public class GroupListController {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				if (status == Status.list_group && !isGroupEditor) {
+					thisView.backTitileView.setText("分组管理");
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 100, 100, 300 };
 					vibrator.vibrate(pattern, -1);
@@ -392,6 +398,7 @@ public class GroupListController {
 	}
 
 	public void cancelEditor() {
+		thisView.backTitileView.setText("群组列表");
 		isGroupEditor = false;
 		editorGroups.clear();
 		thisView.groupEditor.setVisibility(View.GONE);
