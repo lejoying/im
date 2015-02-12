@@ -170,6 +170,7 @@
         android:id="@+id/commentBoard"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:visibility="gone"
         android:translationY="200dp" >
 
         <com.open.lib.TouchTextView

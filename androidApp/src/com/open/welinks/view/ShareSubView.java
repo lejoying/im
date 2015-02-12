@@ -776,6 +776,7 @@ public class ShareSubView {
 				this.incrementView = (TouchImageView) this.cardView.findViewById(R.id.num_picker_increment);
 
 				this.commentBoardView = (TouchView) this.cardView.findViewById(R.id.commentBoard);
+				this.commentBoardView.setVisibility(View.VISIBLE);
 				this.commentContentView = (TouchTextView) this.cardView.findViewById(R.id.commentContent);
 				this.commentContainer = (TouchView) this.cardView.findViewById(R.id.commentContainer);
 				this.commentControlView = (TouchImageView) this.cardView.findViewById(R.id.commentControl);

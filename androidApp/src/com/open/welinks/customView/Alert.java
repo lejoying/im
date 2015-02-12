@@ -411,8 +411,11 @@ public class Alert {
 
 		public AlertInputCommentDialog requestFocus() {
 			dialog.input.requestFocus();
-			InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.showSoftInput(dialog.input, InputMethodManager.RESULT_SHOWN);
+			InputMethodManager m = (InputMethodManager) dialog.getContext().getSystemService(dialog.getContext().INPUT_METHOD_SERVICE);
+			m.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			// m.showSoftInput(dialog.input, InputMethodManager.SHOW_FORCED);
+			// InputMethodManagerUtils inputMethodManagerUtils = new InputMethodManagerUtils(context);
+			// inputMethodManagerUtils.show(dialog.input);
 			return this;
 		}
 

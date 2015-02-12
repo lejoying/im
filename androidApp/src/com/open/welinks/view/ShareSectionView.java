@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -642,7 +643,10 @@ public class ShareSectionView {
 				// } else {
 				// imageLoader.displayImage("file://" + fileHandlers.sdcardImageFolder.getAbsolutePath() + "/" + imageContent, shareImageContentView);
 				// }
-				this.sharePraiseNumberView.setText(shareMessage.scores.size() + "");
+				if (shareMessage.scores == null) {
+					shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+				}
+				this.sharePraiseNumberView.setText(shareMessage.totalScore + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;
 				// if (shareMessage.praiseusers.contains(userPhone)) {
