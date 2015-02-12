@@ -434,6 +434,10 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.deleteboard(data, response);
         });
+    }else if (operation == "score") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.score(data, response);
+        });
     }
 }
 function setOauthAccessKey(phone, accessKey, next) {
