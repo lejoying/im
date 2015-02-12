@@ -40,6 +40,7 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
+import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.view.GroupListView;
 import com.open.welinks.view.GroupListView.GroupCircleDialogAdapter;
 
@@ -419,11 +420,12 @@ public class GroupListController {
 
 					httpUtils.send(HttpMethod.POST, API.GROUP_CREATEGROUPCIRCLE, params, responseHandlers.group_creategroupcircle);
 					thisView.showGroupCircles();
+					InputMethodManagerUtils mInputMethodManagerUtils = new InputMethodManagerUtils(thisActivity);
+					mInputMethodManagerUtils.toggleSoftInput();
 				}
 			}
 
 		}).show();
-
 	}
 
 	public void modifyGroupCircleName() {
