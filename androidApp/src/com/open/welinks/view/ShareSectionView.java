@@ -642,14 +642,14 @@ public class ShareSectionView {
 				// } else {
 				// imageLoader.displayImage("file://" + fileHandlers.sdcardImageFolder.getAbsolutePath() + "/" + imageContent, shareImageContentView);
 				// }
-				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+				this.sharePraiseNumberView.setText(shareMessage.scores.size() + "");
 				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
 				String userPhone = data.userInformation.currentUser.phone;
-				if (shareMessage.praiseusers.contains(userPhone)) {
-					this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-				} else {
-					this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-				}
+				// if (shareMessage.praiseusers.contains(userPhone)) {
+				// this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+				// } else {
+				// this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+				// }
 				this.sharePraiseIconView.setTag("SharePraise#" + shareMessage.gsid);
 				this.sharePraiseIconView.setTag(R.id.tag_class, "share_praise");
 				this.sharePraiseIconView.setOnClickListener(thisController.mOnClickListener);

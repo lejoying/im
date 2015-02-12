@@ -301,7 +301,9 @@ public class Data {
 			public String nickName;
 			public String head;
 			public long time;
-			public ArrayList<String> praiseusers = new ArrayList<String>();
+			public int totalScore;
+			// public ArrayList<String> praiseusers = new ArrayList<String>();
+			public HashMap<String, Score> scores = new HashMap<String, Score>();
 			public List<Comment> comments = new ArrayList<Comment>();
 			public String content;
 			public String status;// sending sent failed
@@ -317,6 +319,14 @@ public class Data {
 			public String contentType;// "text"
 			public String content;
 			public long time;
+		}
+
+		public class Score {
+			public String phone;
+			public long time;
+			public int positive;
+			public int negative;
+			public int remainNumber = 0;
 		}
 	}
 

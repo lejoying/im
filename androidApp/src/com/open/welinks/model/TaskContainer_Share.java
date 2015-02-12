@@ -11,7 +11,6 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.MyLog;
-import com.open.welinks.R;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -45,30 +44,30 @@ public class TaskContainer_Share {
 
 		public void modifyData() {// 主UI线程
 
-			parser.check();
-			User currentUser = data.userInformation.currentUser;
-			ShareMessage shareMessage = data.boards.shareMessagesMap.get(gsid);
-			if (!shareMessage.praiseusers.contains(currentUser.phone)) {
-				option = true;
-				boolean flag = false;
-				for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-					if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-						flag = true;
-						break;
-					}
-				}
-				if (!flag) {
-					shareMessage.praiseusers.add(currentUser.phone);
-				}
-			} else {
-				ArrayList<String> list = new ArrayList<String>();
-				for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-					if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-						list.add(shareMessage.praiseusers.get(i));
-					}
-				}
-				shareMessage.praiseusers.removeAll(list);
-			}
+			// parser.check();
+			// User currentUser = data.userInformation.currentUser;
+			// ShareMessage shareMessage = data.boards.shareMessagesMap.get(gsid);
+			// if (!shareMessage.praiseusers.contains(currentUser.phone)) {
+			// option = true;
+			// boolean flag = false;
+			// for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
+			// if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
+			// flag = true;
+			// break;
+			// }
+			// }
+			// if (!flag) {
+			// shareMessage.praiseusers.add(currentUser.phone);
+			// }
+			// } else {
+			// ArrayList<String> list = new ArrayList<String>();
+			// for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
+			// if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
+			// list.add(shareMessage.praiseusers.get(i));
+			// }
+			// }
+			// shareMessage.praiseusers.removeAll(list);
+			// }
 
 		}
 
@@ -76,12 +75,12 @@ public class TaskContainer_Share {
 			User currentUser = data.userInformation.currentUser;
 			shareMessage = data.boards.shareMessagesMap.get(gsid);
 			SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
-			if (shareMessage.praiseusers.contains(currentUser.phone)) {
-				sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-			} else {
-				sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-			}
-			sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+			// if (shareMessage.praiseusers.contains(currentUser.phone)) {
+			// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+			// } else {
+			// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+			// }
+			// sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
 		}
 
 		@Override

@@ -1888,6 +1888,35 @@ public class ResponseHandlers {
 		}
 	}
 
+	public ResponseHandler<String> share_scoreCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public ShareMessage share;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			parser.check();
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("评分成功")) {
+				ShareMessage serverShare = response.share;
+				ShareMessage localShare = data.boards.shareMessagesMap.get(serverShare.gsid);
+				if (localShare == null) {
+					data.boards.shareMessagesMap.put(serverShare.gsid, serverShare);
+				} else {
+					localShare.scores.clear();
+					localShare.scores.putAll(serverShare.scores);
+					localShare.totalScore = serverShare.totalScore;
+				}
+				log.e("评分成功");
+			} else if (response.提示信息.equals("评分失败")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------评分失败：" + response.失败原因);
+			}
+			// data.shares.isModified = true;
+		};
+	};
+
 	public ResponseHandler<String> share_modifyPraiseusersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;

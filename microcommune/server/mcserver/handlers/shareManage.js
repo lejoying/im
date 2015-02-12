@@ -787,7 +787,7 @@ shareManage.getgroupshares = function (data, response) {
                         time: shareData.time,
                         phone: shareData.phone,
                         totalScore: shareData.totalScore || 0,
-                        scores: JSON.parse(shareData.scores) || {},
+                        scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                         status: "sent"
                     };
                     sharesOrder.push(share.gsid + "");
@@ -856,7 +856,7 @@ shareManage.getusershares = function (data, response) {
                             phone: shareData.phone,
                             gid: groupData.gid,
                             totalScore: shareData.totalScore || 0,
-                            scores: JSON.parse(shareData.scores) || {},
+                            scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                             status: "sent"
                         };
                         shares.push(shareData.gsid);
@@ -1038,7 +1038,7 @@ shareManage.getboardshares = function (data, response) {
                         time: shareData.time,
                         phone: shareData.phone,
                         totalScore: shareData.totalScore || 0,
-                        scores: JSON.parse(shareData.scores) || {},
+                        scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                         status: "sent"
                     };
                     shares.push(share.gsid + "");
@@ -1711,7 +1711,7 @@ shareManage.getboardshare = function (data, response) {
                     time: shareData.time,
                     phone: shareData.phone,
                     totalScore: shareData.totalScore || 0,
-                    scores: JSON.parse(shareData.scores) || {},
+                    scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                     status: "sent"
                 };
                 response.write(JSON.stringify({
@@ -1796,7 +1796,7 @@ shareManage.score = function (data, response) {
                                 time: shareData.time,
                                 phone: shareData.phone,
                                 totalScore: shareData.totalScore || 0,
-                                scores: JSON.parse(shareData.scores) || {},
+                                scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                                 status: "sent"
                             };
                             ResponseData(JSON.stringify({
@@ -1819,7 +1819,7 @@ shareManage.score = function (data, response) {
                                 time: shareData.time,
                                 phone: shareData.phone,
                                 totalScore: shareData.totalScore || 0,
-                                scores: JSON.parse(shareData.scores) || {},
+                                scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                                 status: "sent"
                             };
                             ResponseData(JSON.stringify({

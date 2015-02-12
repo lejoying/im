@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -790,6 +791,15 @@ public class ShareSubView {
 
 		public int lineCount;
 
+		/**
+		 * @param shareMessage
+		 * @param fileName
+		 * @param imageContent
+		 * @param textContent
+		 * @param totalHeight
+		 * @param imageHeight
+		 * @param lineCount
+		 */
 		public void setContent(ShareMessage shareMessage, String fileName, String imageContent, String textContent, int totalHeight, int imageHeight, int lineCount) {
 			data = parser.check();
 			if (i == -1) {
@@ -831,6 +841,11 @@ public class ShareSubView {
 					}
 				} else {
 					this.totalHeight = totalHeight;
+				}
+				if (this.totalHeight > displayMetrics.heightPixels) {
+					int height = this.totalHeight - displayMetrics.heightPixels;
+					this.totalHeight = displayMetrics.heightPixels;
+					this.imageHeight = (int) (this.imageHeight - height);
 				}
 				if (shareMessage.status != null) {
 					if ("sending".equals(shareMessage.status)) {
@@ -904,6 +919,9 @@ public class ShareSubView {
 				} else {
 					params.height = totalHeight;
 				}
+				background_share_item.setBackgroundResource(R.drawable.background_group_share_item);
+				background_share_item.setLayoutParams(params);
+				// log.e("totalHeight:"+totalHeight);
 				// this.shareTextContentView.setLines(lineCount);
 				// this.shareTextContentView.setText(content);
 				// if (content.indexOf("合伙人") == 0) {
@@ -925,17 +943,19 @@ public class ShareSubView {
 				} else {
 					fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth * 2 / 3, imageHeight * 2 / 3, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
 				}
-
-				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+				if (shareMessage.scores == null) {
+					shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+				}
+				this.sharePraiseNumberView.setText(shareMessage.scores.size() + "");
 				Typeface face = Typeface.createFromAsset(thisController.thisActivity.getAssets(), "fonts/avenirroman.ttf");
 				this.sharePraiseNumberView.setTypeface(face);
 				// this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
-				String userPhone = data.userInformation.currentUser.phone;
-				if (shareMessage.praiseusers.contains(userPhone)) {
-					this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-				} else {
-					this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-				}
+				// String userPhone = data.userInformation.currentUser.phone;
+				// if (shareMessage.praiseusers.contains(userPhone)) {
+				// this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+				// } else {
+				// this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+				// }
 				this.sharePraiseIconView.setTag("SharePraise#" + shareMessage.gsid);
 				this.sharePraiseIconView.setTag(R.id.tag_class, "share_praise");
 				this.sharePraiseIconView.setOnClickListener(thisController.mOnClickListener);
@@ -946,9 +966,9 @@ public class ShareSubView {
 
 				this.incrementView.setColorFilter(Color.parseColor("#0099cd"));
 				this.incrementView.setAlpha(0.125f);
-				if (shareMessage.praiseusers.size() < 10) {
+				if (shareMessage.scores.size() < 10) {
 					this.sharePraiseNumberView.setTranslationX(-75 * displayMetrics.density);
-				} else if (shareMessage.praiseusers.size() < 100) {
+				} else if (shareMessage.scores.size() < 100) {
 					this.sharePraiseNumberView.setTranslationX(-69 * displayMetrics.density);
 				} else {
 					this.sharePraiseNumberView.setText("999");
@@ -980,10 +1000,13 @@ public class ShareSubView {
 				if (comments.size() == 0) {
 					this.commentContentView.setVisibility(View.GONE);
 					this.commentsPointView.setVisibility(View.GONE);
+				} else {
+					this.commentsPointView.setX(18 * displayMetrics.density);
 				}
 
 				this.commentContainer.removeAllViews();
-				for (int i = 0; i < comments.size(); i++) {
+				int index = 0;
+				for (int i = comments.size() - 1; i >= 0; i--) {
 					Comment comment = comments.get(i);
 					TouchImageView imageView = new TouchImageView(thisController.thisActivity);
 					int padding = (int) (6 * displayMetrics.density);
@@ -992,19 +1015,18 @@ public class ShareSubView {
 					FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(width, width);
 					fileHandlers.getHeadImage(comment.head, imageView, viewManage.options40);
 					this.commentContainer.addView(imageView, params2);
-					imageView.setX(i * 45 * displayMetrics.density + 6 * displayMetrics.density);
-
+					imageView.setX(index * 45 * displayMetrics.density + 6 * displayMetrics.density);
+					index++;
 					imageView.setTag("CommentHeadView#" + shareMessage.gsid);
 					imageView.setTag(R.id.tag_class, "CommentHeadView");
 					imageView.setTag(R.id.tag_first, i);
 					imageView.setOnTouchListener(thisController.mOnTouchListener);
 					imageView.setOnClickListener(thisController.mOnClickListener);
-					if (i > 3) {
+					if (i < comments.size() - 4) {
 						break;
 					}
-					if (i == 0) {
+					if (i == comments.size() - 1) {
 						this.commentContentView.setText(comment.content);
-
 					}
 				}
 				if (comments.size() > 5) {
