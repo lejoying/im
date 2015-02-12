@@ -1808,7 +1808,7 @@ shareManage.score = function (data, response) {
                             score.negative++;
                             totalScore--;
                             shareData.totalScore = totalScore;
-                            shareData.scores = JSON.stringify(socres);
+                            shareData.scores = JSON.stringify(scores);
                             shareNode.save(function (err, node) {
                             });
                             var share = {
