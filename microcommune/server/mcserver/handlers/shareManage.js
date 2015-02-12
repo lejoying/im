@@ -1747,12 +1747,14 @@ shareManage.score = function (data, response) {
                     console.log(error);
                     ResponseData(JSON.stringify({
                         "提示信息": "评分失败",
-                        "失败原因": "数据异常"
+                        "失败原因": "数据异常",
+                        gsid: gsid
                     }), response);
                 } else if (results.length == 0) {
                     ResponseData(JSON.stringify({
                         "提示信息": "评分失败",
-                        "失败原因": "分享数据不存在"
+                        "失败原因": "分享数据不存在",
+                        gsid: gsid
                     }), response);
                 } else {
                     var shareNode = results.pop().share;
@@ -1827,13 +1829,15 @@ shareManage.score = function (data, response) {
                         } else {
                             ResponseData(JSON.stringify({
                                 "提示信息": "评分失败",
-                                "失败原因": "option参数不正确"
+                                "失败原因": "option参数不正确",
+                                gsid: gsid
                             }), response);
                         }
                     } else {
                         ResponseData(JSON.stringify({
                             "提示信息": "评分失败",
-                            "失败原因": "评分次数已达上限"
+                            "失败原因": "评分次数已达上限",
+                            gsid: gsid
                         }), response);
                     }
                 }
