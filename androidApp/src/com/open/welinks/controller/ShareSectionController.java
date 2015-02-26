@@ -485,10 +485,10 @@ public class ShareSectionController {
 
 	public void finish() {
 		thisView.dismissGroupBoardsDialog();
-		thisView.viewManage.shareSectionView = null;
+		taskManageHolder.viewManage.shareSectionView = null;
 		thisView.currentGroup.currentBoard = thisView.currentGroup.boards.get(0);
-		thisView.viewManage.shareSubView.thisController.nowpage = 0;
-		thisView.viewManage.shareSubView.getCurrentGroupShareMessages();
+		taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
+		taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
 	}
 
 	public void getCurrentGroupShareMessages() {

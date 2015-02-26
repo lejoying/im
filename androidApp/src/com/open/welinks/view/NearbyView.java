@@ -27,13 +27,17 @@ import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.StreamParser;
 
 public class NearbyView {
+
 	public NearbyView thisView;
 	public NearbyController thisController;
 	public NearbyActivity thisActivity;
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
+	
 	public LayoutInflater mInflater;
 
 	public RelativeLayout backView;
@@ -48,8 +52,6 @@ public class NearbyView {
 	public int NearbyLayoutID;
 
 	public View maxView;
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public NearbyView(NearbyActivity thisActivity) {
 		thisView = this;

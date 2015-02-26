@@ -13,11 +13,12 @@ import android.widget.GridView;
 import android.widget.PopupWindow;
 
 import com.open.welinks.R;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.BaseDataUtils;
 
 public class ChatFaceGridView extends GridView implements android.widget.AdapterView.OnItemClickListener, android.widget.AdapterView.OnItemLongClickListener, android.view.View.OnTouchListener {
-	private FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private Context context;
 	private ChatFaceGridView thisView;
@@ -145,7 +146,7 @@ public class ChatFaceGridView extends GridView implements android.widget.Adapter
 			currentView.setSelected(true);
 			String fileName = (String) currentView.getTag(R.id.tag_first);
 			if (!"".equals(fileName) && fileName != null) {
-				fileHandlers.getGifImage(fileName, imageView);
+				taskManageHolder.fileHandler.getGifImage(fileName, imageView);
 				mPopupWindow.showAsDropDown(currentView, -viewWidth / 2, -(viewHeight + (int) BaseDataUtils.dpToPx(140)));
 			}
 		}

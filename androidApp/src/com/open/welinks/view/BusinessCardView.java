@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.R;
@@ -23,8 +22,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.model.LBSHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -35,13 +33,7 @@ public class BusinessCardView {
 
 	public Data data = Data.getInstance();
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
-
-	public ImageLoader imageLoader = ImageLoader.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String GROUPCARDTYPE = "groupcard";
 	public String USERCARDTYPE = "usercard";
@@ -182,7 +174,7 @@ public class BusinessCardView {
 				nickName = friend.alias + "(" + friend.nickName + ")";
 			}
 			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
+			businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
 			businessCard.nickname = nickName;
 			businessCard.mainBusiness = friend.mainBusiness;
 			businessCard.lable = thisActivity.getString(R.string.business_not_label);
@@ -215,7 +207,7 @@ public class BusinessCardView {
 				businessCard.sex = friend.sex;
 				businessCard.age = friend.age + "";
 				User user = thisController.data.userInformation.currentUser;
-				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
+				businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
 				businessCard.nickname = friend.nickName;
 				businessCard.mainBusiness = friend.mainBusiness;
 				businessCard.lable = thisActivity.getString(R.string.business_not_label);
@@ -245,7 +237,7 @@ public class BusinessCardView {
 				description = group.description;
 			}
 			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, group.longitude, group.latitude);
+			businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, group.longitude, group.latitude);
 			businessCard.mainBusiness = description;
 			businessCard.lable = thisActivity.getString(R.string.business_not_label);
 			businessCard.creattime = group.createTime;
@@ -276,7 +268,7 @@ public class BusinessCardView {
 				businessCard.nickname = data.tempData.tempGroup.name;
 				businessCard.mainBusiness = data.tempData.tempGroup.description;
 				User user = thisController.data.userInformation.currentUser;
-				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
+				businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
 				businessCard.lable = thisActivity.getString(R.string.business_not_label);
 				businessCard.creattime = data.tempData.tempGroup.createTime;
 				businessCard.button_one = thisActivity.getString(R.string.business_add_to_room);
@@ -303,7 +295,7 @@ public class BusinessCardView {
 				businessCard.nickname = square.name;
 				businessCard.mainBusiness = square.description;
 				User user = thisController.data.userInformation.currentUser;
-				businessCard.distance = lbsHandlers.pointDistance(user.longitude, user.latitude, square.longitude, square.latitude);
+				businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, square.longitude, square.latitude);
 				businessCard.lable = thisActivity.getString(R.string.business_not_label);
 				businessCard.creattime = square.createTime;
 				businessCard.button_one = thisActivity.getString(R.string.business_go_community);
@@ -316,9 +308,9 @@ public class BusinessCardView {
 			}
 		}
 		if (businessCard.icon.equals("Head") || "".equals(businessCard.icon)) {
-			imageLoader.displayImage("drawable://" + R.drawable.face_man, thisView.head, viewManage.options45);
+			taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.face_man, thisView.head, taskManageHolder.viewManage.options45);
 		} else {
-			fileHandlers.getHeadImage(businessCard.icon, this.head, viewManage.options45);
+			taskManageHolder.fileHandler.getHeadImage(businessCard.icon, this.head, taskManageHolder.viewManage.options45);
 			// thisController.setHeadImage(businessCard.icon, thisView.head);
 		}
 		qrCodeView.setScaleType(ScaleType.FIT_CENTER);

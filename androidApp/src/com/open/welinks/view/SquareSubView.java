@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.facebook.rebound.BaseSpringSystem;
@@ -21,7 +20,6 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
@@ -38,9 +36,8 @@ import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
-import com.open.welinks.oss.DownloadFileList;
+import com.open.welinks.model.TaskManageHolder;
 
 public class SquareSubView {
 
@@ -49,11 +46,8 @@ public class SquareSubView {
 
 	public String tag = "SquareSubView";
 	public MyLog log = new MyLog(tag, true);
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
-	public ViewManage viewManage = ViewManage.getInstance();
+	
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Gson gson = new Gson();
 
@@ -74,7 +68,7 @@ public class SquareSubView {
 
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
-		viewManage.squareSubView = this;
+		taskManageHolder.viewManage.squareSubView = this;
 	}
 
 	public void initViews() {
@@ -228,14 +222,14 @@ public class SquareSubView {
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group != null) {
-			File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
+			File file = new File(taskManageHolder.fileHandler.sdcardBackImageFolder, group.cover);
 			if (group.cover == null || "".equals(group.cover)) {
-				imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
+				taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
 				return;
 			}
 			final String path = file.getAbsolutePath();
 			if (file.exists()) {
-				imageLoader.displayImage("file://" + path, selectBody.coverView, new SimpleImageLoadingListener() {
+				taskManageHolder.imageLoader.displayImage("file://" + path, selectBody.coverView, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
 					}
@@ -253,7 +247,7 @@ public class SquareSubView {
 				if (group.cover != null) {
 					// downloadConver(group.cover, path);
 				} else {
-					imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
+					taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
 				}
 			}
 		}

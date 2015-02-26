@@ -50,13 +50,13 @@ public class ResponseHandlers {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
-	public ResponseEventHandlers responseEventHandlers = ResponseEventHandlers.getInstance();
+	public ResponseEventHandler responseEventHandlers = ResponseEventHandler.getInstance();
 
 	public static ResponseHandlers responseHandlers;
 
 	public Gson gson = new Gson();
 
-	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+	public LBSHandler lbsHandlers = LBSHandler.getInstance();
 
 	public static ResponseHandlers getInstance() {
 		if (responseHandlers == null) {
@@ -612,8 +612,8 @@ public class ResponseHandlers {
 					viewManage.mainView.friendsSubView.showCircles();
 					viewManage.postNotifyView("CirclesManageView");
 				}
-				DataHandlers.getMessages(data.userInformation.currentUser.flag);
-				DataHandlers.clearInvalidFriendMessages();
+				DataHandler.getMessages(data.userInformation.currentUser.flag);
+				DataHandler.clearInvalidFriendMessages();
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
 			}
@@ -652,7 +652,7 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("添加成功")) {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------添加好友成功");
-				DataHandlers.getIntimateFriends();
+				DataHandler.getIntimateFriends();
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
@@ -786,7 +786,7 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("发送请求成功")) {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送请求成功");
 			} else if (response.提示信息.equals("添加好友成功")) {
-				DataHandlers.getIntimateFriends();
+				DataHandler.getIntimateFriends();
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
@@ -940,7 +940,7 @@ public class ResponseHandlers {
 							if (!data.messages.messagesOrder.contains(messageKey)) {
 								if (data.relationship.friends.contains(key)) {
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!DataHandlers.contains(friendMessages, message)) {
+									if (!DataHandler.contains(friendMessages, message)) {
 										friendMessages.add(message);
 										Friend friend = data.relationship.friendsMap.get(key);
 										if (friend != null) {
@@ -952,7 +952,7 @@ public class ResponseHandlers {
 								if (data.relationship.friends.contains(key)) {
 									data.messages.messagesOrder.remove(messageKey);
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!DataHandlers.contains(friendMessages, message)) {
+									if (!DataHandler.contains(friendMessages, message)) {
 										friendMessages.add(message);
 										Friend friend = data.relationship.friendsMap.get(key);
 										if (friend != null) {
@@ -977,7 +977,7 @@ public class ResponseHandlers {
 							if (!data.messages.messagesOrder.contains(messageKey)) {
 								if (data.relationship.groups.contains(key)) {
 									data.messages.messagesOrder.add(messageKey);
-									if (!DataHandlers.contains(groupMessages, message)) {
+									if (!DataHandler.contains(groupMessages, message)) {
 										groupMessages.add(message);
 										Group group = data.relationship.groupsMap.get(key);
 										if (group != null) {
@@ -989,7 +989,7 @@ public class ResponseHandlers {
 								if (data.relationship.groups.contains(key)) {
 									data.messages.messagesOrder.remove(messageKey);
 									data.messages.messagesOrder.add(0, messageKey);
-									if (!DataHandlers.contains(groupMessages, message)) {
+									if (!DataHandler.contains(groupMessages, message)) {
 										groupMessages.add(message);
 										Group group = data.relationship.groupsMap.get(key);
 										if (group != null) {
@@ -1242,7 +1242,7 @@ public class ResponseHandlers {
 									log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
 								}
 							}
-							DataHandlers.getGroupBoards(data.localStatus.localData.currentSelectedGroup);
+							DataHandler.getGroupBoards(data.localStatus.localData.currentSelectedGroup);
 						} else {
 							log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
 						}
@@ -1251,7 +1251,7 @@ public class ResponseHandlers {
 					viewManage.mainView.shareSubView.setGroupsDialogContent(null);
 					viewManage.squareSubView.setConver();
 					viewManage.postNotifyView("GroupListActivity");
-					DataHandlers.clearInvalidGroupMessages();
+					DataHandler.clearInvalidGroupMessages();
 				} else {
 					log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 				}
@@ -1270,7 +1270,7 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("加入群组成功")) {
 				parser.check();
-				DataHandlers.getUserCurrentAllGroup();
+				DataHandler.getUserCurrentAllGroup();
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------加入群组成功");
 			}
 		};
@@ -1334,7 +1334,7 @@ public class ResponseHandlers {
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
-			DataHandlers.getUserCurrentAllGroup();
+			DataHandler.getUserCurrentAllGroup();
 		};
 	};
 
@@ -1346,7 +1346,7 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			DataHandlers.getUserCurrentAllGroup();
+			DataHandler.getUserCurrentAllGroup();
 			if (response.提示信息.equals("退出群组成功")) {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------退出群组成功");
 			} else {

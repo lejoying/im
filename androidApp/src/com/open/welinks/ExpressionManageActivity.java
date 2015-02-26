@@ -31,17 +31,13 @@ import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.oss.DownloadFileList;
-import com.open.welinks.view.ViewManage;
 
 public class ExpressionManageActivity extends Activity {
 
 	private Data data = Data.getInstance();
-	private FileHandlers fileHandlers = FileHandlers.getInstance();
-	private ViewManage mViewManage = ViewManage.getInstance();
-	private DownloadFileList downloadFileList = DownloadFileList.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private View backView;
 	private TextView titleTextView;
@@ -111,7 +107,7 @@ public class ExpressionManageActivity extends Activity {
 			@Override
 			public void onSuccess(DownloadFile instance, int status) {
 				if (instance.view.getTag(R.id.tag_first) == null) {
-					fileHandlers.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, mViewManage.options, mSimpleImageLoadingListener);
+					taskManageHolder.fileHandler.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, taskManageHolder.viewManage.options, mSimpleImageLoadingListener);
 				} else {
 					int current = (Integer) (instance.view.getTag(R.id.tag_second));
 					instance.view.setTag(R.id.tag_second, ++current);
@@ -121,7 +117,7 @@ public class ExpressionManageActivity extends Activity {
 
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
-				downloadFileList.addDownloadFile(instance);
+				taskManageHolder.downloadFileList.addDownloadFile(instance);
 			}
 		};
 		mConfirmOnDialogClickListener = new OnDialogClickListener() {
@@ -151,7 +147,7 @@ public class ExpressionManageActivity extends Activity {
 			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 				super.onLoadingFailed(imageUri, view, failReason);
 				String fileName = imageUri.substring(imageUri.lastIndexOf("/") + 1);
-				File file = new File(fileHandlers.sdcardGifImageFolder, fileName);
+				File file = new File(taskManageHolder.fileHandler.sdcardGifImageFolder, fileName);
 				downLoadCoverImage(file.getAbsolutePath(), imageUri, (ImageView) view);
 			}
 		};
@@ -349,7 +345,7 @@ public class ExpressionManageActivity extends Activity {
 		view.setTag(R.id.tag_first, list.size());
 		view.setTag(R.id.tag_second, 0);
 		for (String expressionName : list) {
-			File file = new File(fileHandlers.sdcardGifImageFolder, expressionName);
+			File file = new File(taskManageHolder.fileHandler.sdcardGifImageFolder, expressionName);
 			if (file.exists()) {
 				int current = (Integer) (view.getTag(R.id.tag_second));
 				view.setTag(R.id.tag_second, ++current);
@@ -361,7 +357,7 @@ public class ExpressionManageActivity extends Activity {
 				downloadFile.path = path;
 				downloadFile.view = view;
 				downloadFile.setDownloadFileListener(mOnDownloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
+				taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 			}
 		}
 	}
@@ -393,11 +389,11 @@ public class ExpressionManageActivity extends Activity {
 	}
 
 	private void getCoverImage(String fileName, ImageView imageView) {
-		File file = new File(fileHandlers.sdcardGifImageFolder, fileName);
+		File file = new File(taskManageHolder.fileHandler.sdcardGifImageFolder, fileName);
 		String excessivePath = file.getAbsolutePath();
 		String excessiveUrl = API.DOMAIN_COMMONIMAGE + "gifs/" + fileName;
 		if (file.exists()) {
-			fileHandlers.imageLoader.displayImage("file://" + excessivePath, imageView, mViewManage.options, mSimpleImageLoadingListener);
+			taskManageHolder.fileHandler.imageLoader.displayImage("file://" + excessivePath, imageView, taskManageHolder.viewManage.options, mSimpleImageLoadingListener);
 		} else {
 			downLoadCoverImage(excessiveUrl, excessivePath, imageView);
 		}
@@ -406,10 +402,10 @@ public class ExpressionManageActivity extends Activity {
 	private void downLoadCoverImage(String url, String path, ImageView imageView) {
 		DownloadFile downloadFile = new DownloadFile(url, path);
 		downloadFile.view = imageView;
-		downloadFile.options = mViewManage.options;
+		downloadFile.options = taskManageHolder.viewManage.options;
 		downloadFile.type = DownloadFile.TYPE_GIF_IMAGE;
 		downloadFile.setDownloadFileListener(mOnDownloadListener);
-		downloadFileList.addDownloadFile(downloadFile);
+		taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 	}
 
 	private void removeExpression(final String name) {

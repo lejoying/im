@@ -11,7 +11,6 @@ import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.view.SquareSubView;
 
@@ -22,8 +21,6 @@ public class SquareSubController {
 
 	public String tag = "ShareSubController";
 	public MyLog log = new MyLog(tag, true);
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public SquareSubView thisView;
 	public Context context;

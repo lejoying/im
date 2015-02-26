@@ -23,7 +23,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.ViewManage;
 
-public class ResponseEventHandlers {
+public class ResponseEventHandler {
 
 	public Data data = Data.getInstance();
 
@@ -32,7 +32,7 @@ public class ResponseEventHandlers {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
-	public static ResponseEventHandlers responseEventHandlers = ResponseEventHandlers.getInstance();
+	public static ResponseEventHandler responseEventHandlers = ResponseEventHandler.getInstance();
 
 	public HttpClient httpClient = HttpClient.getInstance();
 
@@ -40,9 +40,9 @@ public class ResponseEventHandlers {
 
 	public Parser parser = Parser.getInstance();
 
-	public static ResponseEventHandlers getInstance() {
+	public static ResponseEventHandler getInstance() {
 		if (responseEventHandlers == null) {
-			responseEventHandlers = new ResponseEventHandlers();
+			responseEventHandlers = new ResponseEventHandler();
 		}
 		return responseEventHandlers;
 	}
@@ -73,7 +73,7 @@ public class ResponseEventHandlers {
 						NotificationUtils.commonVibrate(viewManage.mainView.context);
 					}
 				}
-				DataHandlers.getMessages(data.userInformation.currentUser.flag);
+				DataHandler.getMessages(data.userInformation.currentUser.flag);
 			} else {
 				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
 				if (data.event.userEventsMap == null) {
@@ -148,7 +148,7 @@ public class ResponseEventHandlers {
 			data.event.groupNotReadMessage = true;
 			String eventKey = "event_group";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getGroupBoards(eventMessage.gid);
+			DataHandler.getGroupBoards(eventMessage.gid);
 		}
 
 	}
@@ -161,7 +161,7 @@ public class ResponseEventHandlers {
 			data.event.groupNotReadMessage = true;
 			String eventKey = "event_group";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getGroupBoards(eventMessage.gid);
+			DataHandler.getGroupBoards(eventMessage.gid);
 		}
 
 	}
@@ -174,7 +174,7 @@ public class ResponseEventHandlers {
 			data.event.groupNotReadMessage = true;
 			String eventKey = "event_group";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getGroupBoards(eventMessage.gid);
+			DataHandler.getGroupBoards(eventMessage.gid);
 		}
 
 	}
@@ -187,7 +187,7 @@ public class ResponseEventHandlers {
 			data.event.groupNotReadMessage = true;
 			String eventKey = "event_group";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getGroupBoards(eventMessage.gid);
+			DataHandler.getGroupBoards(eventMessage.gid);
 		}
 	}
 
@@ -199,7 +199,7 @@ public class ResponseEventHandlers {
 			data.event.groupNotReadMessage = true;
 			String eventKey = "event_group";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getUserInfomation();
+			DataHandler.getUserInfomation();
 		}
 	}
 
@@ -211,8 +211,8 @@ public class ResponseEventHandlers {
 			data.event.userNotReadMessage = true;
 			String eventKey = "event_user";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getUserInfomation();
-			DataHandlers.getIntimateFriends();
+			DataHandler.getUserInfomation();
+			DataHandler.getIntimateFriends();
 		}
 	}
 
@@ -224,8 +224,8 @@ public class ResponseEventHandlers {
 			data.event.userNotReadMessage = true;
 			String eventKey = "event_user";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getUserInfomation();
-			DataHandlers.getIntimateFriends();
+			DataHandler.getUserInfomation();
+			DataHandler.getIntimateFriends();
 		}
 	}
 
@@ -238,7 +238,7 @@ public class ResponseEventHandlers {
 		// String eventKey = "event_user";
 		// checkEventIsMessageOrder(eventKey);
 		// }
-		DataHandlers.getIntimateFriends();
+		DataHandler.getIntimateFriends();
 	}
 
 	private void handleRelationCircleSequenceEvent(EventMessage eventMessage) {
@@ -250,8 +250,8 @@ public class ResponseEventHandlers {
 		// String eventKey = "event_user";
 		// checkEventIsMessageOrder(eventKey);
 		// }
-		DataHandlers.getUserInfomation();
-		DataHandlers.getIntimateFriends();
+		DataHandler.getUserInfomation();
+		DataHandler.getIntimateFriends();
 	}
 
 	private void handleRelationAddCircleEvent(EventMessage eventMessage) {
@@ -262,14 +262,14 @@ public class ResponseEventHandlers {
 			data.event.userNotReadMessage = true;
 			String eventKey = "event_user";
 			checkEventIsMessageOrder(eventKey);
-			DataHandlers.getUserInfomation();
-			DataHandlers.getIntimateFriends();
+			DataHandler.getUserInfomation();
+			DataHandler.getIntimateFriends();
 		}
 	}
 
 	public void handleRelationDataupdateEvent(EventMessage eventMessage) {
-		DataHandlers.getUserInfomation();
-		DataHandlers.getIntimateFriends();
+		DataHandler.getUserInfomation();
+		DataHandler.getIntimateFriends();
 	}
 
 	public void checkEventIsMessageOrder(String key) {
@@ -292,7 +292,7 @@ public class ResponseEventHandlers {
 			addEventToChatMessages(chatMessage, message);
 			viewManage.postNotifyView("DynamicListActivity");
 			viewManage.postNotifyView("MessagesSubView");
-			DataHandlers.getUserCurrentAllGroup();
+			DataHandler.getUserCurrentAllGroup();
 		}
 	}
 
@@ -308,7 +308,7 @@ public class ResponseEventHandlers {
 			addEventToChatMessages(chatMessage, message);
 			viewManage.postNotifyView("DynamicListActivity");
 			viewManage.postNotifyView("MessagesSubView");
-			DataHandlers.getUserCurrentGroupMembers(message.gid, "create");
+			DataHandler.getUserCurrentGroupMembers(message.gid, "create");
 		}
 	}
 
@@ -324,7 +324,7 @@ public class ResponseEventHandlers {
 			addEventToChatMessages(chatMessage, message);
 			viewManage.postNotifyView("DynamicListActivity");
 			viewManage.postNotifyView("MessagesSubView");
-			DataHandlers.getUserCurrentGroupMembers(message.gid, "create");
+			DataHandler.getUserCurrentGroupMembers(message.gid, "create");
 		}
 	}
 
@@ -340,7 +340,7 @@ public class ResponseEventHandlers {
 			addEventToChatMessages(chatMessage, message);
 			viewManage.postNotifyView("MessagesSubView");
 			viewManage.postNotifyView("DynamicListActivity");
-			DataHandlers.getUserCurrentGroupInfomation(message.gid);
+			DataHandler.getUserCurrentGroupInfomation(message.gid);
 		}
 	}
 
@@ -389,7 +389,7 @@ public class ResponseEventHandlers {
 			addEventToChatMessages(chatMessage, message);
 			viewManage.postNotifyView("MessagesSubView");
 			viewManage.postNotifyView("DynamicListActivity");
-			DataHandlers.getUserCurrentGroupMembers(message.gid, "removemembers");
+			DataHandler.getUserCurrentGroupMembers(message.gid, "removemembers");
 		}
 	}
 
@@ -405,7 +405,7 @@ public class ResponseEventHandlers {
 			addEventToChatMessages(chatMessage, message);
 			viewManage.postNotifyView("DynamicListActivity");
 			viewManage.postNotifyView("MessagesSubView");
-			DataHandlers.getUserCurrentGroupMembers(message.gid, "addmembers");
+			DataHandler.getUserCurrentGroupMembers(message.gid, "addmembers");
 		}
 	}
 
@@ -418,7 +418,7 @@ public class ResponseEventHandlers {
 			String eventKey = "event_user";
 			checkEventIsMessageOrder(eventKey);
 			// viewManage.postNotifyView("MessagesSubView");
-			DataHandlers.getIntimateFriends();
+			DataHandler.getIntimateFriends();
 		}
 	}
 
@@ -437,8 +437,8 @@ public class ResponseEventHandlers {
 		Friend friend = data.relationship.friendsMap.get(key);
 		friend.friendStatus = "delete";
 		data.relationship.isModified = true;
-		DataHandlers.getIntimateFriends();
-		DataHandlers.getUserInfomation();
+		DataHandler.getIntimateFriends();
+		DataHandler.getUserInfomation();
 		// }
 	}
 
@@ -454,7 +454,7 @@ public class ResponseEventHandlers {
 		data.event.userNotReadMessage = true;
 		String eventKey = "event_user";
 		checkEventIsMessageOrder(eventKey);
-		DataHandlers.getIntimateFriends();
+		DataHandler.getIntimateFriends();
 		viewManage.postNotifyView("DynamicListActivity");
 		viewManage.postNotifyView("MessagesSubView");
 		// data.event.userEventsMap.put(message.gid, message);
@@ -542,7 +542,7 @@ public class ResponseEventHandlers {
 			checkEventIsMessageOrder(eventKey);
 			viewManage.postNotifyView("DynamicListActivity");
 			viewManage.postNotifyView("MessagesSubView");
-			DataHandlers.getUserInfomation();
+			DataHandler.getUserInfomation();
 		}
 	}
 

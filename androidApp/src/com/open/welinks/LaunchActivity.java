@@ -2,6 +2,7 @@ package com.open.welinks;
 
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.UserInformation.LocalConfig;
 
@@ -17,14 +18,19 @@ public class LaunchActivity extends Activity {
 	public boolean isDebug = false;
 	public Data data = Data.getInstance();
 
-	String tag = "MainActivity";
+	public String tag = "MainActivity";
 	public Context context;
+	
+	public TaskManageHolder taskManageHolder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		context = this;
 		Log.d(tag, "hello world!");
+		
+		taskManageHolder = TaskManageHolder.getInstance();
+		taskManageHolder.initialize();
 
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);

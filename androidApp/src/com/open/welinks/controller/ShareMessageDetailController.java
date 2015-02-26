@@ -54,12 +54,12 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.view.ShareMessageDetailView;
@@ -72,7 +72,7 @@ public class ShareMessageDetailController {
 	public Parser parser = Parser.getInstance();
 	public MyLog log = new MyLog(tag, true);
 
-	public ViewManage viewManage = ViewManage.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public SubData subData = SubData.getInstance();
 
@@ -180,8 +180,6 @@ public class ShareMessageDetailController {
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARE, params, responseHandlers.share_get);
 	}
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
 	public long totalLength = 0;
 
 	public Map<String, Long> fileLengMap = new HashMap<String, Long>();
@@ -211,7 +209,7 @@ public class ShareMessageDetailController {
 					}
 				}
 				final double currentPrecent = currentLength / totalLength;
-				fileHandlers.handler.post(new Runnable() {
+				taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 					@Override
 					public void run() {
@@ -220,7 +218,7 @@ public class ShareMessageDetailController {
 				});
 
 				final ImageView imageView = (ImageView) instance.view;
-				thisView.imageLoader.displayImage("file://" + instance.path, imageView, thisView.displayImageOptions, new SimpleImageLoadingListener() {
+				taskManageHolder.imageLoader.displayImage("file://" + instance.path, imageView, thisView.displayImageOptions, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
 					}
@@ -254,7 +252,7 @@ public class ShareMessageDetailController {
 					}
 				}
 				final double currentPrecent = currentLength / totalLength;
-				fileHandlers.handler.post(new Runnable() {
+				taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 					@Override
 					public void run() {
@@ -457,9 +455,9 @@ public class ShareMessageDetailController {
 						// share.shareMessagesMap.remove(gsid);
 						data.boards.isModified = true;
 						if (data.relationship.squares.contains(gid)) {
-							viewManage.postNotifyView("SquareSubViewMessage");
+							taskManageHolder.viewManage.postNotifyView("SquareSubViewMessage");
 						} else {
-							viewManage.postNotifyView("ShareSubViewMessage");
+							taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
 						}
 						httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
 						Intent intent = new Intent();
@@ -508,7 +506,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void finish() {
-		thisView.viewManage.shareMessageDetailView = null;
+		taskManageHolder.viewManage.shareMessageDetailView = null;
 		data.tempData.selectedImageList = null;
 	}
 
@@ -572,7 +570,7 @@ public class ShareMessageDetailController {
 		data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 		data.boards.isModified = true;
 
-		viewManage.mainView.shareSubView.showShareMessages();
+		taskManageHolder.viewManage.mainView.shareSubView.showShareMessages();
 
 		sendShareToServer(key, shareMessage.content, shareMessage.gsid);
 
@@ -698,7 +696,7 @@ public class ShareMessageDetailController {
 		} else {
 			data.messages.messagesOrder.add(orderKay);
 		}
-		viewManage.messagesSubView.showMessagesSequence();
+		taskManageHolder.viewManage.messagesSubView.showMessagesSequence();
 
 	}
 
@@ -743,7 +741,7 @@ public class ShareMessageDetailController {
 						flag = false;
 					thisController.shareMessage = shareMessage;
 					final boolean flag0 = flag;
-					thisView.fileHandlers.handler.post(new Runnable() {
+					taskManageHolder.fileHandler.handler.post(new Runnable() {
 						public void run() {
 							if (flag0) {
 								thisView.notifyShareMessageComments();
@@ -792,7 +790,7 @@ public class ShareMessageDetailController {
 						flag = false;
 					thisController.shareMessage = response.share;
 					final boolean flag0 = flag;
-					thisView.fileHandlers.handler.post(new Runnable() {
+					taskManageHolder.fileHandler.handler.post(new Runnable() {
 						public void run() {
 							if (flag0) {
 								thisView.notifyShareMessageComments();
@@ -802,7 +800,7 @@ public class ShareMessageDetailController {
 						}
 					});
 				} else {
-					thisView.fileHandlers.handler.post(new Runnable() {
+					taskManageHolder.fileHandler.handler.post(new Runnable() {
 						public void run() {
 							Toast.makeText(thisActivity, response.失败原因 + gsid, Toast.LENGTH_SHORT).show();
 							Log.e(tag, ViewManage.getErrorLineNumber() + response.失败原因);

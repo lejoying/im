@@ -19,7 +19,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -28,7 +27,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ImagesDirectoryController;
 import com.open.welinks.controller.ImagesGridController;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 
 public class ImagesGridView {
 
@@ -41,8 +40,9 @@ public class ImagesGridView {
 	public Activity thisActivity;
 	public ImagesGridController thisController;
 	public ImagesGridView thisView;
+	
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
-	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	DisplayImageOptions options;
 
 	public ImageAdapter mImageAdapter;
@@ -59,13 +59,12 @@ public class ImagesGridView {
 	public DisplayMetrics displayMetrics;
 
 	public LinearLayout alreadyListContainer;
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public DisplayImageOptions smallOptions;
 
 	public void initViews() {
-//		smallOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
+		// smallOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
 		smallOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
-		
+
 		displayMetrics = new DisplayMetrics();
 
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -124,7 +123,7 @@ public class ImagesGridView {
 			imageView.setTag(R.id.tag_first, key);
 			imageView.setOnClickListener(thisController.onClickListener);
 			alreadyListContainer.addView(imageView, layoutParams);
-			imageLoader.displayImage("file://" + key, imageView, smallOptions);
+			taskManageHolder.imageLoader.displayImage("file://" + key, imageView, smallOptions);
 			// fileHandlers.getHeadImagssse(key, imageView, options);
 		}
 	}
@@ -183,7 +182,7 @@ public class ImagesGridView {
 			} else {
 				holder.imageStatusView.setVisibility(View.GONE);
 			}
-			imageLoader.displayImage("file://" + path, holder.imageView, options, new SimpleImageLoadingListener() {
+			taskManageHolder.imageLoader.displayImage("file://" + path, holder.imageView, options, new SimpleImageLoadingListener() {
 				@Override
 				public void onLoadingStarted(String imageUri, View view) {
 					holder.progressBar.setProgress(0);

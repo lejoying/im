@@ -19,7 +19,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.view.ViewManage;
 
-public class LBSHandlers {
+public class LBSHandler {
 
 	Data data = Data.getInstance();
 	Parser parser = Parser.getInstance();
@@ -30,13 +30,13 @@ public class LBSHandlers {
 
 	Gson gson = new Gson();
 
-	static LBSHandlers lbsHandlers;
+	static LBSHandler lbsHandlers;
 
 	ViewManage viewManage = ViewManage.getInstance();
 
-	public static LBSHandlers getInstance() {
+	public static LBSHandler getInstance() {
 		if (lbsHandlers == null) {
-			lbsHandlers = new LBSHandlers();
+			lbsHandlers = new LBSHandler();
 		}
 		return lbsHandlers;
 	}

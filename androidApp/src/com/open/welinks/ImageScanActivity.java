@@ -29,12 +29,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.open.welinks.customView.ImageDetailFragment;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.StreamParser;
 
 public class ImageScanActivity extends FragmentActivity {
@@ -43,6 +42,8 @@ public class ImageScanActivity extends FragmentActivity {
 	public String tag = "ImageScanActivity";
 
 	public static final String EXTRA_IMAGE = "extra_image";
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private ImagePagerAdapter mAdapter;
 	private ViewPager mPager;
@@ -68,7 +69,6 @@ public class ImageScanActivity extends FragmentActivity {
 	public RelativeLayout shareOptionsView;
 
 	public DisplayImageOptions options;
-	public ImageLoader imageLoader = ImageLoader.getInstance();
 
 	public OnClickListener mOnClickListener;
 	public OnPageChangeListener mOnPageChangeListener;
@@ -76,7 +76,6 @@ public class ImageScanActivity extends FragmentActivity {
 	public View backMaxView;
 	public ImageView backImageView;
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -104,7 +103,8 @@ public class ImageScanActivity extends FragmentActivity {
 		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true).displayer(new FadeInBitmapDisplayer(300)).build();
 
 		imageNumberView.setText("浏览  (" + (currentPosition + 1) + "/" + imagesBrowseList.size() + ")");
-		backView.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_back_transparent));
+		backView.setBackgroundResource(R.drawable.selector_back_transparent);
+		// backView.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_back_transparent));
 		backMaxView.setBackgroundColor(Color.parseColor("#00000000"));
 		imageNumberView.setTextColor(Color.WHITE);
 		deleteButtonView = new ImageView(this);
@@ -205,8 +205,6 @@ public class ImageScanActivity extends FragmentActivity {
 		};
 	}
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
 	public void saveCloudFile() {
 		new Thread(new Runnable() {
 
@@ -214,7 +212,7 @@ public class ImageScanActivity extends FragmentActivity {
 			public void run() {
 				String path = imagesBrowseList.get(currentPosition);
 				if (path.lastIndexOf("/") == -1) {
-					File file = new File(fileHandlers.sdcardImageFolder, path);
+					File file = new File(taskManageHolder.fileHandler.sdcardImageFolder, path);
 					path = file.getAbsolutePath();
 				}
 				String fileName = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
@@ -227,10 +225,10 @@ public class ImageScanActivity extends FragmentActivity {
 				fileName = fileName + suffixName;
 				try {
 					FileInputStream fileInputStream = new FileInputStream(new File(path));
-					final File saveFile = new File(fileHandlers.sdcardSaveImageFolder, fileName);
+					final File saveFile = new File(taskManageHolder.fileHandler.sdcardSaveImageFolder, fileName);
 					FileOutputStream fileOutputStream = new FileOutputStream(saveFile);
 					StreamParser.parseToFile(fileInputStream, fileOutputStream);
-					fileHandlers.handler.post(new Runnable() {
+					taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 						@Override
 						public void run() {

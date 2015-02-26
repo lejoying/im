@@ -33,13 +33,15 @@ import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 
 public class FriendsSubView {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+	
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String tag = "FriendsSubView";
 
@@ -57,13 +59,9 @@ public class FriendsSubView {
 
 	public MainView mainView;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
-
 	public FriendsSubView(MainView mainView) {
 		this.mainView = mainView;
-		viewManage.friendsSubView = this;
+		taskManageHolder.viewManage.friendsSubView = this;
 	}
 
 	public void initData() {
@@ -280,7 +278,7 @@ public class FriendsSubView {
 				this.nickNameView.setText("添加好友");
 				this.friendView.setTag(R.id.tag_class, "addfriend_view");
 			} else {
-				fileHandlers.getHeadImage(friend.head, this.headImageView, viewManage.options52);
+				taskManageHolder.fileHandler.getHeadImage(friend.head, this.headImageView, taskManageHolder.viewManage.options52);
 				if (friend.alias != null && !"".equals(friend.alias)) {
 					this.nickNameView.setText(friend.alias);
 				} else {

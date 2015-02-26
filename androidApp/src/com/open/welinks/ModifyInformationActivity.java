@@ -27,25 +27,22 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.oss.UploadMultipart;
-import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.MCImageUtils;
-import com.open.welinks.view.ViewManage;
 
 public class ModifyInformationActivity extends Activity implements OnClickListener {
 	public Data data = Data.getInstance();
-	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Gson gson = new Gson();
 
@@ -53,9 +50,6 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 	public String key, type, headFileName;
 	public boolean modified = false;
-
-	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public DownloadFile downloadFile;
 
@@ -87,9 +81,6 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		initializeListeners();
 	}
 
-	FileHandlers fileHandlers = FileHandlers.getInstance();
-	ViewManage viewManage = ViewManage.getInstance();
-
 	@Override
 	public void onBackPressed() {
 		if (pic_layout.getVisibility() == View.VISIBLE) {
@@ -113,9 +104,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			Uri uri = Uri.fromFile(tempFile);
 			startPhotoZoom(uri);
 		} else if (requestCode == REQUESTCODE_CAT && resultCode == Activity.RESULT_OK) {
-			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), fileHandlers.sdcardHeadImageFolder);
+			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), taskManageHolder.fileHandler.sdcardHeadImageFolder);
 			headFileName = (String) map.get("fileName");
-			fileHandlers.getHeadImage(headFileName, head, viewManage.options45);
+			taskManageHolder.fileHandler.getHeadImage(headFileName, head, taskManageHolder.viewManage.options45);
 			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"));
 			pic_layout.setVisibility(View.GONE);
 		}
@@ -214,9 +205,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			business.setText(user.mainBusiness);
 			lable.setText("");
 			if (user.head.equals("Head") || "".equals(user.head)) {
-				fileHandlers.getHeadImage(headFileName, head, viewManage.options45);
+				taskManageHolder.fileHandler.getHeadImage(headFileName, head, taskManageHolder.viewManage.options45);
 			} else {
-				fileHandlers.getHeadImage(user.head, head, viewManage.options45);
+				taskManageHolder.fileHandler.getHeadImage(user.head, head, taskManageHolder.viewManage.options45);
 			}
 		} else if ("group".equals(type)) {
 			group = data.relationship.groupsMap.get(key);
@@ -231,9 +222,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			business.setText(group.description);
 			lable.setText("");
 			if ("".equals(group.icon)) {
-				fileHandlers.getHeadImage(headFileName, head, viewManage.options45);
+				taskManageHolder.fileHandler.getHeadImage(headFileName, head, taskManageHolder.viewManage.options45);
 			} else {
-				fileHandlers.getHeadImage(group.icon, head, viewManage.options45);
+				taskManageHolder.fileHandler.getHeadImage(group.icon, head, taskManageHolder.viewManage.options45);
 			}
 		}
 	}
@@ -367,10 +358,10 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	void takePicture(int requestCode) {
-		tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage");
+		tempFile = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, "tempimage");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage" + (i++));
+			tempFile = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, "tempimage" + (i++));
 		}
 		Uri uri = Uri.fromFile(tempFile);
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -380,10 +371,10 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	public void startPhotoZoom(Uri uri) {
-		tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage.png");
+		tempFile = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, "tempimage.png");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage" + (i++) + ".png");
+			tempFile = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, "tempimage" + (i++) + ".png");
 		}
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");
@@ -399,7 +390,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 	public void uploadFile(final String filePath, final String fileName, final byte[] bytes) {
 		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, UploadMultipart.UPLOAD_TYPE_HEAD);
-		uploadMultipartList.addMultipart(multipart);
+		taskManageHolder.uploadMultipartList.addMultipart(multipart);
 		multipart.setUploadLoadingListener(uploadLoadingListener);
 	}
 

@@ -27,9 +27,9 @@ import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.DataHandlers;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.DateUtil;
 
 public class MessagesSubView {
@@ -38,6 +38,8 @@ public class MessagesSubView {
 	public Parser parser = Parser.getInstance();
 	public String tag = "MessagesSubView";
 	public MyLog log = new MyLog(tag, true);
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Gson gson = new Gson();
 
@@ -57,13 +59,9 @@ public class MessagesSubView {
 
 	public boolean inited = false;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
-
 	public MessagesSubView(MainView mainView) {
 		this.mainView = mainView;
-		viewManage.messagesSubView = this;
+		taskManageHolder.viewManage.messagesSubView = this;
 	}
 
 	public void initViews() {
@@ -381,7 +379,7 @@ public class MessagesSubView {
 					if (event == null) {
 						content = "";
 					} else {
-						content = DataHandlers.switchChatMessageEvent(event);
+						content = DataHandler.switchChatMessageEvent(event);
 						lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(event.time)));
 					}
 				} catch (Exception e) {
@@ -391,9 +389,9 @@ public class MessagesSubView {
 				lastChatMessageView.setText(content);
 			} else {
 				if ("event".equals(message.sendType)) {
-					fileHandlers.getHeadImage(fileName, headView, viewManage.options50);
+					taskManageHolder.fileHandler.getHeadImage(fileName, headView, taskManageHolder.viewManage.options50);
 					EventMessage message2 = gson.fromJson(message.content, EventMessage.class);
-					String content = DataHandlers.switchChatMessageEvent(message2);
+					String content = DataHandler.switchChatMessageEvent(message2);
 					lastChatMessageView.setText(content);
 					lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message2.time)));
 					Group group2 = data.relationship.groupsMap.get(message2.gid);
@@ -415,7 +413,7 @@ public class MessagesSubView {
 					}
 				} else {
 					data = parser.check();
-					fileHandlers.getHeadImage(fileName, headView, viewManage.options50);
+					taskManageHolder.fileHandler.getHeadImage(fileName, headView, taskManageHolder.viewManage.options50);
 					String leftText = "";
 					Pattern pattern = Pattern.compile("[0-9]*");
 					if (pattern.matcher(message.time).matches()) {

@@ -1,6 +1,10 @@
 package com.open.welinks.model;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
+import com.open.welinks.oss.DownloadFileList;
+import com.open.welinks.oss.UploadMultipartList;
+import com.open.welinks.view.ViewManage;
 
 public class TaskManageHolder {
 
@@ -10,6 +14,17 @@ public class TaskManageHolder {
 	public TaskManager taskManager;
 	public FileHandler fileHandler;
 	public MultipartUploader multipartUploader;
+
+	public AudioHandlers audioHandler;
+
+	public ImageLoader imageLoader;
+
+	public ViewManage viewManage;
+
+	public UploadMultipartList uploadMultipartList;
+	public DownloadFileList downloadFileList;
+
+	public LBSHandler lbsHandler;
 
 	public static TaskManageHolder taskManageHolder;
 
@@ -35,6 +50,12 @@ public class TaskManageHolder {
 			this.fileHandler.initialize();
 			this.fileHandler.startLoop();
 			this.multipartUploader = MultipartUploader.getInstance();
+			this.audioHandler = AudioHandlers.getInstance();
+			this.imageLoader = ImageLoader.getInstance();
+			this.viewManage = ViewManage.getInstance();
+			this.uploadMultipartList = UploadMultipartList.getInstance();
+			this.lbsHandler = LBSHandler.getInstance();
+			this.downloadFileList = DownloadFileList.getInstance();
 		}
 	}
 }

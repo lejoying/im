@@ -31,21 +31,17 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.UploadMultipart;
-import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
-import com.open.welinks.view.ViewManage;
 
 public class CreateBoardActivity extends Activity implements OnClickListener {
 
 	private Data data = Data.getInstance();
-	private FileHandlers fileHandlers = FileHandlers.getInstance();
-	private ViewManage viewManage = ViewManage.getInstance();
-	private UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private Gson gson = new Gson();
 
@@ -108,8 +104,8 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 			startActivityForResult(intent, REQUESTCODE_ABLUM_COVER);
 		} else if (view.equals(okButton)) {
 			createBoard();
-			if (viewManage.shareSectionView != null) {
-				viewManage.shareSectionView.showGroupBoards();
+			if (taskManageHolder.viewManage.shareSectionView != null) {
+				taskManageHolder.viewManage.shareSectionView.showGroupBoards();
 			}
 			setResult(Activity.RESULT_OK);
 			finish();
@@ -173,14 +169,14 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 			startPhotoZoom(this.data.tempData.selectedImageList.get(0), requestCode);
 			data.tempData.selectedImageList = null;
 		} else if (requestCode == REQUESTCODE_CAT_HEAD && resultCode == Activity.RESULT_OK) {
-			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), fileHandlers.sdcardHeadImageFolder);
+			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), taskManageHolder.fileHandler.sdcardHeadImageFolder);
 			imageHeadPath = (String) map.get("fileName");
-			fileHandlers.getHeadImage(imageHeadPath, boardHeadView, viewManage.options45);
+			taskManageHolder.fileHandler.getHeadImage(imageHeadPath, boardHeadView, taskManageHolder.viewManage.options45);
 			uploadFile(tempFile.getAbsolutePath(), imageHeadPath, (byte[]) map.get("bytes"), UploadMultipart.UPLOAD_TYPE_HEAD);
 		} else if (requestCode == REQUESTCODE_CAT_COVER) {
 			byte[] bytes = intent.getByteArrayExtra("bitmap");
 			imageCoverPath = new SHA1().getDigestOfString(bytes) + ".osp";
-			File file = new File(fileHandlers.sdcardBackImageFolder, imageCoverPath);
+			File file = new File(taskManageHolder.fileHandler.sdcardBackImageFolder, imageCoverPath);
 			try {
 				FileOutputStream fileOutputStream = new FileOutputStream(file);
 				StreamParser.parseToFile(bytes, fileOutputStream);
@@ -188,7 +184,7 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 			uploadFile(file.getAbsolutePath(), imageCoverPath, bytes, UploadMultipart.UPLOAD_TYPE_BACKGROUND);
-			fileHandlers.getBackImage(imageCoverPath, boardCoverView, viewManage.options);
+			taskManageHolder.fileHandler.getBackImage(imageCoverPath, boardCoverView, taskManageHolder.viewManage.options);
 		}
 	}
 
@@ -199,10 +195,10 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 			intent.putExtra("path", path);
 			startActivityForResult(intent, REQUESTCODE_CAT_COVER);
 		} else if (requestCode == REQUESTCODE_ABLUM_HEAD) {
-			tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage.png");
+			tempFile = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, "tempimage.png");
 			int i = 1;
 			while (tempFile.exists()) {
-				tempFile = new File(fileHandlers.sdcardHeadImageFolder, "tempimage" + (i++) + ".png");
+				tempFile = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, "tempimage" + (i++) + ".png");
 			}
 			Uri uri = Uri.parse("file://" + path);
 			intent = new Intent("com.android.camera.action.CROP");
@@ -220,7 +216,7 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 
 	public void uploadFile(final String filePath, final String fileName, final byte[] bytes, int type) {
 		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, type);
-		uploadMultipartList.addMultipart(multipart);
+		taskManageHolder.uploadMultipartList.addMultipart(multipart);
 		multipart.setUploadLoadingListener(uploadLoadingListener);
 	}
 }

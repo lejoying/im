@@ -54,11 +54,11 @@ import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.DataHandlers;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
@@ -72,7 +72,7 @@ public class ShareSubController {
 	public MyLog log = new MyLog(tag, true);
 	public Parser parser = Parser.getInstance();
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public ShareSubView thisView;
 	public Context context;
@@ -192,7 +192,7 @@ public class ShareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.viewManage.options40;
+							options = taskManageHolder.viewManage.options40;
 						} else if ("conver".equals(tag)) {
 							flag = false;
 						}
@@ -200,7 +200,7 @@ public class ShareSubController {
 					}
 				}
 				if (flag) {
-					thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
+					taskManageHolder.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
 						@Override
 						public void onLoadingStarted(String imageUri, View view) {
 						}
@@ -220,7 +220,7 @@ public class ShareSubController {
 						}
 					});
 				} else {
-					thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view);
+					taskManageHolder.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view);
 				}
 			}
 
@@ -439,7 +439,7 @@ public class ShareSubController {
 							shareTopMenuGroupName.setText(name);
 							thisView.modifyCurrentShowGroup();
 
-							DataHandlers.getGroupBoards(group.gid + "");
+							DataHandler.getGroupBoards(group.gid + "");
 
 							// display local data
 							nowpage = 0;
@@ -448,7 +448,7 @@ public class ShareSubController {
 							thisView.showTopMenuRoomName();
 							thisView.shareMessageListBody.y = 0;
 							thisView.shareMessageListBody.setChildrenPosition();
-							thisView.viewManage.squareSubView.setConver();
+							taskManageHolder.viewManage.squareSubView.setConver();
 						}
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);

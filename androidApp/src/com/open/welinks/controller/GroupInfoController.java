@@ -46,9 +46,9 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.oss.UploadMultipart;
-import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
@@ -76,7 +76,8 @@ public class GroupInfoController {
 	public Group currentGroup;
 	public Board currentBoard;
 
-	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
+
 	public File tempFile;
 
 	public ViewManage viewManage = ViewManage.getInstance();
@@ -359,7 +360,7 @@ public class GroupInfoController {
 						}
 					}
 					if (flag) {
-						thisView.fileHandlers.handler.post(new Runnable() {
+						taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 							@Override
 							public void run() {
@@ -374,7 +375,7 @@ public class GroupInfoController {
 						}
 					}
 				} else {
-					thisView.fileHandlers.handler.post(new Runnable() {
+					taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 						@Override
 						public void run() {
@@ -475,14 +476,14 @@ public class GroupInfoController {
 			// Uri uri = Uri.fromFile(tempFile);
 			// startPhotoZoom(uri);
 		} else if (requestCode == REQUESTCODE_CAT && resultCode == Activity.RESULT_OK) {
-			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), thisView.fileHandlers.sdcardHeadImageFolder);
+			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), taskManageHolder.fileHandler.sdcardHeadImageFolder);
 			String headFileName = (String) map.get("fileName");
 			if ("board".equals(thisController.type)) {
 				currentBoard.head = headFileName;
 			} else if ("group".equals(thisController.type)) {
 				currentGroup.icon = headFileName;
 			}
-			thisView.fileHandlers.getHeadImage(headFileName, thisView.headIvView, viewManage.options70);
+			taskManageHolder.fileHandler.getHeadImage(headFileName, thisView.headIvView, viewManage.options70);
 			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"), UploadMultipart.UPLOAD_TYPE_HEAD);
 		} else if (requestCode == CONVER_SET && resultCode == Activity.RESULT_OK) {
 			if (this.data.tempData.selectedImageList != null && this.data.tempData.selectedImageList.size() != 0) {
@@ -493,7 +494,7 @@ public class GroupInfoController {
 		} else if (requestCode == CONVER_SET_OK && resultCode == Activity.RESULT_OK) {
 			byte[] bytes = data2.getByteArrayExtra("bitmap");
 			String fileName = new SHA1().getDigestOfString(bytes) + ".osp";
-			File file = new File(thisView.fileHandlers.sdcardBackImageFolder, fileName);
+			File file = new File(taskManageHolder.fileHandler.sdcardBackImageFolder, fileName);
 			try {
 				FileOutputStream fileOutputStream = new FileOutputStream(file);
 				StreamParser.parseToFile(bytes, fileOutputStream);
@@ -534,7 +535,7 @@ public class GroupInfoController {
 
 	public void uploadFile(final String filePath, final String fileName, final byte[] bytes, int uploadType) {
 		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, uploadType);
-		uploadMultipartList.addMultipart(multipart);
+		taskManageHolder.uploadMultipartList.addMultipart(multipart);
 		multipart.setUploadLoadingListener(uploadLoadingListener);
 	}
 
@@ -546,7 +547,7 @@ public class GroupInfoController {
 	}
 
 	public void startPhotoZoom(Uri uri) {
-		File sdFile = thisView.fileHandlers.sdcardHeadImageFolder;
+		File sdFile = taskManageHolder.fileHandler.sdcardHeadImageFolder;
 		tempFile = new File(sdFile, "tempimage.png");
 		int i = 1;
 		while (tempFile.exists()) {

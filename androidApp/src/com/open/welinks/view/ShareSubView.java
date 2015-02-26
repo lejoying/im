@@ -34,7 +34,6 @@ import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
@@ -58,13 +57,12 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
-import com.open.welinks.model.DataHandlers;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.utils.DateUtil;
 
 public class ShareSubView {
@@ -75,7 +73,7 @@ public class ShareSubView {
 
 	public MyLog log = new MyLog(tag, true);
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public DisplayMetrics displayMetrics;
 
@@ -131,13 +129,9 @@ public class ShareSubView {
 	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
 	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
 
-	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DisplayImageOptions options;
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public Gson gson = new Gson();
 	public Parser parser = Parser.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
 
 	// first share View Animation true or false
 	public boolean isShowFirstMessageAnimation = false;
@@ -146,7 +140,7 @@ public class ShareSubView {
 
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
-		viewManage.shareSubView = this;
+		taskManageHolder.viewManage.shareSubView = this;
 	}
 
 	public SmallBusinessCardPopView businessCardPopView;
@@ -198,7 +192,7 @@ public class ShareSubView {
 		releaseChannelView = mainView.mInflater.inflate(R.layout.view_release_channels, null);
 		releaseChannelContainer = releaseChannelView.findViewById(R.id.releaseChannelContainer);
 
-		mImageFile = fileHandlers.sdcardHeadImageFolder;
+		mImageFile = taskManageHolder.fileHandler.sdcardHeadImageFolder;
 		if (!mImageFile.exists())
 			mImageFile.mkdirs();
 
@@ -232,14 +226,14 @@ public class ShareSubView {
 
 	public void setConver() {
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		File file = new File(fileHandlers.sdcardBackImageFolder, group.cover);
+		File file = new File(taskManageHolder.fileHandler.sdcardBackImageFolder, group.cover);
 		if (group.cover == null || "".equals(group.cover)) {
-			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+			taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			return;
 		}
 		final String path = file.getAbsolutePath();
 		if (file.exists()) {
-			imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
+			taskManageHolder.imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
 				@Override
 				public void onLoadingStarted(String imageUri, View view) {
 				}
@@ -257,7 +251,7 @@ public class ShareSubView {
 			if (group.cover != null) {
 				downloadConver(group.cover, path);
 			} else {
-				imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+				taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 			}
 		}
 	}
@@ -268,7 +262,7 @@ public class ShareSubView {
 		DownloadFile downloadFile = new DownloadFile(url, path);
 		downloadFile.view = groupCoverView;
 		downloadFile.setDownloadFileListener(thisController.downloadListener);
-		downloadFileList.addDownloadFile(downloadFile);
+		taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 	}
 
 	public Group currentGroup;
@@ -419,18 +413,18 @@ public class ShareSubView {
 			if (currentGroup.boards != null && currentGroup.boards.size() > 0) {
 				currentGroup.currentBoard = currentGroup.boards.get(0);
 			} else {
-				DataHandlers.getGroupBoards(currentGroup.gid + "");
+				DataHandler.getGroupBoards(currentGroup.gid + "");
 			}
 		}
 
 		// set conver
 		// TODO conver setting
-		fileHandlers.getHeadImage(currentGroup.icon, this.groupHeadView, viewManage.options56);
+		taskManageHolder.fileHandler.getHeadImage(currentGroup.icon, this.groupHeadView, taskManageHolder.viewManage.options56);
 		if (currentGroup.cover != null && !currentGroup.cover.equals("")) {
 			setConver();
 		} else {
 			log.e("cover" + currentGroup.cover);
-			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+			taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
 		Board board = null;
 		if (data.boards != null && data.boards.boardsMap != null) {
@@ -611,7 +605,7 @@ public class ShareSubView {
 						imageHeight = (int) (showImageWidth * ratio);
 					} else {
 						try {
-							File file = new File(fileHandlers.sdcardImageFolder, imageContent);
+							File file = new File(taskManageHolder.fileHandler.sdcardImageFolder, imageContent);
 							if (file.exists()) {
 								FileInputStream fileInputStream0 = new FileInputStream(file);
 								BitmapFactory.Options options = new BitmapFactory.Options();
@@ -635,7 +629,7 @@ public class ShareSubView {
 						imageHeight = (int) (showImageWidth * ratio);
 					} else {
 						try {
-							File file = new File(fileHandlers.sdcardImageFolder, imageContent);
+							File file = new File(taskManageHolder.fileHandler.sdcardImageFolder, imageContent);
 							if (file.exists()) {
 								FileInputStream fileInputStream0 = new FileInputStream(file);
 								BitmapFactory.Options options = new BitmapFactory.Options();
@@ -860,7 +854,7 @@ public class ShareSubView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, viewManage.options40);
+				taskManageHolder.fileHandler.getHeadImage(fileName, this.headView, taskManageHolder.viewManage.options40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
@@ -942,11 +936,11 @@ public class ShareSubView {
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
 				if (!"".equals(imageContent)) {
-					File file = new File(fileHandlers.sdcardImageFolder, imageContent);
+					File file = new File(taskManageHolder.fileHandler.sdcardImageFolder, imageContent);
 					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), shareImageContentView);
+						taskManageHolder.imageLoader.displayImage("file://" + file.getAbsolutePath(), shareImageContentView);
 					} else {
-						fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth * 2 / 3, imageHeight * 2 / 3, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
+						taskManageHolder.fileHandler.getThumbleImage(imageContent, shareImageContentView, showImageWidth * 2 / 3, imageHeight * 2 / 3, options, taskManageHolder.fileHandler.THUMBLE_TYEP_GROUP, null);
 					}
 				}
 				if (shareMessage.scores == null) {
@@ -1040,7 +1034,7 @@ public class ShareSubView {
 						imageView.setPadding(padding, padding, padding, padding);
 						int width = (int) (45 * displayMetrics.density);
 						FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(width, width);
-						fileHandlers.getHeadImage(comment.head, imageView, viewManage.options40);
+						taskManageHolder.fileHandler.getHeadImage(comment.head, imageView, taskManageHolder.viewManage.options40);
 						this.commentContainer.addView(imageView, params2);
 						imageView.setX(index * 45 * displayMetrics.density + 6 * displayMetrics.density);
 						index++;
@@ -1316,7 +1310,7 @@ public class ShareSubView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			fileHandlers.getHeadImage(group.icon, this.groupIconView, viewManage.options40);
+			taskManageHolder.fileHandler.getHeadImage(group.icon, this.groupIconView, taskManageHolder.viewManage.options40);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);

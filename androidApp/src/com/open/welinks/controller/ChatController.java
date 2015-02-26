@@ -59,7 +59,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.open.lib.ResponseHandler;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ExpressionManageActivity;
@@ -77,14 +77,12 @@ import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.customView.ChatFaceView.OnFaceSeletedListener;
 import com.open.welinks.customView.SmallBusinessCardPopView.OnUserCardListener;
 import com.open.welinks.model.API;
-import com.open.welinks.model.AudioHandlers;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
@@ -92,25 +90,20 @@ import com.open.welinks.model.SubData.CardMessageContent;
 import com.open.welinks.model.SubData.LocationMessageContent;
 import com.open.welinks.model.SubData.SpecialGifMessageContent;
 import com.open.welinks.model.SubData.VoiceMessageContent;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.UploadMultipart;
-import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.ExpressionUtil;
 import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ChatView;
-import com.open.welinks.view.ViewManage;
 
 public class ChatController {
 	public Data data = Data.getInstance();
 	public SubData subData = SubData.getInstance();
 	public Parser parser = Parser.getInstance();
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
-	public AudioHandlers audiohandlers = AudioHandlers.getInstance();
-	public ViewManage viewManage = ViewManage.getInstance();
-	public ImageLoader imageLoader = ImageLoader.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 	public InputMethodManagerUtils inputManager;
 	public Gson gson = new Gson();
 	public SHA1 sha1 = new SHA1();
@@ -347,7 +340,7 @@ public class ChatController {
 			public boolean onTouch(View view, MotionEvent event) {
 				if (thisView.voiceLayout.equals(view)) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						audiohandlers.startRecording();
+						taskManageHolder.audioHandler.startRecording();
 					} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 						float x = event.getRawX(), y = event.getRawY(), x1 = thisView.voicePop.getX(), y1 = thisView.voicePop.getY(), x2 = x1 + thisView.voicePop.getWidth(), y2 = y1 + thisView.voicePop.getHeight();
 						if (x > x1 && x < x2 && y < y2 && y > y1) {
@@ -639,13 +632,13 @@ public class ChatController {
 					View view = new View(thisActivity);
 					Message message = messagesMap.remove(tempLocationKey);
 					bitmap = Bitmap.createBitmap(bitmap, (int) BaseDataUtils.dpToPx(65), (int) BaseDataUtils.dpToPx(40), (int) BaseDataUtils.dpToPx(150), (int) BaseDataUtils.dpToPx(100));
-					File toFile = new File(fileHandlers.sdcardImageFolder, tempLocationKey + ".png");
+					File toFile = new File(taskManageHolder.fileHandler.sdcardImageFolder, tempLocationKey + ".png");
 					FileOutputStream fos;
 					fos = new FileOutputStream(toFile);
 					bitmap.compress(CompressFormat.PNG, 100, fos);
 					Map<String, Object> map = processImagesInformation(toFile.getAbsolutePath());
 					String fileName = (String) map.get("fileName");
-					File fromFile = new File(fileHandlers.sdcardImageFolder, fileName);
+					File fromFile = new File(taskManageHolder.fileHandler.sdcardImageFolder, fileName);
 					if (message != null) {
 						LocationMessageContent messageContent = gson.fromJson(message.content, LocationMessageContent.class);
 						messageContent.imageFileName = fileName;
@@ -656,7 +649,7 @@ public class ChatController {
 					messagesMap.put(fileName, message);
 					view.setTag(fileName);
 					UploadMultipart multipart = uploadFile(fromFile.getAbsolutePath(), fileName, (byte[]) map.get("bytes"), view, UploadMultipart.UPLOAD_TYPE_IMAGE);
-					uploadMultipartList.addMultipart(multipart);
+					taskManageHolder.uploadMultipartList.addMultipart(multipart);
 					tempLocationKey = "";
 					toFile.delete();
 				} catch (FileNotFoundException e) {
@@ -747,7 +740,7 @@ public class ChatController {
 			public void onPlayComplete() {
 				if (continuePlay) {
 					continuePlay = false;
-					thisController.audiohandlers.startPlay((String) thisView.currentVoiceView.getTag(R.id.tag_second), (String) thisView.currentVoiceView.getTag(R.id.tag_third));
+					taskManageHolder.audioHandler.startPlay((String) thisView.currentVoiceView.getTag(R.id.tag_second), (String) thisView.currentVoiceView.getTag(R.id.tag_third));
 					thisController.postHandler(HANDLER_CHAT_STARTPLAY);
 					thisView.showVoiceMoive(true);
 				} else {
@@ -844,7 +837,7 @@ public class ChatController {
 		thisView.chatInput.setOnFocusChangeListener(mOnFocusChangeListener);
 		thisView.chatMenu.setOnItemClickListener(mItemClickListener);
 
-		audiohandlers.setAudioListener(mAudioListener);
+		taskManageHolder.audioHandler.setAudioListener(mAudioListener);
 		mAMap.setOnMapLoadedListener(mOnMapLoadedListener);
 
 		thisView.samilyInTranslateAnimation.setAnimationListener(mAnimationListener);
@@ -863,10 +856,10 @@ public class ChatController {
 
 	private void completeVoiceRecording(boolean weather) {
 		if (weather) {
-			audiohandlers.stopRecording();
+			taskManageHolder.audioHandler.stopRecording();
 		} else {
 			postHandler(HANDLER_CHAT_HIDEVOICEPOP);
-			audiohandlers.releaseRecording();
+			taskManageHolder.audioHandler.releaseRecording();
 		}
 	}
 
@@ -907,7 +900,7 @@ public class ChatController {
 			String fileName = (String) map.get("fileName");
 			messageContent.add(fileName);
 			UploadMultipart multipart = uploadFile(filePath, fileName, (byte[]) map.get("bytes"), view, UploadMultipart.UPLOAD_TYPE_IMAGE);
-			uploadMultipartList.addMultipart(multipart);
+			taskManageHolder.uploadMultipartList.addMultipart(multipart);
 		}
 		message.content = gson.toJson(messageContent);
 		messagesMap.put(String.valueOf(time), message);
@@ -939,7 +932,7 @@ public class ChatController {
 		message.type = Constant.MESSAGE_TYPE_SEND;
 		messagesMap.put(fileName, message);
 		UploadMultipart multipart = uploadFile(filePath, fileName, (byte[]) map.get("bytes"), view, UploadMultipart.UPLOAD_TYPE_VOICE);
-		uploadMultipartList.addMultipart(multipart);
+		taskManageHolder.uploadMultipartList.addMultipart(multipart);
 		addMessageToLocation(message);
 	}
 
@@ -990,10 +983,10 @@ public class ChatController {
 	}
 
 	private void takePhoto() {
-		tempPhotoFile = new File(thisController.fileHandlers.sdcardImageFolder, "tempimage.jpg");
+		tempPhotoFile = new File(taskManageHolder.fileHandler.sdcardImageFolder, "tempimage.jpg");
 		int i = 1;
 		while (tempPhotoFile.exists()) {
-			tempPhotoFile = new File(thisController.fileHandlers.sdcardImageFolder, "tempimage" + (i++) + ".jpg");
+			tempPhotoFile = new File(taskManageHolder.fileHandler.sdcardImageFolder, "tempimage" + (i++) + ".jpg");
 		}
 		Uri uri = Uri.fromFile(tempPhotoFile);
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -1219,7 +1212,7 @@ public class ChatController {
 		String sha1FileName = sha1.getDigestOfString(bytes);
 		fileName = sha1FileName + suffixName;
 		map.put("fileName", fileName);
-		File toFile = new File(fileHandlers.sdcardVoiceFolder, fileName);
+		File toFile = new File(taskManageHolder.fileHandler.sdcardVoiceFolder, fileName);
 		fromFile.renameTo(toFile);
 		return map;
 	}
@@ -1234,20 +1227,20 @@ public class ChatController {
 		}
 		String fileName = "";
 		File fromFile = new File(filePath);
-		byte[] bytes = fileHandlers.getImageFileBytes(null, fromFile, (int) data.baseData.screenWidth, (int) data.baseData.screenHeight);
+		byte[] bytes = taskManageHolder.fileHandler.getImageFileBytes(null, fromFile, (int) data.baseData.screenWidth, (int) data.baseData.screenHeight);
 		map.put("bytes", bytes);
 		String sha1FileName = sha1.getDigestOfString(bytes);
 		fileName = sha1FileName + suffixName;
 		map.put("fileName", fileName);
-		File toFile = new File(fileHandlers.sdcardImageFolder, fileName);
+		File toFile = new File(taskManageHolder.fileHandler.sdcardImageFolder, fileName);
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(toFile);
 			StreamParser.parseToFile(bytes, fileOutputStream);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		File toSnapFile = new File(fileHandlers.sdcardThumbnailFolder, fileName);
-		fileHandlers.makeImageThumbnail(fromFile, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146), toSnapFile, fileName);
+		File toSnapFile = new File(taskManageHolder.fileHandler.sdcardThumbnailFolder, fileName);
+		taskManageHolder.fileHandler.makeImageThumbnail(fromFile, (int) BaseDataUtils.dpToPx(178), (int) BaseDataUtils.dpToPx(146), toSnapFile, fileName);
 		return map;
 	}
 
@@ -1290,12 +1283,12 @@ public class ChatController {
 	}
 
 	public void onDestroy() {
-		audiohandlers.releasePlyer();
+		taskManageHolder.audioHandler.releasePlyer();
 		thisView.locationMapView.onDestroy();
 	}
 
 	public void onResume() {
-		viewManage.chatView = thisView;
+		taskManageHolder.viewManage.chatView = thisView;
 		thisView.locationMapView.onResume();
 
 		if (thisView.businessCardPopView.isShowing()) {
@@ -1345,9 +1338,9 @@ public class ChatController {
 			data.relationship.groupsMap.get(key).notReadMessagesCount = 0;
 		}
 		data.relationship.isModified = true;
-		viewManage.chatView = null;
+		taskManageHolder.viewManage.chatView = null;
 
-		viewManage.messagesSubView.showMessagesSequence();
+		taskManageHolder.viewManage.messagesSubView.showMessagesSequence();
 	}
 
 	public void onPause() {

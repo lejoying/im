@@ -33,13 +33,15 @@ import com.open.welinks.controller.CirclesManageController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 
 public class CirclesManageView {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String tag = "CirclesManageView";
 	public MyLog log = new MyLog(tag, true);
@@ -63,17 +65,13 @@ public class CirclesManageView {
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
-
 	public int barHeight;
 
 	public CirclesManageView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 		this.thisView = this;
-		viewManage.circlesManageView = this;
+		taskManageHolder.viewManage.circlesManageView = this;
 	}
 
 	public int containerWidth;
@@ -341,7 +339,7 @@ public class CirclesManageView {
 		}
 
 		public void setData(Friend friend) {
-			fileHandlers.getHeadImage(friend.head, this.headImageView, viewManage.options52);
+			taskManageHolder.fileHandler.getHeadImage(friend.head, this.headImageView, taskManageHolder.viewManage.options52);
 			if (friend.alias != null && !"".equals(friend.alias)) {
 				this.nickNameView.setText(friend.alias);
 			} else {

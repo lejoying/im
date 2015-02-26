@@ -40,9 +40,8 @@ import com.open.welinks.customView.SideBar.OnTouchingLetterChangedListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.CharacterParser;
-import com.open.welinks.view.ViewManage;
 
 @SuppressLint("DefaultLocale")
 public class FriendsSortListActivity extends Activity {
@@ -50,9 +49,7 @@ public class FriendsSortListActivity extends Activity {
 	public Data data = Data.getInstance();
 	public String tag = "FriendsSortListActivity";
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public static int INVITA_FRIEND_GROUP = 0x01;// Invite friends to add to the group
 	public static int RECOMMEND_FRIEND_GROUP = 0x02;// Recommend group to friends
@@ -178,7 +175,7 @@ public class FriendsSortListActivity extends Activity {
 			imageView.setTag(R.id.tag_first, friend.phone);
 			imageView.setOnClickListener(mOnClickListener);
 			alreadyListContainer.addView(imageView, layoutParams);
-			fileHandlers.getHeadImage(friend.head, imageView, viewManage.options40);
+			taskManageHolder.fileHandler.getHeadImage(friend.head, imageView, taskManageHolder.viewManage.options40);
 		}
 	}
 
@@ -340,7 +337,7 @@ public class FriendsSortListActivity extends Activity {
 			if (!"".equals(friend.alias)) {
 				name = friend.alias;
 			}
-			fileHandlers.getHeadImage(friend.head, viewHolder.headView, viewManage.options40);
+			taskManageHolder.fileHandler.getHeadImage(friend.head, viewHolder.headView, taskManageHolder.viewManage.options40);
 			int section = getSectionForPosition(position);
 
 			if (position == getPositionForSection(section)) {

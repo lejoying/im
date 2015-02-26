@@ -32,23 +32,22 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.oss.UploadMultipart;
-import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ViewManage;
 
-public class DataHandlers {
+public class DataHandler {
 
 	public static String tag = "DataUtil";
 	public static Data data = Data.getInstance();
 	public static Parser parser = Parser.getInstance();
 	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-	public static DataHandlers instance;
+	public static DataHandler instance;
 
-	public static DataHandlers getInstance() {
+	public static DataHandler getInstance() {
 		if (instance == null) {
-			instance = new DataHandlers();
+			instance = new DataHandler();
 		}
 		return instance;
 	}
@@ -395,10 +394,9 @@ public class DataHandlers {
 		}
 	}
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 	public SHA1 sha1 = new SHA1();
 	public float imageHeightScale = 0.5686505598114319f;
-	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
 	public OnUploadLoadingListener uploadLoadingListener;
 
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems, List<String> list, OnUploadLoadingListListener onUploadLoadingListListener) {
@@ -422,22 +420,22 @@ public class DataHandlers {
 				byte[] bytes = null;
 				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 
-				bytes = fileHandlers.getImageFileBytes(shareContentItem,fromFile, viewManage.mainView.displayMetrics.heightPixels, viewManage.mainView.displayMetrics.heightPixels);
+				bytes = taskManageHolder.fileHandler.getImageFileBytes(shareContentItem, fromFile, viewManage.mainView.displayMetrics.heightPixels, viewManage.mainView.displayMetrics.heightPixels);
 				// int fileLength = bytes.length;
 				// totalLength += fileLength;
 				// fileTotalLengthMap.put(key, fileLength);
 
 				String sha1FileName = sha1.getDigestOfString(bytes);
 				fileName = sha1FileName + suffixName;
-				File toFile = new File(fileHandlers.sdcardImageFolder, fileName);
+				File toFile = new File(taskManageHolder.fileHandler.sdcardImageFolder, fileName);
 				FileOutputStream fileOutputStream = new FileOutputStream(toFile);
 				StreamParser.parseToFile(bytes, fileOutputStream);
 
 				if (i == 0) {
 					int showImageWidth = viewManage.mainView.displayMetrics.widthPixels;
-					File toSnapFile = new File(fileHandlers.sdcardThumbnailFolder, fileName);
+					File toSnapFile = new File(taskManageHolder.fileHandler.sdcardThumbnailFolder, fileName);
 					int showImageHeight = (int) (viewManage.mainView.displayMetrics.widthPixels * imageHeightScale);
-					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, showImageHeight, toSnapFile, fileName);
+					taskManageHolder.fileHandler.makeImageThumbnail(fromFile, showImageWidth, showImageHeight, toSnapFile, fileName);
 				}
 
 				shareContentItem.type = "image";
@@ -447,7 +445,7 @@ public class DataHandlers {
 				// uploadFileNameMap.put(key, fileName);
 				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
 				multipart.path = key;
-				uploadMultipartList.addMultipart(multipart);
+				taskManageHolder.uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(onUploadLoadingListListener.uploadLoadingListener);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();

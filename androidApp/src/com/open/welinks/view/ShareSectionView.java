@@ -26,7 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
@@ -46,12 +45,11 @@ import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MyGson;
 
@@ -61,6 +59,8 @@ public class ShareSectionView {
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareSectionView";
 	public MyLog log = new MyLog(tag, true);
+	
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public ShareSectionView thisView;
@@ -74,11 +74,6 @@ public class ShareSectionView {
 
 	public Group currentGroup;
 	public Board currentBoard;
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-	public ViewManage viewManage = ViewManage.getInstance();
-	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public MyGson gson = new MyGson();
 
@@ -106,7 +101,7 @@ public class ShareSectionView {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 		this.thisView = this;
-		this.viewManage.shareSectionView = this;
+		taskManageHolder.viewManage.shareSectionView = this;
 	}
 
 	public SmallBusinessCardPopView businessCardPopView;
@@ -243,7 +238,7 @@ public class ShareSectionView {
 			currentBoard = data.boards.boardsMap.get(currentGroup.currentBoard);
 		}
 		setConver();
-		fileHandlers.getHeadImage(currentBoard.head, this.groupHeadView, viewManage.options56);
+		taskManageHolder.fileHandler.getHeadImage(currentBoard.head, this.groupHeadView, taskManageHolder.viewManage.options56);
 		String boardName;
 		if (currentBoard != null) {
 			boardName = currentBoard.name;
@@ -574,7 +569,7 @@ public class ShareSectionView {
 						shareStatusView.setVisibility(View.VISIBLE);
 					}
 				}
-				fileHandlers.getHeadImage(fileName, this.headView, viewManage.options40);
+				taskManageHolder.fileHandler.getHeadImage(fileName, this.headView, taskManageHolder.viewManage.options40);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
@@ -639,7 +634,7 @@ public class ShareSectionView {
 				shareImageContentView.setLayoutParams(shareImageParams);
 				// File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
 				// if (file.exists()) {
-				fileHandlers.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, fileHandlers.THUMBLE_TYEP_GROUP, null);
+				taskManageHolder.fileHandler.getThumbleImage(imageContent, shareImageContentView, showImageWidth / 2, showImageHeight / 2, options, taskManageHolder.fileHandler.THUMBLE_TYEP_GROUP, null);
 				// } else {
 				// imageLoader.displayImage("file://" + fileHandlers.sdcardImageFolder.getAbsolutePath() + "/" + imageContent, shareImageContentView);
 				// }
@@ -673,10 +668,10 @@ public class ShareSectionView {
 
 	public void setConver() {
 		if (currentBoard.cover != null && !currentBoard.cover.equals("")) {
-			File file = new File(fileHandlers.sdcardBackImageFolder, currentBoard.cover);
+			File file = new File(taskManageHolder.fileHandler.sdcardBackImageFolder, currentBoard.cover);
 			final String path = file.getAbsolutePath();
 			if (file.exists()) {
-				imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
+				taskManageHolder.imageLoader.displayImage("file://" + path, groupCoverView, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
 					}
@@ -694,7 +689,7 @@ public class ShareSectionView {
 				downloadConver(currentBoard.cover, path);
 			}
 		} else {
-			imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
+			taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, groupCoverView);
 		}
 	}
 
@@ -704,7 +699,7 @@ public class ShareSectionView {
 		DownloadFile downloadFile = new DownloadFile(url, path);
 		downloadFile.view = groupCoverView;
 		downloadFile.setDownloadFileListener(thisController.downloadListener);
-		downloadFileList.addDownloadFile(downloadFile);
+		taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 	}
 
 	public void showRoomTime() {
@@ -935,7 +930,7 @@ public class ShareSectionView {
 		public void setContent(Board board) {
 			data = parser.check();
 			this.board = board;
-			fileHandlers.getHeadImage(board.head, this.groupIconView, viewManage.options40);
+			taskManageHolder.fileHandler.getHeadImage(board.head, this.groupIconView, taskManageHolder.viewManage.options40);
 			String name = board.name;
 			if ("主版".equals(name))
 				name = "默认版块";

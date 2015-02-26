@@ -1,33 +1,10 @@
 package com.open.welinks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.lib.HttpClient;
-import com.open.lib.MyLog;
-import com.open.welinks.customListener.MyOnClickListener;
-import com.open.welinks.customView.Alert;
-import com.open.welinks.customView.SmallBusinessCardPopView;
-import com.open.welinks.customView.Alert.AlertInputDialog;
-import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
-import com.open.welinks.customView.MyHorizontalScrollView;
-import com.open.welinks.customView.MyHorizontalScrollView.ScrollEndListener;
-import com.open.welinks.model.API;
-import com.open.welinks.model.Constant;
-import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.utils.BaseDataUtils;
-import com.open.welinks.view.ViewManage;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
@@ -42,24 +19,43 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
+
+import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.HttpClient;
+import com.open.lib.MyLog;
+import com.open.welinks.customListener.MyOnClickListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.customView.MyHorizontalScrollView;
+import com.open.welinks.customView.MyHorizontalScrollView.ScrollEndListener;
+import com.open.welinks.customView.SmallBusinessCardPopView;
+import com.open.welinks.model.API;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.utils.BaseDataUtils;
 
 public class ClassificationRecommendationActivity extends Activity {
 
 	public MyLog log = new MyLog("ClassificationRecommendationActivity", true);
 	public Data data = Data.getInstance();
-	public FileHandlers mFileHandlers = FileHandlers.getInstance();
-	public ViewManage mViewManage = ViewManage.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 	public HttpClient httpClient = HttpClient.getInstance();
 	public Gson gson = new Gson();
 
@@ -528,7 +524,7 @@ public class ClassificationRecommendationActivity extends Activity {
 			holder.groupIconView.setVisibility(View.GONE);
 			Group group = data.relationship.groupsMap.get(getItem(position));
 			if (group != null) {
-				mFileHandlers.getHeadImage(group.icon, holder.headView, mViewManage.options50);
+				taskManageHolder.fileHandler.getHeadImage(group.icon, holder.headView, taskManageHolder.viewManage.options50);
 				holder.nickNameView.setText(group.name);
 				holder.lastChatMessageView.setText(group.description);
 			}

@@ -27,11 +27,10 @@ import com.open.welinks.controller.ShareListController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.ShareMessage;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.utils.DateUtil;
 
 public class ShareListView {
@@ -39,6 +38,8 @@ public class ShareListView {
 	public Data data = Data.getInstance();
 	public String tag = "ShareListView";
 	public MyLog log = new MyLog(tag, true);
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public ShareListView thisView;
@@ -52,13 +53,9 @@ public class ShareListView {
 	public View backView;
 	public TextView backTitleView;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
 	public ShareListAdapter shareListAdapter;
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
-
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public View footerView;
 
@@ -163,14 +160,14 @@ public class ShareListView {
 					nickName = thisController.friend.nickName;
 					business = thisController.friend.mainBusiness;
 				}
-				File file = new File(fileHandlers.sdcardHeadImageFolder, head);
+				File file = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, head);
 				if (file.exists()) {
 					imageLoader.displayImage("file://" + file.getAbsolutePath(), holder.headView);
 				} else {
 					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_COMMONIMAGE + "heads/" + head, file.getAbsolutePath());
 					downloadFile.view = holder.headView;
 					downloadFile.setDownloadFileListener(thisController.downloadListener);
-					downloadFileList.addDownloadFile(downloadFile);
+					taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 				}
 				holder.nickNameView.setText(nickName);
 				holder.businessView.setText(business);
@@ -263,14 +260,14 @@ public class ShareListView {
 					int width = (int) (displayMetrics.density * 75 + 0.5f);
 					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
 					container.addView(imageView, params);
-					File file = new File(fileHandlers.sdcardCacheImageFolder, list.get(i) + "@2_2");
+					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
 					if (file.exists()) {
 						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q", file.getAbsolutePath());
 						downloadFile.view = imageView;
 						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						downloadFileList.addDownloadFile(downloadFile);
+						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 					}
 				} else if (list.size() == 2) {
 					ImageView imageView = new ImageView(context);
@@ -283,14 +280,14 @@ public class ShareListView {
 						params.leftMargin = (int) (38 * displayMetrics.density + 0.5f);
 					}
 					container.addView(imageView, params);
-					File file = new File(fileHandlers.sdcardCacheImageFolder, list.get(i) + "@1_2");
+					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
 					if (file.exists()) {
 						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
 						downloadFile.view = imageView;
 						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						downloadFileList.addDownloadFile(downloadFile);
+						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 					}
 				} else if (list.size() == 3) {
 					ImageView imageView = new ImageView(context);
@@ -317,14 +314,14 @@ public class ShareListView {
 						suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
 					}
 					container.addView(imageView, params);
-					File file = new File(fileHandlers.sdcardCacheImageFolder, list.get(i) + name);
+					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
 					if (file.exists()) {
 						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
 						downloadFile.view = imageView;
 						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						downloadFileList.addDownloadFile(downloadFile);
+						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 					}
 				} else {
 					ImageView imageView = new ImageView(context);
@@ -345,14 +342,14 @@ public class ShareListView {
 						break;
 					}
 					container.addView(imageView, params);
-					File file = new File(fileHandlers.sdcardCacheImageFolder, list.get(i) + name);
+					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
 					if (file.exists()) {
 						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
 						downloadFile.view = imageView;
 						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						downloadFileList.addDownloadFile(downloadFile);
+						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 					}
 				}
 			}

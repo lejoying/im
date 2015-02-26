@@ -22,7 +22,7 @@ import com.open.welinks.controller.GroupInfoController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.oss.DownloadFileList;
 
@@ -30,6 +30,8 @@ public class GroupInfoView {
 	public Data data = Data.getInstance();
 	public String tag = "GroupInfoView";
 	public MyLog log = new MyLog(tag, true);
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public GroupInfoView thisView;
@@ -62,8 +64,6 @@ public class GroupInfoView {
 	public ImageView converImageView;
 
 	public TextView groupMemberCountView;
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public GroupInfoView(Activity thisActivity) {
 		this.context = thisActivity;
@@ -129,7 +129,7 @@ public class GroupInfoView {
 			ImageView imageView = new ImageView(thisActivity);
 
 			Friend friend = data.relationship.friendsMap.get(thisController.currentGroup.members.get(i));
-			fileHandlers.getHeadImage(friend.head, imageView, viewManage.options70);
+			taskManageHolder.fileHandler.getHeadImage(friend.head, imageView, viewManage.options70);
 			this.memberListView.addView(imageView, params);
 		}
 	}
@@ -156,13 +156,13 @@ public class GroupInfoView {
 			this.borderNine.setVisibility(View.GONE);
 
 			this.nickNameView.setText(thisController.currentBoard.name);
-			this.fileHandlers.getHeadImage(thisController.currentBoard.head, this.headIvView, viewManage.options70);
+			taskManageHolder.fileHandler.getHeadImage(thisController.currentBoard.head, this.headIvView, viewManage.options70);
 			this.businessView.setText(thisController.currentBoard.description);
 			setConver();
 		} else {
 			this.backTitleView.setText("群组信息");
 			this.nickNameView.setText(thisController.currentGroup.name);
-			this.fileHandlers.getHeadImage(thisController.currentGroup.icon, this.headIvView, viewManage.options70);
+			taskManageHolder.fileHandler.getHeadImage(thisController.currentGroup.icon, this.headIvView, viewManage.options70);
 			this.businessView.setText(thisController.currentGroup.description);
 			boolean isNotice = false;
 			if (data.localStatus.localData != null) {
@@ -206,7 +206,7 @@ public class GroupInfoView {
 			imageLoader.displayImage("drawable://" + R.drawable.tempicon, converImageView);
 			return;
 		}
-		File file = new File(fileHandlers.sdcardBackImageFolder, cover);
+		File file = new File(taskManageHolder.fileHandler.sdcardBackImageFolder, cover);
 		final String path = file.getAbsolutePath();
 		if (file.exists()) {
 			imageLoader.displayImage("file://" + path, converImageView, new SimpleImageLoadingListener() {

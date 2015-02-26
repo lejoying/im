@@ -52,6 +52,6 @@ public class CirclesManageActivity extends Activity {
 	@Override
 	public void finish() {
 		super.finish();
-		thisView.viewManage.circlesManageView = null;
+		thisView.taskManageHolder.viewManage.circlesManageView = null;
 	}
 }

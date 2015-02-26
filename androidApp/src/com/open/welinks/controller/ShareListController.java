@@ -35,6 +35,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.MyGson;
 import com.open.welinks.view.ShareListView;
@@ -45,6 +46,8 @@ public class ShareListController {
 	public Parser parser = Parser.getInstance();
 	public String tag = "ShareListController";
 	public MyLog log = new MyLog(tag, true);
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public ShareListView thisView;
@@ -223,7 +226,7 @@ public class ShareListController {
 						}
 						if (response.shares.size() != 0) {
 							sharesMap.putAll(response.sharesMap);
-							thisView.fileHandlers.handler.post(new Runnable() {
+							taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 								@Override
 								public void run() {

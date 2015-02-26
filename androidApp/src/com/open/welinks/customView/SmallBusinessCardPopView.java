@@ -36,8 +36,8 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.ChatActivity;
+import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.model.API;
@@ -46,9 +46,8 @@ import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.view.ViewManage;
 
@@ -58,7 +57,6 @@ public class SmallBusinessCardPopView {
 	public MyLog log = new MyLog(tag, true);
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
-	public ViewManage mViewManage = ViewManage.getInstance();
 
 	public SmallBusinessCardPopView instance;
 	public Activity thisActivity;
@@ -174,6 +172,7 @@ public class SmallBusinessCardPopView {
 			this.bindEvent();
 		}
 
+		@SuppressWarnings("null")
 		public void setSmallBusinessCardContent(String type, String key) {
 			this.type = type;
 			this.key = key;
@@ -328,8 +327,7 @@ public class SmallBusinessCardPopView {
 			}
 		}
 
-		public FileHandlers fileHandlers = FileHandlers.getInstance();
-		public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
+		public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 		boolean isGetData = false;
 
 		private void setContent(boolean isChat, String sex, String age, String fileName, String nickName, String relation, String type, String key, String longitude, String latitude, String lastLoginTime) {
@@ -342,7 +340,7 @@ public class SmallBusinessCardPopView {
 			}
 			parser.check();
 			User user = data.userInformation.currentUser;
-			fileHandlers.getHeadImage(fileName, userHeadView, smallBusinessCardOptions);
+			taskManageHolder.fileHandler.getHeadImage(fileName, userHeadView, smallBusinessCardOptions);
 			userNickNameView.setText(nickName);
 			cardStatusView.setText(relation);
 			userAgeView.setText(age);
@@ -353,7 +351,7 @@ public class SmallBusinessCardPopView {
 				userAgeView.setBackgroundResource(R.drawable.personalinfo_female);
 				listTitle.setText("你要对她做什么？");
 			}
-			distanceView.setText(lbsHandlers.pointDistance(user.longitude, user.latitude, longitude, latitude) + "km");
+			distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, longitude, latitude) + "km");
 			if (lastLoginTime != null && !"".equals(lastLoginTime)) {
 				lastLoginTimeView.setText(DateUtil.getTime(Long.valueOf(lastLoginTime)));
 			} else {
@@ -519,7 +517,7 @@ public class SmallBusinessCardPopView {
 						}
 					} else if (view.equals(goChatView)) {
 						// String phone = (String) view.getTag(R.id.tag_first);
-						if (mViewManage.chatView != null && key.equals(mViewManage.chatView.thisController.key)) {
+						if (taskManageHolder.viewManage.chatView != null && key.equals(taskManageHolder.viewManage.chatView.thisController.key)) {
 							dismissUserCardDialogView();
 						} else {
 							if (type.equals(TYPE_GROUP)) {

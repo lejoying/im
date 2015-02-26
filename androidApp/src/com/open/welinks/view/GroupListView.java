@@ -25,6 +25,7 @@ import com.open.welinks.controller.GroupListController;
 import com.open.welinks.controller.GroupListController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
@@ -35,7 +36,7 @@ public class GroupListView {
 	public GroupListActivity thisActivity;
 	public GroupListController thisController;
 
-	public ViewManage mViewManage = ViewManage.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public LayoutInflater mInflater;
 
@@ -273,7 +274,7 @@ public class GroupListView {
 			}
 			if (thisController.status == Status.friend || thisController.status == Status.card_friend) {
 				Friend friend = thisController.friendsMap.get(thisController.friends[position]);
-				thisController.fileHandlers.getHeadImage(friend.head, holder.headView, mViewManage.options50);
+				taskManageHolder.fileHandler.getHeadImage(friend.head, holder.headView, taskManageHolder.viewManage.options50);
 				if (friend.alias != null && !friend.alias.equals("")) {
 					holder.nameView.setText(friend.alias + "(" + friend.nickName + ")");
 				} else {
@@ -283,7 +284,7 @@ public class GroupListView {
 			} else {
 				String gid = thisController.groups.get(position);
 				Group group = thisController.groupsMap.get(gid);
-				thisController.fileHandlers.getHeadImage(group.icon, holder.headView, mViewManage.options50);
+				taskManageHolder.fileHandler.getHeadImage(group.icon, holder.headView, taskManageHolder.viewManage.options50);
 				holder.nameView.setText(group.name);
 				holder.descriptionView.setText(group.description);
 				if (thisController.isGroupEditor) {

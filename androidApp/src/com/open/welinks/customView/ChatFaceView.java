@@ -25,21 +25,21 @@ import com.open.welinks.R.color;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.BaseDataUtils;
-import com.open.welinks.view.ViewManage;
 
 public class ChatFaceView extends FrameLayout {
+
 	private Data data = Data.getInstance();
-	private FileHandlers fileHandlers = FileHandlers.getInstance();
-	private ViewManage mViewManage = ViewManage.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private Context context;
 	private FaceViewPager facePager;
 	private PageControlView facePagerControl;
 	private LinearLayout faceViewList;
-	private ChatFaceView thisView;
+	public ChatFaceView thisView;
 
 	private List<Integer> defaultEmojis;
 	private List<View> pagerViews;
@@ -222,7 +222,7 @@ public class ChatFaceView extends FrameLayout {
 		image.setLayoutParams(params);
 		image.setBackgroundResource(R.drawable.selector_chat_face_item);
 		image.setOnClickListener(mOnClickListener);
-		fileHandlers.getImage(filePath, image, params, DownloadFile.TYPE_GIF_IMAGE, mViewManage.options);
+		taskManageHolder.fileHandler.getImage(filePath, image, params, DownloadFile.TYPE_GIF_IMAGE, taskManageHolder.viewManage.options);
 		faceViewList.addView(image);
 		addSpaceView();
 		image.setTag((faceViewList.getChildCount() - 1) / 2);
@@ -350,7 +350,7 @@ public class ChatFaceView extends FrameLayout {
 					int resource = total * current + position;
 					if (resource < faceResource.size()) {
 						convertView.setBackgroundResource(R.drawable.selector_chat_face_item);
-						fileHandlers.getImage(faceResource.get(resource), image, params, DownloadFile.TYPE_GIF_IMAGE, null);
+						taskManageHolder.fileHandler.getImage(faceResource.get(resource), image, params, DownloadFile.TYPE_GIF_IMAGE, null);
 						convertView.setTag(R.id.tag_first, faceResource.get(resource));
 						if (faceNames != null) {
 							text.setText(faceNames.get(resource));

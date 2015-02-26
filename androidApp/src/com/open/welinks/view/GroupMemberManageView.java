@@ -21,12 +21,14 @@ import com.open.welinks.controller.GroupMemberManageController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 
 public class GroupMemberManageView {
 
 	public Data data = Data.getInstance();
 	public String tag = "GroupMemberManageView";
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public GroupMemberManageView thisView;
@@ -50,8 +52,6 @@ public class GroupMemberManageView {
 	public int isSubtract = MANAGE_INIT;
 
 	public GroupMembersAdapter groupMembersAdapter;
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public DisplayMetrics displayMetrics;
 
@@ -105,11 +105,9 @@ public class GroupMemberManageView {
 			imageView.setTag(R.id.tag_first, friend.phone);
 			imageView.setOnClickListener(thisController.mOnClickListener);
 			alreadyListContainer.addView(imageView, layoutParams);
-			fileHandlers.getHeadImage(friend.head, imageView, viewManage.options60);
+			taskManageHolder.fileHandler.getHeadImage(friend.head, imageView, taskManageHolder.viewManage.options60);
 		}
 	}
-
-	ViewManage viewManage = ViewManage.getInstance();
 
 	public List<String> subtractMembers = new ArrayList<String>();
 
@@ -182,7 +180,7 @@ public class GroupMemberManageView {
 					nickName = friend.nickName;
 				}
 				imageHolder.nickNameView.setText(nickName);
-				fileHandlers.getHeadImage(friend.head, imageHolder0.imageContent, viewManage.options60);
+				taskManageHolder.fileHandler.getHeadImage(friend.head, imageHolder0.imageContent, taskManageHolder.viewManage.options60);
 
 				convertView.setTag(R.id.iv_image, "subtractonclick#" + friend.phone);
 				convertView.setOnClickListener(thisController.mOnClickListener);

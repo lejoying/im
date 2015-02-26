@@ -10,9 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.google.zxing.common.detector.WhiteRectangleDetector;
-import com.open.welinks.customListener.AudioListener;
-
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -20,8 +17,11 @@ import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import com.open.welinks.customListener.AudioListener;
+
 public class AudioHandlers {
-	private FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private static final int SAMPLE_RATE = 11025;// 8000 11025 22050 32000 44100
 
@@ -39,7 +39,7 @@ public class AudioHandlers {
 	private int mPrimePlaySize = 0, mRecordReadSize = 38;
 	private long recorderStartTime, recorderEndTime;
 	private int mRecorderMinBufferSize = 0;
-	private int mSpeexEncodeFrameSize = 0, mSpeexDecodeFrameSize = 0;
+	public int mSpeexEncodeFrameSize = 0, mSpeexDecodeFrameSize = 0;
 
 	private static Speex speex;
 
@@ -112,9 +112,9 @@ public class AudioHandlers {
 	}
 
 	public void prepareVoice(String fileName, int recordReadSize, boolean play) {
-		File file = new File(fileHandlers.sdcardVoiceFolder, fileName);
+		File file = new File(taskManageHolder.fileHandler.sdcardVoiceFolder, fileName);
 		if (!file.exists()) {
-			fileHandlers.downloadVoiceFile(file, fileName, recordReadSize, play);
+			taskManageHolder.fileHandler.downloadVoiceFile(file, fileName, recordReadSize, play);
 		} else {
 			if (play) {
 				startPlay(fileName, recordReadSize);
@@ -131,7 +131,7 @@ public class AudioHandlers {
 		if (playStatus == Status.playing) {
 			stopPlay();
 		} else {
-			file = new File(fileHandlers.sdcardVoiceFolder, fileName);
+			file = new File(taskManageHolder.fileHandler.sdcardVoiceFolder, fileName);
 			if (!file.exists()) {
 				prepareVoice(fileName, recordReadSize, true);
 			} else {
@@ -175,7 +175,7 @@ public class AudioHandlers {
 	private void getFilePath() {
 		try {
 			String fileName = String.valueOf(System.currentTimeMillis());
-			raw = new File(fileHandlers.sdcardVoiceFolder, fileName);
+			raw = new File(taskManageHolder.fileHandler.sdcardVoiceFolder, fileName);
 			raw.createNewFile();
 		} catch (Exception e) {
 			e.printStackTrace();

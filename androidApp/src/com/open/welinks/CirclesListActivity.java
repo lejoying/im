@@ -27,8 +27,8 @@ import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.view.ViewManage;
 
 public class CirclesListActivity extends Activity {
@@ -36,7 +36,7 @@ public class CirclesListActivity extends Activity {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String tag = "CirclesListActivity";
 
@@ -296,7 +296,7 @@ public class CirclesListActivity extends Activity {
 
 		public void setData(Friend friend) {
 
-			fileHandlers.getHeadImage(friend.head, this.headImageView, ViewManage.getInstance().options52);
+			taskManageHolder.fileHandler.getHeadImage(friend.head, this.headImageView, ViewManage.getInstance().options52);
 			// this.headImageView.setImageBitmap(bitmap);
 
 			this.nickNameView.setText(friend.nickName);

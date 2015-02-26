@@ -23,7 +23,7 @@ import com.open.welinks.MainActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.ResponseEventHandlers.ResponseInfoHandler;
+import com.open.welinks.model.ResponseEventHandler.ResponseInfoHandler;
 import com.open.welinks.utils.MyGson;
 
 public class PushService extends Service {

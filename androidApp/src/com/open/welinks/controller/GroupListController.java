@@ -34,17 +34,23 @@ import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.model.Parser;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
+import com.open.welinks.model.Parser;
+import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.view.GroupListView;
 import com.open.welinks.view.GroupListView.GroupCircleDialogAdapter;
 
 public class GroupListController {
+
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
+
 	public GroupListActivity thisActivity;
 	public GroupListView thisView;
 
@@ -55,9 +61,6 @@ public class GroupListController {
 	public com.open.welinks.customView.ThreeChoicesView.OnItemClickListener mOnThreeChoiceItemClickListener;
 	public ListController listController;
 
-	public Data data = Data.getInstance();
-	public Parser parser = Parser.getInstance();
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 	public Gson gson = new Gson();
 
@@ -85,7 +88,7 @@ public class GroupListController {
 	}
 
 	public void onCreate() {
-		thisView.mViewManage.groupListActivity = thisActivity;
+		taskManageHolder.viewManage.groupListActivity = thisActivity;
 		String type = thisActivity.getIntent().getStringExtra("type");
 		if ("list_group".equals(type)) {
 			this.status = Status.list_group;
@@ -116,8 +119,8 @@ public class GroupListController {
 				groups = data.relationship.squares;
 			} else if (status == Status.list_group) {
 				if (data.relationship != null && data.relationship.groupCirclesMap != null && data.relationship.groupCircles != null) {
-					if (thisView.mViewManage.shareSubView.currentGroupCircle != null) {
-						currentGroupCircle = data.relationship.groupCirclesMap.get(thisView.mViewManage.shareSubView.currentGroupCircle.rid + "");
+					if (taskManageHolder.viewManage.shareSubView.currentGroupCircle != null) {
+						currentGroupCircle = data.relationship.groupCirclesMap.get(taskManageHolder.viewManage.shareSubView.currentGroupCircle.rid + "");
 
 					} else {
 						currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
@@ -549,7 +552,7 @@ public class GroupListController {
 	}
 
 	public void onDestroy() {
-		thisView.mViewManage.groupListActivity = null;
+		taskManageHolder.viewManage.groupListActivity = null;
 	}
 
 	public void onBackPressed() {
@@ -563,9 +566,9 @@ public class GroupListController {
 	}
 
 	public void finish() {
-		if (thisView.mViewManage.shareSubView != null) {
-			thisView.mViewManage.shareSubView.setGroupsDialogContent(currentGroupCircle);
-			thisView.mViewManage.shareSubView.showShareMessages();
+		if (taskManageHolder.viewManage.shareSubView != null) {
+			taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(currentGroupCircle);
+			taskManageHolder.viewManage.shareSubView.showShareMessages();
 		}
 
 	}

@@ -20,12 +20,14 @@ import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 
 public class SharePraiseusersView {
 
 	public Data data = Data.getInstance();
 	public String tag = "SharePraiseusersView";
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public SharePraiseusersView thisView;
@@ -39,8 +41,6 @@ public class SharePraiseusersView {
 	public LayoutInflater mInflater;
 
 	public PraiseUsersAdapter praiseUsersAdapter;
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public View maxView;
 
@@ -136,7 +136,7 @@ public class SharePraiseusersView {
 			if (friend != null) {
 				fileName = friend.head;
 			}
-			fileHandlers.getHeadImage(fileName, holder.head, ViewManage.getInstance().options52);
+			taskManageHolder.fileHandler.getHeadImage(fileName, holder.head, taskManageHolder.viewManage.options52);
 			String nickName = thisController.praiseusersList.get(position);
 			if (friend != null) {
 				nickName = friend.nickName;

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 
 import com.open.lib.MyLog;
-import com.open.welinks.model.DataHandlers;
+import com.open.welinks.model.DataHandler;
 
 public class ConnectionChangeReceiver extends BroadcastReceiver {
 
@@ -22,7 +22,7 @@ public class ConnectionChangeReceiver extends BroadcastReceiver {
 					if (!PushService.isRunning) {
 						PushService.instance.startLongPull();
 						log.e("onReceive-------------------------ok");
-						DataHandlers dataHandlers = DataHandlers.getInstance();
+						DataHandler dataHandlers = DataHandler.getInstance();
 						dataHandlers.sendShareMessage();
 					}
 				} else {

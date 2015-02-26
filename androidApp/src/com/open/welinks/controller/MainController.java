@@ -67,7 +67,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.DataHandlers;
+import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.oss.DownloadFile;
@@ -140,7 +140,7 @@ public class MainController {
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
 	private MainController thisController;
 
-	private DataHandlers dataHandlers = DataHandlers.getInstance();
+	private DataHandler dataHandlers = DataHandler.getInstance();
 
 	public void oncreate() {
 		String phone = thisActivity.getIntent().getStringExtra("phone");
@@ -159,7 +159,7 @@ public class MainController {
 
 		data.tempData.statusBarHeight = ViewManage.getStatusBarHeight(thisActivity);
 
-		DataHandlers.getUserInfomation();
+		DataHandler.getUserInfomation();
 		// DataHandlers.getUserCurrentAllGroup();
 		getIntimatefriends();
 
@@ -796,7 +796,7 @@ public class MainController {
 			thisActivity.unregisterReceiver(this.connectionChangeReceiver);
 			connectionChangeReceiver = null;
 		}
-		DataHandlers.clearData();
+		DataHandler.clearData();
 		thisActivity.finish();
 		thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 	}

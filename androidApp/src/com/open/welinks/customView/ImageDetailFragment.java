@@ -26,7 +26,7 @@ import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
-import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.oss.DownloadFileList;
 
@@ -38,6 +38,8 @@ public class ImageDetailFragment extends Fragment {
 	private ProgressBar mProgressBar;
 
 	public String path;
+	
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public static ImageDetailFragment newInstance(int imageNum, String path) {
 
@@ -106,8 +108,7 @@ public class ImageDetailFragment extends Fragment {
 		};
 		if (ImageScanActivity.class.isInstance(getActivity())) {
 			if (path.lastIndexOf("/") == -1) {
-				FileHandlers fileHandlers = FileHandlers.getInstance();
-				File file = new File(fileHandlers.sdcardImageFolder, path);
+				File file = new File(taskManageHolder.fileHandler.sdcardImageFolder, path);
 				path = file.getAbsolutePath();
 			}
 			final String path0 = path;

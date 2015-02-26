@@ -19,7 +19,6 @@ import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareSectionView;
-import com.open.welinks.view.ShareSectionView.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
 public class TaskContainer_Share {
@@ -29,8 +28,8 @@ public class TaskContainer_Share {
 	public Gson gson = new Gson();
 	public MyLog log = new MyLog(tag, true);
 	public SHA1 sha1 = new SHA1();
-	public ViewManage viewManage = ViewManage.getInstance();
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public class Praise extends Task {
 
@@ -72,9 +71,9 @@ public class TaskContainer_Share {
 		}
 
 		public void modifyView() {// 主UI线程
-			User currentUser = data.userInformation.currentUser;
-			shareMessage = data.boards.shareMessagesMap.get(gsid);
-			SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+		// User currentUser = data.userInformation.currentUser;
+		// shareMessage = data.boards.shareMessagesMap.get(gsid);
+		// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
 			// if (shareMessage.praiseusers.contains(currentUser.phone)) {
 			// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
 			// } else {
@@ -204,16 +203,16 @@ public class TaskContainer_Share {
 			log.e("updateView:::::::::::::::::");
 			if (data.relationship.groups.contains(gid)) {
 				if (response.shares.shareMessagesOrder.size() == 0) {
-					viewManage.shareSectionView.thisController.nowpage--;
+					taskManageHolder.viewManage.shareSectionView.thisController.nowpage--;
 				}
-				viewManage.shareSectionView.thisController.reflashStatus.state = viewManage.shareSectionView.thisController.reflashStatus.Normal;
-				viewManage.postNotifyView("ShareSectionNotifyShares");
+				taskManageHolder.viewManage.shareSectionView.thisController.reflashStatus.state = taskManageHolder.viewManage.shareSectionView.thisController.reflashStatus.Normal;
+				taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
 			} else {
 				if (response.shares.shareMessagesOrder.size() == 0) {
-					viewManage.shareSectionView.thisController.nowpage--;
+					taskManageHolder.viewManage.shareSectionView.thisController.nowpage--;
 				}
-				viewManage.shareSectionView.thisController.reflashStatus.state = viewManage.shareSectionView.thisController.reflashStatus.Normal;
-				viewManage.postNotifyView("ShareSectionNotifyShares");
+				taskManageHolder.viewManage.shareSectionView.thisController.reflashStatus.state = taskManageHolder.viewManage.shareSectionView.thisController.reflashStatus.Normal;
+				taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
 			}
 		}
 	}
@@ -300,7 +299,7 @@ public class TaskContainer_Share {
 				contentItem.detail = myFile.fileName;
 				contentItems.add(contentItem);
 				shareMessage.content = gson.toJson(contentItems);
-				viewManage.postNotifyView("ShareSectionNotifyShares");
+				taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
 			}
 		}
 
@@ -399,7 +398,7 @@ public class TaskContainer_Share {
 
 		@Override
 		public void updateView() {
-			viewManage.postNotifyView("ShareSectionNotifyShares");
+			taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
 		}
 
 		public void copyFileToSprecifiedDirecytory(MyFile myFile, boolean isCompression) {
@@ -415,13 +414,13 @@ public class TaskContainer_Share {
 				String fileName = "";
 				File fromFile = new File(key);
 				byte[] bytes = null;
-				bytes = fileHandlers.getImageFileBytes(null, fromFile, viewManage.screenWidth, viewManage.screenHeight);
+				bytes = taskManageHolder.fileHandler.getImageFileBytes(null, fromFile, taskManageHolder.viewManage.screenWidth, taskManageHolder.viewManage.screenHeight);
 				int fileLength = bytes.length;
 				myFile.length = fileLength;
 				String sha1FileName = sha1.getDigestOfString(bytes);
 				fileName = sha1FileName + suffixName;
 				myFile.fileName = fileName;
-				File toFile = new File(fileHandlers.sdcardImageFolder, fileName);
+				File toFile = new File(taskManageHolder.fileHandler.sdcardImageFolder, fileName);
 				FileOutputStream fileOutputStream = new FileOutputStream(toFile);
 				StreamParser.parseToFile(bytes, fileOutputStream);
 

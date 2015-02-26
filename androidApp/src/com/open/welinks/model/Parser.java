@@ -30,7 +30,7 @@ public class Parser {
 
 	public static Parser parser;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public static Parser getInstance() {
 		if (parser == null) {
@@ -116,7 +116,7 @@ public class Parser {
 	}
 
 	public void saveToUserForder(String phone, String fileName, String content) {
-		File sdFile = fileHandlers.getSdCardFile();
+		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
 		if (!userForder.exists()) {
@@ -127,7 +127,7 @@ public class Parser {
 	}
 
 	public void saveToRootForder(String fileName, String content) {
-		File sdFile = fileHandlers.getSdCardFile();
+		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File rootForder = new File(sdFile, "welinks/");
 
 		if (!rootForder.exists()) {
@@ -159,7 +159,7 @@ public class Parser {
 
 	public String getFromUserForder(String phone, String fileName) {
 		String result = null;
-		File sdFile = fileHandlers.getSdCardFile();
+		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
 		if (!userForder.exists()) {
@@ -177,7 +177,7 @@ public class Parser {
 
 	public String getFromRootForder(String fileName) {
 		String result = null;
-		File sdFile = fileHandlers.getSdCardFile();
+		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File rootForder = new File(sdFile, "welinks/");
 
 		result = getFromSD(rootForder, fileName);
@@ -292,7 +292,7 @@ public class Parser {
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");
 			e.printStackTrace();
-			DataHandlers.clearData();
+			DataHandler.clearData();
 			// data = null;
 		}
 
@@ -315,7 +315,7 @@ public class Parser {
 	}
 
 	public void deleteFile(String phone, String fileName) {
-		File sdFile = fileHandlers.getSdCardFile();
+		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
 		if (!userForder.exists()) {
@@ -376,7 +376,7 @@ public class Parser {
 			}
 		}
 
-		if (data.event != null&&data.event.isModified) {
+		if (data.event != null && data.event.isModified) {
 			data.event.isModified = false;
 
 			String eventStr = gson.toJson(data.event);

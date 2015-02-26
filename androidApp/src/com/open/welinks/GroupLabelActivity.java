@@ -7,28 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.lib.HttpClient;
-import com.open.lib.MyLog;
-import com.open.welinks.customListener.MyOnClickListener;
-import com.open.welinks.customView.Alert;
-import com.open.welinks.customView.Alert.AlertInputDialog;
-import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
-import com.open.welinks.model.API;
-import com.open.welinks.model.Constant;
-import com.open.welinks.model.Data;
-import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.utils.BaseDataUtils;
-
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -46,6 +27,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.HttpClient;
+import com.open.lib.MyLog;
+import com.open.welinks.customListener.MyOnClickListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
+import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.utils.BaseDataUtils;
 
 public class GroupLabelActivity extends Activity {
 

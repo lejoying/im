@@ -36,12 +36,10 @@ import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.model.LBSHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.view.ViewManage;
 
 public class DynamicListActivity extends Activity {
 
@@ -51,11 +49,7 @@ public class DynamicListActivity extends Activity {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
-	public LBSHandlers lbsHandlers = LBSHandlers.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public RelativeLayout backView;
 	public TextView backTitleView;
@@ -90,7 +84,7 @@ public class DynamicListActivity extends Activity {
 
 		selectType = getIntent().getIntExtra("type", 3);
 
-		viewManage.dynamicListActivity = this;
+		taskManageHolder.viewManage.dynamicListActivity = this;
 		friendsMap = data.relationship.friendsMap;
 		initView();
 		initializeListeners();
@@ -109,8 +103,8 @@ public class DynamicListActivity extends Activity {
 
 	@Override
 	public void finish() {
-		viewManage.postNotifyView("MessagesSubView");
-		viewManage.postNotifyView("MeSubView");
+		taskManageHolder.viewManage.postNotifyView("MessagesSubView");
+		taskManageHolder.viewManage.postNotifyView("MeSubView");
 		super.finish();
 	}
 
@@ -348,11 +342,11 @@ public class DynamicListActivity extends Activity {
 			}
 			holder.eventContentView.setText(content);
 			if (flag) {
-				fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.options40);
+				taskManageHolder.fileHandler.getHeadImage(headFileName, holder.headView, taskManageHolder.viewManage.options40);
 				convertView.setTag(R.id.tag_first, event.gid);
 				convertView.setTag(R.id.tag_second, "group");
 			} else {
-				fileHandlers.getHeadImage(data.userInformation.currentUser.head, holder.headView, viewManage.options40);
+				taskManageHolder.fileHandler.getHeadImage(data.userInformation.currentUser.head, holder.headView, taskManageHolder.viewManage.options40);
 				convertView.setTag(R.id.tag_first, data.userInformation.currentUser.phone);
 				convertView.setTag(R.id.tag_second, "user");
 			}
@@ -570,7 +564,7 @@ public class DynamicListActivity extends Activity {
 				e.printStackTrace();
 			}
 			// holder.headView.setImageBitmap(bitmap);
-			fileHandlers.getHeadImage(headFileName, holder.headView, viewManage.options40);
+			taskManageHolder.fileHandler.getHeadImage(headFileName, holder.headView, taskManageHolder.viewManage.options40);
 			return convertView;
 		}
 	}

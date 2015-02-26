@@ -24,8 +24,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.open.welinks.ImageGridActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.Data.TempData.ImageBean;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.view.ImagesDirectoryView;
 import com.open.welinks.view.ImagesDirectoryView.ImageAdapter;
 import com.open.welinks.view.ImagesDirectoryView.MyGridViewAdapter;
@@ -34,6 +34,8 @@ public class ImagesDirectoryController {
 
 	public Data data = Data.getInstance();
 	public String tag = "ImagesDirectoryController";
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public final static int SCAN_OK = 1;
 
@@ -163,13 +165,12 @@ public class ImagesDirectoryController {
 		}
 	}
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public List<String> cloudAccessFile = new ArrayList<String>();
 
 	public ImageAdapter imageAdapter;
 
 	public void getCloudFileAccess() {
-		File imageFile = fileHandlers.sdcardImageFolder;
+		File imageFile = taskManageHolder.fileHandler.sdcardImageFolder;
 		if (imageFile.exists()) {
 			if (imageFile.isDirectory()) {
 				File[] files = imageFile.listFiles();

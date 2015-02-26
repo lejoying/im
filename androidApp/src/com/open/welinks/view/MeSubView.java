@@ -13,13 +13,15 @@ import com.open.welinks.R;
 import com.open.welinks.controller.MeSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
 
 public class MeSubView {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+	
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String tag = "MeSubView";
 
@@ -41,13 +43,9 @@ public class MeSubView {
 
 	public MeSubController thisController;
 
-	public ViewManage viewManage = ViewManage.getInstance();
-
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
-
 	public MeSubView(MainView mainView) {
 		this.mainView = mainView;
-		viewManage.meSubView = this;
+		taskManageHolder.viewManage.meSubView = this;
 	}
 
 	public void initViews() {
@@ -71,7 +69,7 @@ public class MeSubView {
 		parser.check();
 		User user = data.userInformation.currentUser;
 		if (user != null) {
-			fileHandlers.getHeadImage(user.head, this.userHeadImageView, viewManage.options60);
+			taskManageHolder.fileHandler.getHeadImage(user.head, this.userHeadImageView, taskManageHolder.viewManage.options60);
 			this.userNickNameView.setText(user.nickName);
 			mainView.userTopbarNameView.setText(user.nickName);
 			this.userBusinessView.setText(user.mainBusiness);

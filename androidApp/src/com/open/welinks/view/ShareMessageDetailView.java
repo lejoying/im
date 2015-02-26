@@ -39,7 +39,6 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.ShareMessageDetailController;
@@ -48,9 +47,9 @@ import com.open.welinks.customView.ShareView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MyGson;
@@ -60,7 +59,7 @@ public class ShareMessageDetailView {
 	public Data data = Data.getInstance();
 	public String tag = "ShareMessageDetailView";
 
-	public ViewManage viewManage = ViewManage.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Context context;
 	public ShareMessageDetailView thisView;
@@ -69,7 +68,6 @@ public class ShareMessageDetailView {
 
 	public LayoutInflater mInflater;
 
-	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DisplayImageOptions displayImageOptions;
 
 	public float screenHeight;
@@ -118,7 +116,6 @@ public class ShareMessageDetailView {
 	public ShareView shareView;
 	public PopupWindow sharePopupWindow;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public File mImageFile;
 
 	// menu options
@@ -137,8 +134,8 @@ public class ShareMessageDetailView {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
 		thisView = this;
-		viewManage.shareMessageDetailView = this;
-		mImageFile = fileHandlers.sdcardImageFolder;
+		taskManageHolder.viewManage.shareMessageDetailView = this;
+		mImageFile = taskManageHolder.fileHandler.sdcardImageFolder;
 	}
 
 	public DisplayMetrics displayMetrics;
@@ -325,7 +322,7 @@ public class ShareMessageDetailView {
 			index++;
 			imageView.setOnClickListener(thisController.mOnClickListener);
 
-			fileHandlers.getImage(imageFileName, imageView, displayImageOptions);
+			taskManageHolder.fileHandler.getImage(imageFileName, imageView, displayImageOptions);
 
 			File currentImageFile = new File(mImageFile, imageFileName);
 			String filepath = currentImageFile.getAbsolutePath();
@@ -477,7 +474,7 @@ public class ShareMessageDetailView {
 				this.replyView.setVisibility(View.GONE);
 				this.receivedView.setVisibility(View.GONE);
 			}
-			fileHandlers.getHeadImage(comment.head, this.headView, viewManage.options40);
+			taskManageHolder.fileHandler.getHeadImage(comment.head, this.headView, taskManageHolder.viewManage.options40);
 			this.cardView.setTag("ShareComment#" + comment.phone);
 			this.cardView.setTag(R.id.commentEditTextView, comment);
 

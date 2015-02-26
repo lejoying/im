@@ -122,7 +122,7 @@ public class UpdateManager {
 		new downloadApkThread().start();
 	}
 
-	FileHandlers fileHandlers = FileHandlers.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private class downloadApkThread extends Thread {
 		@Override
@@ -135,11 +135,11 @@ public class UpdateManager {
 					int length = conn.getContentLength();
 					InputStream is = conn.getInputStream();
 
-					File file = fileHandlers.sdcardFolder;
+					File file = taskManageHolder.fileHandler.sdcardFolder;
 					if (!file.exists()) {
 						file.mkdir();
 					}
-					File apkFile = new File(fileHandlers.sdcardFolder, versionClass.name);
+					File apkFile = new File(taskManageHolder.fileHandler.sdcardFolder, versionClass.name);
 					FileOutputStream fos = new FileOutputStream(apkFile);
 					int count = 0;
 					byte buf[] = new byte[1024];
@@ -170,7 +170,7 @@ public class UpdateManager {
 	};
 
 	private void installApk() {
-		File apkfile = new File(fileHandlers.sdcardFolder, versionClass.name);
+		File apkfile = new File(taskManageHolder.fileHandler.sdcardFolder, versionClass.name);
 		if (!apkfile.exists()) {
 			return;
 		}

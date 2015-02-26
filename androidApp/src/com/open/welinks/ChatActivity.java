@@ -1,6 +1,7 @@
 package com.open.welinks;
 
 import com.open.welinks.controller.ChatController;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.view.ChatView;
 
 import android.app.Activity;
@@ -15,6 +16,7 @@ public class ChatActivity extends Activity {
 	public ChatController thisController;
 	public ChatActivity thisActivity;
 	public LayoutInflater mInflater;
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,7 @@ public class ChatActivity extends Activity {
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 
-		thisController.viewManage.chatView = thisView;
+		taskManageHolder.viewManage.chatView = thisView;
 
 		this.thisController.onCreate();
 		this.thisView.initViews();

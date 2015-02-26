@@ -43,7 +43,6 @@ import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
@@ -51,19 +50,18 @@ import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.UploadMultipart;
-import com.open.welinks.oss.UploadMultipartList;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareReleaseImageTextView;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
-import com.open.welinks.view.ViewManage;
 
 public class ShareReleaseImageTextController {
+
+	public String tag = "ShareReleaseImageTextController";
+	public MyLog log = new MyLog(tag, true);
+
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
-	public String tag = "ShareReleaseImageTextController";
-
-	public MyLog log = new MyLog(tag, true);
 
 	public Context context;
 	public ShareReleaseImageTextView thisView;
@@ -77,15 +75,10 @@ public class ShareReleaseImageTextController {
 
 	public int RESULT_REQUESTCODE_SELECTIMAGE = 0x01;
 
-	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public SHA1 sha1 = new SHA1();
 	public File sdcardFolder;
 	public File sdcardImageFolder;
 	public File sdcardThumbnailFolder;
-
-	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
-
-	public ViewManage viewManage = ViewManage.getInstance();
 
 	public int currentUploadCount = 0;
 	public int totalUploadCount = 0;
@@ -93,7 +86,7 @@ public class ShareReleaseImageTextController {
 
 	public String currentSelectedGroup = "";
 	public String sid = "";
-	public User currentUser = data.userInformation.currentUser;
+	public User currentUser;
 
 	public Gson gson = new Gson();
 
@@ -106,25 +99,25 @@ public class ShareReleaseImageTextController {
 	public ShareMessage shareMessage;
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
+		this.currentUser = data.userInformation.currentUser;
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
-
-		gtype = thisActivity.getIntent().getStringExtra("gtype");
-		type = thisActivity.getIntent().getStringExtra("type");
-		gid = thisActivity.getIntent().getStringExtra("gid");
-		sid = thisActivity.getIntent().getStringExtra("sid");
+		Intent intent = thisActivity.getIntent();
+		gtype = intent.getStringExtra("gtype");
+		type = intent.getStringExtra("type");
+		gid = intent.getStringExtra("gid");
+		sid = intent.getStringExtra("sid");
 		currentSelectedGroup = gid;
 		// Initialize the image directory
-		sdcardImageFolder = fileHandlers.sdcardImageFolder;
+		sdcardImageFolder = taskManageHolder.fileHandler.sdcardImageFolder;
 		if (gtype.equals("square")) {
-			sdcardThumbnailFolder = fileHandlers.sdcardSquareThumbnailFolder;
+			sdcardThumbnailFolder = taskManageHolder.fileHandler.sdcardSquareThumbnailFolder;
 		} else {
-			sdcardThumbnailFolder = fileHandlers.sdcardThumbnailFolder;
+			sdcardThumbnailFolder = taskManageHolder.fileHandler.sdcardThumbnailFolder;
 			// showImageHeight = (int) (thisView.displayMetrics.widthPixels *
 			// imageHeightScale);
 		}
 		data.tempData.selectedImageList = null;
-
 	}
 
 	public OnTouchListener mScrollOnTouchListener;
@@ -153,13 +146,13 @@ public class ShareReleaseImageTextController {
 					}
 				}
 				final double currentPrecent = currentLength / totalLength;
-				fileHandlers.handler.post(new Runnable() {
+				taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 					@Override
 					public void run() {
 						if (shareMessage != null) {
 							String keyName = "message#" + shareMessage.gsid;
-							SharesMessageBody listItemBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
+							SharesMessageBody listItemBody = (SharesMessageBody) taskManageHolder.viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
 							if (listItemBody != null) {
 								ControlProgress controlProgress = listItemBody.controlProgress;
 								if (controlProgress != null) {
@@ -186,14 +179,14 @@ public class ShareReleaseImageTextController {
 				}
 				final double currentPrecent = currentLength / totalLength;
 				// log.e("currentPrecent：" + currentPrecent);
-				fileHandlers.handler.post(new Runnable() {
+				taskManageHolder.fileHandler.handler.post(new Runnable() {
 
 					@Override
 					public void run() {
 						if (shareMessage != null) {
 							// log.e("shareMessage：" + shareMessage);
 							String keyName = "message#" + shareMessage.gsid;
-							SharesMessageBody listItemBody = (SharesMessageBody) viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
+							SharesMessageBody listItemBody = (SharesMessageBody) taskManageHolder.viewManage.shareSubView.shareMessageListBody.listItemBodiesMap.get(keyName);
 							if (listItemBody != null) {
 								// log.e("listItemBody：" + listItemBody);
 								ControlProgress controlProgress = listItemBody.controlProgress;
@@ -216,9 +209,9 @@ public class ShareReleaseImageTextController {
 				currentUploadCount++;
 				if (currentUploadCount == 1) {
 					if (gtype.equals("group") || gtype.equals("share")) {
-						viewManage.postNotifyView("ShareSubViewMessage");
+						taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
 					} else {
-						viewManage.postNotifyView("SquareSubViewMessage");
+						taskManageHolder.viewManage.postNotifyView("SquareSubViewMessage");
 					}
 					if (totalUploadCount == currentUploadCount) {
 						sendMessageToServer(shareMessage.content, shareMessage.gsid);
@@ -352,7 +345,7 @@ public class ShareReleaseImageTextController {
 		if ("".equals(sendContent) && flag) {
 			return;
 		}
-		viewManage.shareSubView.isShowFirstMessageAnimation = true;
+		taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
 		thisActivity.finish();
 		new Thread(new Runnable() {
 
@@ -455,10 +448,10 @@ public class ShareReleaseImageTextController {
 
 				// Local data diaplay in MainHandler
 				if ("square".equals(gtype)) {
-					viewManage.postNotifyView("SquareSubViewMessage");
+					taskManageHolder.viewManage.postNotifyView("SquareSubViewMessage");
 				}
 				if ("share".equals(gtype)) {
-					viewManage.postNotifyView("ShareSubViewMessage");
+					taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
 				}
 
 				// init tempData data
@@ -516,7 +509,7 @@ public class ShareReleaseImageTextController {
 				String fileName = "";
 				File fromFile = new File(key);
 				byte[] bytes = null;
-				bytes = fileHandlers.getImageFileBytes(shareContentItem, fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+				bytes = taskManageHolder.fileHandler.getImageFileBytes(shareContentItem, fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
 				int fileLength = bytes.length;
 				totalLength += fileLength;
 				fileTotalLengthMap.put(key, fileLength);
@@ -531,7 +524,7 @@ public class ShareReleaseImageTextController {
 					int showImageWidth = (int) (thisView.displayMetrics.widthPixels - 20 * thisView.displayMetrics.density);
 					int showImageHeight = (int) (showImageWidth * shareContentItem.ratio);
 					File toSnapFile = new File(sdcardThumbnailFolder, fileName);
-					fileHandlers.makeImageThumbnail(fromFile, showImageWidth, showImageHeight, toSnapFile, fileName);
+					taskManageHolder.fileHandler.makeImageThumbnail(fromFile, showImageWidth, showImageHeight, toSnapFile, fileName);
 				}
 
 				shareContentItem.type = "image";
@@ -546,7 +539,7 @@ public class ShareReleaseImageTextController {
 				System.gc();
 				Thread.sleep(100);
 				multipart.path = key;
-				uploadMultipartList.addMultipart(multipart);
+				taskManageHolder.uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			} catch (Exception e) {
 				e.printStackTrace();
