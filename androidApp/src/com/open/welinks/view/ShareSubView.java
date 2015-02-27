@@ -448,8 +448,9 @@ public class ShareSubView {
 		Map<String, ShareMessage> shareMessagesMap = data.boards.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
 		// int timeBarCount = 0;
-		if (shareMessagesOrder == null)
+		if (shareMessagesOrder == null) {
 			shareMessagesOrder = new ArrayList<String>();
+		}
 		for (int i = 0; i < shareMessagesOrder.size(); i++) {
 			String key = shareMessagesOrder.get(i);
 			ShareMessage shareMessage = null;
@@ -549,7 +550,11 @@ public class ShareSubView {
 				// String content = textContent;
 				if (lineCount >= 5) {
 					lineCount = 4;
-					String firstContent = textContent.substring(0, 4 * lineTextCount);
+					int end = 4 * lineTextCount;
+					if (end >= textContent.length()) {
+						end = textContent.length();
+					}
+					String firstContent = textContent.substring(0, end);
 					String[] n = firstContent.getBytes().toString().split("\n");
 					int subPosition = 4 * lineTextCount;
 					for (String str : n) {

@@ -1,6 +1,8 @@
 package com.open.welinks.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -16,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -32,20 +36,27 @@ import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputCommentDialog;
+import com.open.welinks.customView.Alert.AlertInputCommentDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Board;
+import com.open.welinks.model.Data.Boards.Comment;
+import com.open.welinks.model.Data.Boards.Score;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack;
 import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.TaskContainer_Share.GetShares;
-import com.open.welinks.model.TaskContainer_Share.Praise;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.ShareSectionView;
 import com.open.welinks.view.ShareSectionView.BoardDialogItem;
+import com.open.welinks.view.ShareSectionView.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
 public class ShareSectionController {
@@ -250,7 +261,7 @@ public class ShareSectionController {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
 					String type = tagContent.substring(0, index);
-					String content = tagContent.substring(index + 1);
+					final String content = tagContent.substring(index + 1);
 					if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 						intent.putExtra("gid", thisView.currentGroup.gid + "");
@@ -264,15 +275,162 @@ public class ShareSectionController {
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent("point", content);
 						thisView.businessCardPopView.showUserCardDialogView();
 					} else if ("SharePraise".equals(type)) {
+						// Praise praise = mTaskContainer_Share.new Praise();
+						// praise.gsid = content;
+						// praise.thisView = thisView;
+						// praise.gid = thisView.currentGroup.gid + "";
+						// praise.sid = thisView.currentBoard.sid;
+						// praise.API = API.SHARE_ADDPRAISE;
+						// taskManageHolder.taskManager.pushTask(praise);
+					} else if ("DecrementView".equals(type)) {
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+						SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+						String number = sharesMessageBody.sharePraiseNumberView.getText().toString();
+						int num = Integer.valueOf(number);
+						num--;
+						if (shareMessage.scores == null) {
+							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+						}
+						Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
+						if (score == null) {
+							score = data.boards.new Score();
+						} else {
+							if (score.negative > 0) {
+								view.setAlpha(1f);
+							} else {
+								view.setAlpha(0.125f);
+							}
+							if (score.remainNumber == 0) {
+								Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
+								return;
+							}
+						}
+						shareMessage.totalScore = shareMessage.totalScore - 1;
+						score.phone = data.userInformation.currentUser.phone;
+						score.time = new Date().getTime();
+						score.negative = 1;
+						score.remainNumber = 0;
+						shareMessage.scores.put(score.phone, score);
+						data.boards.isModified = true;
+						sharesMessageBody.sharePraiseNumberView.setText(num + "");
+						if (num < 10 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-75 * thisView.displayMetrics.density);
+						} else if (num < 100 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * thisView.displayMetrics.density);
+						} else if (num < 1000 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setText("999");
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-62 * thisView.displayMetrics.density);
+						} else if (num < 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#00a800"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-71 * thisView.displayMetrics.density);
+						}
+						if (score.negative > 0) {
+							view.setAlpha(1f);
+						} else {
+							view.setAlpha(0.125f);
+						}
+						view.setTag(R.id.time, null);
+						modifyPraiseusersToMessage(false, shareMessage.gsid);
+					} else if ("IncrementView".equals(type)) {
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+						SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+						String number = sharesMessageBody.sharePraiseNumberView.getText().toString();
+						int num = Integer.valueOf(number);
+						num++;
+						if (shareMessage.scores == null) {
+							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+						}
+						Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
+						if (score == null) {
+							score = data.boards.new Score();
+						} else {
+							if (score.positive > 0) {
+								view.setAlpha(1f);
+							} else {
+								view.setAlpha(0.125f);
+							}
+							if (score.remainNumber == 0) {
+								Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
+								return;
+							}
+						}
+						shareMessage.totalScore = shareMessage.totalScore + 1;
+						score.phone = data.userInformation.currentUser.phone;
+						score.time = new Date().getTime();
+						score.positive = 1;
+						score.remainNumber = 0;
+						shareMessage.scores.put(score.phone, score);
+						data.boards.isModified = true;
+						sharesMessageBody.sharePraiseNumberView.setText(num + "");
+						if (num < 10 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-75 * thisView.displayMetrics.density);
+						} else if (num < 100 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-69 * thisView.displayMetrics.density);
+						} else if (num < 1000 && num >= 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#0099cd"));
+							sharesMessageBody.sharePraiseNumberView.setText("999");
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-62 * thisView.displayMetrics.density);
+						} else if (num < 0) {
+							sharesMessageBody.sharePraiseNumberView.setTextColor(Color.parseColor("#00a800"));
+							sharesMessageBody.sharePraiseNumberView.setTranslationX(-71 * thisView.displayMetrics.density);
+						}
+						if (score.positive > 0) {
+							view.setAlpha(1f);
+						} else {
+							view.setAlpha(0.125f);
+						}
+						modifyPraiseusersToMessage(true, shareMessage.gsid);
+						// float alpha = sharesMessageBody.incrementView.getAlpha();
+						view.setTag(R.id.time, null);
+					} else if ("CommentControlView".equals(type)) {
+						Alert.createInputCommentDialog(thisActivity).setOnConfirmClickListener(new OnDialogClickListener() {
 
-						Praise praise = mTaskContainer_Share.new Praise();
-						praise.gsid = content;
-						praise.thisView = thisView;
-						praise.gid = thisView.currentGroup.gid + "";
-						praise.sid = thisView.currentBoard.sid;
-						praise.API = API.SHARE_ADDPRAISE;
-						taskManageHolder.taskManager.pushTask(praise);
-
+							@Override
+							public void onClick(AlertInputCommentDialog dialog) {
+								String commentContent = dialog.getInputText().trim();
+								if ("".equals(commentContent)) {
+								} else {
+									// TODO
+									ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+									if (shareMessage == null) {
+										// log.e("-----------------null");
+										return;
+									}
+									// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+									parser.check();
+									User currentUser = data.userInformation.currentUser;
+									Comment comment = data.boards.new Comment();
+									comment.phone = currentUser.phone;
+									comment.nickName = currentUser.nickName;
+									comment.head = currentUser.head;
+									comment.phoneTo = "";
+									comment.nickNameTo = "";
+									comment.headTo = "";
+									comment.contentType = "text";
+									comment.content = commentContent;
+									comment.time = new Date().getTime();
+									if (shareMessage.comments == null) {
+										shareMessage.comments = new ArrayList<Comment>();
+									}
+									shareMessage.comments.add(comment);
+									data.boards.isModified = true;
+									thisView.showShareMessages();
+									addCommentToMessage(thisView.currentGroup.gid + "", thisView.currentGroup.currentBoard, shareMessage.gsid, commentContent);
+								}
+							}
+						}).show().requestFocus();
+					} else if ("CommentHeadView".equals(type)) {
+						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+						SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+						List<Comment> comments = shareMessage.comments;
+						int i = (Integer) view.getTag(R.id.tag_first);
+						sharesMessageBody.commentContentView.setText(comments.get(i).content);
+						sharesMessageBody.commentsPointView.setX(18 * thisView.displayMetrics.density + (comments.size() - i - 1) * 45 * thisView.displayMetrics.density);
 					}
 				} else if (view.getTag(R.id.tag_class) != null) {
 					String tag = (String) view.getTag(R.id.tag_class);
@@ -285,6 +443,7 @@ public class ShareSectionController {
 					}
 				}
 				onTouchDownView = null;
+				isTouchDown = false;
 			}
 		};
 		mOnTouchListener = new OnTouchListener() {
@@ -326,6 +485,24 @@ public class ShareSectionController {
 							thisView.dismissGroupBoardsDialog();
 							Log.d(tag, "onTouch: " + (String) viewTag);
 						}
+					} else if (view_class.equals("DecrementView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+						// log.e("DecrementView");
+						// float alpha = onTouchDownView.getAlpha();
+					} else if (view_class.equals("IncrementView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+						// log.e("IncrementView");
+					} else if (view_class.equals("CommentControlView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+					} else if (view_class.equals("CommentHeadView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					}
 					if (view.equals(thisView.groupDialogView)) {
 						Log.i(tag, "ACTION_DOWN---groupDialogView");
@@ -407,6 +584,17 @@ public class ShareSectionController {
 				thisView.showGroupBoards();
 				thisView.dismissGroupBoardsDialog();
 				getCurrentGroupShareMessages();
+			}else if (view_class.equals("DecrementView")) {
+				onTouchDownView.setTag(R.id.time, null);
+				onTouchDownView.performClick();
+			} else if (view_class.equals("IncrementView")) {
+				onTouchDownView.setTag(R.id.time, null);
+				onTouchDownView.performClick();
+			} else if (view_class.equals("CommentControlView")) {
+				onTouchDownView.setAlpha(0.5f);
+				onTouchDownView.performClick();
+			} else if (view_class.equals("CommentHeadView")) {
+				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;
 		}
@@ -466,7 +654,44 @@ public class ShareSectionController {
 		}
 
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+			if (onTouchDownView != null) {
+				String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+				if (view_class.equals("DecrementView")) {
+					String tagContent = (String) onTouchDownView.getTag();
+					int index = tagContent.lastIndexOf("#");
+					String content = tagContent.substring(index + 1);
+					ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+					Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
+					if (score != null) {
+						if (score.negative > 0) {
+							onTouchDownView.setAlpha(1f);
+						} else {
+							onTouchDownView.setAlpha(0.125f);
+						}
+					} else {
+						onTouchDownView.setAlpha(0.125f);
+					}
+				} else if (view_class.equals("IncrementView")) {
+					String tagContent = (String) onTouchDownView.getTag();
+					int index = tagContent.lastIndexOf("#");
+					String content = tagContent.substring(index + 1);
+					ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
+					Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
+					if (score != null) {
+						if (score.positive > 0) {
+							onTouchDownView.setAlpha(1f);
+						} else {
+							onTouchDownView.setAlpha(0.125f);
+						}
+					} else {
+						onTouchDownView.setAlpha(0.125f);
+					}
+				} else if (view_class.equals("CommentControlView")) {
+					onTouchDownView.setAlpha(0.5f);
+				}
+			}
 			onTouchDownView = null;
+			// isTouchDown = false;
 			if (thisView.selectMenuView.getVisibility() == View.VISIBLE) {
 				thisView.selectMenuView.setVisibility(View.GONE);
 			}
@@ -489,6 +714,38 @@ public class ShareSectionController {
 		thisView.currentGroup.currentBoard = thisView.currentGroup.boards.get(0);
 		taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
 		taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
+	}
+
+	public void addCommentToMessage(String gid, String sid, String gsid, String content) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("sid", sid);
+		params.addBodyParameter("gsid", gsid);
+		params.addBodyParameter("nickName", currentUser.nickName);
+		params.addBodyParameter("head", currentUser.head);
+		params.addBodyParameter("phoneTo", "");
+		params.addBodyParameter("nickNameTo", "");
+		params.addBodyParameter("headTo", "");
+		params.addBodyParameter("contentType", "text");
+		params.addBodyParameter("content", content);
+		httpUtils.send(HttpMethod.POST, API.SHARE_ADDCOMMENT, params, responseHandlers.share_addCommentCallBack);
+	}
+
+	public void modifyPraiseusersToMessage(boolean option, String gsid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gsid", gsid);
+		params.addBodyParameter("option", option + "");
+		Share_scoreCallBack callBack = responseHandlers.new Share_scoreCallBack();
+		callBack.option = option;
+		httpUtils.send(HttpMethod.POST, API.SHARE_SCORE, params, callBack);
 	}
 
 	public void getCurrentGroupShareMessages() {
@@ -626,6 +883,5 @@ public class ShareSectionController {
 		} else {
 			thisActivity.finish();
 		}
-
 	}
 }

@@ -323,7 +323,6 @@ public class ShareReleaseImageTextController {
 		thisView.mSelectImageButtonView.setOnTouchListener(monOnTouchListener);
 		thisView.mVoiceView.setOnTouchListener(monOnTouchListener);
 		thisView.mFaceView.setOnTouchListener(monOnTouchListener);
-
 	}
 
 	// public TaskManager mTaskManager = TaskManager.getInstance();
