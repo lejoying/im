@@ -17,8 +17,10 @@ import android.util.Log;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Boards;
 import com.open.welinks.model.Data.Event;
+import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData;
 import com.open.welinks.model.Data.Messages;
+import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.utils.MyGson;
@@ -234,7 +236,7 @@ public class Parser {
 				if (data.relationship == null) {
 					log.e(tag, "**data.relationship is null");
 					String relationshipStr = getFromUserForder(phone, "relationship.js");
-					log.e(phone + "------------------");
+					// log.e(phone + "------------------");
 					data.relationship = gson.fromJson(relationshipStr, Relationship.class);
 					data.relationship.friends = checkKeyValue(data.relationship.friends, data.relationship.friendsMap);
 					data.relationship.circles = checkKeyValue(data.relationship.circles, data.relationship.circlesMap);
@@ -246,7 +248,17 @@ public class Parser {
 				data.relationship = data.new Relationship();
 				deleteFile(phone, "relationship.js");
 			}
-
+			try {
+				if (data.event == null) {
+					String eventContent = getFromUserForder(phone, "event.js");
+					data.event = gson.fromJson(eventContent, Event.class);
+					data.event.userEvents = checkKeyValue(data.event.userEvents, data.event.userEventsMap);
+					data.event.groupEvents = checkKeyValue(data.event.groupEvents, data.event.groupEventsMap);
+				}
+			} catch (Exception e) {
+				log.e(e.toString());
+				deleteFile(phone, "event.js");
+			}
 			try {
 				if (data.messages == null) {
 					String messageContent = getFromUserForder(phone, "message.js");
@@ -261,10 +273,23 @@ public class Parser {
 						data.messages.messagesOrder.addAll(set);
 						data.messages.isModified = true;
 					}
+					if (messageOrder != null) {
+						try {
+							data.messages.isModified = true;
+							List<String> list = checkMessagesOrder(messageOrder);
+							if (list.size() == messageOrder.size()) {
+								messageOrder.clear();
+								messageOrder.addAll(list);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							Log.e(tag, e.toString() + "-messageOrderXXXXXa" + e);
+						}
+					}
 				}
 			} catch (Exception e) {
 				deleteFile(phone, "message.js");
-				Log.e(tag, e.toString());
+				Log.e(tag, e.toString() + "XXXXXXXXXXXXXXXXXXX" + e);
 			}
 			try {
 				if (data.boards == null) {
@@ -278,17 +303,6 @@ public class Parser {
 			} catch (Exception e) {
 				deleteFile(phone, "boards.js");
 			}
-			try {
-				if (data.event == null) {
-					String eventContent = getFromUserForder(phone, "event.js");
-					data.event = gson.fromJson(eventContent, Event.class);
-					data.event.userEvents = checkKeyValue(data.event.userEvents, data.event.userEventsMap);
-					data.event.groupEvents = checkKeyValue(data.event.groupEvents, data.event.groupEventsMap);
-				}
-			} catch (Exception e) {
-				log.e(e.toString());
-				deleteFile(phone, "event.js");
-			}
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");
 			e.printStackTrace();
@@ -297,6 +311,69 @@ public class Parser {
 		}
 
 		return data;
+	}
+
+	// 判断聊天记录列表顺序是否正确
+	public List<String> checkMessagesOrder(List<String> list0) {
+		Log.e(tag, list0.toString() + "*****");
+		List<String> list = new ArrayList<String>();
+		list.addAll(list0);
+		Data data = Data.getInstance();
+		for (int i = 0; i < list.size() - 1; i++) { // 最多做n-1趟排序
+			for (int j = 0; j < list.size() - i - 1; j++) { // 对当前无序区间score[0......length-i-1]进行排序(j的范围很关键，这个范围是在逐步缩小的)
+
+				long time_1 = 0;
+				long time_2 = 0;
+
+				String key_1 = list.get(j);
+				if (key_1.indexOf("p") == 0) {
+					List<Message> messages = data.messages.friendMessageMap.get(key_1);
+					int size = messages.size() == 0 ? 0 : messages.size() - 1;
+					Message message = messages.get(size);
+					time_1 = Long.valueOf(message.time);
+				} else if (key_1.indexOf("g") == 0) {
+					List<Message> messages = data.messages.groupMessageMap.get(key_1);
+					int size = messages.size() == 0 ? 0 : messages.size() - 1;
+					Message message = messages.get(size);
+					time_1 = Long.valueOf(message.time);
+				} else if (key_1.indexOf("event_user") == 0) {
+					String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
+					EventMessage event = data.event.userEventsMap.get(key);
+					time_1 = Long.valueOf(event.time);
+				} else if (key_1.indexOf("event_group") == 0) {
+					String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
+					EventMessage event = data.event.groupEventsMap.get(key);
+					time_1 = Long.valueOf(event.time);
+				}
+				String key_2 = list.get(j + 1);
+				if (key_2.indexOf("p") == 0) {
+					List<Message> messages = data.messages.friendMessageMap.get(key_2);
+					int size = messages.size() == 0 ? 0 : messages.size() - 1;
+					Message message = messages.get(size);
+					time_2 = Long.valueOf(message.time);
+				} else if (key_2.indexOf("g") == 0) {
+					List<Message> messages = data.messages.groupMessageMap.get(key_2);
+					int size = messages.size() == 0 ? 0 : messages.size() - 1;
+					Message message = messages.get(size);
+					time_2 = Long.valueOf(message.time);
+				} else if (key_2.indexOf("event_user") == 0) {
+					String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
+					EventMessage event = data.event.userEventsMap.get(key);
+					time_2 = Long.valueOf(event.time);
+				} else if (key_2.indexOf("event_group") == 0) {
+					String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
+					EventMessage event = data.event.groupEventsMap.get(key);
+					time_2 = Long.valueOf(event.time);
+				}
+
+				if (time_1 < time_2) {
+					list.set(j, key_2);
+					list.set(j + 1, key_1);
+				}
+			}
+		}
+		Log.e(tag, list.toString() + "**********");
+		return list;
 	}
 
 	public List<String> checkKeyValue(List<String> list, Map<?, ?> map) {

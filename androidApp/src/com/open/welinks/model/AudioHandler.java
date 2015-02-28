@@ -19,7 +19,7 @@ import android.util.Log;
 
 import com.open.welinks.customListener.AudioListener;
 
-public class AudioHandlers {
+public class AudioHandler {
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
@@ -49,19 +49,19 @@ public class AudioHandlers {
 
 	private Status recorderStatus = Status.released, playStatus = Status.played;
 
-	public static AudioHandlers handlers;
+	public static AudioHandler handlers;
 	String tag = "audio";
 
-	public AudioHandlers() {
+	public AudioHandler() {
 		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		mSpeexEncodeFrameSize = speex.getEncodeFrameSize();
 		mSpeexDecodeFrameSize = speex.getDecodeFrameSize();
 	}
 
-	public static AudioHandlers getInstance() {
+	public static AudioHandler getInstance() {
 		speex = new Speex();
 		if (handlers == null) {
-			handlers = new AudioHandlers();
+			handlers = new AudioHandler();
 		}
 		return handlers;
 	}

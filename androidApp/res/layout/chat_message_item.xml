@@ -109,4 +109,12 @@
             android:visibility="gone" />
     </com.open.lib.TouchView>
 
+    <com.open.lib.TouchView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="right|center_vertical"
+        android:visibility="gone"
+        android:background="#0099cd" >
+    </com.open.lib.TouchView>
+
 </com.open.lib.TouchView>

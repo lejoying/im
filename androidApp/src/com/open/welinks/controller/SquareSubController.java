@@ -2,10 +2,16 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
+import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.location.LocationManagerProxy;
+import com.amap.api.location.LocationProviderProxy;
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
@@ -19,7 +25,7 @@ public class SquareSubController {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 
-	public String tag = "ShareSubController";
+	public String tag = "SquareSubController";
 	public MyLog log = new MyLog(tag, true);
 
 	public SquareSubView thisView;
@@ -35,8 +41,17 @@ public class SquareSubController {
 
 	public SquareSubController(MainController mainController) {
 		thisActivity = mainController.thisActivity;
-
 		this.mainController = mainController;
+	}
+
+	public LocationManagerProxy mLocationManagerProxy;
+	public AMapLocationListener mAMapLocationListener;
+	public AMapLocation mAmapLocation;
+
+	public void getLocation() {
+		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
+		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
+		mLocationManagerProxy.setGpsEnable(true);
 	}
 
 	public View onTouchDownView;
@@ -44,7 +59,41 @@ public class SquareSubController {
 	public boolean isTouchDown = false;
 
 	public void initializeListeners() {
+		mAMapLocationListener = new AMapLocationListener() {
 
+			@Override
+			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+			}
+
+			@Override
+			public void onProviderEnabled(String arg0) {
+			}
+
+			@Override
+			public void onProviderDisabled(String arg0) {
+			}
+
+			@Override
+			public void onLocationChanged(Location location) {
+			}
+
+			@Override
+			public void onLocationChanged(AMapLocation amapLocation) {
+				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+				mLocationManagerProxy.destroy();
+				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
+					mAmapLocation = amapLocation;
+					log.e("Latitude：>>>>>>>>**************《《" + mAmapLocation.getLatitude());
+					log.e("Longitude：>>>>>>>**************《《" + mAmapLocation.getLongitude());
+					log.e("Longitude：>>>>>>>**************《《" + mAmapLocation.getProvince() + mAmapLocation.getCity());
+					log.e("Longitude：>>>>>>>**************《《" + mAmapLocation.getAddress());
+					thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
+					// searchNearby(amapLocation);
+					// searchNearByPolygon(0);
+				}
+			}
+		};
+		getLocation();
 		this.mOnTouchListener = new OnTouchListener() {
 
 			@Override

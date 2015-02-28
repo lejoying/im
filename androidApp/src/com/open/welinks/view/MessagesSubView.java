@@ -170,52 +170,52 @@ public class MessagesSubView {
 			} else {
 				key2 = key;
 			}
-			MessageBody messageBody = null;
+			MessageBody body = null;
 			if (this.messageListBody.listItemBodiesMap.get(key2) != null) {
 				if ("p".equals(type)) {
-					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
-					messageBody.setContent(message, fileName);
+					body = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
+					body.setContent(message, fileName);
 					this.messageListBody.listItemsSequence.add(key2);
 				} else if ("g".equals(type)) {
-					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
-					messageBody.setContent(message, fileName);
+					body = (MessageBody) this.messageListBody.listItemBodiesMap.get(key2);
+					body.setContent(message, fileName);
 					this.messageListBody.listItemsSequence.add(key2);
 				} else {
-					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get(key);
-					messageBody.setContent(null, "");
+					body = (MessageBody) this.messageListBody.listItemBodiesMap.get(key);
+					body.setContent(null, "");
 					this.messageListBody.listItemsSequence.add(key);
 				}
 			} else {
-				messageBody = new MessageBody(this.messageListBody);
+				body = new MessageBody(this.messageListBody);
 				if (key.indexOf("event_user") == 0) {
-					messageBody.initialize(-1);
-					messageBody.setContent(null, "");
+					body.initialize(-1);
+					body.setContent(null, "");
 					this.messageListBody.listItemsSequence.add(key2);
-					this.messageListBody.listItemBodiesMap.put(key2, messageBody);
+					this.messageListBody.listItemBodiesMap.put(key2, body);
 				} else if (key.indexOf("event_group") == 0) {
-					messageBody.initialize(-2);
-					messageBody.setContent(null, "");
+					body.initialize(-2);
+					body.setContent(null, "");
 					this.messageListBody.listItemsSequence.add(key2);
-					this.messageListBody.listItemBodiesMap.put(key2, messageBody);
+					this.messageListBody.listItemBodiesMap.put(key2, body);
 				} else {
-					messageBody.initialize(i);
-					messageBody.setContent(message, fileName);
+					body.initialize(i);
+					body.setContent(message, fileName);
 					this.messageListBody.listItemsSequence.add(key);
-					this.messageListBody.listItemBodiesMap.put(key, messageBody);
+					this.messageListBody.listItemBodiesMap.put(key, body);
 				}
 			}
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels), (int) (80 * displayMetrics.density));
-			messageBody.y = this.messageListBody.height;
-			messageBody.cardView.setY(messageBody.y);
+			body.y = this.messageListBody.height;
+			body.cardView.setY(body.y);
 			// messageBody.cardView.setX(0);
-			messageBody.itemHeight = 80 * displayMetrics.density;
+			body.itemHeight = 80 * displayMetrics.density;
 			this.messageListBody.height = this.messageListBody.height + 80 * displayMetrics.density;
-			this.messageListBody.containerView.addView(messageBody.cardView, layoutParams);
+			this.messageListBody.containerView.addView(body.cardView, layoutParams);
 
-			messageBody.cardView.setTag(R.id.tag_class, "message_view");
-			messageBody.cardView.setTag(R.id.tag_first, key);
-			messageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
-			messageBody.cardView.setOnClickListener(thisController.mOnClickListener);
+			body.cardView.setTag(R.id.tag_class, "message_view");
+			body.cardView.setTag(R.id.tag_first, key);
+			body.cardView.setOnTouchListener(thisController.mOnTouchListener);
+			body.cardView.setOnClickListener(thisController.mOnClickListener);
 
 		}
 		this.messageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewManage.getStatusBarHeight(thisController.mainController.thisActivity) - displayMetrics.density * 84);
@@ -414,7 +414,7 @@ public class MessagesSubView {
 				} else {
 					data = parser.check();
 					taskManageHolder.fileHandler.getHeadImage(fileName, headView, taskManageHolder.viewManage.options50);
-					String leftText = "";
+					String leftTextContent = "";
 					Pattern pattern = Pattern.compile("[0-9]*");
 					if (pattern.matcher(message.time).matches()) {
 						lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
@@ -441,7 +441,7 @@ public class MessagesSubView {
 								notReadNumberView.setVisibility(View.GONE);
 							} else {
 								notReadNumberView.setVisibility(View.VISIBLE);
-								notReadNumberView.setText(String.valueOf(notReadMessagesCount));
+								notReadNumberView.setText(notReadMessagesCount + "");
 							}
 						}
 					} else if ("group".equals(sendType)) {
@@ -458,30 +458,30 @@ public class MessagesSubView {
 								notReadNumberView.setVisibility(View.GONE);
 							} else {
 								notReadNumberView.setVisibility(View.VISIBLE);
-								notReadNumberView.setText(String.valueOf(notReadMessagesCount));
+								notReadNumberView.setText(notReadMessagesCount + "");
 							}
 						}
 						Friend friend = data.relationship.friendsMap.get(message.phone);
 						if (friend != null) {
-							leftText += friend.nickName + ":";
+							leftTextContent += friend.nickName + ":";
 						}
 					}
 					if ("text".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + message.content);
+						lastChatMessageView.setText(leftTextContent + message.content);
 					} else if ("image".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[图片]");
+						lastChatMessageView.setText(leftTextContent + "[图片]");
 					} else if ("voice".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[声音]");
+						lastChatMessageView.setText(leftTextContent + "[声音]");
 					} else if ("share".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[分享]");
+						lastChatMessageView.setText(leftTextContent + "[分享]");
 					} else if ("gif".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[动图]");
+						lastChatMessageView.setText(leftTextContent + "[动图]");
 					} else if ("location".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[位置信息]");
+						lastChatMessageView.setText(leftTextContent + "[位置信息]");
 					} else if ("card".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[名片]");
+						lastChatMessageView.setText(leftTextContent + "[名片]");
 					} else if ("specialGif".equals(message.contentType)) {
-						lastChatMessageView.setText(leftText + "[动图]");
+						lastChatMessageView.setText(leftTextContent + "[动图]");
 					}
 				}
 			}

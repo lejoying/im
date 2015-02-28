@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.SimpleSpringListener;
@@ -65,6 +66,8 @@ public class SquareSubView {
 
 	public ListBody1 locationListBody;
 	public SelectBody selectBody;
+	
+	public TextView titleNameView;
 
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -78,6 +81,8 @@ public class SquareSubView {
 
 		this.squareMessageView = (ViewGroup) squareView.findViewById(R.id.squareContainer);
 		this.squareMessageView.setBackgroundColor(Color.parseColor("#F1F2F5"));
+		
+		this.titleNameView = (TextView) squareView.findViewById(R.id.shareTopMenuSquareName);
 
 		this.locationListBody = new ListBody1();
 		this.locationListBody.initialize(this.displayMetrics, this.squareMessageView);

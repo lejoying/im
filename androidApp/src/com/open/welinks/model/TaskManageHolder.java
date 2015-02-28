@@ -15,7 +15,7 @@ public class TaskManageHolder {
 	public FileHandler fileHandler;
 	public MultipartUploader multipartUploader;
 
-	public AudioHandlers audioHandler;
+	public AudioHandler audioHandler;
 
 	public ImageLoader imageLoader;
 
@@ -50,7 +50,7 @@ public class TaskManageHolder {
 			this.fileHandler.initialize();
 			this.fileHandler.startLoop();
 			this.multipartUploader = MultipartUploader.getInstance();
-			this.audioHandler = AudioHandlers.getInstance();
+			this.audioHandler = AudioHandler.getInstance();
 			this.imageLoader = ImageLoader.getInstance();
 			this.viewManage = ViewManage.getInstance();
 			this.uploadMultipartList = UploadMultipartList.getInstance();

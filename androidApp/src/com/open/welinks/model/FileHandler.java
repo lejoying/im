@@ -42,7 +42,7 @@ import com.open.welinks.view.ViewManage;
 
 public class FileHandler {
 
-	public static String tag = "FileHandlers";
+	public static String tag = "FileHandler";
 	public static MyLog log = new MyLog(tag, true);
 
 	public File sdcard;
@@ -559,9 +559,9 @@ public class FileHandler {
 				if (instance.type == DownloadFile.TYPE_HEAD_IMAGE) {
 					// imageLoader.displayImage("drawable://" + R.drawable.face_man, imageView, options);
 				} else if (instance.type == DownloadFile.TYPE_THUMBLE_IMAGE) {
-					log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
+					// log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
 				} else if (instance.type == DownloadFile.TYPE_IMAGE) {
-					log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
+					// log.e("onFailure----download:" + instance.url + "-" + instance.path + "-path");
 				}
 				if (instance.thumbleListener != null) {
 					instance.thumbleListener.onResult();
@@ -716,7 +716,7 @@ public class FileHandler {
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						log.e(path + "-complete");
+						// log.e(path + "-complete");
 						if (thumbleListener != null) {
 							thumbleListener.onResult();
 						}
