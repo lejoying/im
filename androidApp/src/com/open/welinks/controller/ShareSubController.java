@@ -374,6 +374,7 @@ public class ShareSubController {
 					vibrator.vibrate(pattern, -1);
 
 					thisView.showReleaseShareDialogView();
+					// thisView.showNewStyle();
 				} else if (view.equals(thisView.groupMembersListContentView)) {
 					Intent intent = new Intent(thisActivity, ChatActivity.class);
 					intent.putExtra("type", "group");

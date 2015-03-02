@@ -252,13 +252,8 @@ public class BusinessCardView {
 			sexLayout.setVisibility(View.GONE);
 			ageLayout.setVisibility(View.GONE);
 			rightTopButton.setText(thisActivity.getString(R.string.business_add_to_room));
-			if (data.tempData.tempGroup == null) {
-				if (!isGetData)
-					thisController.getGroupCard(thisController.key, "group");
-			} else {
-				if (!isGetData)
-					thisController.getGroupCard(thisController.key, "group");
-			}
+			if (!isGetData)
+				thisController.getGroupCard(thisController.key, "group");
 			if (data.relationship.groupsMap.get(thisController.key) != null) {
 				data.tempData.tempGroup = data.relationship.groupsMap.get(thisController.key);
 				businessCard.id = data.tempData.tempGroup.gid;
@@ -276,7 +271,7 @@ public class BusinessCardView {
 				businessCard.button_three = "";
 				buttonTwo.setVisibility(View.GONE);
 				buttonThree.setVisibility(View.GONE);
-				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
+				qrCodeView.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, data.tempData.tempGroup.gid + ""));
 			}
 		} else if (status.equals(Status.SQUARE)) {
 			myShareView.setVisibility(View.GONE);

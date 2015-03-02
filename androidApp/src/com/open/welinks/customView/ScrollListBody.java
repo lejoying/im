@@ -13,19 +13,22 @@ import android.view.ViewGroup;
 import com.open.lib.MyLog;
 
 public class ScrollListBody {
+
 	public String tag = "ScrollListBody";
 	public MyLog log = new MyLog(tag, false);
 
 	public ViewGroup containerView = null;
 	public DisplayMetrics displayMetrics;
 
-	public int height;
+	public int width;
 
 	public int containerHeight;
 	public int containerWidth;
 
 	public View initialize(DisplayMetrics displayMetrics, View containerView) {
 		this.displayMetrics = displayMetrics;
+
+		this.containerWidth = this.displayMetrics.widthPixels;
 
 		this.containerView = (ViewGroup) containerView;
 
@@ -41,6 +44,7 @@ public class ScrollListBody {
 		public float x = 0;
 		public float y = 0;
 
+		public float offset_x = 0;
 		public float offset_y = 0;
 
 		public float pre_position = 0;
@@ -109,7 +113,6 @@ public class ScrollListBody {
 				this.setDeltaXY(x - touch_pre_x, 0);
 				this.setChildrenPosition();
 				touch_pre_x = x;
-
 			}
 		} else {
 			// log.e(tag, "unkown status: touchMoveStatus.Up");
@@ -117,20 +120,29 @@ public class ScrollListBody {
 	}
 
 	private void setChildrenPosition() {
-		// TODO Auto-generated method stub
-
+		for (int i = 0; i < this.listSequence.size(); i++) {
+			// String key = this.listSequence.get(i);
+			// ScrollListItemBody body = this.listSequenceMap.get(key);
+			// float positionY = this.x + body.x - body.offset_x;
+		}
 	}
 
 	private void setDeltaXY(float deltaX, float deltaY) {
-		if (this.height < this.containerHeight) {
+		if (this.width < this.containerWidth) {
 			return;
 		}
-		if (this.x>= 0 && deltaX > 0) {
-			deltaY = deltaY / 4;
-		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {
-			deltaY = deltaY / 4;
+		this.x += deltaX;
+		if (this.x >= 0) {
+			deltaX = 0;
+		} else if (this.x < this.width - this.containerWidth) {
+			this.x = this.width - this.containerWidth;
 		}
-		this.y = this.y + deltaY;
+		// if (this.x >= 0 && deltaX > 0) {
+		// deltaY = deltaY / 4;
+		// } else if (this.y <= -(this.width - containerWidth) && deltaY < 0) {
+		// deltaY = deltaY / 4;
+		// }
+		// this.y = this.y + deltaY;
 	}
 
 	public void onTouchUp(MotionEvent event) {

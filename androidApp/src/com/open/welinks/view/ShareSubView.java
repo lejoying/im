@@ -290,6 +290,21 @@ public class ShareSubView {
 	public ScrollListBody releaseChannelListBody;
 	public boolean isShowChannel = true;
 
+	public void showNewStyle() {
+		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(this.displayMetrics.widthPixels, this.displayMetrics.heightPixels);
+		this.mainView.main_container.addView(this.releaseChannelView, params);
+		this.isShowChannel = true;
+		shareMessageListBody.inActive();
+		mainView.mainPagerBody.inActive();
+	}
+
+	public void dismissNewStyle() {
+		this.mainView.main_container.removeView(this.releaseChannelView);
+		this.isShowChannel = false;
+		shareMessageListBody.active();
+		mainView.mainPagerBody.active();
+	}
+
 	public void showReleaseChannel() {
 		// init
 		releaseChannelListBody = new ScrollListBody();
@@ -308,15 +323,13 @@ public class ShareSubView {
 			body.itemHeight = width;
 
 			this.releaseChannelListBody.containerView.addView(body.cardView, layoutParams);
-			body.x = releaseChannelListBody.height;
+			body.x = releaseChannelListBody.width;
 			body.cardView.setX(body.x);
 			body.cardView.setY(0);
 
-			releaseChannelListBody.height = releaseChannelListBody.height + width;
+			releaseChannelListBody.width = releaseChannelListBody.width + width;
 		}
 		this.releaseChannelListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewManage.getStatusBarHeight(mainView.thisActivity));
-		// FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(displayMetrics.widthPixels, displayMetrics.heightPixels);
-		// this.mainView.main_container.addView(releaseChannelView, params);
 	}
 
 	public class ChannelBody extends ScrollListItemBody {
