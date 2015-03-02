@@ -14,6 +14,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.utils.SHA1;
@@ -28,6 +29,8 @@ public class TaskContainer_Share {
 	public Gson gson = new Gson();
 	public MyLog log = new MyLog(tag, true);
 	public SHA1 sha1 = new SHA1();
+
+	public SubData subData = SubData.getInstance();
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
@@ -70,9 +73,9 @@ public class TaskContainer_Share {
 		}
 
 		public void modifyView() {// 主UI线程
-		// User currentUser = data.userInformation.currentUser;
-		// shareMessage = data.boards.shareMessagesMap.get(gsid);
-		// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
+			// User currentUser = data.userInformation.currentUser;
+			// shareMessage = data.boards.shareMessagesMap.get(gsid);
+			// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
 			// if (shareMessage.praiseusers.contains(currentUser.phone)) {
 			// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
 			// } else {
@@ -218,6 +221,8 @@ public class TaskContainer_Share {
 
 	public class PostTask extends Task {
 
+		public String mode;
+
 		public String gid;
 		public String gtype;
 		public String sid;
@@ -298,8 +303,13 @@ public class TaskContainer_Share {
 				contentItem.detail = myFile.fileName;
 				contentItems.add(contentItem);
 				shareMessage.content = gson.toJson(contentItems);
-				taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
+				// taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
+			} else {
+				shareMessage.content = gson.toJson(contentItems);
+
+				// taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
 			}
+			taskManageHolder.viewManage.postNotifyView(this.mode);// ShareSectionNotifyShares
 		}
 
 		@Override
@@ -328,8 +338,10 @@ public class TaskContainer_Share {
 			params.addBodyParameter("gid", gid);
 			params.addBodyParameter("ogsid", shareMessage.gsid);
 			params.addBodyParameter("sid", sid);
-			params.addBodyParameter("type", "imagetext");
-			params.addBodyParameter("content", shareMessage.content);
+			SendShareMessage sendShareMessage = subData.new SendShareMessage();
+			sendShareMessage.type = "imagetext";
+			sendShareMessage.content = shareMessage.content;
+			params.addBodyParameter("message", gson.toJson(sendShareMessage));
 		}
 
 		class Response {
@@ -397,7 +409,7 @@ public class TaskContainer_Share {
 
 		@Override
 		public void updateView() {
-			taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
+			taskManageHolder.viewManage.postNotifyView(this.mode);// "ShareSectionNotifyShares"
 		}
 
 		public void copyFileToSprecifiedDirecytory(MyFile myFile, boolean isCompression) {

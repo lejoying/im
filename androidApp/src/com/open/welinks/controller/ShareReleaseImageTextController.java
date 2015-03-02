@@ -43,11 +43,15 @@ import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.MyFile;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
+import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.TaskContainer_Share;
+import com.open.welinks.model.TaskContainer_Share.PostTask;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.UploadMultipart;
 import com.open.welinks.utils.SHA1;
@@ -94,7 +98,7 @@ public class ShareReleaseImageTextController {
 
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
-	public String type, gid, gtype;
+	public String type, gid, gtype, mode;
 
 	public ShareMessage shareMessage;
 
@@ -107,6 +111,7 @@ public class ShareReleaseImageTextController {
 		type = intent.getStringExtra("type");
 		gid = intent.getStringExtra("gid");
 		sid = intent.getStringExtra("sid");
+		this.mode = intent.getStringExtra("mode");
 		currentSelectedGroup = gid;
 		// Initialize the image directory
 		sdcardImageFolder = taskManageHolder.fileHandler.sdcardImageFolder;
@@ -299,7 +304,8 @@ public class ShareReleaseImageTextController {
 					if (data.localStatus.localData.notSendShareMessagesMap != null) {
 						data.localStatus.localData.notSendShareMessagesMap.remove(gtype);
 					}
-					sendImageTextShare();
+					// sendImageTextShare();
+					newSendImageTextShareAction();
 				} else if (view == thisView.mSelectImageButtonView) {
 					Intent intent = new Intent(thisActivity, ImagesDirectoryActivity.class);
 					thisActivity.startActivityForResult(intent, RESULT_REQUESTCODE_SELECTIMAGE);
@@ -327,6 +333,48 @@ public class ShareReleaseImageTextController {
 
 	// public TaskManager mTaskManager = TaskManager.getInstance();
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
+
+	public void newSendImageTextShareAction() {
+		final String sendContent = thisView.mEditTextView.getText().toString().trim();
+		boolean flag = false;
+		if (data.tempData.selectedImageList == null) {
+			flag = true;
+		} else {
+			if (data.tempData.selectedImageList.size() == 0) {
+				flag = true;
+			} else {
+				flag = false;
+			}
+		}
+		if ("".equals(sendContent) && flag) {
+			return;
+		}
+		taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
+		thisActivity.finish();
+
+		TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
+		PostTask task = mTaskContainer_Share.new PostTask();
+		task.mode = this.mode;
+		task.API = API.SHARE_SENDSHARE;
+		task.gid = gid;
+		task.sid = sid;
+		task.gtype = gtype;
+		if (data.tempData.selectedImageList != null) {
+			task.imageListString = gson.toJson(data.tempData.selectedImageList);
+		}
+		task.chatTextContent = thisView.mEditTextView.getText().toString();
+		if (data.tempData.selectedImageList != null && data.tempData.selectedImageList.size() > 0) {
+			task.myFileList = new ArrayList<MyFile>();
+			for (int i = 0; i < data.tempData.selectedImageList.size(); i++) {
+				MyFile myFile = new MyFile();
+				myFile.uploadFileType = myFile.UPLOAD_TYPE_IMAGE;
+				myFile.path = data.tempData.selectedImageList.get(i);
+				task.myFileList.add(myFile);
+			}
+		}
+		taskManageHolder.taskManager.pushTask(task);
+		data.tempData.selectedImageList = null;
+	}
 
 	public void sendImageTextShare() {
 
@@ -459,13 +507,10 @@ public class ShareReleaseImageTextController {
 		}).start();
 	}
 
-	public class SendShareMessage {
-		public String type;// imagetext voicetext vote
-		public String content;
-	}
+	public SubData subData = SubData.getInstance();
 
 	public void sendMessageToServer(String content, String gsid) {
-		SendShareMessage sendShareMessage = new SendShareMessage();
+		SendShareMessage sendShareMessage = subData.new SendShareMessage();
 		sendShareMessage.type = "imagetext";
 		sendShareMessage.content = content;
 

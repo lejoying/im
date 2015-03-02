@@ -29,6 +29,7 @@ import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.oss.UploadMultipart;
@@ -453,14 +454,11 @@ public class DataHandler {
 		}
 	}
 
-	public class SendShareMessage {
-		public String type;// imagetext voicetext vote
-		public String content;
-	}
+	public SubData subData = SubData.getInstance();
 
 	public void sendMessageToServer(String content, String gid, String gsid, String sid) {
 
-		SendShareMessage sendShareMessage = new SendShareMessage();
+		SendShareMessage sendShareMessage = subData.new SendShareMessage();
 		sendShareMessage.type = "imagetext";
 		sendShareMessage.content = content;
 
