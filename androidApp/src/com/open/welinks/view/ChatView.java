@@ -71,7 +71,7 @@ import com.open.welinks.utils.MyGson;
 
 public class ChatView {
 
-	public String tag = "NewChatView";
+	public String tag = "ChatView";
 	public MyLog log = new MyLog(tag, true);
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
@@ -107,7 +107,6 @@ public class ChatView {
 		thisActivity = activity;
 	}
 
-	@SuppressWarnings("deprecation")
 	@SuppressLint("HandlerLeak")
 	public void initViews() {
 		thisActivity.setContentView(R.layout.activity_chat);
@@ -142,11 +141,14 @@ public class ChatView {
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, thisActivity.findViewById(R.id.chatMainView));
 
-		chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_record));
-		chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
+		// chatRecord.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_record));
+		chatRecord.setImageResource(R.drawable.selector_chat_record);
+		// chatAdd.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_chat_add));
+		chatAdd.setImageResource(R.drawable.selector_chat_add);
 
 		titleImage = new ImageView(thisActivity);
-		titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
+		// titleImage.setImageDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_arrow_down));
+		titleImage.setImageResource(R.drawable.selector_arrow_down);
 		titleImage.setColorFilter(Color.parseColor("#0099cd"));
 		RelativeLayout.LayoutParams rightParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) BaseDataUtils.dpToPx(30));
 		titleImage.setLayoutParams(rightParams);
@@ -161,7 +163,8 @@ public class ChatView {
 		thisController.mAMap.getUiSettings().setZoomControlsEnabled(false);
 
 		backMaxView.setBackgroundColor(Color.WHITE);
-		backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
+		// backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
+		backView.setBackgroundResource(R.drawable.selector_back_white);
 		backTitleView.setTextColor(Color.parseColor("#0099cd"));
 		backTitleView.setTextSize(18);
 		backImageView.setColorFilter(Color.parseColor("#0099cd"));

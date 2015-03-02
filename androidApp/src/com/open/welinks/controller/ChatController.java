@@ -59,7 +59,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.lib.ResponseHandler;
+import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ExpressionManageActivity;
@@ -100,11 +100,18 @@ import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ChatView;
 
 public class ChatController {
+
+	public String tag = "ChatController";
+	public MyLog log = new MyLog(tag, true);
+
 	public Data data = Data.getInstance();
 	public SubData subData = SubData.getInstance();
 	public Parser parser = Parser.getInstance();
+
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
+
 	public InputMethodManagerUtils inputManager;
+
 	public Gson gson = new Gson();
 	public SHA1 sha1 = new SHA1();
 
@@ -177,11 +184,12 @@ public class ChatController {
 	}
 
 	public void onCreate() {
-		String key = thisActivity.getIntent().getStringExtra("id");
+		Intent intent = thisActivity.getIntent();
+		String key = intent.getStringExtra("id");
 		if (key != null && !"".equals(key)) {
 			this.key = key;
 		}
-		String type = thisActivity.getIntent().getStringExtra("type");
+		String type = intent.getStringExtra("type");
 		if (type != null && !"".equals(type)) {
 			this.type = type;
 		}
@@ -211,7 +219,7 @@ public class ChatController {
 					} else if ("image".equals(contentType)) {
 						data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_second);
 						Intent intent = new Intent(thisActivity, ImageScanActivity.class);
-						intent.putExtra("position", String.valueOf(0));
+						intent.putExtra("position", 0 + "");
 						thisActivity.startActivity(intent);
 					} else if ("share".equals(contentType)) {
 						String gid = (String) view.getTag(R.id.tag_second);
@@ -227,14 +235,18 @@ public class ChatController {
 							Toast.makeText(thisActivity, "群分享不存在", Toast.LENGTH_SHORT).show();
 						}
 					} else if ("location".equals(contentType)) {
+						String latitude = (String) view.getTag(R.id.tag_second);
+						String longitude = (String) view.getTag(R.id.tag_third);
 						Intent intent = new Intent(thisActivity, LocationActivity.class);
-						intent.putExtra("latitude", (String) view.getTag(R.id.tag_second));
-						intent.putExtra("longitude", (String) view.getTag(R.id.tag_third));
+						intent.putExtra("latitude", latitude);
+						intent.putExtra("longitude", longitude);
 						thisActivity.startActivity(intent);
 					} else if ("card".equals(contentType)) {
+						String type = (String) view.getTag(R.id.tag_second);
+						String key = (String) view.getTag(R.id.tag_third);
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
-						intent.putExtra("type", (String) view.getTag(R.id.tag_second));
-						intent.putExtra("key", (String) view.getTag(R.id.tag_third));
+						intent.putExtra("type", type);
+						intent.putExtra("key", key);
 						thisActivity.startActivity(intent);
 					} else if ("resend".equals(contentType)) {
 						int position = (Integer) view.getTag(R.id.tag_second);
@@ -242,7 +254,7 @@ public class ChatController {
 						if (messages.size() > position) {
 							Message message = messages.get(position);
 							message.status = "sending";
-							message.time = String.valueOf(System.currentTimeMillis());
+							message.time = System.currentTimeMillis() + "";
 							thisView.mChatAdapter.notifyDataSetChanged();
 							sendMessage(message);
 						}
@@ -265,7 +277,8 @@ public class ChatController {
 					takePhoto();
 				} else if (thisView.ablum.equals(view)) {
 					data.tempData.selectedImageList = null;
-					thisActivity.startActivityForResult(new Intent(thisActivity, ImagesDirectoryActivity.class), REQUESTCODE_ABLUM);
+					Intent intent = new Intent(thisActivity, ImagesDirectoryActivity.class);
+					thisActivity.startActivityForResult(intent, REQUESTCODE_ABLUM);
 				} else if (thisView.location.equals(view)) {
 					requestLocation();
 				} else if (thisView.chatContent.equals(view)) {

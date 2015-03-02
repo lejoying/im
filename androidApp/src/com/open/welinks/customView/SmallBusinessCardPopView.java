@@ -754,7 +754,6 @@ public class SmallBusinessCardPopView {
 		}
 
 		public void onItemSeleted(String string, String phone) {
-
 		}
 	}
 }

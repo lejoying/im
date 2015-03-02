@@ -135,7 +135,7 @@ public class DownloadFile {
 			if (downloadListener != null) {
 				downloadListener.onSuccess(instance, isDownloadStatus);
 			}
-			log.e(tag, "-----success-----" + responseInfo.statusCode);
+			// log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 
 		@Override
