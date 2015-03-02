@@ -70,7 +70,6 @@ public class ShareSubView {
 	public Data data = Data.getInstance();
 
 	public String tag = "ShareSubView";
-
 	public MyLog log = new MyLog(tag, true);
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
@@ -702,7 +701,7 @@ public class ShareSubView {
 
 		this.isShowFirstMessageAnimation = false;
 
-		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
+		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewManage.getStatusBarHeight(mainView.thisActivity) - displayMetrics.density * 48);
 		if (this.shareMessageListBody.height < this.shareMessageListBody.containerHeight) {
 			this.shareMessageListBody.y = 0;
 		}

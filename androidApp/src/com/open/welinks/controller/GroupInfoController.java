@@ -57,11 +57,13 @@ import com.open.welinks.view.ViewManage;
 
 public class GroupInfoController {
 
-	public Data data = Data.getInstance();
-	public Parser parser = Parser.getInstance();
-	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 	public String tag = "GroupInfoController";
 	public MyLog log = new MyLog(tag, true);
+
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
+
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public Context context;
 	public GroupInfoView thisView;
@@ -91,9 +93,10 @@ public class GroupInfoController {
 	}
 
 	public void onCreate() {
-		String gid = thisActivity.getIntent().getStringExtra("gid");
-		String sid = thisActivity.getIntent().getStringExtra("sid");
-		String type = thisActivity.getIntent().getStringExtra("type");
+		Intent intent = thisActivity.getIntent();
+		String gid = intent.getStringExtra("gid");
+		String sid = intent.getStringExtra("sid");
+		String type = intent.getStringExtra("type");
 		if (type == null) {
 			this.type = "group";
 		} else {

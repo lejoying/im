@@ -411,6 +411,7 @@ public class Alert {
 
 		public AlertInputCommentDialog requestFocus() {
 			dialog.input.requestFocus();
+			@SuppressWarnings("static-access")
 			InputMethodManager m = (InputMethodManager) dialog.getContext().getSystemService(dialog.getContext().INPUT_METHOD_SERVICE);
 			m.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 			// m.showSoftInput(dialog.input, InputMethodManager.SHOW_FORCED);

@@ -504,7 +504,7 @@ public class ShareSectionView {
 
 		// this.isShowFirstMessageAnimation = false;
 
-		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
+		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewManage.getStatusBarHeight(thisActivity) - displayMetrics.density * 48);
 		if (this.shareMessageListBody.height < this.shareMessageListBody.containerHeight) {
 			this.shareMessageListBody.y = 0;
 		}

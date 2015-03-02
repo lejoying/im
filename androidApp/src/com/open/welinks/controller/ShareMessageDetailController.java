@@ -61,7 +61,6 @@ import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.view.ShareMessageDetailView;
 import com.open.welinks.view.ViewManage;
 
@@ -97,8 +96,6 @@ public class ShareMessageDetailController {
 	public onWeChatClickListener mOnWeChatClickListener;
 
 	public int IMAGEBROWSE_REQUESTCODE = 0x01;
-
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 

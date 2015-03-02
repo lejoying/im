@@ -87,13 +87,14 @@ public class FriendsSortListActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		int type = getIntent().getIntExtra("type", -1);
+		Intent intent = this.getIntent();
+		int type = intent.getIntExtra("type", -1);
 		if (type == -1) {
 			return;
 		} else {
 			currentOperationType = type;
 		}
-		String gid = this.getIntent().getStringExtra("gid");
+		String gid = intent.getStringExtra("gid");
 		if (gid != null && !"".equals(gid)) {
 			currentGroup = data.relationship.groupsMap.get(gid);
 			if (currentGroup == null) {

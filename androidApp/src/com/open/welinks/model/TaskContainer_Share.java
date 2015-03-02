@@ -67,7 +67,6 @@ public class TaskContainer_Share {
 			// }
 			// shareMessage.praiseusers.removeAll(list);
 			// }
-
 		}
 
 		public void modifyView() {// 主UI线程

@@ -37,6 +37,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.TaskManageHolder;
@@ -286,7 +287,10 @@ public class GroupListController {
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.groupEditorConfirm.setOnClickListener(mOnClickListener);
 		thisView.groupEditorCancel.setOnClickListener(mOnClickListener);
-		thisView.dialogGroupEditorConfirm.setOnClickListener(mOnClickListener);
+
+		if (thisView.dialogGroupEditorConfirm != null) {
+			thisView.dialogGroupEditorConfirm.setOnClickListener(mOnClickListener);
+		}
 		if (thisView.rightContainerLinearLayout != null)
 			thisView.rightContainerLinearLayout.setOnClickListener(mOnClickListener);
 		if (thisView.buttonOne != null)
@@ -423,8 +427,9 @@ public class GroupListController {
 
 					RequestParams params = new RequestParams();
 					HttpUtils httpUtils = new HttpUtils();
-					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					User currentUser = data.userInformation.currentUser;
+					params.addBodyParameter("phone", currentUser.phone);
+					params.addBodyParameter("accessKey", currentUser.accessKey);
 					params.addBodyParameter("name", groupCircle.name);
 					params.addBodyParameter("rid", String.valueOf(groupCircle.rid));
 
@@ -474,8 +479,9 @@ public class GroupListController {
 
 				RequestParams params = new RequestParams();
 				HttpUtils httpUtils = new HttpUtils();
-				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+				User currentUser = data.userInformation.currentUser;
+				params.addBodyParameter("phone", currentUser.phone);
+				params.addBodyParameter("accessKey", currentUser.accessKey);
 				params.addBodyParameter("rid", String.valueOf(groupCircle.rid));
 				httpUtils.send(HttpMethod.POST, API.GROUP_DELETEGROUPCIRCLE, params, responseHandlers.group_deletegroupcircle);
 			}
@@ -484,7 +490,6 @@ public class GroupListController {
 			@Override
 			public void onClick(AlertInputDialog dialog) {
 				thisView.showGroupCircles();
-
 			}
 		}).show();
 	}
@@ -507,8 +512,9 @@ public class GroupListController {
 
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("groups", gson.toJson(editorGroups));
 		params.addBodyParameter("groupCircles", gson.toJson(data.relationship.groupCircles));
 		params.addBodyParameter("groupCirclesMap", gson.toJson(data.relationship.groupCirclesMap));
@@ -522,8 +528,9 @@ public class GroupListController {
 	public void moveGroupsToCircle(List<String> groups, int fromRid, int toRid, List<String> fromGroups, List<String> toGroups) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("groups", gson.toJson(groups));
 		params.addBodyParameter("fromGroups", gson.toJson(fromGroups));
 		params.addBodyParameter("toGroups", gson.toJson(toGroups));
@@ -536,8 +543,9 @@ public class GroupListController {
 	public void modifyGroupCirclesSequence(String sequenceListString, int rid, String name) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("groupCircles", sequenceListString);
 		params.addBodyParameter("name", name);
 		params.addBodyParameter("rid", rid + "");
@@ -570,6 +578,5 @@ public class GroupListController {
 			taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(currentGroupCircle);
 			taskManageHolder.viewManage.shareSubView.showShareMessages();
 		}
-
 	}
 }

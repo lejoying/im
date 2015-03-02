@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -28,29 +27,22 @@ import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.oss.DownloadFileList;
 
 public class ImageDetailFragment extends Fragment {
-	// private static final String IMAGE_DATA_EXTRA = "resId";
-	// private int mImageNum;
+
 	private ImageView mImageView;
-	// private ImageWorker mImageWorker;
 	private ProgressBar mProgressBar;
 
 	public String path;
-	
+
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public static ImageDetailFragment newInstance(int imageNum, String path) {
 
-		ImageDetailFragment f = new ImageDetailFragment();
-		f.path = path;
+		ImageDetailFragment fragment = new ImageDetailFragment();
+		fragment.path = path;
 
-		// final Bundle args = new Bundle();
-		// args.putInt(IMAGE_DATA_EXTRA, imageNum);
-		// f.setArguments(args);
-
-		return f;
+		return fragment;
 	}
 
 	public ImageDetailFragment() {
@@ -59,15 +51,13 @@ public class ImageDetailFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// mImageNum = getArguments() != null ? getArguments().getInt(IMAGE_DATA_EXTRA) : -1;
 	}
 
-	TextView fileSizeView;
-	TextView fileWidthView;
+	public TextView fileSizeView;
+	public TextView fileWidthView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// Inflate and locate the main ImageView
 		final View v = inflater.inflate(R.layout.image_detail_fragment, container, false);
 		mImageView = (ImageView) v.findViewById(R.id.imageView);
 		mProgressBar = (ProgressBar) v.findViewById(R.id.progressBar);
@@ -76,8 +66,6 @@ public class ImageDetailFragment extends Fragment {
 		return v;
 	}
 
-	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public DisplayImageOptions options;
 	public OnDownloadListener downloadListener;
 
@@ -89,7 +77,7 @@ public class ImageDetailFragment extends Fragment {
 
 			@Override
 			public void onSuccess(DownloadFile instance, int status) {
-				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
+				taskManageHolder.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
 			}
 
 			@Override
@@ -102,8 +90,6 @@ public class ImageDetailFragment extends Fragment {
 
 			@Override
 			public void onLoadingStarted(DownloadFile instance, int precent, int status) {
-				// super.onLoadingStarted(instance, precent, status);
-				// fileSizeView.setText("Content-Length：" + instance.bytesLength);
 			}
 		};
 		if (ImageScanActivity.class.isInstance(getActivity())) {
@@ -117,7 +103,7 @@ public class ImageDetailFragment extends Fragment {
 			final int length = (int) imageFile.length();
 			if (imageFile.exists()) {
 
-				imageLoader.displayImage("file://" + path0, mImageView, new SimpleImageLoadingListener() {
+				taskManageHolder.imageLoader.displayImage("file://" + path0, mImageView, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
 						mProgressBar.setVisibility(View.VISIBLE);
@@ -128,7 +114,7 @@ public class ImageDetailFragment extends Fragment {
 						DownloadFile downloadFile = new DownloadFile(url, path);
 						downloadFile.view = mImageView;
 						downloadFile.setDownloadFileListener(downloadListener);
-						downloadFileList.addDownloadFile(downloadFile);
+						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 						mProgressBar.setVisibility(View.VISIBLE);
 					}
 
@@ -157,7 +143,7 @@ public class ImageDetailFragment extends Fragment {
 				DownloadFile downloadFile = new DownloadFile(url, path);
 				downloadFile.view = mImageView;
 				downloadFile.setDownloadFileListener(downloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
+				taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 				mProgressBar.setVisibility(View.VISIBLE);
 			}
 		}

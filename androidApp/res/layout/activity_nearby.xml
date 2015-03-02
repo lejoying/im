@@ -69,7 +69,7 @@
         android:id="@+id/lbsmap"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="88dp" >
+        android:layout_marginTop="92dp" >
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -125,7 +125,7 @@
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="87dp"
+        android:layout_marginTop="91dp"
         android:background="#99666666"
         android:visibility="visible" />
 
@@ -133,7 +133,7 @@
         android:id="@+id/nearby"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="288dp"
+        android:layout_marginTop="292dp"
         android:background="#f1f2f5"
         android:cacheColorHint="#0000"
         android:divider="#0000"
