@@ -109,13 +109,13 @@ public class ThreeChoicesView extends FrameLayout {
 			button_two.clearFocus();
 			button_three.clearFocus();
 
-			button_one.setTextColor(Color.parseColor("#99000000"));
+			button_one.setTextColor(Color.parseColor("#eeffffff"));
 			button_one.setBackgroundResource(R.drawable.threechoice_focus_left);
 
-			button_two.setTextColor(Color.parseColor("#ffffffff"));
+			button_two.setTextColor(Color.parseColor("#0099cd"));
 			button_two.setBackgroundResource(R.drawable.threechoice_two);
 
-			button_three.setTextColor(Color.parseColor("#ffffffff"));
+			button_three.setTextColor(Color.parseColor("#0099cd"));
 			button_three.setBackgroundResource(R.drawable.threechoice_three);
 
 		} else if (2 == item) {
@@ -126,13 +126,13 @@ public class ThreeChoicesView extends FrameLayout {
 			button_one.clearFocus();
 			button_three.clearFocus();
 
-			button_two.setTextColor(Color.parseColor("#99000000"));
+			button_two.setTextColor(Color.parseColor("#eeffffff"));
 			button_two.setBackgroundResource(R.drawable.threechoice_focus);
 
-			button_one.setTextColor(Color.parseColor("#ffffffff"));
+			button_one.setTextColor(Color.parseColor("#0099cd"));
 			button_one.setBackgroundResource(R.drawable.threechoice_one);
 
-			button_three.setTextColor(Color.parseColor("#ffffffff"));
+			button_three.setTextColor(Color.parseColor("#0099cd"));
 			button_three.setBackgroundResource(R.drawable.threechoice_three);
 
 		} else if (3 == item) {
@@ -142,13 +142,13 @@ public class ThreeChoicesView extends FrameLayout {
 			button_one.clearFocus();
 			button_two.clearFocus();
 
-			button_three.setTextColor(Color.parseColor("#99000000"));
+			button_three.setTextColor(Color.parseColor("#eeffffff"));
 			button_three.setBackgroundResource(R.drawable.threechoice_focus_right);
 
-			button_two.setTextColor(Color.parseColor("#ffffffff"));
+			button_two.setTextColor(Color.parseColor("#0099cd"));
 			button_two.setBackgroundResource(R.drawable.threechoice_two);
 
-			button_one.setTextColor(Color.parseColor("#ffffffff"));
+			button_one.setTextColor(Color.parseColor("#0099cd"));
 			button_one.setBackgroundResource(R.drawable.threechoice_one);
 
 		}

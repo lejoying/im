@@ -17,8 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.MapView;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.MapView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -37,7 +37,7 @@ public class NearbyView {
 	public NearbyActivity thisActivity;
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
-	
+
 	public LayoutInflater mInflater;
 
 	public RelativeLayout backView;
@@ -87,6 +87,8 @@ public class NearbyView {
 		this.mInflater = thisActivity.getLayoutInflater();
 		this.thisActivity.setContentView(R.layout.activity_nearby);
 		this.backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		RelativeLayout backMaxView = (RelativeLayout) thisActivity.findViewById(R.id.backMaxView);
+		backMaxView.setBackgroundColor(Color.parseColor("#eeffffff"));
 		this.backTitleContent = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		this.nearbyListView = (ListView) thisActivity.findViewById(R.id.nearby);
 		this.rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
@@ -99,7 +101,7 @@ public class NearbyView {
 		this.addressView = (TextView) thisActivity.findViewById(R.id.address);
 		this.sortView = (TextView) thisActivity.findViewById(R.id.sort);
 
-		this.lineView = thisActivity.findViewById(R.id.line);
+		// this.lineView = thisActivity.findViewById(R.id.line);
 		this.searChView = thisActivity.findViewById(R.id.search);
 		this.locationView = thisActivity.findViewById(R.id.location);
 		this.positionView = thisActivity.findViewById(R.id.position);
@@ -109,13 +111,14 @@ public class NearbyView {
 		int width = (int) (this.metrics.density * 48);
 
 		ImageView lineView = new ImageView(thisActivity);
-		lineView.setBackgroundColor(Color.parseColor("#aa000000"));
+		lineView.setBackgroundColor(Color.parseColor("#0099cd"));
 		int lineWidth = (int) (1 * this.metrics.density);
 		int linePadding = (int) (5 * this.metrics.density);
 		RelativeLayout.LayoutParams lineParams = new RelativeLayout.LayoutParams(lineWidth, width - linePadding * 4);
 		this.centerContainer.addView(lineView, lineParams);
 
 		RelativeLayout.LayoutParams centerContainerParams = (LayoutParams) this.centerContainer.getLayoutParams();
+//		this.centerContainer.setBackgroundColor(Color.parseColor("#380099cd"));
 		this.centerContainer.setGravity(Gravity.CENTER_VERTICAL);
 		centerContainerParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		centerContainerParams.leftMargin = (int) (this.metrics.density * 53);
@@ -125,7 +128,7 @@ public class NearbyView {
 
 		ImageView backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
 		backImageView.setImageResource(R.drawable.ab3);
-		backImageView.setColorFilter(Color.parseColor("#ffffff"));
+		backImageView.setColorFilter(Color.parseColor("#0099cd"));
 		backImageView.setAlpha(0.875f);
 		RelativeLayout.LayoutParams backImageViewParams = (LayoutParams) backImageView.getLayoutParams();
 		backImageViewParams.width = width;
@@ -137,14 +140,13 @@ public class NearbyView {
 		this.backView.setPadding(0, 0, (int) (10 * this.metrics.density), 0);
 
 		this.menuImage = new ImageView(thisActivity);
-		this.menuImage.setImageResource(R.drawable.chat_more);
-		this.menuImage.setColorFilter(Color.parseColor("#ffffff"));
+		this.menuImage.setImageResource(R.drawable.button_modifygroupname);
+		this.menuImage.setColorFilter(Color.parseColor("#0099cd"));
 		this.menuImage.setAlpha(0.875f);
 		int moreWidth = (int) (53 * this.metrics.density);
 		RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
-		int padding = (int) (12 * this.metrics.density);
-		int leftPadding = (int) (24.5 * this.metrics.density);
-		this.menuImage.setPadding(leftPadding, padding, leftPadding, padding);
+		int padding = (int) (5 * this.metrics.density);
+		this.menuImage.setPadding(padding, padding, padding, padding);
 		this.menuImage.setBackgroundResource(R.drawable.backview_background);
 		this.rightContainer.addView(this.menuImage, menuImageParams);
 

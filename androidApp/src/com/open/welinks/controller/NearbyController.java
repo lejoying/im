@@ -29,13 +29,13 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps2d.AMap.OnCameraChangeListener;
-import com.amap.api.maps2d.AMapUtils;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.LocationSource;
-import com.amap.api.maps2d.LocationSource.OnLocationChangedListener;
-import com.amap.api.maps2d.model.CameraPosition;
-import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps.AMap.OnCameraChangeListener;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.LocationSource;
+import com.amap.api.maps.LocationSource.OnLocationChangedListener;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.services.geocoder.GeocodeAddress;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
@@ -440,18 +440,20 @@ public class NearbyController {
 					mAmapLocation = amapLocation;
 					String address = mAmapLocation.getAddress();
 					log.e(address);
-					thisView.addressView.setText(address);
+
+					// thisView.addressView.setText(address);
+
 					log.e("Latitude：>>>>>>>《《" + mAmapLocation.getLatitude());
 					log.e("Longitude：>>>>>>>《《" + mAmapLocation.getLongitude());
-					mOnLocationChangedListener.onLocationChanged(amapLocation);
+					// mOnLocationChangedListener.onLocationChanged(amapLocation);
 					LatLng mLatLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
-					thisView.mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));
+					// thisView.mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));
+					thisView.mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
 					// searchNearby(amapLocation);
 					// searchNearByPolygon(0);
 				} else {
 
 				}
-
 			}
 		};
 		downloadListener = new OnDownloadListener() {
