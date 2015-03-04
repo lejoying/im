@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.Toast;
@@ -36,6 +39,7 @@ import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.LocationSource.OnLocationChangedListener;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.geocoder.GeocodeAddress;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
@@ -47,6 +51,9 @@ import com.open.lib.MyLog;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
@@ -145,7 +152,81 @@ public class NearbyController {
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
 
 		// requestMyLocation();
+		animationTop = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_beat_top);
+		animationBottom = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_beat_bottom);
+		animationTop.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				thisView.ico_map_pin.startAnimation(animationBottom);
+			}
+		});
+		animationShadowTop = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_shadow2_beat_top);
+		animationShadowBottom = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_shadow2_beat_bottom);
+		animationShadowTop.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				thisView.ico_map_pin_shadow2.startAnimation(animationShadowBottom);
+			}
+		});
+		animationShadowBottom.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				// thisView.img_btn_set_start.setVisibility(View.VISIBLE);
+				// thisView.img_btn_set_start.startAnimation(animationNearRight);
+			}
+		});
+		animationNearLeft = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_left);
+		animationNearRight = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_right);
+		animationNearLeft.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				thisView.img_btn_set_start.setVisibility(View.INVISIBLE);
+			}
+		});
 	}
+
+	public Animation animationTop;
+	public Animation animationBottom;
+	public Animation animationShadowTop;
+	public Animation animationShadowBottom;
+	public Animation animationNearLeft;
+	public Animation animationNearRight;
 
 	public LocationSource mLocationSource;
 	public OnLocationChangedListener mOnLocationChangedListener;
@@ -161,13 +242,17 @@ public class NearbyController {
 		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
 	}
 
-	public boolean loadfinish = true;
+	public boolean loadFinish = true;
 
 	public int nowpage = 0;
 
 	public RegeocodeQuery mRegeocodeQuery;
 
 	public boolean isScroll = false;
+
+	public boolean isChangeAddress = false;
+
+	public String address, title;
 
 	public void initializeListeners() {
 
@@ -177,13 +262,20 @@ public class NearbyController {
 			public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
 				if (rCode == 0) {
 					if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
-						String address = result.getRegeocodeAddress().getFormatAddress();
-						log.e(address);
+						address = result.getRegeocodeAddress().getFormatAddress();
+						log.e("onRegeocodeSearched:" + address);
 						thisView.addressView.setText(address);
-						// locationView.setText("当前地址：" + address);
+						isChangeAddress = false;
+						thisView.ico_map_pin.startAnimation(animationTop);
+						thisView.ico_map_pin_shadow2.startAnimation(animationShadowTop);
+						List<PoiItem> pois = result.getRegeocodeAddress().getPois();
+						if (pois != null && pois.size() > 0) {
+							title = pois.get(0).getTitle();
+						} else {
+							title = result.getRegeocodeAddress().getStreetNumber().getStreet();
+						}
 					}
 				}
-
 			}
 
 			@Override
@@ -194,7 +286,7 @@ public class NearbyController {
 						LatLng mLatLng = new LatLng(point.getLatLonPoint().getLatitude(), point.getLatLonPoint().getLongitude());
 						thisView.mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
 						String address = point.getFormatAddress();
-						log.e(address);
+						log.e("onGeocodeSearched:" + address);
 						// locationView.setText("当前地址：" + address);
 					}
 				}
@@ -212,7 +304,16 @@ public class NearbyController {
 
 			@Override
 			public void onCameraChange(CameraPosition cameraPosition) {
+				next();
+			}
 
+			public void next() {
+				if (isChangeAddress == false) {
+					isChangeAddress = true;
+					if (thisView.img_btn_set_start.getVisibility() == View.VISIBLE) {
+						thisView.img_btn_set_start.startAnimation(animationNearLeft);
+					}
+				}
 			}
 		};
 		mLocationSource = new LocationSource() {
@@ -253,8 +354,8 @@ public class NearbyController {
 				int lastItemid = thisView.nearbyListView.getLastVisiblePosition();
 				if ((lastItemid + 1) == totalItemCount) {
 					if (totalItemCount > 0) {
-						if (loadfinish) {
-							loadfinish = false;
+						if (loadFinish) {
+							loadFinish = false;
 							searchNearByPolygon(nowpage);
 						}
 					}
@@ -319,11 +420,33 @@ public class NearbyController {
 					// params.topMargin = (int) (288 * thisView.metrics.density);
 					// }
 				} else if (view.equals(thisView.sortView)) {
-					Toast.makeText(thisActivity, "排序筛选", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(thisActivity, "排序筛选", Toast.LENGTH_SHORT).show();
+					thisView.changePopupWindow(false);
 				} else if (view.equals(thisView.searChView)) {
 					Toast.makeText(thisActivity, "搜索", Toast.LENGTH_SHORT).show();
 				} else if (view.equals(thisView.locationView)) {
 					mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
+				} else if (view.equals(thisView.ico_map_pin2)) {
+					if (thisView.img_btn_set_start.getVisibility() == View.VISIBLE) {
+						thisView.img_btn_set_start.startAnimation(animationNearLeft);
+					} else {
+						thisView.img_btn_set_start.setVisibility(View.VISIBLE);
+						thisView.img_btn_set_start.startAnimation(animationNearRight);
+					}
+				} else if (view.equals(thisView.background)) {
+					thisView.changePopupWindow(false);
+				} else if (view.equals(thisView.singleButton)) {
+					thisView.changePopupWindow(false);
+					thisView.img_btn_set_start.setVisibility(View.VISIBLE);
+					thisView.img_btn_set_start.startAnimation(animationNearRight);
+				} else if (view.equals(thisView.img_btn_set_start)) {
+					Alert.createInputDialog(thisActivity).setTitle("请输入地址备注信息").setInputText(title).setInputHint("请输入地址备注").setDescription("当前位置：" + address).setOnConfirmClickListener(new OnDialogClickListener() {
+
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+
+						}
+					}).show();
 				}
 			}
 		};
@@ -336,7 +459,7 @@ public class NearbyController {
 					mTableId = Constant.ACCOUNTTABLEID;
 					thisView.NearbyLayoutID = R.layout.nearby_item_account;
 					nowpage = 0;
-					loadfinish = true;
+					loadFinish = true;
 					thisView.nearbyListView.setSelection(0);
 					searchNearByPolygon(nowpage);
 				} else if (position == 2) {
@@ -383,7 +506,7 @@ public class NearbyController {
 							}
 							if (mCloudItems.size() > 0) {
 								nowpage++;
-								loadfinish = true;
+								loadFinish = true;
 								log.e(mCloudItems.size() + "---nowpage1:" + nowpage);
 							} else {
 								log.e(mCloudItems.size() + "---nowpage2:" + nowpage);
@@ -440,9 +563,7 @@ public class NearbyController {
 					mAmapLocation = amapLocation;
 					String address = mAmapLocation.getAddress();
 					log.e(address);
-
 					// thisView.addressView.setText(address);
-
 					log.e("Latitude：>>>>>>>《《" + mAmapLocation.getLatitude());
 					log.e("Longitude：>>>>>>>《《" + mAmapLocation.getLongitude());
 					// mOnLocationChangedListener.onLocationChanged(amapLocation);
@@ -474,6 +595,13 @@ public class NearbyController {
 		thisView.sortView.setOnClickListener(this.mOnClickListener);
 		thisView.searChView.setOnClickListener(this.mOnClickListener);
 		thisView.locationView.setOnClickListener(this.mOnClickListener);
+		thisView.img_btn_set_start.setOnClickListener(this.mOnClickListener);
+		thisView.ico_map_pin2.setOnClickListener(this.mOnClickListener);
+		thisView.background.setOnClickListener(this.mOnClickListener);
+		thisView.dialogContainer.setOnClickListener(this.mOnClickListener);
+		if (thisView.singleButton != null) {
+			thisView.singleButton.setOnClickListener(mOnClickListener);
+		}
 	}
 
 	public void searchNearby(AMapLocation amapLocation) {

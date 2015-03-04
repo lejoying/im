@@ -106,7 +106,32 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
 
+            <RelativeLayout
+                android:id="@+id/relativeLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/ico_map_pin"
+                android:layout_alignTop="@+id/ico_map_pin" >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="26dp" >
+
+                    <TextView
+                        android:id="@+id/img_btn_set_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_usually_address_background"
+                        android:padding="3dp"
+                        android:text="    设置为常用地址"
+                        android:textColor="#0099cd"
+                        android:visibility="gone" />
+                </RelativeLayout>
+            </RelativeLayout>
+
             <ImageView
+                android:id="@+id/ico_map_pin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -114,6 +139,15 @@
                 android:src="@drawable/ico_map_pin" />
 
             <ImageView
+                android:id="@+id/ico_map_pin2"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:contentDescription="@null"
+                android:translationY="-20dp" />
+
+            <ImageView
+                android:id="@+id/ico_map_pin_shadow1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -121,9 +155,11 @@
                 android:src="@drawable/ico_map_pin_shadow1" />
 
             <ImageView
+                android:id="@+id/ico_map_pin_shadow2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_alignLeft="@+id/relativeLayout1"
+                android:layout_alignTop="@+id/relativeLayout1"
                 android:contentDescription="@null"
                 android:src="@drawable/ico_map_pin_shadow2" />
         </RelativeLayout>
