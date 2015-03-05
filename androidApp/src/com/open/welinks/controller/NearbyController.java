@@ -402,11 +402,11 @@ public class NearbyController {
 				} else if (view.equals(thisView.positionView)) {
 					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
 					int topMarigin = params.topMargin;
-					if (topMarigin == (int) (88 * thisView.metrics.density)) {
+					if (topMarigin == (int) (84 * thisView.metrics.density)) {
 						params.topMargin = (int) (288 * thisView.metrics.density);
 						// thisView.lineView.setVisibility(View.GONE);
 					} else {
-						params.topMargin = (int) (88 * thisView.metrics.density);
+						params.topMargin = (int) (84 * thisView.metrics.density);
 						// thisView.lineView.setVisibility(View.VISIBLE);
 					}
 					thisView.nearbyListView.setLayoutParams(params);

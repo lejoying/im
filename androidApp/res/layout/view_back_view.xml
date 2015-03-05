@@ -9,6 +9,13 @@
         android:layout_height="48dp"
         android:background="@color/card_color" >
 
+        <ImageView
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:visibility="gone"
+            android:background="#380099cd" />
+
         <RelativeLayout
             android:id="@+id/backView"
             android:layout_width="wrap_content"
