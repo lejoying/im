@@ -207,6 +207,9 @@ public class NearbyView {
 	public ListLoopCallback loopCallback;
 
 	public class ListLoopCallback extends LoopCallback {
+
+		public int state;// T B
+
 		public ListLoopCallback(OpenLooper openLooper) {
 			openLooper.super();
 		}
@@ -225,7 +228,11 @@ public class NearbyView {
 			if (nextPosition <= currentPosition) {
 				currentPosition = nextPosition;
 				isStop = true;
-				reflashFirst();
+				if (loopCallback.state == status.T) {
+					reflashFirst();
+				} else if (loopCallback.state == status.B) {
+					nextPageData();
+				}
 			}
 			progressView.setTranslationX(currentPosition);
 		} else {
@@ -238,12 +245,19 @@ public class NearbyView {
 		}
 		if (isStop) {
 			openLooper.stop();
+			isTranslate = false;
 			log.e("停止了");
 		}
 	}
 
 	public void reflashFirst() {
 		// TODO 获取最新数据
+		log.e("获取最新数据");
+	}
+
+	public void nextPageData() {
+		// TODO 获取下一页数据
+		log.e("获取下一页数据");
 	}
 
 	public float transleteSpeed = 3f;
@@ -259,107 +273,6 @@ public class NearbyView {
 
 	public float currentPosition;
 	public float nextPosition;
-
-	public void fillData() {
-
-		nearbyAdapter = new NearbyAdapter();
-		try {
-			byte[] bytes = StreamParser.parseToByteArray(thisActivity.getAssets().open("testhot.js"));
-			String result = new String(bytes);
-			this.hots = gson.fromJson(result, new TypeToken<ArrayList<HotContent>>() {
-			}.getType());
-			nearbyListView.setAdapter(nearbyAdapter);
-			this.nearbyListView.setOnTouchListener(new OnTouchListener() {
-
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					int id = event.getAction();
-					if (id == MotionEvent.ACTION_DOWN && isTranslate) {
-						openLooper.stop();
-						touch_pre_x = event.getX();
-						touch_pre_y = event.getY();
-						percent = 0;
-						currentPosition = -viewManage.screenWidth;
-						nextPosition = -viewManage.screenWidth;
-					} else if (id == MotionEvent.ACTION_MOVE && isTranslate) {
-						float x = event.getX();
-						float y = event.getY();
-						if (touch_pre_y <= y) {
-							if (percent < 0 && y - touch_pre_y > 10) {
-								isTranslate = false;
-								nextPosition = -viewManage.screenWidth;
-								openLooper.start();
-							}
-							float Δy = y - touch_pre_y;
-							touch_pre_x = x;
-							touch_pre_y = y;
-							View c = nearbyListView.getChildAt(0);
-							int firstVisiblePosition = nearbyListView.getFirstVisiblePosition();
-							int top = c.getTop();
-							int topDistance = -top + firstVisiblePosition * c.getHeight();
-							// log.e(nearbyListView.getScrollY() + ":y--" + a + ",,,," + c.getHeight());
-							if (topDistance == 0) {
-								// log.e("到顶部了，开始滑动");
-								percent += Δy;
-								currentPosition = (float) (-viewManage.screenWidth + percent * 2);
-								if (currentPosition >= 0) {
-									currentPosition = 0;
-								}
-								progressView.setTranslationX(currentPosition);
-							}
-						} else {
-							float Δy = y - touch_pre_y;
-							if (percent > 0 && y - touch_pre_y < -10) {
-								// isTranslate = false;
-								// nextPosition = -viewManage.screenWidth;
-								// openLooper.start();
-								percent += Δy;
-								currentPosition = (float) (-viewManage.screenWidth + percent * 2);
-								if (currentPosition >= 0) {
-									currentPosition = 0;
-								}
-								progressView.setTranslationX(currentPosition);
-								return false;
-							}
-
-							touch_pre_x = x;
-							touch_pre_y = y;
-							View c = nearbyListView.getChildAt(0);
-							int firstVisiblePosition = nearbyListView.getFirstVisiblePosition();
-							int top = c.getTop();
-							int buttomDistance = -top + firstVisiblePosition * c.getHeight() + nearbyListView.getHeight();
-							int totalHeight = c.getHeight() * nearbyListView.getCount();
-							log.e(buttomDistance + "--" + totalHeight);
-							if (buttomDistance == totalHeight - 2) {
-								log.e("qin ,到底了。");
-								percent += Δy;
-								currentPosition = (float) (-viewManage.screenWidth + Math.abs(percent) * 2);
-								if (currentPosition >= 0) {
-									currentPosition = 0;
-								}
-								progressView.setTranslationX(currentPosition);
-							}
-						}
-					} else if (id == MotionEvent.ACTION_UP) {
-						log.e("ACTION_UP");
-						if (isTranslate) {
-							float distance = Math.abs(percent) * 2;
-							if (distance > viewManage.screenWidth / 2) {
-								nextPosition = 0;
-							} else {
-								nextPosition = -viewManage.screenWidth;
-							}
-							openLooper.start();
-						}
-						isTranslate = true;
-					}
-					return false;
-				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public class TouchStatus {
 		public int None = 0, Down = 1, T = 2, B = 3, Up = 0;
@@ -390,7 +303,7 @@ public class NearbyView {
 						percent = 0;
 						currentPosition = -viewManage.screenWidth;
 						nextPosition = -viewManage.screenWidth;
-						isTranslate = false;
+						// isTranslate = false;
 					} else if (id == MotionEvent.ACTION_MOVE) {
 						float x = event.getX();
 						float y = event.getY();
@@ -402,18 +315,17 @@ public class NearbyView {
 							int topDistance = -top + firstVisiblePosition * firstViewHeight;
 							int buttomDistance = topDistance + nearbyListView.getHeight();
 							int totalHeight = firstViewHeight * nearbyListView.getCount();
-							log.e(buttomDistance + ",,,,," + totalHeight);
 							MarginLayoutParams params = (MarginLayoutParams) nearbyListView.getLayoutParams();
 							int topMarigin = params.topMargin;
-							int a = 2;
+							int error = 2;
 							if (topMarigin == (int) (84 * thisView.metrics.density)) {
-								a = 4;
+								error = 4;
 							} else {
-								a = 2;
+								error = 2;
 							}
 							if (topDistance == 0) {
 								status.state = status.T;
-							} else if (buttomDistance == totalHeight - a) {
+							} else if (buttomDistance == totalHeight - error) {
 								status.state = status.B;
 							}
 						} else if (status.state == status.T || status.state == status.B) {
@@ -439,15 +351,17 @@ public class NearbyView {
 							progressView.setTranslationX(currentPosition);
 						}
 					} else if (id == MotionEvent.ACTION_UP) {
-						log.e("ACTION_UP");
 						float distance = Math.abs(percent) * 2;
 						if (distance > viewManage.screenWidth / 2) {
 							nextPosition = 0;
 						} else {
 							nextPosition = -viewManage.screenWidth;
 						}
-						openLooper.start();
 						isTranslate = false;
+						openLooper.start();
+						loopCallback.state = status.state;
+						status.state = status.Up;
+						// isTranslate = false;
 					}
 					return isTranslate;
 				}

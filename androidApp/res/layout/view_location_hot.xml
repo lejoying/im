@@ -5,7 +5,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="126dp"
+        android:layout_height="114dp"
         android:background="#99ffffff" >
 
         <TextView
@@ -19,6 +19,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="7dp"
+            android:lineSpacingMultiplier="1.2"
             android:text=""
             android:textColor="#99000000"
             android:textSize="14sp" />
@@ -35,8 +36,8 @@
             android:layout_width="160dp"
             android:layout_height="47dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="9dp"
-            android:layout_marginLeft="12dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="9dp"
             android:scaleX="1.1"
             android:scaleY="1.1" >
 
@@ -74,10 +75,10 @@
 
         <RelativeLayout
             android:layout_width="91dp"
-            android:layout_height="20dp"
+            android:layout_height="16dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="0dp"
             android:layout_marginRight="10dp" >
 
             <TextView
@@ -94,8 +95,8 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
                 android:background="#B9B6AF"
                 android:visibility="visible" />
 

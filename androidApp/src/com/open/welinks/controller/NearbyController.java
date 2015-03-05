@@ -144,6 +144,9 @@ public class NearbyController {
 		// thisView.mAMap.getUiSettings().setScaleControlsEnabled(false);
 		thisView.mAMap.setMyLocationEnabled(true);
 
+		thisView.mAMap.getUiSettings().setRotateGesturesEnabled(false);
+		thisView.mAMap.getUiSettings().setTiltGesturesEnabled(false);
+
 		thisView.mAMap.setOnCameraChangeListener(mOnCameraChangeListener);
 
 		mGeocodeSearch = new GeocodeSearch(thisActivity);
@@ -403,7 +406,7 @@ public class NearbyController {
 					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
 					int topMarigin = params.topMargin;
 					if (topMarigin == (int) (84 * thisView.metrics.density)) {
-						params.topMargin = (int) (288 * thisView.metrics.density);
+						params.topMargin = (int) (304 * thisView.metrics.density);
 						// thisView.lineView.setVisibility(View.GONE);
 					} else {
 						params.topMargin = (int) (84 * thisView.metrics.density);
