@@ -1,6 +1,8 @@
 package com.open.welinks.view;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +19,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -378,7 +380,7 @@ public class NearbyView {
 		public String content;
 		public String totalScore;
 		public String time;
-		public String distance;
+		public double distance;
 
 	}
 
@@ -431,7 +433,16 @@ public class NearbyView {
 				} else {
 					holder.imageCountView.setText("");
 				}
-				holder.distanceView.setText(hotContent.distance + "km");
+
+				String distance = new BigDecimal(hotContent.distance, new MathContext(4)).toPlainString();
+				if (distance.length() == 1) {
+					distance += ".000";
+				}
+				if (distance.length() == 2) {
+					distance += ".00";
+				}
+				holder.distanceView.setText(distance + "km");
+
 				if (position % 7 == 0) {
 					imageLoader.displayImage("drawable://" + R.drawable.a1, holder.imageContentView);
 				} else if (position % 7 == 1) {
