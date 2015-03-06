@@ -16,6 +16,7 @@ serverSetting.LBS.NEARBY = "http://api.map.baidu.com/geosearch/v3/nearby";
 serverSetting.LBS.KEY = "0cfd7855ab036b58c865e7b0bde42146";
 serverSetting.LBS.ACCOUNTTABLEID = "53eacbe4e4b0693fbf5fd13b";
 serverSetting.LBS.GROUPTABLEID = "53eacbb9e4b0693fbf5fd0f6";
+serverSetting.LBS.SHARESTABLEID = "54f520e3e4b0ff22e1fc52d3";
 serverSetting.LBS.DATA_CREATE = "http://yuntuapi.amap.com/datamanage/data/create";
 serverSetting.LBS.DATA_UPDATA = "http://yuntuapi.amap.com/datamanage/data/update";
 serverSetting.LBS.DATA_DELETE = "http://yuntuapi.amap.com/datamanage/data/delete";

@@ -94,7 +94,8 @@ public class ShareReleaseImageTextController {
 
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
-	public String type, gid, gtype;
+	public String type, gid, gtype, address;
+	public double longitude, latitude;
 
 	public ShareMessage shareMessage;
 
@@ -107,6 +108,9 @@ public class ShareReleaseImageTextController {
 		type = intent.getStringExtra("type");
 		gid = intent.getStringExtra("gid");
 		sid = intent.getStringExtra("sid");
+		address = intent.getStringExtra("address");
+		longitude = intent.getDoubleExtra("longitude", 0);
+		latitude = intent.getDoubleExtra("latitude", 0);
 		currentSelectedGroup = gid;
 		// Initialize the image directory
 		sdcardImageFolder = taskManageHolder.fileHandler.sdcardImageFolder;
@@ -414,6 +418,7 @@ public class ShareReleaseImageTextController {
 				shareMessage.sid = sid;
 				shareMessage.phone = currentUser.phone;
 				shareMessage.nickName = currentUser.nickName;
+				shareMessage.head = currentUser.head;
 				shareMessage.time = time;
 				shareMessage.status = "sending";
 
@@ -473,11 +478,16 @@ public class ShareReleaseImageTextController {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("nickName", currentUser.nickName);
+		params.addBodyParameter("head", currentUser.head);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentSelectedGroup);
 		params.addBodyParameter("ogsid", gsid);
 		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
+		if (longitude != 0 && latitude != 0) {
+			params.addBodyParameter("location", longitude + "," + latitude);
+			params.addBodyParameter("address", address);
+		}
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		responseHandlers.share_sendShareCallBack.gid = currentSelectedGroup;

@@ -367,7 +367,6 @@ public class NearbyController {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void onCloudSearched(CloudResult result, int rCode) {
-				log.e("*************" + rCode);
 				if (rCode == 0) {
 					if (result != null && result.getQuery() != null) {
 						if (result.getQuery().equals(mQuery)) {
@@ -375,8 +374,6 @@ public class NearbyController {
 							if (mAmapLocation == null) {
 								return;
 							}
-							log.e("Latitude：>>>>>>>" + mAmapLocation.getLatitude());
-							log.e("Longitude：>>>>>>>" + mAmapLocation.getLongitude());
 							LatLng point = new LatLng(mAmapLocation.getLatitude(), mAmapLocation.getLongitude());
 							if (nowpage == 0) {
 								mInfomations.clear();
@@ -384,9 +381,7 @@ public class NearbyController {
 							if (mCloudItems.size() > 0) {
 								nowpage++;
 								loadfinish = true;
-								log.e(mCloudItems.size() + "---nowpage1:" + nowpage);
 							} else {
-								log.e(mCloudItems.size() + "---nowpage2:" + nowpage);
 							}
 							for (CloudItem item : mCloudItems) {
 								Map<String, Object> map = new HashMap<String, Object>();
@@ -435,14 +430,10 @@ public class NearbyController {
 			public void onLocationChanged(AMapLocation amapLocation) {
 				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
 				mLocationManagerProxy.destroy();
-				log.e("。。。。。。。。。。。。。。。");
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
 					mAmapLocation = amapLocation;
 					String address = mAmapLocation.getAddress();
-					log.e(address);
 					thisView.addressView.setText(address);
-					log.e("Latitude：>>>>>>>《《" + mAmapLocation.getLatitude());
-					log.e("Longitude：>>>>>>>《《" + mAmapLocation.getLongitude());
 					mOnLocationChangedListener.onLocationChanged(amapLocation);
 					LatLng mLatLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
 					thisView.mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));

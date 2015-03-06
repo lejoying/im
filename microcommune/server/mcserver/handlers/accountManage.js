@@ -910,44 +910,48 @@ accountManage.getuserinfomation = function (data, response) {
             phone: phone
         };
         db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "获取用户信息失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-                console.error(error);
-                return;
-            } else if (results.length == 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "获取用户信息失败",
-                    "失败原因": "用户不存在"
-                }));
-                response.end();
-            } else {
-                var accountData = results.pop().account.data;
-                var account = {
-                    ID: accountData.ID,
-                    phone: accountData.phone,
-                    nickName: accountData.nickName,
-                    mainBusiness: accountData.mainBusiness,
-                    head: accountData.head,
-                    sex: accountData.sex,
-                    age: accountData.age,
-                    lastLoginTime: accountData.lastlogintime,
-                    userBackground: accountData.userBackground
+                if (error) {
+                    response.write(JSON.stringify({
+                        "提示信息": "获取用户信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                    console.error(error);
+                    return;
+                } else if (results.length == 0) {
+                    response.write(JSON.stringify({
+                        "提示信息": "获取用户信息失败",
+                        "失败原因": "用户不存在"
+                    }));
+                    response.end();
+                } else {
+                    var accountData = results.pop().account.data;
+                    var account = {
+                            ID: accountData.ID,
+                            phone: accountData.phone,
+                            nickName: accountData.nickName,
+                            mainBusiness: accountData.mainBusiness,
+                            head: accountData.head,
+                            sex: accountData.sex,
+                            age: accountData.age,
+                            lastLoginTime: accountData.lastlogintime,
+                            userBackground: accountData.userBackground,
+                            commonUsedLocation: accountData.commonUsedLocation || []
 //                    accessKey: accessKey,
 //                    flag: 0
-                };
-                response.write(JSON.stringify({
-                    "提示信息": "获取用户信息成功",
-                    userInformation: {
-                        currentUser: account
-                    }
-                }));
-                response.end();
+                        }
+                        ;
+                    response.write(JSON.stringify({
+                        "提示信息": "获取用户信息成功",
+                        userInformation: {
+                            currentUser: account
+                        }
+                    }));
+                    response.end();
+                }
             }
-        });
+        )
+        ;
     }
 }
 function ResponseData(responseContent, response) {
@@ -968,7 +972,7 @@ accountManage.modifylocation = function (data, response) {
     var longitude = data.longitude;
     var latitude = data.latitude;
     var address = data.address;
-    var arr = [phone, accessKey, longitude, latitude, address];
+    var arr = [phone, accessKey, longitude, latitude];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         modifyAccountNode(phone, longitude, latitude);
     }
@@ -1019,6 +1023,7 @@ accountManage.modifylocation = function (data, response) {
                         console.error(err);
                         return;
                     } else {
+                        checkLbsAccount(accountData);
                         response.write(JSON.stringify({
                             "提示信息": "修改用户信息成功",
                             account: accountData
@@ -1028,8 +1033,141 @@ accountManage.modifylocation = function (data, response) {
                 });
             }
         });
+        function checkLbsAccount(accountData) {
+            try {
+                ajax.ajax({
+                    type: "POST",
+                    url: serverSetting.LBS.DATA_SEARCH,
+                    data: {
+                        key: serverSetting.LBS.KEY,
+                        tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                        filter: "phone:" + accountData.phone
+                    }, success: function (info) {
+                        var info = JSON.parse(info);
+                        if (info.status == 1 && info.count >= 1) {
+                            var id = info.datas[0]._id;
+                            modifyLbsAccount(id);
+                            console.log("success--" + info._id)
+                        } else {
+                            createLbsAccount(accountData);
+                            console.log("check error--" + info.status)
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+                return;
+            }
+        }
+
+        function createLbsAccount(accountData) {
+            try {
+                ajax.ajax({
+                    type: "POST",
+                    url: serverSetting.LBS.DATA_CREATE,
+                    data: {
+                        key: serverSetting.LBS.KEY,
+                        tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                        loctype: 2,
+                        data: JSON.stringify({
+                            _name: accountData.nickName,
+                            _location: longitude + latitude,
+                            _address: address,
+                            sex: accountData.sex,
+                            mainBusiness: accountData.mainBusiness,
+                            lastlogintime: accountData.lastlogintime,
+                            phone: accountData.phone,
+                            head: accountData.head
+                        })
+                    }, success: function (info) {
+                        var info = JSON.parse(info);
+                        if (info.status == 1 && info.count >= 1) {
+                            var id = info.datas[0]._id;
+                            console.log("success--" + info._id)
+                        } else {
+                            console.log("check error--" + info.status)
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+                return;
+            }
+        }
+
+        function modifyLbsAccount(id) {
+            try {
+                ajax.ajax({
+                    type: "POST",
+                    url: serverSetting.LBS.DATA_UPDATA,
+                    data: {
+                        key: serverSetting.LBS.KEY,
+                        tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                        data: JSON.stringify({
+                            _id: id,
+                            _location: longitude + latitude,
+                            _address: address
+                        })
+                    }, success: function (info) {
+                        var info = JSON.parse(info);
+                        if (info.status == 1) {
+                            console.log("success--" + info._id)
+                        } else {
+                            console.log("modify error--" + info.status)
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+                return;
+            }
+        }
     }
 
+}
+
+accountManage.modifycommonusedlocation = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var commonusedlocation = data.commonusedlocation;
+    if (verifyEmpty.verifyEmpty(commonusedlocation, phone)) {
+        modify();
+    }
+    function modify() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            "SET account.commonUsedLocation={common}",
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone,
+            common: commonusedlocation
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户常用位置信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户常用位置信息失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户常用位置信息成功"
+                }));
+                response.end();
+            }
+        });
+    }
 }
 function getNickName() {
     var nickNames = ["微笑的泪滴", "夏末的回忆。", "随风而逝的、秋", "泪中的、苦涩", "微笑的孤独", "骨子里的淡漠", "依、痛彻心扉", "唯美小王子", "素颜繁华梦",

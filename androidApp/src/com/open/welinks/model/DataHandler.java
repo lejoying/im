@@ -237,7 +237,7 @@ public class DataHandler {
 			data.event.userEventsMap.clear();
 
 			data.localStatus.localData.currentSelectedGroup = "";
-			data.localStatus.localData.currentSelectedSquare = "";
+			// data.localStatus.localData.currentSelectedSquare = "";
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -474,6 +474,9 @@ public class DataHandler {
 		params.addBodyParameter("ogsid", gsid);
 		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("nickName", currentUser.nickName);
+		params.addBodyParameter("head", currentUser.head);
+		// params.addBodyParameter("location", currentUser.longitude + "," + currentUser.latitude);
+		// params.addBodyParameter("address", currentUser.address);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();

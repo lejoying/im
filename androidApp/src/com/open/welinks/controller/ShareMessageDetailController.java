@@ -585,10 +585,13 @@ public class ShareMessageDetailController {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("nickName", currentUser.nickName);
+		params.addBodyParameter("head", currentUser.head);
 		params.addBodyParameter("gid", key);
 		params.addBodyParameter("ogsid", gsid);
 		params.addBodyParameter("sid", sid);
-		params.addBodyParameter("nickName", currentUser.nickName);
+		// params.addBodyParameter("location", currentUser.longitude + "," + currentUser.latitude);
+		// params.addBodyParameter("address", currentUser.address);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();

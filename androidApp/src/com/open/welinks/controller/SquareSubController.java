@@ -50,8 +50,8 @@ public class SquareSubController {
 
 	public void getLocation() {
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
-		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
 		mLocationManagerProxy.setGpsEnable(true);
+		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 1000, mAMapLocationListener);
 	}
 
 	public View onTouchDownView;
@@ -83,10 +83,6 @@ public class SquareSubController {
 				mLocationManagerProxy.destroy();
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
 					mAmapLocation = amapLocation;
-					log.e("Latitude：>>>>>>>>**************《《" + mAmapLocation.getLatitude());
-					log.e("Longitude：>>>>>>>**************《《" + mAmapLocation.getLongitude());
-					log.e("Longitude：>>>>>>>**************《《" + mAmapLocation.getProvince() + mAmapLocation.getCity());
-					log.e("Longitude：>>>>>>>**************《《" + mAmapLocation.getAddress());
 					thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
 					// searchNearby(amapLocation);
 					// searchNearByPolygon(0);
@@ -177,5 +173,9 @@ public class SquareSubController {
 		// isTouchDown = false;
 		onTouchDownView = null;
 		isTouchDown = false;
+	}
+
+	public void onDestroy() {
+
 	}
 }

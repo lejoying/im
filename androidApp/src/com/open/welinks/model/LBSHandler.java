@@ -81,7 +81,7 @@ public class LBSHandler {
 			data._id = id;
 			data._name = user.nickName;
 			data._location = user.longitude + "," + user.latitude;
-			data._address = viewManage.mainView.thisController.userAddress;
+			data._address = user.address;
 			data.phone = user.phone;
 			data.sex = user.sex;
 			data.head = user.head;

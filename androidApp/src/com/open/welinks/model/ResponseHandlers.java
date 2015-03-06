@@ -282,7 +282,7 @@ public class ResponseHandlers {
 				user.longitude = response.account.longitude;
 				user.lastLoginTime = response.account.lastLoginTime;
 				data.userInformation.isModified = true;
-				viewManage.mainView.thisController.chackLBSAccount();
+				// viewManage.mainView.thisController.chackLBSAccount();
 			} else {
 				log.e(ViewManage.getErrorLineNumber() + "修改用户信息失败---" + response.失败原因);
 			}

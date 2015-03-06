@@ -94,8 +94,6 @@ public class Data {
 
 			public String currentSelectedGroup = "";
 			public String currentSelectedGroupBoard = "";
-			public String currentSelectedSquare = "";
-			public String currentSelectedSquareBoard = "";
 
 			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
 			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();
@@ -145,12 +143,19 @@ public class Data {
 			public String lastLoginTime;
 			public String longitude;
 			public String latitude;
+			public String address;
 
 			public String groupsSequenceString;
 			public String circlesOrderString;
 
 			public List<String> blackList;
 			public List<String> faceList;
+			public List<Location> commonUsedLocation;
+
+			public class Location {
+				public double longitude, latitude;
+				public String address, city;
+			}
 		}
 
 		public LocalConfig localConfig;
@@ -302,6 +307,8 @@ public class Data {
 			public String head;
 			public long time;
 			public int totalScore;
+
+			public int distance;
 			// public ArrayList<String> praiseusers = new ArrayList<String>();
 			public HashMap<String, Score> scores = new HashMap<String, Score>();
 			public List<Comment> comments = new ArrayList<Comment>();

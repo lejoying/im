@@ -96,7 +96,7 @@ public class MainController {
 	public CloudSearch mCloudSearch;
 	public ArrayList<CloudItem> mCloudItems;
 	public Query mQuery;
-	public LatLng mLatLng;
+	// public LatLng mLatLng;
 
 	public OnCloudSearchListener mCloudSearchListener;
 	public OnClickListener mOnClickListener;
@@ -117,7 +117,6 @@ public class MainController {
 	Gson gson = new Gson();
 
 	public String userPhone;
-	public String userAddress;
 
 	public boolean isExit = false;
 
@@ -193,7 +192,10 @@ public class MainController {
 	}
 
 	public void onDestroy() {
+		mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+		mLocationManagerProxy.destroy();
 		thisView.messagesSubView.onDestroy();
+		thisView.squareSubView.thisController.onDestroy();
 
 	}
 
@@ -325,12 +327,11 @@ public class MainController {
 
 			@Override
 			public void onLocationChanged(AMapLocation aMapLocation) {
-				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-				mLocationManagerProxy.destroy();
 				if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0) {
-					mLatLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-					searchNearBySquare();
-					modifyLocation(aMapLocation);
+					data.userInformation.currentUser.address = aMapLocation.getAddress();
+					data.userInformation.currentUser.latitude = String.valueOf(aMapLocation.getLatitude());
+					data.userInformation.currentUser.longitude = String.valueOf(aMapLocation.getLongitude());
+					modifyLocation();
 				}
 
 			}
@@ -354,7 +355,7 @@ public class MainController {
 									map.put("location", item.getLatLonPoint());
 									map.put("name", item.getTitle());
 									map.put("address", item.getSnippet());
-									map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
+									// map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
 									Iterator<?> iter = item.getCustomfield().entrySet().iterator();
 									while (iter.hasNext()) {
 										Entry<?, ?> entry = (Entry<?, ?>) iter.next();
@@ -405,8 +406,8 @@ public class MainController {
 
 	public void requestLocation() {
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
-		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
 		mLocationManagerProxy.setGpsEnable(true);
+		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, 60 * 1000 * 10, 1000, mAMapLocationListener);
 	}
 
 	public void searchNearBySquare() {
@@ -452,27 +453,26 @@ public class MainController {
 			group2.currentBoard = (String) map.get("sid");
 			if (map.get("conver") != null) {
 				group2.cover = (String) map.get("conver");
-				if (data.localStatus.localData.currentSelectedSquare.equals(group2.gid + "")) {
-					// thisView.squareSubView.setConver();
-				}
+				// if (data.localStatus.localData.currentSelectedSquare.equals(group2.gid + "")) {
+				// // thisView.squareSubView.setConver();
+				// }
 			}
 		}
 
 		data.relationship.isModified = true;
 	}
 
-	public void modifyLocation(AMapLocation aMapLocation) {
+	public void modifyLocation() {
 		data = parser.check();
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("longitude", String.valueOf(aMapLocation.getLongitude()));
-		params.addBodyParameter("latitude", String.valueOf(aMapLocation.getLatitude()));
-		params.addBodyParameter("address", aMapLocation.getAddress());
+		params.addBodyParameter("longitude", data.userInformation.currentUser.longitude);
+		params.addBodyParameter("latitude", data.userInformation.currentUser.latitude);
+		params.addBodyParameter("address", data.userInformation.currentUser.address);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
-		userAddress = aMapLocation.getAddress();
 	}
 
 	public void chackLBSAccount() {
@@ -490,7 +490,7 @@ public class MainController {
 		LBSAccountData data = new LBSAccountData();
 		data._name = user.nickName;
 		data._location = user.longitude + "," + user.latitude;
-		data._address = userAddress;
+		data._address = this.data.userInformation.currentUser.address;
 		data.phone = user.phone;
 		data.sex = user.sex;
 		data.head = user.head;
@@ -513,7 +513,7 @@ public class MainController {
 		data._id = id;
 		data._name = user.nickName;
 		data._location = user.longitude + "," + user.latitude;
-		data._address = userAddress;
+		data._address = this.data.userInformation.currentUser.address;
 		data.phone = user.phone;
 		data.sex = user.sex;
 		if (user.age != null && !"".equals(user.age)) {
