@@ -854,9 +854,12 @@ accountManage.modify = function (data, response) {
 function setAllAccountToLbsData() {
     var query = [
         "MATCH (account:Account)",
+        "WHERE account.status={status}",
         "RETURN account"
     ].join("\n");
-    var params = {};
+    var params = {
+        status: "active"
+    };
     db.query(query, params, function (error, results) {
         if (error) {
             console.error(error);
@@ -890,7 +893,11 @@ function checkAccountIsExists(account) {
                     var pois = info.datas;
                     for (var index in pois) {
                         var poi = pois[index];
-                        ids = ids + "," + poi._id;
+                        if(ids==""){
+                            ids = poi._id;
+                        }else{
+                            ids = ids + "," + poi._id;
+                        }
                     }
                     deleteAccountLbsData(account, ids);
                 }
@@ -902,13 +909,104 @@ function checkAccountIsExists(account) {
 }
 
 function createAccountLbsData(account) {
-
+    var addressLocation = (account.longitude ? account.longitude : "104.394729")+","+(account.latitude ? account.latitude : "31.125698");
+    ajax.ajax({
+        type: "POST",
+        url: serverSetting.LBS.DATA_CREATE,
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.ACCOUNTTABLEID,
+            loctype: 1,
+            data: JSON.stringify({
+                _name: account.nickName,
+                _location: addressLocation,
+                uid: account.uid,
+                phone: account.phone,
+                sex: account.sex,
+                lastlogintime: account.lastLoginTime,
+                status: account.status,
+                age: account.age,
+                mainBusiness: account.mainBusiness,
+                head: account.head
+            })
+        }, success: function (info) {
+            var info = JSON.parse(info);
+            if (info.status == 1) {
+                console.log("success--" + info._id)
+            } else {
+                console.error(info.info + "-create");
+            }
+        }
+    });
 }
 function updateAccountLbsData(account, id) {
 
+    var nickName = account.nickName;
+    nickName = nickName.replace(/ /g, "&nbsp;");
+    var mainBusiness = account.mainBusiness;
+    mainBusiness = mainBusiness.replace(/ /g, "&nbsp;");
+
+    ajax.ajax({
+        type: "POST",
+        url: serverSetting.LBS.DATA_UPDATA,
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.ACCOUNTTABLEID,
+            data: JSON.stringify({
+                _id: id,
+                _name: nickName,
+                uid: account.uid,
+                phone: account.phone,
+                sex: account.sex,
+                lastlogintime: account.lastLoginTime,
+                status: account.status,
+                age: account.age,
+                mainBusiness: mainBusiness,
+                head: account.head
+            })
+        }, success: function (info) {
+            try {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    console.log("更新成功" + info.info);
+                } else {
+                    console.log(info.info + "--" + account.phone);
+                }
+            } catch (e) {
+                console.log(JSON.stringify({
+                    _id: id,
+                    _name: account.nickName,
+                    uid: account.uid,
+                    phone: account.phone,
+                    sex: account.sex,
+                    lastlogintime: account.lastLoginTime,
+                    status: account.status,
+                    age: account.age,
+                    mainBusiness: account.mainBusiness,
+                    head: account.head
+                }));
+            }
+        }
+    });
 }
 function deleteAccountLbsData(account, ids) {
-
+    ajax.ajax({
+        type: "POST",
+        url: serverSetting.LBS.DATA_DELETE,
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.ACCOUNTTABLEID,
+            ids: ids
+        }, success: function (info) {
+            var info = JSON.parse(info);
+            if (info.status == 1) {
+                console.log("删除成功");
+                createAccountLbsData(account);
+            } else {
+                console.log(info.info + "--"+ids);
+            }
+        }
+    });
 }
 
 
