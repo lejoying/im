@@ -375,6 +375,5 @@ public class GroupListView {
 			public ImageView status, selectedStatus;
 			public TextView name;
 		}
-
 	}
 }

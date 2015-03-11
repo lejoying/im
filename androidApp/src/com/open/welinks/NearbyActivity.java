@@ -1,10 +1,10 @@
 package com.open.welinks;
 
+import android.app.Activity;
+import android.os.Bundle;
+
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.view.NearbyView;
-
-import android.os.Bundle;
-import android.app.Activity;
 
 public class NearbyActivity extends Activity {
 
@@ -25,7 +25,7 @@ public class NearbyActivity extends Activity {
 		thisView.initView();
 		thisView.mapView.onCreate(savedInstanceState);
 		thisController.onCreate();
-		thisView.fillData();
+		thisView.fillData2();
 	}
 
 	@Override

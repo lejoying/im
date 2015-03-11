@@ -43,6 +43,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.BaseDataUtils;
 
@@ -149,7 +150,8 @@ public class GroupLabelActivity extends Activity {
 		save.setTextSize(16);
 		save.setGravity(Gravity.CENTER);
 		save.setPadding(BaseDataUtils.dpToPxint(15), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(15), BaseDataUtils.dpToPxint(5));
-		save.setBackgroundDrawable(getResources().getDrawable(R.drawable.shape_white_stroke));
+		// save.setBackgroundDrawable(getResources().getDrawable(R.drawable.shape_white_stroke));
+		save.setBackgroundResource(R.drawable.shape_white_stroke);
 		save.setVisibility(View.GONE);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		rightContainer.addView(save, params);
@@ -402,8 +404,9 @@ public class GroupLabelActivity extends Activity {
 	private void getHotLabels() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETHOTLABELS, params, httpClient.new ResponseHandler<String>() {
@@ -438,8 +441,9 @@ public class GroupLabelActivity extends Activity {
 		checkSave();
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
 		params.addBodyParameter("labels", gson.toJson(currentGroup.labels));
 		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFYGROUPLABEL, params, httpClient.new ResponseHandler<String>() {
@@ -464,8 +468,9 @@ public class GroupLabelActivity extends Activity {
 	private void getGroupLabels() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPLABELS, params, httpClient.new ResponseHandler<String>() {
 			class Response {

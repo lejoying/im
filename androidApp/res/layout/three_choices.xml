@@ -15,9 +15,9 @@
         android:text="社区" />
 
     <ImageView
-        android:layout_width="1.5dp"
+        android:layout_width="1.3dp"
         android:layout_height="30dp"
-        android:background="#eeffffff" />
+        android:background="#0099cd" />
 
     <LinearLayout
         android:id="@+id/layout_two"
@@ -35,9 +35,9 @@
             android:text="群组" />
 
         <ImageView
-            android:layout_width="1.5dp"
+            android:layout_width="1.3dp"
             android:layout_height="30dp"
-            android:background="#eeffffff" />
+            android:background="#0099cd" />
     </LinearLayout>
 
     <Button

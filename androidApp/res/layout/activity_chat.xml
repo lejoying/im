@@ -6,12 +6,12 @@
     android:background="@color/white"
     tools:context="com.open.welinks.ChatActivity" >
 
-    <com.amap.api.maps2d.MapView
+    <com.amap.api.maps.MapView
         android:id="@+id/locationMapView"
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_centerInParent="true" >
-    </com.amap.api.maps2d.MapView>
+    </com.amap.api.maps.MapView>
 
     <ImageView
         android:id="@+id/lineOne"

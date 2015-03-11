@@ -563,13 +563,13 @@ accountManage.exit = function (data, response, next) {
             response.end();
         } else if (flag == false) {
             response.write(JSON.stringify({
-                "提示信息": "退出失败",
+                "提示信息": "退出成功",
                 "失败原因": "AccessKey Invalid"
             }));
             response.end();
         } else {
             response.write(JSON.stringify({
-                "提示信息": "退出失败",
+                "提示信息": "退出成功",
                 "失败原因": "数据异常"
             }));
             response.end();
@@ -668,6 +668,7 @@ accountManage.get = function (data, response) {
 /***************************************
  *     URL：/api2/account/modify
  ***************************************/
+//TODO Lbs data
 accountManage.modify = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -846,6 +847,71 @@ accountManage.modify = function (data, response) {
         });
     }
 }
+
+//使数据库中的注册用户数据和高德Lbs云中数据保持一致
+//不存在的就创建新的lbs数据，存在就更新使数据一致，如果出现异常数据，删除掉查询出的数据并创建新的lbs数据
+//setAllAccountToLbsData();
+function setAllAccountToLbsData() {
+    var query = [
+        "MATCH (account:Account)",
+        "RETURN account"
+    ].join("\n");
+    var params = {};
+    db.query(query, params, function (error, results) {
+        if (error) {
+            console.error(error);
+        } else {
+            for (var index in results) {
+                var accountData = results[index].account.data;
+                checkAccountIsExists(accountData);
+            }
+        }
+    });
+}
+
+function checkAccountIsExists(account) {
+    ajax.ajax({
+        type: "GET",
+        url: "http://yuntuapi.amap.com/datamanage/data/list",
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.ACCOUNTTABLEID,
+            filter: "phone:" + account.phone
+        }, success: function (info) {
+            var info = JSON.parse(info);
+            if (info.status == 1) {
+                //console.log("success--" + info.datas.length)
+                if (info.count == 0) {
+                    createAccountLbsData(account);
+                } else if (info.count == 1) {
+                    updateAccountLbsData(account, info.datas[0]._id);
+                } else if (info.count > 1) {
+                    var ids = "";
+                    var pois = info.datas;
+                    for (var index in pois) {
+                        var poi = pois[index];
+                        ids = ids + "," + poi._id;
+                    }
+                    deleteAccountLbsData(account, ids);
+                }
+            } else {
+                console.log(info.info + "--");
+            }
+        }
+    });
+}
+
+function createAccountLbsData(account) {
+
+}
+function updateAccountLbsData(account, id) {
+
+}
+function deleteAccountLbsData(account, ids) {
+
+}
+
+
 //sha1Pwd();
 function sha1Pwd() {
     var query = [

@@ -9,37 +9,49 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="36dp"
         android:layout_marginTop="48dp"
-        android:background="#f0f0f0" >
+        android:background="#75c2b8" >
+
+        <ImageView
+            android:layout_width="58dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_address_background"
+            android:paddingBottom="10dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10dp"
+            android:src="@drawable/list_icon_filter_select"
+            android:tint="#ffffff" />
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="58dp"
+            android:layout_marginTop="5dp"
+            android:background="#fff" />
 
         <RelativeLayout
             android:id="@+id/position"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="59dp"
             android:background="@drawable/button_address_background" >
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="3dp"
-                android:src="@drawable/square1"
-                android:tint="#0099cd" />
 
             <TextView
                 android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="80dp"
+                android:layout_marginRight="59dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="5dp"
                 android:text="河北省秦皇岛市山海关区海韵丁香"
-                android:textColor="#99000000"
-                android:textSize="14sp" />
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
         </RelativeLayout>
 
         <TextView
@@ -47,39 +59,39 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="80dp"
-            android:layout_marginTop="10dp"
-            android:background="#c8c8c8" />
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="58dp"
+            android:layout_marginTop="5dp"
+            android:background="#ffffff" />
 
         <TextView
             android:id="@+id/sort"
-            android:layout_width="80dp"
+            android:layout_width="58dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_address_background"
             android:gravity="center"
-            android:text="排序筛选"
-            android:textColor="#99000000"
-            android:textSize="14sp" />
+            android:text="常用地址"
+            android:textColor="#ffffff"
+            android:textSize="12sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/lbsmap"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="88dp" >
+        android:layout_height="220dp"
+        android:layout_marginTop="84dp" >
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
-            <com.amap.api.maps2d.MapView
+            <com.amap.api.maps.MapView
                 android:id="@+id/mapView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
-            </com.amap.api.maps2d.MapView>
+            </com.amap.api.maps.MapView>
         </FrameLayout>
 
         <ImageView
@@ -87,16 +99,77 @@
             android:layout_height="30dp"
             android:layout_centerInParent="true"
             android:src="@drawable/lbs_point"
-            android:translationY="-15dp" />
+            android:translationY="-15dp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/ico_map_pin"
+                android:layout_alignTop="@+id/ico_map_pin" >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="26dp" >
+
+                    <TextView
+                        android:id="@+id/img_btn_set_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_usually_address_background"
+                        android:padding="3dp"
+                        android:text="    设置为常用地址"
+                        android:textColor="#0099cd"
+                        android:visibility="gone" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/ico_map_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:contentDescription="@null"
+                android:src="@drawable/ico_map_pin" />
+
+            <ImageView
+                android:id="@+id/ico_map_pin2"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:contentDescription="@null"
+                android:translationY="-20dp" />
+
+            <ImageView
+                android:id="@+id/ico_map_pin_shadow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:contentDescription="@null"
+                android:src="@drawable/ico_map_pin_shadow1" />
+
+            <ImageView
+                android:id="@+id/ico_map_pin_shadow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/relativeLayout1"
+                android:layout_alignTop="@+id/relativeLayout1"
+                android:contentDescription="@null"
+                android:src="@drawable/ico_map_pin_shadow2" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/search"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="60dp"
             android:background="@drawable/button_lbs_background"
             android:padding="5dp"
             android:src="@drawable/search_input"
@@ -106,10 +179,8 @@
             android:id="@+id/location"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/button_lbs_background"
             android:padding="8dp"
             android:src="@drawable/navi_idle_gps_unlocked" />
@@ -121,19 +192,11 @@
             android:background="#99666666" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="87dp"
-        android:background="#99666666"
-        android:visibility="visible" />
-
     <ListView
         android:id="@+id/nearby"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="288dp"
+        android:layout_marginTop="304dp"
         android:background="#f1f2f5"
         android:cacheColorHint="#0000"
         android:divider="#0000"

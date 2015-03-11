@@ -262,6 +262,12 @@ public class Alert {
 			return this;
 		}
 
+		public AlertInputDialog setDescription(String text) {
+			dialog.description.setVisibility(View.VISIBLE);
+			dialog.description.setText(text);
+			return this;
+		}
+
 		public String getInputText() {
 			return dialog.input.getText().toString();
 		}
@@ -306,12 +312,14 @@ public class Alert {
 			EditText input;
 			View confirmView;
 			View cancelView;
+			TextView description;
 
 			public CommonDialog(Context context) {
 				super(context, R.style.AlertInputDialog);
 				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				View content = inflater.inflate(R.layout.widget_alert_dialog, null);
 				title = (TextView) content.findViewById(R.id.title);
+				description = (TextView) content.findViewById(R.id.description);
 				input = (EditText) content.findViewById(R.id.input);
 				confirmView = content.findViewById(R.id.confirm);
 				cancelView = content.findViewById(R.id.cancel);
@@ -411,6 +419,7 @@ public class Alert {
 
 		public AlertInputCommentDialog requestFocus() {
 			dialog.input.requestFocus();
+			@SuppressWarnings("static-access")
 			InputMethodManager m = (InputMethodManager) dialog.getContext().getSystemService(dialog.getContext().INPUT_METHOD_SERVICE);
 			m.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 			// m.showSoftInput(dialog.input, InputMethodManager.SHOW_FORCED);

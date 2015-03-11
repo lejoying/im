@@ -1,14 +1,14 @@
 package com.open.welinks;
 
-import com.open.welinks.controller.ChatController;
-import com.open.welinks.model.TaskManageHolder;
-import com.open.welinks.view.ChatView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+
+import com.open.welinks.controller.ChatController;
+import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.view.ChatView;
 
 public class ChatActivity extends Activity {
 

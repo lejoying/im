@@ -222,6 +222,7 @@ public class ShareSectionController {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseTextButton)) {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("mode", "ShareSectionNotifyShares");
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "text");
 					intent.putExtra("sid", thisView.currentBoard.sid);
@@ -230,6 +231,7 @@ public class ShareSectionController {
 					// thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseAlbumButton)) {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("mode", "ShareSectionNotifyShares");
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "album");
 					intent.putExtra("sid", thisView.currentBoard.sid);
@@ -238,6 +240,7 @@ public class ShareSectionController {
 					// thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseImageViewButton)) {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("mode", "ShareSectionNotifyShares");
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "imagetext");
 					intent.putExtra("sid", thisView.currentBoard.sid);

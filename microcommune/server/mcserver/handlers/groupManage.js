@@ -153,7 +153,7 @@ groupManage.create = function (data, response) {
                 nodeType: "Shares",
                 status: "active",
                 type: "Main",
-                createTime: new Date().getTime(),
+                createTime: new Date().getTime()
             }
         };
         db.query(query, params, function (error, results) {
@@ -834,6 +834,8 @@ groupManage.getallmembers = function (data, response) {
 /***************************************
  *     URL：/api2/group/modify
  ***************************************/
+
+//TODO LBS data
 groupManage.modify = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -931,6 +933,7 @@ groupManage.modify = function (data, response) {
                 console.log(error);
                 return;
             } else if (results.length > 0) {
+                var isUpdateLbsData = false;
                 var groupNode = results.pop().group;
                 var groupData = groupNode.data;
                 var groupLocation = groupData.location || JSON.stringify({longitude: 116.422324, latitude: 39.906744});
@@ -941,12 +944,15 @@ groupManage.modify = function (data, response) {
                 }
                 if (name) {
                     groupData.name = name || groupData.name;
+                    isUpdateLbsData = true;
                 }
                 if (icon) {
                     groupData.icon = icon;
+                    isUpdateLbsData = true;
                 }
                 if (description) {
                     groupData.description = description || groupData.description;
+                    isUpdateLbsData = true;
                 }
                 var background0 = "";
                 if (groupData.background) {
@@ -958,9 +964,11 @@ groupManage.modify = function (data, response) {
                 }
                 if (cover) {
                     groupData.cover = cover;
+                    isUpdateLbsData = true;
                 }
                 if (permission) {
                     groupData.permission = permission;
+                    isUpdateLbsData = true;
                 }
                 var currentLocation = {};
                 if (location) {
@@ -968,6 +976,7 @@ groupManage.modify = function (data, response) {
                     currentLocation.latitude = location.latitude || groupLocation.latitude;
 
                     groupData.location = JSON.stringify(currentLocation);
+                    isUpdateLbsData = true;
                 }
                 groupNode.save(function (error) {
                 });
@@ -1020,6 +1029,9 @@ groupManage.modify = function (data, response) {
                         }
                     });
                     push.inform(phone, index, accessKey, "*", event);
+                }
+                if (isUpdateLbsData) {
+                    checkGroupIsExists(groupData);
                 }
 //                setGroupLBSLocation(phone, accessKey, JSON.stringify(currentLocation), groupData);
             } else {
@@ -2551,6 +2563,199 @@ function ResponseData(responseContent, response) {
      response.write(fileData);
      response.addTrailers({'Content-MD5': "7895bf4b8828b55ceaf47747b4bca667"});
      response.end();*/
+}
+
+//使数据库中的群组数据和高德Lbs云中数据保持一致
+//不存在的就创建新的lbs数据，存在就更新使数据一致，如果出现异常数据，删除掉查询出的数据并创建新的lbs数据
+//setAllGroupNodeToLbs();
+function setAllGroupNodeToLbs() {
+    var query = [
+        "MATCH (group:Group)",
+        "WHERE group.gtype={gtype}",
+        "RETURN group"
+    ].join("\n");
+    var params = {
+        gtype: "group"
+    };
+    db.query(query, params, function (error, results) {
+        if (error) {
+            console.log("数据异常");
+        } else {
+            for (var index in results) {
+                var groupData = results[index].group.data;
+                //console.log(groupData.gid);
+                checkGroupIsExists(groupData);
+            }
+            console.error(results.length);
+        }
+    });
+}
+function checkGroupIsExists(group) {
+    ajax.ajax({
+        type: "GET",
+        url: "http://yuntuapi.amap.com/datamanage/data/list",
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.GROUPTABLEID,
+            filter: "gid:" + group.gid
+        }, success: function (info) {
+            var info = JSON.parse(info);
+            if (info.status == 1) {
+                //console.log("success--" + info.datas.length)
+                if (info.count == 0) {
+                    createGroupLbsData(group);
+                } else if (info.count == 1) {
+                    updateGroupLbsData(group, info.datas[0]._id);
+                } else if (info.count > 1) {
+                    var ids = "";
+                    var pois = info.datas;
+                    for (var index in pois) {
+                        var poi = pois[index];
+                        ids = ids + "," + poi._id;
+                    }
+                    deleteGroupLbsData(group, ids);
+                }
+            } else {
+                console.log(info.info + "--");
+            }
+        }
+    });
+}
+
+function deleteGroupLbsData(group, ids) {
+    ajax.ajax({
+        type: "POST",
+        url: serverSetting.LBS.DATA_DELETE,
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.GROUPTABLEID,
+            ids: ids
+        }, success: function (info) {
+            var info = JSON.parse(info);
+            if (info.status == 1) {
+                console.log("删除成功");
+                createGroupLbsData(group);
+            } else {
+                console.log(info.info + "--");
+            }
+        }
+    });
+}
+
+function updateGroupLbsData(group, id) {
+    var addressLocation = "";
+    var location = group.location;
+    if (location) {
+        try {
+            location = JSON.parse(location);
+            addressLocation = (location.longitude ? location.longitude : "104.394729") + "," + (location.latitude ? location.latitude : "31.125698");
+        } catch (e) {
+            addressLocation = "104.394729,31.125698";
+        }
+    } else {
+        addressLocation = "104.394729,31.125698";
+    }
+    var name = group.name;
+    name = name.replace(/ /g, "&nbsp;")
+    ajax.ajax({
+        type: "POST",
+        url: serverSetting.LBS.DATA_UPDATA,
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.GROUPTABLEID,
+            loctype: 1,
+            data: JSON.stringify({
+                _id: id,
+                _name: name,
+                _location: addressLocation,
+                //_address: "",
+                icon: group.icon,
+                gtype: group.gtype,
+                permission: group.permission ? group.permission : "open",
+                cover: group.cover ? group.cover : "",
+                createTime: group.createTime ? group.createTime : 1412578255571,
+                description: group.description == "请输入群组描述信息" ? "" : group.description
+                //description:group.description == "请输入群组描述信息" ? "无 描述" : group.description
+            })
+        }, success: function (info) {
+            try {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    console.log("更新成功" + info.info);
+                } else {
+                    console.log(info.info + "--" + group.gid);
+                    console.error(JSON.stringify({
+                        _id: id,
+                        _name: group.name,
+                        _location: addressLocation,
+                        //_address: "",
+                        icon: group.icon,
+                        gtype: group.gtype,
+                        permission: group.permission ? group.permission : "open",
+                        cover: group.cover ? group.cover : "",
+                        createTime: group.createTime ? group.createTime : 1412578255571,
+                        description: group.description == "请输入群组描述信息" ? "" : group.description
+                    }));
+                }
+            } catch (e) {
+                console.error(info);
+                console.error(JSON.stringify({
+                    _id: id,
+                    _name: group.name,
+                    _location: addressLocation,
+                    //_address: "",
+                    icon: group.icon,
+                    gtype: group.gtype,
+                    permission: group.permission ? group.permission : "open",
+                    cover: group.cover ? group.cover : "",
+                    createTime: group.createTime ? group.createTime : 1412578255571,
+                    description: group.description == "请输入群组描述信息" ? "" : group.description
+                }));
+            }
+        }
+    });
+}
+function createGroupLbsData(group) {
+    var addressLocation = "";
+    var location = group.location;
+    if (location) {
+        try {
+            location = JSON.parse(location);
+            addressLocation = (location.longitude ? location.longitude : "104.394729") + "," + (location.latitude ? location.latitude : "31.125698");
+        } catch (e) {
+            addressLocation = "104.394729,31.125698";
+        }
+    } else {
+        addressLocation = "104.394729,31.125698";
+    }
+    ajax.ajax({
+        type: "POST",
+        url: serverSetting.LBS.DATA_CREATE,
+        data: {
+            key: serverSetting.LBS.KEY,
+            tableid: serverSetting.LBS.GROUPTABLEID,
+            loctype: 1,
+            data: JSON.stringify({
+                _name: group.name,
+                _location: addressLocation,
+                //_address: "",
+                gid: group.gid,
+                icon: group.icon,
+                gtype: group.gtype,
+                permission: group.permission ? group.permission : "open",
+                cover: group.cover ? group.cover : "",
+                createTime: group.createTime ? group.createTime : 1412578255571,
+                description: group.description == "请输入群组描述信息" ? "" : group.description
+            })
+        }, success: function (info) {
+            var info = JSON.parse(info);
+            if (info.status == 1) {
+                console.log("success--" + info._id)
+            } else {
+                console.error(info.info);
+            }
+        }
+    });
 }
 
 module.exports = groupManage;

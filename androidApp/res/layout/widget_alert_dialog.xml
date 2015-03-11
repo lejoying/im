@@ -34,6 +34,16 @@
             android:textCursorDrawable="@null"
             android:textSize="17sp" />
 
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="河北省秦皇岛市山海关区老龙头路海韵丁香22号楼3单元101"
+            android:textColor="#0099cd"
+            android:visibility="gone"
+            android:textSize="12sp" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

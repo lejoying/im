@@ -9,9 +9,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-/**
- * @author zhy http://blog.csdn.net/lmj623565791/article/details/39761281
- */
 public class ClipImageBorderView extends View {
 	/**
 	 * 水平方向与View的边距
@@ -24,7 +21,7 @@ public class ClipImageBorderView extends View {
 	/**
 	 * 绘制的矩形的宽度
 	 */
-	private int mWidth;
+	public int mWidth;
 	/**
 	 * 边框的颜色，默认为白色
 	 */
@@ -82,7 +79,5 @@ public class ClipImageBorderView extends View {
 
 	public void setHorizontalPadding(int mHorizontalPadding) {
 		this.mHorizontalPadding = mHorizontalPadding;
-
 	}
-
 }

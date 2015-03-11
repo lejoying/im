@@ -54,8 +54,9 @@ public class GroupMemberManageController {
 	}
 
 	public void onCreate() {
-		String gid = thisActivity.getIntent().getStringExtra("gid");
-		int type = thisActivity.getIntent().getIntExtra("type", 2);
+		Intent intent = thisActivity.getIntent();
+		String gid = intent.getStringExtra("gid");
+		int type = intent.getIntExtra("type", 2);
 		if (type == 2) {
 			thisView.isSubtract = thisView.MANAGE_INIT;
 		}
