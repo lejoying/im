@@ -49,6 +49,7 @@ public class MyFile {
 	public int UPLOAD_TYPE_VOICE = 0x02;
 	public int UPLOAD_TYPE_HEAD = 0x03;
 	public int UPLOAD_TYPE_BACKGROUND = 0x04;
+	public int UPLOAD_TYPE_Gif = 0x06;
 	public int uploadFileType;
 	public String Oss_Directory;
 

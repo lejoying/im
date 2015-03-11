@@ -36,7 +36,7 @@ public class Data {
 
 		public ArrayList<String> selectedImageList;
 
-		public ArrayList<String> praiseusersList;
+		// public ArrayList<String> praiseusersList;
 
 		public List<ShareMessage> tempShares;
 
@@ -112,7 +112,6 @@ public class Data {
 			public String addFriendMessage = "";
 
 			public List userIntentQueue = new ArrayList();
-
 		}
 	}
 

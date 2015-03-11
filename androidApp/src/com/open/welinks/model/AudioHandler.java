@@ -174,7 +174,7 @@ public class AudioHandler {
 
 	private void getFilePath() {
 		try {
-			String fileName = String.valueOf(System.currentTimeMillis());
+			String fileName = String.valueOf(System.currentTimeMillis()) + ".osa";
 			raw = new File(taskManageHolder.fileHandler.sdcardVoiceFolder, fileName);
 			raw.createNewFile();
 		} catch (Exception e) {
