@@ -2611,7 +2611,11 @@ function checkGroupIsExists(group) {
                     var pois = info.datas;
                     for (var index in pois) {
                         var poi = pois[index];
-                        ids = ids + "," + poi._id;
+                        if(ids==""){
+                            ids = poi._id;
+                        }else{
+                            ids = ids + "," + poi._id;
+                        }
                     }
                     deleteGroupLbsData(group, ids);
                 }
@@ -2656,7 +2660,7 @@ function updateGroupLbsData(group, id) {
         addressLocation = "104.394729,31.125698";
     }
     var name = group.name;
-    name = name.replace(/ /g, "&nbsp;")
+    name = name.replace(/ /g, "&nbsp;");
     ajax.ajax({
         type: "POST",
         url: serverSetting.LBS.DATA_UPDATA,
