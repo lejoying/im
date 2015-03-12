@@ -47,7 +47,7 @@ public class SquareSubView {
 
 	public String tag = "SquareSubView";
 	public MyLog log = new MyLog(tag, true);
-	
+
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public Gson gson = new Gson();
@@ -66,7 +66,7 @@ public class SquareSubView {
 
 	public ListBody1 locationListBody;
 	public SelectBody selectBody;
-	
+
 	public TextView titleNameView;
 
 	public SquareSubView(MainView mainView) {
@@ -81,7 +81,7 @@ public class SquareSubView {
 
 		this.squareMessageView = (ViewGroup) squareView.findViewById(R.id.squareContainer);
 		this.squareMessageView.setBackgroundColor(Color.parseColor("#F1F2F5"));
-		
+
 		this.titleNameView = (TextView) squareView.findViewById(R.id.shareTopMenuSquareName);
 
 		this.locationListBody = new ListBody1();
@@ -287,18 +287,18 @@ public class SquareSubView {
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_days_normal) {
 				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-				intent.putExtra("type", "square");
+				intent.putExtra("type", "share");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_group_normal) {
 				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-				intent.putExtra("type", "group");
+				intent.putExtra("type", "share");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_category_normal) {
 				Intent intent = new Intent(thisController.thisActivity, ClassificationRecommendationActivity.class);
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_test_normal) {
 				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-				intent.putExtra("type", "account");
+				intent.putExtra("type", "share");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_beauty_normal) {
 				Intent intent = new Intent(thisController.thisActivity, ShareListActivity.class);

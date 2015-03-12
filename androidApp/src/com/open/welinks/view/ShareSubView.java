@@ -1231,6 +1231,7 @@ public class ShareSubView {
 		}
 		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group0 != null) {
+//			data.localStatus.localData.currentSelectedGroupBoard = group0.boards.get(0);
 			this.shareTopMenuGroupName.setText(group0.name);
 			this.setMenuNameBotton(group0.name);
 		} else {

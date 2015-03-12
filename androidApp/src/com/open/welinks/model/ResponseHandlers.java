@@ -470,6 +470,28 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> account_getcommonusedlocation = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public List<Data.UserInformation.User.Location> commonUsedLocations;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if ("获取用户常用位置信息成功".equals(response.提示信息)) {
+				data.userInformation.currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
+				data.userInformation.currentUser.commonUsedLocations.addAll(response.commonUsedLocations);
+				if (viewManage.nearbyView != null) {
+					viewManage.nearbyView.showGroupCircles();
+				}
+			} else {
+
+			}
+		}
+	};
+
 	public RequestCallBack<String> modifyCircleSequenceCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;

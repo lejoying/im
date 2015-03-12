@@ -893,9 +893,9 @@ function checkAccountIsExists(account) {
                     var pois = info.datas;
                     for (var index in pois) {
                         var poi = pois[index];
-                        if(ids==""){
+                        if (ids == "") {
                             ids = poi._id;
-                        }else{
+                        } else {
                             ids = ids + "," + poi._id;
                         }
                     }
@@ -909,7 +909,7 @@ function checkAccountIsExists(account) {
 }
 
 function createAccountLbsData(account) {
-    var addressLocation = (account.longitude ? account.longitude : "104.394729")+","+(account.latitude ? account.latitude : "31.125698");
+    var addressLocation = (account.longitude ? account.longitude : "104.394729") + "," + (account.latitude ? account.latitude : "31.125698");
     ajax.ajax({
         type: "POST",
         url: serverSetting.LBS.DATA_CREATE,
@@ -1003,7 +1003,7 @@ function deleteAccountLbsData(account, ids) {
                 console.log("删除成功");
                 createAccountLbsData(account);
             } else {
-                console.log(info.info + "--"+ids);
+                console.log(info.info + "--" + ids);
             }
         }
     });
@@ -1289,7 +1289,47 @@ accountManage.modifylocation = function (data, response) {
     }
 
 }
+accountManage.getcommonusedlocation = function (data, response) {
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    getlocation();
 
+    function getlocation() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户常用位置信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户常用位置信息失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户常用位置信息成功",
+                    "commonUsedLocations": JSON.parse(accountData.commonUsedLocation)
+                }));
+                response.end();
+            }
+        });
+    }
+}
 accountManage.modifycommonusedlocation = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;

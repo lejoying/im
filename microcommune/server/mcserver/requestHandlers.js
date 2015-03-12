@@ -69,6 +69,10 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
         });
     } else if (operation == "modifypassword") {
         accountManage.modifypassword(data, response, setOauthAccessKey);
+    } else if (operation == "modifycommonusedlocation") {
+        accountManage.modifycommonusedlocation(data, response, setOauthAccessKey);
+    }else if (operation == "getcommonusedlocation") {
+        accountManage.getcommonusedlocation(data, response, setOauthAccessKey);
     }
 }
 
@@ -434,7 +438,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.deleteboard(data, response);
         });
-    }else if (operation == "score") {
+    } else if (operation == "score") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.score(data, response);
         });
