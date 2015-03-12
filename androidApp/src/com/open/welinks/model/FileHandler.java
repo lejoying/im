@@ -117,13 +117,24 @@ public class FileHandler {
 					if (myFile == null) {
 					} else {
 						if (myFile.uploadFileType == myFile.UPLOAD_TYPE_IMAGE || myFile.uploadFileType == myFile.UPLOAD_TYPE_BACKGROUND || myFile.uploadFileType == myFile.UPLOAD_TYPE_HEAD) {
-							resolveFile(myFile);
+							resolveImageFile(myFile);
 							myFile.task.currentResolveFileCount++;
 							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
 								myFile.task.onLocalFilesResolved();
 							}
-						} else {
+						} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_VOICE) {
 							// TODO voice
+							resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardVoiceFolder, ".osa");
+							myFile.task.currentResolveFileCount++;
+							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
+								myFile.task.onLocalFilesResolved();
+							}
+						} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_Gif) {
+							resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardGifImageFolder, ".osg");
+							myFile.task.currentResolveFileCount++;
+							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
+								myFile.task.onLocalFilesResolved();
+							}
 						}
 						myFile.status.state = myFile.status.LocalStored;
 						myFileUploadQueue.offerE(myFile);
@@ -245,10 +256,49 @@ public class FileHandler {
 		Thread.sleep(50);
 	}
 
-	int CompressThreshold = 400 * 1024;
+	private void checkUploadFileType(MyFile myFile, String path) {
+		String suffixName = path.substring(path.lastIndexOf(".") + 1);
+		myFile.suffixName = suffixName.toLowerCase(Locale.getDefault());
+		if ("jpg".equals(suffixName) || "osj".equals(suffixName)) {
+			myFile.uploadFileType = myFile.UPLOAD_TYPE_IMAGE;
+			myFile.suffixName = ".osj";
+		} else if ("jpeg".equals(suffixName) || "osj".equals(suffixName)) {
+			myFile.uploadFileType = myFile.UPLOAD_TYPE_IMAGE;
+			myFile.suffixName = ".osj";
+		} else if ("png".equals(suffixName) || "osp".equals(suffixName)) {
+			myFile.uploadFileType = myFile.UPLOAD_TYPE_IMAGE;
+			myFile.suffixName = ".osp";
+		} else if ("osa".equals(suffixName)) {
+			myFile.uploadFileType = myFile.UPLOAD_TYPE_VOICE;
+			myFile.suffixName = ".osa";
+		} else if ("gif".equals(suffixName) || "osg".equals(suffixName)) {
+			myFile.uploadFileType = myFile.UPLOAD_TYPE_Gif;
+			myFile.suffixName = ".osg";
+		}
+	}
+
+	void resolveVoiceOrGifFile(MyFile myFile, File folder, String suffexName) throws Exception {
+		String filePath = myFile.path;
+		myFile.suffixName = suffexName;
+		File fromFile = new File(filePath);
+		myFile.bytes = StreamParser.parseToByteArray(fromFile);
+		if (myFile.bytes == null) {
+			return;
+		}
+		myFile.shaStr = sha1.getDigestOfString(myFile.bytes);
+		myFile.fileName = myFile.shaStr + myFile.suffixName;
+		File toFile = new File(folder, myFile.fileName);
+		fromFile.renameTo(toFile);
+
+		myFile.bytes = null;
+		System.gc();
+		Thread.sleep(50);
+	}
+
+	public int CompressThreshold = 400 * 1024;
 	public SHA1 sha1 = SHA1.getInstance();
 
-	void resolveFile(MyFile myFile) throws Exception {
+	void resolveImageFile(MyFile myFile) throws Exception {
 		// 计算文件后缀名
 		String filePath = myFile.path;
 		String suffixName = filePath.substring(filePath.lastIndexOf("."));
