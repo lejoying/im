@@ -1921,6 +1921,29 @@ public class ResponseHandlers {
 		}
 	}
 
+	public class Share_scoreCallBack2 extends com.open.lib.ResponseHandler<String> {
+
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public ShareMessage share;
+			public String gsid;
+		}
+
+		public boolean option;
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			parser.check();
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("评分成功")) {
+
+			} else {
+
+			}
+		}
+	}
+
 	public class Share_scoreCallBack extends com.open.lib.ResponseHandler<String> {
 
 		class Response {

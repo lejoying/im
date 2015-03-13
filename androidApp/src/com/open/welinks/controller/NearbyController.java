@@ -30,7 +30,6 @@ import com.amap.api.cloud.search.CloudSearch;
 import com.amap.api.cloud.search.CloudSearch.OnCloudSearchListener;
 import com.amap.api.cloud.search.CloudSearch.Query;
 import com.amap.api.cloud.search.CloudSearch.SearchBound;
-import com.amap.api.cloud.search.CloudSearch.Sortingrules;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
@@ -58,7 +57,6 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -70,13 +68,13 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.SubData;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.SubData;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.NearbyView;
 
@@ -517,7 +515,7 @@ public class NearbyController {
 					// thisView.NearbyLayoutID = R.layout.nearby_item_account;
 					nowpage = 0;
 					loadFinish = true;
-//					mInfomations.clear();
+					// mInfomations.clear();
 					thisView.nearbyAdapter.notifyDataSetChanged();
 					thisView.nearbyListView.setSelection(0);
 					// searchNearByPolygon(nowpage);
@@ -541,7 +539,7 @@ public class NearbyController {
 					// searchNearByPolygon(nowpage);
 					nowpage = 0;
 					loadFinish = true;
-//					mInfomations.clear();
+					// mInfomations.clear();
 					thisView.nearbyAdapter.notifyDataSetChanged();
 					thisView.nearbyListView.setSelection(0);
 				}
@@ -577,7 +575,6 @@ public class NearbyController {
 								Iterator iter = item.getCustomfield().entrySet().iterator();
 								while (iter.hasNext()) {
 									Map.Entry entry = (Map.Entry) iter.next();
-									log.e(entry.getKey().toString() + "::::::::::::::" + entry.getValue());
 									map.put(entry.getKey().toString(), entry.getValue());
 								}
 								mInfomations.add(processingData(map));
@@ -588,7 +585,6 @@ public class NearbyController {
 				} else {
 					log.e(rCode + "::::::::::::::" + result);
 				}
-
 			}
 
 			@Override
@@ -643,12 +639,32 @@ public class NearbyController {
 		mOnTouchListener = new OnTouchListener() {
 
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				System.out.println("touch:::::::::");
+			public boolean onTouch(View view, MotionEvent event) {
+				int action = event.getAction();
+				if (action == MotionEvent.ACTION_DOWN) {
+					if (isTouchDown) {
+						return false;
+					}
+					String view_class = (String) view.getTag(R.id.tag_class);
+					if (view_class.equals("DecrementView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+					} else if (view_class.equals("IncrementView")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+						onTouchDownView.setAlpha(1f);
+					}
+					log.e("ACTION_DOWN");
+				}
+
 				return false;
 			}
 		};
 	}
+
+	public boolean isTouchDown = false;
+	public View onTouchDownView;
 
 	public void bindEvent() {
 		thisView.threeChoicesView.setOnItemClickListener(mOnItemClickListener);

@@ -2,6 +2,7 @@ package com.open.welinks;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.view.NearbyView;
