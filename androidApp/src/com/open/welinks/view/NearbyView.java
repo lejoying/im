@@ -13,6 +13,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -292,6 +294,7 @@ public class NearbyView {
 			this.hots = gson.fromJson(result, new TypeToken<ArrayList<HotContent>>() {
 			}.getType());
 			nearbyListView.setAdapter(nearbyAdapter);
+			final GestureDetector mGesture = new GestureDetector(thisActivity, new GestureListener());
 			this.nearbyListView.setOnTouchListener(new OnTouchListener() {
 
 				@Override
@@ -365,11 +368,33 @@ public class NearbyView {
 						status.state = status.Up;
 						// isTranslate = false;
 					}
+					mGesture.onTouchEvent(event);
 					return isTranslate;
 				}
 			});
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	class GestureListener extends SimpleOnGestureListener {
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			log.e("velocityY:::" + velocityY);
+			return true;
+		}
+	}
+
+	public float dySpeed;
+
+	public void dampenHotScrollSpeed(long deltaMillis) {
+
+		if (dySpeed != 0.0f) {
+			dySpeed *= (1.0f - 0.002f * deltaMillis);
+			if (Math.abs(dySpeed) < 50f) {
+				dySpeed = 0.0f;
+				
+			}
 		}
 	}
 

@@ -48,7 +48,7 @@ public class ImagesGridView {
 	public ImageAdapter mImageAdapter;
 
 	public GridView mGridView;
-	public TextView mConfirm;
+	public TextView mConfirmView;
 
 	public RelativeLayout rightContainerView;
 
@@ -79,18 +79,17 @@ public class ImagesGridView {
 		rightContainerView = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 
 		int dp_5 = (int) (5 * displayMetrics.density);
-		mConfirm = new TextView(context);
-		mConfirm.setGravity(Gravity.CENTER);
-		mConfirm.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
-		mConfirm.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-		mConfirm.setText("确定(0)");
-		mConfirm.setBackgroundResource(R.drawable.textview_bg);
+		mConfirmView = new TextView(context);
+		mConfirmView.setGravity(Gravity.CENTER);
+		mConfirmView.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
+		mConfirmView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		mConfirmView.setText("确定(0)");
+		mConfirmView.setBackgroundResource(R.drawable.textview_bg);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		rightContainerView.addView(mConfirm, layoutParams);
+		rightContainerView.addView(mConfirmView, layoutParams);
 		showAlreayList();
-
 	}
 
 	public void initData() {
@@ -105,7 +104,7 @@ public class ImagesGridView {
 		} else {
 			size = ImagesDirectoryController.instance.selectedImage.size();
 		}
-		this.mConfirm.setText("确定(" + size + ")");
+		this.mConfirmView.setText("确定(" + size + ")");
 		this.directoryNameView.setText(thisController.parentName);
 
 	}

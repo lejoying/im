@@ -45,7 +45,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;

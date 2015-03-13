@@ -36,10 +36,11 @@ public class StatementActivity extends Activity implements OnClickListener {
 			InputStreamReader inputReader = new InputStreamReader(getResources().getAssets().open(fileName));
 			BufferedReader bufReader = new BufferedReader(inputReader);
 			String line = "";
-			String Result = "";
-			while ((line = bufReader.readLine()) != null)
-				Result += line + "\n";
-			contentView.setText(Result);
+			String result = "";
+			while ((line = bufReader.readLine()) != null) {
+				result += line + "\n";
+			}
+			contentView.setText(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

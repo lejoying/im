@@ -69,7 +69,7 @@ public class ImagesGridController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.mConfirm)) {
+				if (view.equals(thisView.mConfirmView)) {
 					thisActivity.setResult(Activity.RESULT_OK);
 					thisActivity.finish();
 				} else if (view.equals(thisView.backView)) {
@@ -107,7 +107,7 @@ public class ImagesGridController {
 
 					@Override
 					public void run() {
-						thisView.mConfirm.setText("确定(" + ImagesDirectoryController.instance.selectedImage.size() + ")");
+						thisView.mConfirmView.setText("确定(" + ImagesDirectoryController.instance.selectedImage.size() + ")");
 					}
 				});
 			}
@@ -116,7 +116,7 @@ public class ImagesGridController {
 
 	public void bindEvent() {
 		thisView.mGridView.setOnItemClickListener(onItemClickListener);
-		thisView.mConfirm.setOnClickListener(onClickListener);
+		thisView.mConfirmView.setOnClickListener(onClickListener);
 		thisView.backView.setOnClickListener(onClickListener);
 		thisView.backView.setOnTouchListener(onTouchListener);
 	}

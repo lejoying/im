@@ -153,24 +153,23 @@ public class GroupMemberManageView {
 
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
-			ImageHolder imageHolder = null;
+			ImageHolder holder = null;
 			if (convertView == null) {
-				imageHolder = new ImageHolder();
+				holder = new ImageHolder();
 				convertView = mInflater.inflate(R.layout.activity_group_members_item, null);
-				imageHolder.imageContent = (ImageView) convertView.findViewById(R.id.iv_image);
-				imageHolder.imageContentStatus = (ImageView) convertView.findViewById(R.id.iv_imageContentStatus);
-				imageHolder.nickNameView = (TextView) convertView.findViewById(R.id.tv_username);
-				convertView.setTag(imageHolder);
+				holder.imageContent = (ImageView) convertView.findViewById(R.id.iv_image);
+				holder.imageContentStatus = (ImageView) convertView.findViewById(R.id.iv_imageContentStatus);
+				holder.nickNameView = (TextView) convertView.findViewById(R.id.tv_username);
+				convertView.setTag(holder);
 			} else {
-				imageHolder = (ImageHolder) convertView.getTag();
+				holder = (ImageHolder) convertView.getTag();
 			}
 			if (isSubtract == MANAGE_SUBTRACT) {
-				imageHolder.imageContentStatus.setVisibility(View.VISIBLE);
+				holder.imageContentStatus.setVisibility(View.VISIBLE);
 			} else {
-				if (imageHolder.imageContentStatus.getVisibility() == View.VISIBLE)
-					imageHolder.imageContentStatus.setVisibility(View.GONE);
+				if (holder.imageContentStatus.getVisibility() == View.VISIBLE)
+					holder.imageContentStatus.setVisibility(View.GONE);
 			}
-			final ImageHolder imageHolder0 = imageHolder;
 			if (position < members.size() + 2 - 2) {
 				final Friend friend = friendsMap.get(members.get(position));
 				String nickName = "";
@@ -179,22 +178,22 @@ public class GroupMemberManageView {
 				} else {
 					nickName = friend.nickName;
 				}
-				imageHolder.nickNameView.setText(nickName);
-				taskManageHolder.fileHandler.getHeadImage(friend.head, imageHolder0.imageContent, taskManageHolder.viewManage.options60);
+				holder.nickNameView.setText(nickName);
+				taskManageHolder.fileHandler.getHeadImage(friend.head, holder.imageContent, taskManageHolder.viewManage.options60);
 
 				convertView.setTag(R.id.iv_image, "subtractonclick#" + friend.phone);
 				convertView.setOnClickListener(thisController.mOnClickListener);
 			} else {
 				if (isSubtract == MANAGE_COMMON) {
-					imageHolder.nickNameView.setText("");
+					holder.nickNameView.setText("");
 					if (position == members.size() + 2 - 2) {
-						imageHolder0.imageContent.setImageResource(R.drawable.subtract_icon);
-						imageHolder0.imageContent.setTag("managesubtract#");
-						imageHolder0.imageContent.setOnClickListener(thisController.mOnClickListener);
+						holder.imageContent.setImageResource(R.drawable.subtract_icon);
+						holder.imageContent.setTag("managesubtract#");
+						holder.imageContent.setOnClickListener(thisController.mOnClickListener);
 					} else {
-						imageHolder0.imageContent.setImageResource(R.drawable.add_icon);
-						imageHolder0.imageContent.setTag("invitafriendgroup#");
-						imageHolder0.imageContent.setOnClickListener(thisController.mOnClickListener);
+						holder.imageContent.setImageResource(R.drawable.add_icon);
+						holder.imageContent.setTag("invitafriendgroup#");
+						holder.imageContent.setOnClickListener(thisController.mOnClickListener);
 					}
 				}
 			}

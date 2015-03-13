@@ -45,9 +45,9 @@ public class BusinessCardView {
 	public LayoutInflater mInflater;
 
 	public RelativeLayout backView;
-	public LinearLayout content, infomationLayout, sexLayout, ageLayout;
-	public TextView spacingOne, spacingTwo, spacingThree, backTitleView, businessTitle, lableTitle, creatTimeTitle, nickName, id, business, lable, creatTime, sex, age, distance;
-	public ImageView head, qrCodeView;
+	public LinearLayout contentLinearLayout, infomationLayout, sexLayout, ageLayout;
+	public TextView spacingOne, spacingTwo, spacingThree, backTitleView, businessTitleView, lableTitleView, creatTimeTitleView, nickNameView, idView, businessView, lableView, creatTimeView, sexView, ageView, distanceView;
+	public ImageView headView, qrCodeView;
 	public Button buttonOne, buttonTwo, buttonThree, buttonFour;
 	public RelativeLayout rightContainer;
 	public TextView rightTopButton;
@@ -80,25 +80,25 @@ public class BusinessCardView {
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
-		content = (LinearLayout) thisActivity.findViewById(R.id.content);
+		contentLinearLayout = (LinearLayout) thisActivity.findViewById(R.id.content);
 		infomationLayout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
 		sexLayout = (LinearLayout) thisActivity.findViewById(R.id.sex_layout);
 		ageLayout = (LinearLayout) thisActivity.findViewById(R.id.age_layout);
 		spacingOne = (TextView) thisActivity.findViewById(R.id.spacing_one);
 		spacingTwo = (TextView) thisActivity.findViewById(R.id.spacing_two);
 		spacingThree = (TextView) thisActivity.findViewById(R.id.spacing_three);
-		businessTitle = (TextView) thisActivity.findViewById(R.id.business_title);
-		lableTitle = (TextView) thisActivity.findViewById(R.id.lable_title);
-		creatTimeTitle = (TextView) thisActivity.findViewById(R.id.creattime_title);
-		id = (TextView) thisActivity.findViewById(R.id.id);
-		nickName = (TextView) thisActivity.findViewById(R.id.nickname);
-		business = (TextView) thisActivity.findViewById(R.id.business);
-		lable = (TextView) thisActivity.findViewById(R.id.lable);
-		creatTime = (TextView) thisActivity.findViewById(R.id.creattime);
-		sex = (TextView) thisActivity.findViewById(R.id.sex);
-		age = (TextView) thisActivity.findViewById(R.id.age);
-		head = (ImageView) thisActivity.findViewById(R.id.head);
-		distance = (TextView) thisActivity.findViewById(R.id.distance);
+		businessTitleView = (TextView) thisActivity.findViewById(R.id.business_title);
+		lableTitleView = (TextView) thisActivity.findViewById(R.id.lable_title);
+		creatTimeTitleView = (TextView) thisActivity.findViewById(R.id.creattime_title);
+		idView = (TextView) thisActivity.findViewById(R.id.id);
+		nickNameView = (TextView) thisActivity.findViewById(R.id.nickname);
+		businessView = (TextView) thisActivity.findViewById(R.id.business);
+		lableView = (TextView) thisActivity.findViewById(R.id.lable);
+		creatTimeView = (TextView) thisActivity.findViewById(R.id.creattime);
+		sexView = (TextView) thisActivity.findViewById(R.id.sex);
+		ageView = (TextView) thisActivity.findViewById(R.id.age);
+		headView = (ImageView) thisActivity.findViewById(R.id.head);
+		distanceView = (TextView) thisActivity.findViewById(R.id.distance);
 
 		myShareView = thisActivity.findViewById(R.id.myShare);
 		shareTxView = (TextView) thisActivity.findViewById(R.id.shareTx);
@@ -303,9 +303,9 @@ public class BusinessCardView {
 			}
 		}
 		if (businessCard.icon.equals("Head") || "".equals(businessCard.icon)) {
-			taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.face_man, thisView.head, taskManageHolder.viewManage.options45);
+			taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.face_man, thisView.headView, taskManageHolder.viewManage.options45);
 		} else {
-			taskManageHolder.fileHandler.getHeadImage(businessCard.icon, this.head, taskManageHolder.viewManage.options45);
+			taskManageHolder.fileHandler.getHeadImage(businessCard.icon, this.headView, taskManageHolder.viewManage.options45);
 			// thisController.setHeadImage(businessCard.icon, thisView.head);
 		}
 		qrCodeView.setScaleType(ScaleType.FIT_CENTER);
@@ -316,49 +316,49 @@ public class BusinessCardView {
 		// log.e("createTime--------：" + businessCard.creattime);
 		if (status.equals(Status.SELF)) {
 			backTitleView.setText(thisActivity.getString(R.string.business_my_info));
-			businessTitle.setText(thisActivity.getString(R.string.business_personal_statement));
-			lableTitle.setText(thisActivity.getString(R.string.business_hobbies));
-			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
+			businessTitleView.setText(thisActivity.getString(R.string.business_personal_statement));
+			lableTitleView.setText(thisActivity.getString(R.string.business_hobbies));
+			creatTimeTitleView.setText(thisActivity.getString(R.string.business_regist_time));
 		} else if (status.equals(Status.FRIEND) || status.equals(Status.TEMPFRIEND)) {
 			backTitleView.setText(thisActivity.getString(R.string.business_personal_info));
-			businessTitle.setText(thisActivity.getString(R.string.business_personal_statement));
-			lableTitle.setText(thisActivity.getString(R.string.business_hobbies));
-			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
+			businessTitleView.setText(thisActivity.getString(R.string.business_personal_statement));
+			lableTitleView.setText(thisActivity.getString(R.string.business_hobbies));
+			creatTimeTitleView.setText(thisActivity.getString(R.string.business_regist_time));
 		} else if (status.equals(Status.JOINEDGROUP)) {
 			backTitleView.setText(thisActivity.getString(R.string.business_room_info));
-			businessTitle.setText(thisActivity.getString(R.string.business_room_description));
-			lableTitle.setText(thisActivity.getString(R.string.business_label));
-			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
+			businessTitleView.setText(thisActivity.getString(R.string.business_room_description));
+			lableTitleView.setText(thisActivity.getString(R.string.business_label));
+			creatTimeTitleView.setText(thisActivity.getString(R.string.business_regist_time));
 		} else if (status.equals(Status.NOTJOINGROUP)) {
 			backTitleView.setText(thisActivity.getString(R.string.business_room_info));
-			businessTitle.setText(thisActivity.getString(R.string.business_room_description));
-			lableTitle.setText(thisActivity.getString(R.string.business_label));
-			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
+			businessTitleView.setText(thisActivity.getString(R.string.business_room_description));
+			lableTitleView.setText(thisActivity.getString(R.string.business_label));
+			creatTimeTitleView.setText(thisActivity.getString(R.string.business_regist_time));
 			buttonTwo.setVisibility(View.GONE);
 		} else if (status.equals(Status.SQUARE)) {
 			backTitleView.setText(thisActivity.getString(R.string.business_community_info));
-			businessTitle.setText(thisActivity.getString(R.string.business_room_name));
-			lableTitle.setText(thisActivity.getString(R.string.business_label));
-			creatTimeTitle.setText(thisActivity.getString(R.string.business_regist_time));
+			businessTitleView.setText(thisActivity.getString(R.string.business_room_name));
+			lableTitleView.setText(thisActivity.getString(R.string.business_label));
+			creatTimeTitleView.setText(thisActivity.getString(R.string.business_regist_time));
 		}
 
 		if (!"".equals(businessCard.sex) && ("male".equals(businessCard.sex) || (thisActivity.getString(R.string.business_male)).equals(businessCard.sex))) {
-			sex.setText(thisActivity.getString(R.string.business_male));
+			sexView.setText(thisActivity.getString(R.string.business_male));
 			shareTxView.setText(thisActivity.getString(R.string.business_he_share));
 		} else {
-			sex.setText(thisActivity.getString(R.string.business_female));
+			sexView.setText(thisActivity.getString(R.string.business_female));
 			shareTxView.setText(thisActivity.getString(R.string.business_she_share));
 		}
 		if (businessCard.id == data.userInformation.currentUser.id) {
 			shareTxView.setText(thisActivity.getString(R.string.business_my_share));
 		}
-		age.setText(businessCard.age);
-		distance.setText(businessCard.distance + "km");
-		nickName.setText(businessCard.nickname);
-		id.setText(String.valueOf(businessCard.id));
-		business.setText(businessCard.mainBusiness);
-		lable.setText(businessCard.lable);
-		creatTime.setText(DateUtil.formatYearMonthDay2(businessCard.creattime));
+		ageView.setText(businessCard.age);
+		distanceView.setText(businessCard.distance + "km");
+		nickNameView.setText(businessCard.nickname);
+		idView.setText(String.valueOf(businessCard.id));
+		businessView.setText(businessCard.mainBusiness);
+		lableView.setText(businessCard.lable);
+		creatTimeView.setText(DateUtil.formatYearMonthDay2(businessCard.creattime));
 		buttonOne.setText(businessCard.button_one);
 		buttonTwo.setText(businessCard.button_two);
 		buttonThree.setText(businessCard.button_three);

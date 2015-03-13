@@ -174,8 +174,9 @@ public class ExpressionManageActivity extends Activity {
 			ownedExpression = new ArrayList<String>();
 		unownedExpression = new ArrayList<String>();
 		for (String face : allExpression) {
-			if (!ownedExpression.contains(face))
+			if (!ownedExpression.contains(face)) {
 				unownedExpression.add(face);
+			}
 		}
 		titleTextView.setText(getString(R.string.expressionManage));
 		listAdapter = new ListAdapter();
@@ -233,12 +234,16 @@ public class ExpressionManageActivity extends Activity {
 			Holder holder = new Holder();
 			String exressionName = "";
 			int type = getItemViewType(position);
-			convertView = mInflater.inflate(R.layout.expression_manage_item, null);
-			holder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
-			holder.imageView = (ImageView) convertView.findViewById(R.id.image);
-			holder.nameView = (TextView) convertView.findViewById(R.id.name);
-			holder.statusView = (TextView) convertView.findViewById(R.id.status);
-			convertView.setTag(holder);
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.expression_manage_item, null);
+				holder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+				holder.imageView = (ImageView) convertView.findViewById(R.id.image);
+				holder.nameView = (TextView) convertView.findViewById(R.id.name);
+				holder.statusView = (TextView) convertView.findViewById(R.id.status);
+				convertView.setTag(holder);
+			} else {
+				holder = (Holder) convertView.getTag();
+			}
 			if (type == OWNED) {
 				exressionName = ownedExpression.get(position);
 				holder.statusView.setBackgroundResource(R.drawable.expression_manager_button_off);

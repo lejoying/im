@@ -59,10 +59,10 @@ public class GroupLabelActivity extends Activity {
 	private LayoutInflater mInflater;
 
 	private View backView, backMaxView;
-	private TextView backTitleView, save, addLabel;
+	private TextView backTitleView, saveTextView, addLabelView;
 	private ImageView backImageView;
-	private GridView grid;
-	private ViewGroup labels, rightContainer;
+	private GridView gridView;
+	private ViewGroup labelsViewGroup, rightContainer;
 
 	private GridAdapter mAdapter;
 
@@ -94,7 +94,7 @@ public class GroupLabelActivity extends Activity {
 	}
 
 	public void mFinish() {
-		if (save.getVisibility() == View.VISIBLE) {
+		if (saveTextView.getVisibility() == View.VISIBLE) {
 			Alert.createDialog(this).setTitle("您还有编辑尚未提交，是否保存？").setOnConfirmClickListener(new OnDialogClickListener() {
 
 				@Override
@@ -127,7 +127,7 @@ public class GroupLabelActivity extends Activity {
 		labelViews = new ArrayList<View>();
 		labelColorsMap = new HashMap<String, Integer>();
 		mAdapter = new GridAdapter();
-		grid.setAdapter(mAdapter);
+		gridView.setAdapter(mAdapter);
 		mAdapter.notifyDataSetChanged();
 		getGroupLabels();
 		fillLabels();
@@ -138,40 +138,40 @@ public class GroupLabelActivity extends Activity {
 		setContentView(R.layout.activity_group_labels);
 		backView = findViewById(R.id.backView);
 		backMaxView = findViewById(R.id.backMaxView);
-		labels = (ViewGroup) findViewById(R.id.labels);
+		labelsViewGroup = (ViewGroup) findViewById(R.id.labels);
 		backTitleView = (TextView) findViewById(R.id.backTitleView);
 		backImageView = (ImageView) findViewById(R.id.backImageView);
-		grid = (GridView) findViewById(R.id.grid);
+		gridView = (GridView) findViewById(R.id.grid);
 		rightContainer = (ViewGroup) findViewById(R.id.rightContainer);
 
-		save = new TextView(this);
-		save.setText("保存");
-		save.setTextColor(Color.WHITE);
-		save.setTextSize(16);
-		save.setGravity(Gravity.CENTER);
-		save.setPadding(BaseDataUtils.dpToPxint(15), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(15), BaseDataUtils.dpToPxint(5));
+		saveTextView = new TextView(this);
+		saveTextView.setText("保存");
+		saveTextView.setTextColor(Color.WHITE);
+		saveTextView.setTextSize(16);
+		saveTextView.setGravity(Gravity.CENTER);
+		saveTextView.setPadding(BaseDataUtils.dpToPxint(15), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(15), BaseDataUtils.dpToPxint(5));
 		// save.setBackgroundDrawable(getResources().getDrawable(R.drawable.shape_white_stroke));
-		save.setBackgroundResource(R.drawable.shape_white_stroke);
-		save.setVisibility(View.GONE);
+		saveTextView.setBackgroundResource(R.drawable.shape_white_stroke);
+		saveTextView.setVisibility(View.GONE);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		rightContainer.addView(save, params);
+		rightContainer.addView(saveTextView, params);
 		backTitleView.setText("群组标签");
 		// backView.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_back_white));
 
-		addLabel = new TextView(this);
-		addLabel.setText("+");
-		addLabel.setTextSize(14);
-		addLabel.setTextColor(Color.WHITE);
-		addLabel.setGravity(Gravity.CENTER);
+		addLabelView = new TextView(this);
+		addLabelView.setText("+");
+		addLabelView.setTextSize(14);
+		addLabelView.setTextColor(Color.WHITE);
+		addLabelView.setGravity(Gravity.CENTER);
 		GradientDrawable drawable = (GradientDrawable) getResources().getDrawable(R.drawable.shape_grouplabel_item);
 		drawable.setStroke((int) BaseDataUtils.dpToPx(0.75f), Color.TRANSPARENT);
 		drawable.setColor(Color.parseColor("#0099cd"));
-		addLabel.setBackgroundDrawable(drawable);
-		addLabel.setPadding(BaseDataUtils.dpToPxint(20), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(20), BaseDataUtils.dpToPxint(5));
+		addLabelView.setBackgroundDrawable(drawable);
+		addLabelView.setPadding(BaseDataUtils.dpToPxint(20), BaseDataUtils.dpToPxint(5), BaseDataUtils.dpToPxint(20), BaseDataUtils.dpToPxint(5));
 		LinearLayout.LayoutParams addLabelParams = new LinearLayout.LayoutParams(BaseDataUtils.dpToPxint((int) (data.baseData.screenWidth / 5) - 45), LayoutParams.WRAP_CONTENT);
 		addLabelParams.leftMargin = BaseDataUtils.dpToPxint(10);
-		addLabel.setLayoutParams(addLabelParams);
-		labels.addView(addLabel, 0);
+		addLabelView.setLayoutParams(addLabelParams);
+		labelsViewGroup.addView(addLabelView, 0);
 
 		initListener();
 	}
@@ -182,9 +182,9 @@ public class GroupLabelActivity extends Activity {
 			public void onClickEffective(View view) {
 				if (view.equals(backView)) {
 					mFinish();
-				} else if (view.equals(addLabel)) {
+				} else if (view.equals(addLabelView)) {
 					creataCustomLabel();
-				} else if (view.equals(save)) {
+				} else if (view.equals(saveTextView)) {
 					modifyGroupLabels();
 				} else {
 					String tag = (String) view.getTag(R.id.tag_class);
@@ -192,7 +192,7 @@ public class GroupLabelActivity extends Activity {
 						String label = ((TextView) view).getText().toString();
 						int index = seletedLabel.indexOf(label);
 						seletedLabel.remove(index);
-						labels.removeViewAt(index + 1);
+						labelsViewGroup.removeViewAt(index + 1);
 						mAdapter.notifyDataSetChanged();
 						checkSave();
 					}
@@ -210,11 +210,11 @@ public class GroupLabelActivity extends Activity {
 					getHotLabels();
 				} else {
 					if (!seletedLabel.contains(label)) {
-						labels.addView(createSeletedLabel(color, label), 1);
+						labelsViewGroup.addView(createSeletedLabel(color, label), 1);
 					} else {
 						int index = seletedLabel.indexOf(label);
 						seletedLabel.remove(index);
-						labels.removeViewAt(index + 1);
+						labelsViewGroup.removeViewAt(index + 1);
 						mAdapter.notifyDataSetChanged();
 					}
 					checkSave();
@@ -227,14 +227,14 @@ public class GroupLabelActivity extends Activity {
 
 	private void bindEvent() {
 		backView.setOnClickListener(mOnClickListener);
-		addLabel.setOnClickListener(mOnClickListener);
-		save.setOnClickListener(mOnClickListener);
-		grid.setOnItemClickListener(mOnItemClickListener);
+		addLabelView.setOnClickListener(mOnClickListener);
+		saveTextView.setOnClickListener(mOnClickListener);
+		gridView.setOnItemClickListener(mOnItemClickListener);
 	}
 
 	private void fillLabels() {
-		labels.removeAllViews();
-		labels.addView(addLabel, 0);
+		labelsViewGroup.removeAllViews();
+		labelsViewGroup.addView(addLabelView, 0);
 		for (String label : seletedLabel) {
 			int color = 0;
 			if (labelColorsMap.containsKey(label)) {
@@ -244,7 +244,7 @@ public class GroupLabelActivity extends Activity {
 				color = colors[index];
 				labelColorsMap.put(label, index);
 			}
-			labels.addView(createSeletedLabel(color, label));
+			labelsViewGroup.addView(createSeletedLabel(color, label));
 		}
 	}
 
@@ -271,7 +271,7 @@ public class GroupLabelActivity extends Activity {
 		}
 		if (seletedLabel.size() > labelCount) {
 			seletedLabel.remove(labelCount);
-			labels.removeViewAt(labelCount);
+			labelsViewGroup.removeViewAt(labelCount);
 		}
 		mAdapter.notifyDataSetChanged();
 		return text;
@@ -309,7 +309,7 @@ public class GroupLabelActivity extends Activity {
 			if (convertView == null) {
 				holder = new Holder();
 				convertView = mInflater.inflate(R.layout.group_label_item, null);
-				holder.label = (TextView) convertView.findViewById(R.id.content);
+				holder.labelView = (TextView) convertView.findViewById(R.id.content);
 				convertView.setTag(holder);
 			} else {
 				holder = (Holder) convertView.getTag();
@@ -325,20 +325,20 @@ public class GroupLabelActivity extends Activity {
 				GradientDrawable drawable = (GradientDrawable) getResources().getDrawable(R.drawable.shape_grouplabel_item);
 				drawable.setStroke((int) BaseDataUtils.dpToPx(0.75f), Color.TRANSPARENT);
 				drawable.setColor(color);
-				holder.label.setBackgroundDrawable(drawable);
+				holder.labelView.setBackgroundDrawable(drawable);
 				color = Color.WHITE;
 			} else {
 				Drawable drawable = getResources().getDrawable(drawables[index]);
-				holder.label.setBackgroundDrawable(drawable);
+				holder.labelView.setBackgroundDrawable(drawable);
 			}
 
-			holder.label.setText(label);
-			holder.label.setTextColor(createColorStateList(color));
+			holder.labelView.setText(label);
+			holder.labelView.setTextColor(createColorStateList(color));
 			return convertView;
 		}
 
 		class Holder {
-			TextView label;
+			TextView labelView;
 		}
 	}
 
@@ -371,7 +371,7 @@ public class GroupLabelActivity extends Activity {
 								color = colors[index];
 								labelColorsMap.put(label, index);
 							}
-							labels.addView(createSeletedLabel(color, label), 1);
+							labelsViewGroup.addView(createSeletedLabel(color, label), 1);
 						}
 						checkSave();
 					} else {
@@ -395,9 +395,9 @@ public class GroupLabelActivity extends Activity {
 			flag = false;
 		}
 		if (flag) {
-			save.setVisibility(View.GONE);
+			saveTextView.setVisibility(View.GONE);
 		} else {
-			save.setVisibility(View.VISIBLE);
+			saveTextView.setVisibility(View.VISIBLE);
 		}
 	}
 

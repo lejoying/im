@@ -25,6 +25,8 @@ import com.open.welinks.controller.GroupListController;
 import com.open.welinks.controller.GroupListController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -32,6 +34,9 @@ import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.utils.BaseDataUtils;
 
 public class GroupListView {
+
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public GroupListActivity thisActivity;
 	public GroupListController thisController;
@@ -41,10 +46,10 @@ public class GroupListView {
 	public LayoutInflater mInflater;
 
 	public RelativeLayout backView, rightContainer, maxView;
-	public TextView dialogGroupEditorConfirm, dialogGroupEditorCancel, groupEditorConfirm, groupEditorCancel, backTitileView, titleView, sectionNameTextView, buttonOneText, buttonTwoText, buttonThreeText;
+	public TextView dialogGroupEditorConfirm, dialogGroupEditorCancel, groupEditorConfirmView, groupEditorCancelView, backTitileView, titleView, sectionNameTextView, buttonOneText, buttonTwoText, buttonThreeText;
 	public LinearLayout rightContainerLinearLayout;
 	public ImageView moreView, rditorLine;
-	public View groupEditor, dialogGroupEditor, dialogView, buttons, manage, buttonOne, buttonTwo, buttonThree, background, onTouchDownView, onLongPressView;
+	public View groupEditor, dialogGroupEditor, dialogView, buttomBarView, settingView, buttonOne, buttonTwo, buttonThree, background, onTouchDownView, onLongPressView;
 	public PopupWindow popDialogView;
 	public ListView groupListContainer;
 	public ThreeChoicesView threeChoicesView;
@@ -77,8 +82,8 @@ public class GroupListView {
 		this.backTitileView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		this.titleView = (TextView) thisActivity.findViewById(R.id.titleContent);
 
-		this.groupEditorConfirm = (TextView) thisActivity.findViewById(R.id.confirm);
-		this.groupEditorCancel = (TextView) thisActivity.findViewById(R.id.cancel);
+		this.groupEditorConfirmView = (TextView) thisActivity.findViewById(R.id.confirm);
+		this.groupEditorCancelView = (TextView) thisActivity.findViewById(R.id.cancel);
 		this.rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 
 		this.groupListContainer = (ListView) thisActivity.findViewById(R.id.groupListContainer);
@@ -114,8 +119,8 @@ public class GroupListView {
 			rightContainerLinearLayout.addView(moreView, infomationParams);
 			rightContainer.addView(rightContainerLinearLayout, lineParams);
 
-			if (thisController.data.relationship != null && thisController.data.relationship.groupCirclesMap != null && thisController.data.relationship.groupCircles != null) {
-				thisController.currentGroupCircle = thisController.data.relationship.groupCirclesMap.get(thisController.data.relationship.groupCircles.get(0));
+			if (data.relationship != null && data.relationship.groupCirclesMap != null && data.relationship.groupCircles != null) {
+				thisController.currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
 			} else {
 				thisActivity.finish();
 			}
@@ -145,8 +150,8 @@ public class GroupListView {
 	public void initializationGroupCirclesDialog() {
 		dialogView = mInflater.inflate(R.layout.dialog_listview, null);
 		groupCircleList = (DragSortListView) dialogView.findViewById(R.id.content);
-		buttons = dialogView.findViewById(R.id.buttons);
-		manage = dialogView.findViewById(R.id.manage);
+		buttomBarView = dialogView.findViewById(R.id.buttons);
+		settingView = dialogView.findViewById(R.id.manage);
 		background = dialogView.findViewById(R.id.background);
 		buttonOne = dialogView.findViewById(R.id.buttonOne);
 		buttonTwo = dialogView.findViewById(R.id.buttonTwo);
@@ -171,16 +176,16 @@ public class GroupListView {
 		if (popDialogView.isShowing()) {
 			popDialogView.dismiss();
 		} else {
-			if (buttons.getVisibility() == View.VISIBLE)
-				buttons.setVisibility(View.GONE);
+			if (buttomBarView.getVisibility() == View.VISIBLE)
+				buttomBarView.setVisibility(View.GONE);
 			if (isEditor) {
 				dialogGroupEditor.setVisibility(View.VISIBLE);
 				rditorLine.setVisibility(View.VISIBLE);
-				manage.setVisibility(View.GONE);
+				settingView.setVisibility(View.GONE);
 			} else {
 				dialogGroupEditor.setVisibility(View.GONE);
 				rditorLine.setVisibility(View.GONE);
-				manage.setVisibility(View.VISIBLE);
+				settingView.setVisibility(View.VISIBLE);
 			}
 			if (thisController.currentGroupCircle.rid == 8888888) {
 				buttonTwo.setVisibility(View.GONE);
@@ -216,16 +221,16 @@ public class GroupListView {
 		@Override
 		public void notifyDataSetChanged() {
 			if (thisController.status == Status.friend) {
-				thisController.friendsMap = thisController.data.relationship.friendsMap;
+				thisController.friendsMap = data.relationship.friendsMap;
 			} else {
 				if (thisController.status == Status.square) {
-					thisController.groups = thisController.data.relationship.squares;
+					thisController.groups = data.relationship.squares;
 				} else if (thisController.status == Status.list_group) {
 					thisController.groups = thisController.currentGroupCircle.groups;
 				} else {
-					thisController.groups = thisController.data.relationship.groups;
+					thisController.groups = data.relationship.groups;
 				}
-				thisController.groupsMap = thisController.data.relationship.groupsMap;
+				thisController.groupsMap = data.relationship.groupsMap;
 			}
 			super.notifyDataSetChanged();
 		}
@@ -264,10 +269,10 @@ public class GroupListView {
 				holder = new GroupHolder();
 				convertView = mInflater.inflate(R.layout.group_list_item, null);
 				holder.headView = (ImageView) convertView.findViewById(R.id.head);
-				holder.checkBox = (ImageView) convertView.findViewById(R.id.checkBox);
+				holder.checkBoxView = (ImageView) convertView.findViewById(R.id.checkBox);
 				holder.nameView = (TextView) convertView.findViewById(R.id.title);
 				holder.descriptionView = (TextView) convertView.findViewById(R.id.description);
-				((RelativeLayout.LayoutParams) holder.checkBox.getLayoutParams()).rightMargin = BaseDataUtils.dpToPxint(25);
+				((RelativeLayout.LayoutParams) holder.checkBoxView.getLayoutParams()).rightMargin = BaseDataUtils.dpToPxint(25);
 				convertView.setTag(holder);
 			} else {
 				holder = (GroupHolder) convertView.getTag();
@@ -288,14 +293,14 @@ public class GroupListView {
 				holder.nameView.setText(group.name);
 				holder.descriptionView.setText(group.description);
 				if (thisController.isGroupEditor) {
-					holder.checkBox.setVisibility(View.VISIBLE);
+					holder.checkBoxView.setVisibility(View.VISIBLE);
 					if (thisController.editorGroups.contains(gid)) {
-						holder.checkBox.setImageResource(R.drawable.icon_checkbox_checked);
+						holder.checkBoxView.setImageResource(R.drawable.icon_checkbox_checked);
 					} else {
-						holder.checkBox.setImageResource(R.drawable.icon_checkbox);
+						holder.checkBoxView.setImageResource(R.drawable.icon_checkbox);
 					}
 				} else {
-					holder.checkBox.setVisibility(View.GONE);
+					holder.checkBoxView.setVisibility(View.GONE);
 				}
 			}
 			return convertView;
@@ -303,7 +308,7 @@ public class GroupListView {
 	}
 
 	public class GroupHolder {
-		public ImageView headView, checkBox;
+		public ImageView headView, checkBoxView;
 		public TextView nameView, descriptionView;
 	}
 
@@ -311,12 +316,12 @@ public class GroupListView {
 		private List<String> groupCircles;
 
 		public GroupCircleDialogAdapter() {
-			groupCircles = thisController.data.relationship.groupCircles;
+			groupCircles = data.relationship.groupCircles;
 		}
 
 		@Override
 		public void notifyDataSetChanged() {
-			groupCircles = thisController.data.relationship.groupCircles;
+			groupCircles = data.relationship.groupCircles;
 			groupListAdapter.notifyDataSetChanged();
 			super.notifyDataSetChanged();
 		}
@@ -328,7 +333,7 @@ public class GroupListView {
 
 		@Override
 		public Object getItem(int position) {
-			return thisController.data.relationship.groupCirclesMap.get(groupCircles.get(position));
+			return data.relationship.groupCirclesMap.get(groupCircles.get(position));
 		}
 
 		@Override
@@ -342,38 +347,38 @@ public class GroupListView {
 			if (convertView == null) {
 				holder = new Holder();
 				convertView = mInflater.inflate(R.layout.group_list_dialog_item, null, false);
-				holder.selectedStatus = (ImageView) convertView.findViewById(R.id.selectedStatus);
-				holder.status = (ImageView) convertView.findViewById(R.id.status);
-				holder.name = (TextView) convertView.findViewById(R.id.name);
+				holder.selectedStatusView = (ImageView) convertView.findViewById(R.id.selectedStatus);
+				holder.statusView = (ImageView) convertView.findViewById(R.id.status);
+				holder.nameView = (TextView) convertView.findViewById(R.id.name);
 				convertView.setTag(holder);
 			} else {
 				holder = (Holder) convertView.getTag();
 			}
 			GroupCircle groupCircle = (GroupCircle) getItem(position);
 			if (groupCircle != null) {
-				holder.name.setText(groupCircle.name);
+				holder.nameView.setText(groupCircle.name);
 				if (thisController.currentGroupCircle != null && thisController.currentGroupCircle.rid == groupCircle.rid) {
-					holder.selectedStatus.setVisibility(View.VISIBLE);
+					holder.selectedStatusView.setVisibility(View.VISIBLE);
 				} else {
-					holder.selectedStatus.setVisibility(View.INVISIBLE);
+					holder.selectedStatusView.setVisibility(View.INVISIBLE);
 				}
-				if (thisController.isGroupEditor && manage.getVisibility() == View.GONE) {
-					holder.status.setVisibility(View.VISIBLE);
+				if (thisController.isGroupEditor && settingView.getVisibility() == View.GONE) {
+					holder.statusView.setVisibility(View.VISIBLE);
 					if (groupCircle.rid == thisController.seletedRid) {
-						holder.status.setImageResource(R.drawable.icon_checkbox_checked);
+						holder.statusView.setImageResource(R.drawable.icon_checkbox_checked);
 					} else {
-						holder.status.setImageResource(R.drawable.icon_checkbox);
+						holder.statusView.setImageResource(R.drawable.icon_checkbox);
 					}
 				} else {
-					holder.status.setVisibility(View.GONE);
+					holder.statusView.setVisibility(View.GONE);
 				}
 			}
 			return convertView;
 		}
 
 		class Holder {
-			public ImageView status, selectedStatus;
-			public TextView name;
+			public ImageView statusView, selectedStatusView;
+			public TextView nameView;
 		}
 	}
 }

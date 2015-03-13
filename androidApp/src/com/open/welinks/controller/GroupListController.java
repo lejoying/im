@@ -157,22 +157,22 @@ public class GroupListController {
 					}
 				} else if (view.equals(thisView.rightContainerLinearLayout)) {
 					thisView.changePopupWindow(false);
-				} else if (view.equals(thisView.manage)) {
-					if (thisView.buttons.getVisibility() == View.VISIBLE) {
-						thisView.buttons.setVisibility(View.GONE);
+				} else if (view.equals(thisView.settingView)) {
+					if (thisView.buttomBarView.getVisibility() == View.VISIBLE) {
+						thisView.buttomBarView.setVisibility(View.GONE);
 					} else {
-						thisView.buttons.setVisibility(View.VISIBLE);
+						thisView.buttomBarView.setVisibility(View.VISIBLE);
 					}
 				} else if (view.equals(thisView.background)) {
 					thisView.changePopupWindow(false);
-				} else if (view.equals(thisView.groupEditorConfirm)) {
+				} else if (view.equals(thisView.groupEditorConfirmView)) {
 					if (editorGroups.size() > 0) {
 						seletedRid = 0;
 						thisView.changePopupWindow(true);
 					}
 				} else if (view.equals(thisView.dialogGroupEditorConfirm)) {
 					moveGroupsToCircle();
-				} else if (view.equals(thisView.groupEditorCancel)) {
+				} else if (view.equals(thisView.groupEditorCancelView)) {
 					cancelEditor();
 				} else if (view.equals(thisView.buttonOne)) {
 					createGroupCircle();
@@ -221,11 +221,11 @@ public class GroupListController {
 							editorGroups.add(gid);
 						}
 						if (editorGroups.size() > 0) {
-							thisView.groupEditorConfirm.setText("移动" + editorGroups.size() + "个群组到...");
-							thisView.groupEditorConfirm.setTextColor(Color.BLACK);
+							thisView.groupEditorConfirmView.setText("移动" + editorGroups.size() + "个群组到...");
+							thisView.groupEditorConfirmView.setTextColor(Color.BLACK);
 						} else {
-							thisView.groupEditorConfirm.setText("移动到...");
-							thisView.groupEditorConfirm.setTextColor(color.gray80);
+							thisView.groupEditorConfirmView.setText("移动到...");
+							thisView.groupEditorConfirmView.setTextColor(color.gray80);
 						}
 						thisView.groupListAdapter.notifyDataSetChanged();
 					} else {
@@ -270,8 +270,8 @@ public class GroupListController {
 					isGroupEditor = true;
 					editorGroups = new ArrayList<String>();
 					thisView.groupListAdapter.notifyDataSetChanged();
-					thisView.groupEditorConfirm.setText("移动到...");
-					thisView.groupEditorConfirm.setTextColor(color.gray80);
+					thisView.groupEditorConfirmView.setText("移动到...");
+					thisView.groupEditorConfirmView.setTextColor(color.gray80);
 					thisView.groupEditor.setVisibility(View.VISIBLE);
 				}
 				return true;
@@ -285,8 +285,8 @@ public class GroupListController {
 		thisView.groupListContainer.setOnItemClickListener(mOnItemClickListener);
 		thisView.groupListContainer.setOnItemLongClickListener(mOnItemLongClickListener);
 		thisView.backView.setOnClickListener(mOnClickListener);
-		thisView.groupEditorConfirm.setOnClickListener(mOnClickListener);
-		thisView.groupEditorCancel.setOnClickListener(mOnClickListener);
+		thisView.groupEditorConfirmView.setOnClickListener(mOnClickListener);
+		thisView.groupEditorCancelView.setOnClickListener(mOnClickListener);
 
 		if (thisView.dialogGroupEditorConfirm != null) {
 			thisView.dialogGroupEditorConfirm.setOnClickListener(mOnClickListener);
@@ -299,8 +299,8 @@ public class GroupListController {
 			thisView.buttonTwo.setOnClickListener(mOnClickListener);
 		if (thisView.buttonThree != null)
 			thisView.buttonThree.setOnClickListener(mOnClickListener);
-		if (thisView.manage != null)
-			thisView.manage.setOnClickListener(mOnClickListener);
+		if (thisView.settingView != null)
+			thisView.settingView.setOnClickListener(mOnClickListener);
 		if (thisView.background != null)
 			thisView.background.setOnClickListener(mOnClickListener);
 	}
@@ -372,7 +372,7 @@ public class GroupListController {
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			GroupCircle groupCircle = (GroupCircle) adapter.getItem(position);
 			if (groupCircle != null) {
-				if (isGroupEditor && thisView.manage.getVisibility() == View.GONE) {
+				if (isGroupEditor && thisView.settingView.getVisibility() == View.GONE) {
 					if (seletedRid != groupCircle.rid) {
 						seletedRid = groupCircle.rid;
 						thisView.dialogAdapter.notifyDataSetChanged();

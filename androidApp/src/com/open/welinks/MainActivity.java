@@ -1,5 +1,8 @@
 package com.open.welinks;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -28,6 +33,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.UpdateManager;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.service.PushService;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.NotificationUtils;
@@ -77,6 +83,13 @@ public class MainActivity extends Activity {
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 
+//		String a = "[{\"detail\":\"呼呼\",\"type\":\"text\",\"ratio\":0.0}]";
+		String a = "[{detail=456789, type=text, ratio=0}]";
+		Gson gson = new Gson();
+
+		ArrayList<ShareContentItem> b = gson.fromJson(a, new TypeToken<ArrayList<ShareContentItem>>() {
+		}.getType());   
+
 		// try {
 		UpdateManager manager = new UpdateManager(MainActivity.this);
 		manager.checkUpdate();
@@ -84,6 +97,12 @@ public class MainActivity extends Activity {
 		// e.printStackTrace();
 		// }
 
+	}
+
+	public class ShareContentItem {
+		public String type;// text image
+		public String detail;
+		public float ratio = 0;
 	}
 
 	MyLog log = new MyLog(tag, true);

@@ -380,7 +380,7 @@ public class ShareReleaseImageTextController {
 		data.tempData.selectedImageList = null;
 	}
 
-	public void sendImageTextShare() {
+	private void sendImageTextShare() {
 
 		final String sendContent = thisView.mEditTextView.getText().toString().trim();
 		boolean flag = false;
@@ -544,7 +544,7 @@ public class ShareReleaseImageTextController {
 
 	public float imageHeightScale = 0.5686505598114319f;
 
-	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
+	private void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
 		// The current selected pictures gallery
 		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
 		log.e("copy file to the position,file count:" + selectedImageList.size());

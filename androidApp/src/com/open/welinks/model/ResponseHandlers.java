@@ -210,9 +210,10 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("修改用户信息成功")) {
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();
-				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-				params.addBodyParameter("target", "[\"" + data.userInformation.currentUser.phone + "\"]");
+				User currentUser = data.userInformation.currentUser;
+				params.addBodyParameter("phone", currentUser.phone);
+				params.addBodyParameter("accessKey", currentUser.accessKey);
+				params.addBodyParameter("target", "[\"" + currentUser.phone + "\"]");
 				httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {
 					class Response {
 						public String 提示信息;
@@ -308,8 +309,9 @@ public class ResponseHandlers {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				data.userInformation.currentUser.phone = phone;
-				data.userInformation.currentUser.accessKey = accessKey;
+				User currentUser = data.userInformation.currentUser;
+				currentUser.phone = phone;
+				currentUser.accessKey = accessKey;
 				data.userInformation.isModified = true;
 				viewManage.loginView.thisController.requestUserAuthWithVerifyCodeCallBack();
 			} else {
@@ -353,8 +355,9 @@ public class ResponseHandlers {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				data.userInformation.currentUser.phone = phone;
-				data.userInformation.currentUser.accessKey = accessKey;
+				User currentUser = data.userInformation.currentUser;
+				currentUser.phone = phone;
+				currentUser.accessKey = accessKey;
 				data.userInformation.isModified = true;
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();

@@ -132,8 +132,9 @@ public class CreateBoardActivity extends Activity implements OnClickListener {
 
 		String targetPhones = "";
 		Group group = data.relationship.groupsMap.get(board.gid);
-		if (group != null)
+		if (group != null) {
 			targetPhones = gson.toJson(group.members);
+		}
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();

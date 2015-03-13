@@ -68,8 +68,8 @@ public class ShareListController {
 	public int nowpage = 0;
 	public int pagesize = 5;
 
-	public List<String> shares = new ArrayList<String>();
-	public Map<String, ShareMessage> sharesMap = new HashMap<String, ShareMessage>();
+	public List<String> shares;
+	public Map<String, ShareMessage> sharesMap;
 
 	public ShareListController(Activity thisActivity) {
 		this.context = thisActivity;
@@ -86,6 +86,8 @@ public class ShareListController {
 		} else {
 			friend = data.relationship.friendsMap.get(key);
 		}
+		this.shares = new ArrayList<String>();
+		this.sharesMap = new HashMap<String, ShareMessage>();
 		getUserShares();
 	}
 

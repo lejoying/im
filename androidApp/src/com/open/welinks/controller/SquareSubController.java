@@ -83,9 +83,11 @@ public class SquareSubController {
 				mLocationManagerProxy.destroy();
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
 					mAmapLocation = amapLocation;
-					thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
-					// searchNearby(amapLocation);
-					// searchNearByPolygon(0);
+					if (mAmapLocation.getProvince() != null) {
+						thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
+					} else {
+						thisView.titleNameView.setText("发现");
+					}
 				}
 			}
 		};
