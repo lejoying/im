@@ -1,11 +1,15 @@
 package com.open.welinks.view;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Service;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -36,6 +40,9 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -47,14 +54,21 @@ import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Data.UserInformation.User.Location;
+import com.open.welinks.model.Parser;
+import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack2;
 import com.open.welinks.model.SubData.ShareContent;
 import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
-import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.view.NearbyView.NearbyAdapter.HotHolder;
 
 public class NearbyView {
 
@@ -64,6 +78,7 @@ public class NearbyView {
 	public NearbyView thisView;
 	public NearbyController thisController;
 	public NearbyActivity thisActivity;
+	public Context context;
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
@@ -85,6 +100,7 @@ public class NearbyView {
 	public NearbyView(NearbyActivity thisActivity) {
 		thisView = this;
 		this.thisActivity = thisActivity;
+		this.context = thisActivity;
 	}
 
 	public SmallBusinessCardPopView businessCardPopView;
@@ -256,7 +272,7 @@ public class NearbyView {
 		if (isStop) {
 			openLooper.stop();
 			isTranslate = false;
-			log.e("停止了");
+			// log.e("停止了");
 		}
 	}
 
@@ -297,7 +313,7 @@ public class NearbyView {
 		this.nearbyListView.setOnTouchListener(new OnTouchListener() {
 
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public boolean onTouch(View view, MotionEvent event) {
 				int id = event.getAction();
 				if (id == MotionEvent.ACTION_DOWN) {
 					status.state = status.Down;
@@ -308,11 +324,23 @@ public class NearbyView {
 					currentPosition = -viewManage.screenWidth;
 					nextPosition = -viewManage.screenWidth;
 					// isTranslate = false;
+					log.e("listview ACTION_DOWN");
+					// String view_class = (String) view.getTag(R.id.tag_class);
+					// if (view_class != null && view_class.equals("DecrementView")) {
+					// onTouchDownView = view;
+					// onTouchDownView.setAlpha(1f);
+					// } else if (view_class != null && view_class.equals("IncrementView")) {
+					// onTouchDownView = view;
+					// onTouchDownView.setAlpha(1f);
+					// }
 				} else if (id == MotionEvent.ACTION_MOVE) {
 					float x = event.getX();
 					float y = event.getY();
 					if (status.state == status.Down) {
 						View firstView = nearbyListView.getChildAt(0);
+						if (firstView == null) {
+							return false;
+						}
 						int firstVisiblePosition = nearbyListView.getFirstVisiblePosition();
 						int top = firstView.getTop();
 						int firstViewHeight = firstView.getHeight();
@@ -354,7 +382,11 @@ public class NearbyView {
 						}
 						progressView.setTranslationX(currentPosition);
 					}
+					log.e("listview ACTION_MOVE");
+					onclickScore(MotionEvent.ACTION_MOVE);
 				} else if (id == MotionEvent.ACTION_UP) {
+					log.e("listview ACTION_UP");
+					onclickScore(MotionEvent.ACTION_UP);
 					float distance = Math.abs(percent) * 2;
 					if (distance > viewManage.screenWidth / 2) {
 						nextPosition = 0;
@@ -370,6 +402,139 @@ public class NearbyView {
 				return isTranslate;
 			}
 		});
+	}
+
+	public void onclickScore(int state) {
+		if (thisController.onTouchDownView != null) {
+			String view_class = (String) thisController.onTouchDownView.getTag(R.id.tag_class);
+			if (state == MotionEvent.ACTION_MOVE) {
+				if (view_class != null && view_class.equals("DecrementView")) {
+					thisController.onTouchDownView.setAlpha(0.125f);
+				} else if (view_class != null && view_class.equals("IncrementView")) {
+					thisController.onTouchDownView.setAlpha(0.125f);
+				}
+			}
+			if (state == MotionEvent.ACTION_UP) {
+				if (view_class != null && view_class.equals("DecrementView")) {
+					int position = (Integer) thisController.onTouchDownView.getTag(R.id.tag_first);
+					View view = nearbyListView.getChildAt(position);
+					if (view == null) {
+						return;
+					}
+					HotHolder holder = (HotHolder) view.getTag();
+					ShareMessage shareMessage = thisController.mInfomations.get(position);
+					if (shareMessage.scores == null) {
+						shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+					}
+					Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
+					if (score == null) {
+						score = data.boards.new Score();
+					} else {
+						if (score.negative > 0) {
+							holder.num_picker_decrement.setAlpha(1f);
+						} else {
+							holder.num_picker_decrement.setAlpha(0.125f);
+						}
+						if (score.remainNumber == 0) {
+							Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
+							return;
+						}
+					}
+					shareMessage.totalScore = shareMessage.totalScore - 1;
+					score.phone = data.userInformation.currentUser.phone;
+					score.time = new Date().getTime();
+					score.negative = 1;
+					score.remainNumber = 0;
+					shareMessage.scores.put(score.phone, score);
+					data.boards.isModified = true;
+					int num = shareMessage.totalScore;
+					holder.scoreView.setText("" + num);
+					if (num < 10 && num >= 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+					} else if (num < 100 && num >= 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+					} else if (num < 1000 && num >= 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+						holder.scoreView.setText("999");
+					} else if (num < 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#00a800"));
+					}
+					if (score.negative > 0) {
+						holder.num_picker_decrement.setAlpha(1f);
+					} else {
+						holder.num_picker_decrement.setAlpha(0.125f);
+					}
+					modifyPraiseusersToMessage(false, shareMessage.gsid);
+				} else if (view_class != null && view_class.equals("IncrementView")) {
+					int position = (Integer) thisController.onTouchDownView.getTag(R.id.tag_first);
+					View view = nearbyListView.getChildAt(position);
+					if (view == null) {
+						return;
+					}
+					HotHolder holder = (HotHolder) view.getTag();
+					ShareMessage shareMessage = thisController.mInfomations.get(position);
+					if (shareMessage.scores == null) {
+						shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+					}
+					Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
+					if (score == null) {
+						score = data.boards.new Score();
+					} else {
+						if (score.positive > 0) {
+							holder.num_picker_increment.setAlpha(1f);
+						} else {
+							holder.num_picker_increment.setAlpha(0.125f);
+						}
+						if (score.remainNumber == 0) {
+							Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
+							return;
+						}
+					}
+					shareMessage.totalScore = shareMessage.totalScore + 1;
+					score.phone = data.userInformation.currentUser.phone;
+					score.time = new Date().getTime();
+					score.positive = 1;
+					score.remainNumber = 0;
+					shareMessage.scores.put(score.phone, score);
+					data.boards.isModified = true;
+					int num = shareMessage.totalScore;
+					holder.scoreView.setText("" + num);
+					if (num < 10 && num >= 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+					} else if (num < 100 && num >= 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+					} else if (num < 1000 && num >= 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+						holder.scoreView.setText("999");
+					} else if (num < 0) {
+						holder.scoreView.setTextColor(Color.parseColor("#00a800"));
+					}
+					if (score.positive > 0) {
+						holder.num_picker_increment.setAlpha(1f);
+					} else {
+						holder.num_picker_increment.setAlpha(0.125f);
+					}
+					modifyPraiseusersToMessage(true, shareMessage.gsid);
+				}
+			}
+			thisController.onTouchDownView = null;
+			thisController.isTouchDown = false;
+		}
+	}
+
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+	public void modifyPraiseusersToMessage(boolean option, String gsid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gsid", gsid);
+		params.addBodyParameter("option", option + "");
+		Share_scoreCallBack2 callBack = responseHandlers.new Share_scoreCallBack2();
+		callBack.option = option;
+		httpUtils.send(HttpMethod.POST, API.SHARE_SCORE, params, callBack);
 	}
 
 	public ViewManage viewManage = ViewManage.getInstance();
@@ -402,6 +567,7 @@ public class NearbyView {
 				holder.scoreView = (TextView) convertView.findViewById(R.id.score);
 				holder.textContentView = (TextView) convertView.findViewById(R.id.textContent);
 				holder.imageContentView = (ImageView) convertView.findViewById(R.id.imageContent);
+				holder.imageContainer = (RelativeLayout) convertView.findViewById(R.id.imageContainer);
 				holder.imageCountView = (TextView) convertView.findViewById(R.id.imageCount);
 				holder.distanceView = (TextView) convertView.findViewById(R.id.distance);
 				holder.timeView = (TextView) convertView.findViewById(R.id.time);
@@ -426,7 +592,6 @@ public class NearbyView {
 					} else if (item.type.equals("image")) {
 						images.add(item.detail);
 					}
-
 				}
 				if (images.size() > 4) {
 					holder.imageCountView.setText("(共" + images.size() + "张)");
@@ -448,23 +613,56 @@ public class NearbyView {
 					holder.distanceView.setText(distance + "m");
 				}
 				holder.timeView.setText(DateUtil.getChatMessageListTime(message.time));
-				if (position % 7 == 0) {
-					imageLoader.displayImage("drawable://" + R.drawable.a1, holder.imageContentView);
-				} else if (position % 7 == 1) {
-					imageLoader.displayImage("drawable://" + R.drawable.a2, holder.imageContentView);
-				} else if (position % 7 == 2) {
-					imageLoader.displayImage("drawable://" + R.drawable.a3, holder.imageContentView);
-				} else if (position % 7 == 3) {
-					imageLoader.displayImage("drawable://" + R.drawable.a4, holder.imageContentView);
-				} else if (position % 7 == 4) {
-					imageLoader.displayImage("drawable://" + R.drawable.a5, holder.imageContentView);
-				} else if (position % 7 == 5) {
-					imageLoader.displayImage("drawable://" + R.drawable.a6, holder.imageContentView);
-				} else if (position % 7 == 6) {
-					imageLoader.displayImage("drawable://" + R.drawable.a7, holder.imageContentView);
+				// if (position % 7 == 0) {
+				// imageLoader.displayImage("drawable://" + R.drawable.a1, holder.imageContentView);
+				// } else if (position % 7 == 1) {
+				// imageLoader.displayImage("drawable://" + R.drawable.a2, holder.imageContentView);
+				// } else if (position % 7 == 2) {
+				// imageLoader.displayImage("drawable://" + R.drawable.a3, holder.imageContentView);
+				// } else if (position % 7 == 3) {
+				// imageLoader.displayImage("drawable://" + R.drawable.a4, holder.imageContentView);
+				// } else if (position % 7 == 4) {
+				// imageLoader.displayImage("drawable://" + R.drawable.a5, holder.imageContentView);
+				// } else if (position % 7 == 5) {
+				// imageLoader.displayImage("drawable://" + R.drawable.a6, holder.imageContentView);
+				// } else if (position % 7 == 6) {
+				// imageLoader.displayImage("drawable://" + R.drawable.a7, holder.imageContentView);
+				// }
+				if (message.scores != null) {
+					Score score = message.scores.get(data.userInformation.currentUser.phone);
+					if (score != null) {
+						if (score.positive > 0) {
+							holder.num_picker_increment.setAlpha(1f);
+						}
+						if (score.negative > 0) {
+							holder.num_picker_decrement.setAlpha(1f);
+						}
+					} else {
+						holder.num_picker_increment.setAlpha(0.125f);
+						holder.num_picker_decrement.setAlpha(0.125f);
+					}
+				} else {
+					holder.num_picker_increment.setAlpha(0.125f);
+					holder.num_picker_decrement.setAlpha(0.125f);
 				}
+				holder.imageContainer.removeAllViews();
+				showImages(images, holder.imageContainer);
+				if (images.size() == 0) {
+					holder.imageContainer.setBackgroundColor(Color.parseColor("#380099cd"));
+				} else {
+					holder.imageContainer.setBackgroundColor(Color.parseColor("#000099cd"));
+				}
+
+				holder.num_picker_increment.setTag(R.id.tag_class, "IncrementView");
 				holder.num_picker_increment.setOnTouchListener(thisController.mOnTouchListener);
+				// holder.num_picker_increment.setOnClickListener(thisController.mOnClickListener);
+				holder.num_picker_increment.setColorFilter(Color.parseColor("#0099cd"));
+				holder.num_picker_increment.setTag(R.id.tag_first, position);
+				holder.num_picker_decrement.setTag(R.id.tag_class, "DecrementView");
 				holder.num_picker_decrement.setOnTouchListener(thisController.mOnTouchListener);
+				// holder.num_picker_decrement.setOnClickListener(thisController.mOnClickListener);
+				holder.num_picker_decrement.setColorFilter(Color.parseColor("#0099cd"));
+				holder.num_picker_decrement.setTag(R.id.tag_first, position);
 			}
 			return convertView;
 		}
@@ -478,6 +676,110 @@ public class NearbyView {
 			public TextView timeView;
 			public ImageView num_picker_increment;
 			public ImageView num_picker_decrement;
+			public RelativeLayout imageContainer;
+		}
+	}
+
+	public void showImages(List<String> list, RelativeLayout container) {
+		container.removeAllViews();
+		for (int i = 0; i < list.size(); i++) {
+			if (list.size() == 1) {
+				ImageView imageView = new ImageView(context);
+				int width = (int) (metrics.density * 90);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
+				container.addView(imageView, params);
+				File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
+				if (file.exists()) {
+					imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+				} else {
+					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q", file.getAbsolutePath());
+					downloadFile.view = imageView;
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
+					taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+				}
+			} else if (list.size() == 2) {
+				ImageView imageView = new ImageView(context);
+				int width = (int) (metrics.density * 44.5f);
+				int height = (int) (metrics.density * 90);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+				if (i == 0) {
+					params.leftMargin = 0;
+				} else {
+					params.leftMargin = (int) (45.5f * metrics.density);
+				}
+				container.addView(imageView, params);
+				File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
+				if (file.exists()) {
+					imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+				} else {
+					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
+					downloadFile.view = imageView;
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
+					taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+				}
+			} else if (list.size() == 3) {
+				ImageView imageView = new ImageView(context);
+				int width = (int) (metrics.density * 44.5f);
+				int height = (int) (metrics.density * 90);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width * 2);
+				String suffix = "";
+				String name = "";
+				if (i == 0) {
+					name = "@1_2";
+					params.leftMargin = 0;
+					params.height = height;
+					suffix = "@" + width / 2 + "w_" + width + "h_1c_1e_100q";
+				} else if (i == 1) {
+					name = "@1_1";
+					params.leftMargin = (int) (width + (metrics.density * 1));
+					params.height = width;
+					suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+				} else {
+					name = "@1_1";
+					params.leftMargin = (int) (width + (metrics.density * 1));
+					params.topMargin = (int) (width + (metrics.density * 1));
+					params.height = width;
+					suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+				}
+				container.addView(imageView, params);
+				File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+				if (file.exists()) {
+					imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+				} else {
+					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
+					downloadFile.view = imageView;
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
+					taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+				}
+			} else {
+				ImageView imageView = new ImageView(context);
+				int width = (int) (metrics.density * 44.5f);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
+				String suffix = "";
+				suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+				String name = "@1_1";
+				if (i == 0) {
+				} else if (i == 1) {
+					params.leftMargin = (int) (width + (metrics.density * 1));
+				} else if (i == 2) {
+					params.topMargin = (int) (width + (metrics.density * 1));
+				} else if (i == 3) {
+					params.leftMargin = (int) (width + (metrics.density * 1));
+					params.topMargin = (int) (width + (metrics.density * 1));
+				} else {
+					break;
+				}
+				container.addView(imageView, params);
+				File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+				if (file.exists()) {
+					imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+				} else {
+					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
+					downloadFile.view = imageView;
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
+					taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+				}
+			}
 		}
 	}
 
