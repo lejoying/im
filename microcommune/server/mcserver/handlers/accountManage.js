@@ -1323,7 +1323,7 @@ accountManage.getcommonusedlocation = function (data, response) {
                 var accountData = accountNode.data;
                 response.write(JSON.stringify({
                     "提示信息": "获取用户常用位置信息成功",
-                    "commonUsedLocations": JSON.parse(accountData.commonUsedLocation)
+                    "commonUsedLocations": accountData.commonUsedLocation ? JSON.parse(accountData.commonUsedLocation) : []
                 }));
                 response.end();
             }
