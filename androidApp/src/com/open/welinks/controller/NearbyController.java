@@ -6,10 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -46,25 +49,41 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.GeocodeSearch.OnGeocodeSearchListener;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
+import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.SubData;
+import com.open.welinks.model.Data.Boards.Score;
+import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.NearbyView;
 
 public class NearbyController {
 
 	public Data data = Data.getInstance();
+	public SubData subData = SubData.getInstance();
 
 	public String tag = "NearbyController";
 	public MyLog log = new MyLog(tag, true);
@@ -76,7 +95,6 @@ public class NearbyController {
 	public LocationManagerProxy mLocationManagerProxy;
 	public SearchBound bound;
 	public Query mQuery;
-	public Sortingrules mSortingrules;
 	public CloudSearch mCloudSearch;
 	public ArrayList<CloudItem> mCloudItems;
 	public String type;
@@ -87,17 +105,26 @@ public class NearbyController {
 	public OnItemClickListener mOnItemClickListener;
 	public OnDownloadListener downloadListener;
 	public OnScrollListener mOnScrollListener;
+	public OnTouchListener mOnTouchListener;
 
+	public HttpClient httpClient = HttpClient.getInstance();
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
+	public Gson gson = new Gson();
+
 	public String mTableId;
-	public ArrayList<Map<String, Object>> mInfomations;
+	public ArrayList<ShareMessage> mInfomations;
 	public AMapLocation mAmapLocation;
+
+	public double latitude, longitude;
+	public int searchRadius = 50000;// 5000 10000 50000
+	public long searchTime = 900000;// 3600000 86400000 259200000
 
 	public Status status;
 
 	public enum Status {
-		account, group, square
+		account, group, share
 	}
 
 	public NearbyController(NearbyActivity thisActivity) {
@@ -106,7 +133,7 @@ public class NearbyController {
 	}
 
 	public void onCreate() {
-
+		thisView.viewManage.nearbyView = thisView;
 		type = thisActivity.getIntent().getStringExtra("type");
 		if ("account".equals(type)) {
 			status = Status.account;
@@ -118,16 +145,17 @@ public class NearbyController {
 			mTableId = Constant.GROUPTABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
 			thisView.threeChoicesView.setDefaultItem(2);
-		} else if ("square".equals(type)) {
-			status = Status.square;
-			mTableId = Constant.SQUARETABLEID;
+		} else if ("share".equals(type)) {
+			status = Status.share;
+			mTableId = Constant.SHARETABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
 			thisView.threeChoicesView.setDefaultItem(1);
 		}
 		thisView.threeChoicesView.setButtonOneText("最新");
-		thisView.threeChoicesView.setButtonTwoText("最热");
-		thisView.threeChoicesView.setButtonThreeText("关注");
-		mInfomations = new ArrayList<Map<String, Object>>();
+		// thisView.threeChoicesView.setButtonTwoText("关注");
+		thisView.threeChoicesView.setButtonThreeText("最热");
+		thisView.threeChoicesView.setTwoChoice();
+		mInfomations = new ArrayList<ShareMessage>();
 		mCloudSearch = new CloudSearch(thisActivity);
 
 		initializeListeners();
@@ -153,6 +181,7 @@ public class NearbyController {
 		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
 
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
+		getUserCommonUsedLocations();
 
 		// requestMyLocation();
 		animationTop = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_beat_top);
@@ -266,7 +295,7 @@ public class NearbyController {
 				if (rCode == 0) {
 					if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
 						address = result.getRegeocodeAddress().getFormatAddress();
-						log.e("onRegeocodeSearched:" + address);
+						// log.e("onRegeocodeSearched:" + address);
 						thisView.addressView.setText(address);
 						isChangeAddress = false;
 						thisView.ico_map_pin.startAnimation(animationTop);
@@ -289,7 +318,7 @@ public class NearbyController {
 						LatLng mLatLng = new LatLng(point.getLatLonPoint().getLatitude(), point.getLatLonPoint().getLongitude());
 						thisView.mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
 						String address = point.getFormatAddress();
-						log.e("onGeocodeSearched:" + address);
+						// log.e("onGeocodeSearched:" + address);
 						// locationView.setText("当前地址：" + address);
 					}
 				}
@@ -300,9 +329,12 @@ public class NearbyController {
 			@Override
 			public void onCameraChangeFinish(CameraPosition cameraPosition) {
 				LatLng mLatLng = cameraPosition.target;
+				latitude = mLatLng.latitude;
+				longitude = mLatLng.longitude;
 				com.amap.api.services.core.LatLonPoint latLonPoint = new com.amap.api.services.core.LatLonPoint(mLatLng.latitude, mLatLng.longitude);
 				RegeocodeQuery mRegeocodeQuery = new RegeocodeQuery(latLonPoint, 200, GeocodeSearch.AMAP);
 				mGeocodeSearch.getFromLocationAsyn(mRegeocodeQuery);
+				searchNearby();
 			}
 
 			@Override
@@ -359,7 +391,7 @@ public class NearbyController {
 					if (totalItemCount > 0) {
 						if (loadFinish) {
 							loadFinish = false;
-							searchNearByPolygon(nowpage);
+							// searchNearby();
 						}
 					}
 				}
@@ -447,9 +479,31 @@ public class NearbyController {
 
 						@Override
 						public void onClick(AlertInputDialog dialog) {
-
+							com.open.welinks.model.Data.UserInformation.User.Location location = data.userInformation.currentUser.new Location();
+							location.address = address;
+							location.latitude = latitude;
+							location.longitude = longitude;
+							location.remark = dialog.getInputText().trim();
+							if (data.userInformation.currentUser.commonUsedLocations == null)
+								data.userInformation.currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
+							data.userInformation.currentUser.commonUsedLocations.add(location);
+							thisView.dialogAdapter.notifyDataSetChanged();
+							data.userInformation.isModified = true;
+							modifyUserCommonUsedLocations();
 						}
+
 					}).show();
+				} else if (view.equals(thisView.menuImage)) {
+					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("mode", "NearbyView");
+					intent.putExtra("gtype", "share");
+					intent.putExtra("type", "imagetext");
+					intent.putExtra("gid", Constant.SQUARE_SID);
+					intent.putExtra("address", address);
+					intent.putExtra("latitude", latitude);
+					intent.putExtra("longitude", longitude);
+					intent.putExtra("sid", Constant.SQUARE_SID);
+					thisActivity.startActivity(intent);
 				}
 			}
 		};
@@ -458,13 +512,15 @@ public class NearbyController {
 			@Override
 			public void onButtonCilck(int position) {
 				if (position == 3) {
-					status = Status.account;
-					mTableId = Constant.ACCOUNTTABLEID;
-					thisView.NearbyLayoutID = R.layout.nearby_item_account;
+					// status = Status.account;
+					// mTableId = Constant.ACCOUNTTABLEID;
+					// thisView.NearbyLayoutID = R.layout.nearby_item_account;
 					nowpage = 0;
 					loadFinish = true;
+//					mInfomations.clear();
+					thisView.nearbyAdapter.notifyDataSetChanged();
 					thisView.nearbyListView.setSelection(0);
-					searchNearByPolygon(nowpage);
+					// searchNearByPolygon(nowpage);
 				} else if (position == 2) {
 					// status = Status.group;
 					// mTableId = Constant.GROUPTABLEID;
@@ -483,8 +539,11 @@ public class NearbyController {
 					// loadfinish = true;
 					// thisView.nearbyListView.setSelection(0);
 					// searchNearByPolygon(nowpage);
-					mInfomations.clear();
+					nowpage = 0;
+					loadFinish = true;
+//					mInfomations.clear();
 					thisView.nearbyAdapter.notifyDataSetChanged();
+					thisView.nearbyListView.setSelection(0);
 				}
 			}
 		};
@@ -507,7 +566,6 @@ public class NearbyController {
 							if (mCloudItems.size() > 0) {
 								nowpage++;
 								loadFinish = true;
-							} else {
 							}
 							for (CloudItem item : mCloudItems) {
 								Map<String, Object> map = new HashMap<String, Object>();
@@ -519,13 +577,16 @@ public class NearbyController {
 								Iterator iter = item.getCustomfield().entrySet().iterator();
 								while (iter.hasNext()) {
 									Map.Entry entry = (Map.Entry) iter.next();
+									log.e(entry.getKey().toString() + "::::::::::::::" + entry.getValue());
 									map.put(entry.getKey().toString(), entry.getValue());
 								}
-								mInfomations.add(map);
+								mInfomations.add(processingData(map));
 							}
 							thisView.nearbyAdapter.notifyDataSetChanged();
 						}
 					}
+				} else {
+					log.e(rCode + "::::::::::::::" + result);
 				}
 
 			}
@@ -558,7 +619,9 @@ public class NearbyController {
 				mLocationManagerProxy.destroy();
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
 					mAmapLocation = amapLocation;
-					String address = mAmapLocation.getAddress();
+					address = mAmapLocation.getAddress();
+					latitude = amapLocation.getLatitude();
+					longitude = amapLocation.getLongitude();
 					// thisView.addressView.setText(address);
 					// mOnLocationChangedListener.onLocationChanged(amapLocation);
 					LatLng mLatLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
@@ -575,6 +638,14 @@ public class NearbyController {
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
 				super.onFailure(instance, status);
+			}
+		};
+		mOnTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				System.out.println("touch:::::::::");
+				return false;
 			}
 		};
 	}
@@ -598,42 +669,39 @@ public class NearbyController {
 		}
 	}
 
-	public void searchNearby(AMapLocation amapLocation) {
-		bound = new SearchBound(new LatLonPoint(amapLocation.getLatitude(), amapLocation.getLongitude()), 50000);
+	public void searchNearby() {
+		bound = new SearchBound(new LatLonPoint(latitude, longitude), searchRadius);
 		try {
 			mQuery = new Query(mTableId, "", bound);
 		} catch (AMapCloudException e) {
 			e.printStackTrace();
 		}
-		// if (status == Status.group) {
-		// mQuery.addFilterString("gtype", "group");
-		// } else if (status == Status.square) {
-		// mQuery.addFilterString("gtype", "community");
-		// }
-		mQuery.setPageSize(50);
-		// mQuery.setPageNum(1);
-		mSortingrules = new Sortingrules(1);
-		mQuery.setSortingrules(mSortingrules);
+		mQuery.setPageSize(20);
+		mQuery.setPageNum(nowpage);
+
+		CloudSearch.Sortingrules sorting = new CloudSearch.Sortingrules("_createtime", false);
+		mQuery.setSortingrules(sorting);
 
 		mCloudSearch.searchCloudAsyn(mQuery);
 	}
 
-	public void searchNearByPolygon(int nowpage) {
-		List<LatLonPoint> points = new ArrayList<LatLonPoint>();
-		points.add(new LatLonPoint(5.965754, 70.136719));
-		points.add(new LatLonPoint(56.170023, 140.097656));
-		try {
-			mQuery = new Query(mTableId, "", new SearchBound(points));
-		} catch (AMapCloudException e) {
-			e.printStackTrace();
-		}
-		mQuery.setPageSize(50);
-		mQuery.setPageNum(nowpage);
-		mSortingrules = new Sortingrules(1);// 0为权重降序排列，1为距离升序排列。
-		mQuery.setSortingrules(mSortingrules);
-		// mQuery.setBound(new SearchBound(points));
-		mCloudSearch.searchCloudAsyn(mQuery);
-
+	public ShareMessage processingData(Map<String, Object> map) {
+		ShareMessage message = data.boards.new ShareMessage();
+		message.content = (String) map.get("content");
+		message.head = (String) map.get("head");
+		message.gsid = (String) map.get("gsid");
+		message.sid = (String) map.get("sid");
+		message.phone = (String) map.get("phone");
+		message.totalScore = Integer.valueOf((String) map.get("totalScore"));
+		message.type = (String) map.get("type");
+		message.time = Long.valueOf((String) map.get("time"));
+		message.nickName = (String) map.get("name");
+		message.distance = (Integer) map.get("distance");
+		Object obj = map.get("scores");
+		if (obj != null)
+			message.scores = gson.fromJson((String) obj, new TypeToken<HashMap<String, Score>>() {
+			}.getType());
+		return data.boards.shareMessagesMap.put(message.sid, message);
 	}
 
 	public boolean judgeTempRelation(Map<String, Object> infomation) {
@@ -668,5 +736,32 @@ public class NearbyController {
 
 		}
 		return isTemp;
+	}
+
+	public void getUserCommonUsedLocations() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GETCOMMONUSEDLOCATION, params, responseHandlers.account_getcommonusedlocation);
+	}
+
+	public void modifyUserCommonUsedLocations() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("commonusedlocation", gson.toJson(currentUser.commonUsedLocations));
+
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYCOMMONUSEDLOCATION, params, httpClient.new ResponseHandler<String>() {
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				super.onSuccess(responseInfo);
+			}
+		});
+
 	}
 }

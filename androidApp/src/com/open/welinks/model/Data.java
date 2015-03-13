@@ -149,11 +149,11 @@ public class Data {
 
 			public List<String> blackList;
 			public List<String> faceList;
-			public List<Location> commonUsedLocation;
+			public List<Location> commonUsedLocations;
 
 			public class Location {
 				public double longitude, latitude;
-				public String address, city;
+				public String address, remark;
 			}
 		}
 

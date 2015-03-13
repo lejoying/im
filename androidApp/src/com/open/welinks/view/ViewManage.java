@@ -30,6 +30,7 @@ public class ViewManage {
 	public ChatView chatView = null;
 	public MessagesSubView messagesSubView = null;
 	public ShareMessageDetailView shareMessageDetailView = null;
+	public NearbyView nearbyView = null;
 
 	public ShareSectionView shareSectionView = null;
 
@@ -161,6 +162,8 @@ public class ViewManage {
 			if (shareSectionView != null) {
 				shareSectionView.showShareMessages();
 			}
+		} else if (viewName.equals("NearbyView")) {
+			System.out.println("NearbyView:::::::::::::");
 		}
 	}
 

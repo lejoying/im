@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/ 192.168.1.14 192.168.0.105
+	public static String API_DOMAIN = "http://192.168.0.104/";// http://www.we-links.com/ 192.168.1.14 192.168.0.105
 
 	/**
 	 * http://images2.we-links.com/
@@ -44,6 +44,14 @@ public class API {
 	 * http://www.we-links.com/api2/account/modifylocation
 	 */
 	public static String ACCOUNT_MODIFYLOCATION = API_DOMAIN + "api2/account/modifylocation";
+	/**
+	 * http://www.we-links.com/api2/account/getcommonusedlocation
+	 */
+	public static String ACCOUNT_GETCOMMONUSEDLOCATION = API_DOMAIN + "api2/account/getcommonusedlocation";
+	/**
+	 * http://www.we-links.com/api2/account/modifycommonusedlocation
+	 */
+	public static String ACCOUNT_MODIFYCOMMONUSEDLOCATION = API_DOMAIN + "api2/account/modifycommonusedlocation";
 	// group
 	/**
 	 * http://www.we-links.com/api2/group/create

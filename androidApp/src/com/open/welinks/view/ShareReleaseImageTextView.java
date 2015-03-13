@@ -2,18 +2,28 @@ package com.open.welinks.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -22,6 +32,8 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ShareReleaseImageTextController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
+import com.open.welinks.model.Data.UserInformation.User.Location;
+import com.open.welinks.utils.BaseDataUtils;
 
 public class ShareReleaseImageTextView {
 	public Data data = Data.getInstance();
@@ -35,9 +47,11 @@ public class ShareReleaseImageTextView {
 	public EditText mEditTextView;
 	public RelativeLayout mImagesContentView;
 	public RelativeLayout mReleaseButtomBarView;
+	public RelativeLayout addressLayout;
 
 	public TextView mCancleButtonView;
 	public TextView mConfirmButtonView;
+	public TextView address;
 	public ImageView mSelectImageButtonView;
 	public ImageView mFaceView;
 	public ImageView mVoiceView;
@@ -45,6 +59,22 @@ public class ShareReleaseImageTextView {
 	public DisplayMetrics displayMetrics;
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DisplayImageOptions options;
+
+	public View maxView;
+
+	public PopupWindow popDialogView;
+	public View groupEditor, dialogGroupEditor, dialogView, buttons, manage, buttonOne, buttonTwo, buttonThree, background, onTouchDownView, onLongPressView;
+	public DragSortListView groupCircleList;
+	public ImageView moreView, rditorLine;
+	public TextView dialogGroupEditorConfirm, dialogGroupEditorCancel, groupEditorConfirm, groupEditorCancel, backTitileView, titleView, sectionNameTextView, buttonOneText, buttonTwoText, buttonThreeText;
+
+	public View dialogContainer;
+
+	public View singleButton;
+
+	public LayoutInflater mInflater;
+	public AddressDialogAdapter dialogAdapter;
+	public ListController listController;
 
 	public MyScrollImageBody myScrollImageBody;
 
@@ -61,6 +91,7 @@ public class ShareReleaseImageTextView {
 	public void initView() {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		mInflater = thisActivity.getLayoutInflater();
 		if (thisController.gtype.equals("square")) {
 			showImageHeight = (int) ((displayMetrics.widthPixels - 20 * displayMetrics.density - 0.5f) * thisController.imageHeightScale);
 		} else {
@@ -68,11 +99,14 @@ public class ShareReleaseImageTextView {
 		}
 
 		thisActivity.setContentView(R.layout.share_release_imagetext);
+		maxView = thisActivity.findViewById(R.id.maxView);
 		mEditTextView = (EditText) thisActivity.findViewById(R.id.releaseTextContentView);
 		mImagesContentView = (RelativeLayout) thisActivity.findViewById(R.id.releaseImagesContent);
 		mReleaseButtomBarView = (RelativeLayout) thisActivity.findViewById(R.id.releaseButtomBar);
+		addressLayout = (RelativeLayout) thisActivity.findViewById(R.id.addressLayout);
 		mCancleButtonView = (TextView) thisActivity.findViewById(R.id.releaseCancel);
 		mConfirmButtonView = (TextView) thisActivity.findViewById(R.id.releaseConfirm);
+		address = (TextView) thisActivity.findViewById(R.id.address);
 		mSelectImageButtonView = (ImageView) thisActivity.findViewById(R.id.selectImageButton);
 		mFaceView = (ImageView) thisActivity.findViewById(R.id.releaseFace);
 		mVoiceView = (ImageView) thisActivity.findViewById(R.id.releaseVoice);
@@ -120,6 +154,148 @@ public class ShareReleaseImageTextView {
 					this.showSelectedImages();
 				}
 			}
+		}
+		if (thisController.address != null) {
+			addressLayout.setVisibility(View.VISIBLE);
+			((RelativeLayout.LayoutParams) mEditTextView.getLayoutParams()).bottomMargin = BaseDataUtils.dpToPxint(90);
+			address.setText(thisController.address);
+			initializationGroupCirclesDialog();
+		} else {
+			((RelativeLayout.LayoutParams) mEditTextView.getLayoutParams()).bottomMargin = BaseDataUtils.dpToPxint(50);
+			addressLayout.setVisibility(View.GONE);
+		}
+	}
+
+	public void initializationGroupCirclesDialog() {
+		dialogView = mInflater.inflate(R.layout.dialog_listview, null);
+		groupCircleList = (DragSortListView) dialogView.findViewById(R.id.content);
+		dialogContainer = dialogView.findViewById(R.id.container);
+		buttons = dialogView.findViewById(R.id.buttons);
+		manage = dialogView.findViewById(R.id.manage);
+		manage.setVisibility(View.GONE);
+		background = dialogView.findViewById(R.id.background);
+		buttonOne = dialogView.findViewById(R.id.buttonOne);
+		buttonTwo = dialogView.findViewById(R.id.buttonTwo);
+		buttonThree = dialogView.findViewById(R.id.buttonThree);
+		dialogGroupEditor = dialogView.findViewById(R.id.groupEditor);
+		rditorLine = (ImageView) dialogView.findViewById(R.id.rditorLine);
+		buttonOneText = (TextView) dialogView.findViewById(R.id.buttonOneText);
+		buttonTwoText = (TextView) dialogView.findViewById(R.id.buttonTwoText);
+		buttonThreeText = (TextView) dialogView.findViewById(R.id.buttonThreeText);
+		dialogGroupEditorConfirm = (TextView) dialogView.findViewById(R.id.confirm);
+		dialogGroupEditorCancel = (TextView) dialogView.findViewById(R.id.cancel);
+
+		this.singleButton = dialogView.findViewById(R.id.singleButton);
+		this.singleButton.setVisibility(View.GONE);
+
+		popDialogView = new PopupWindow(dialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		popDialogView.setBackgroundDrawable(new BitmapDrawable());
+		showLocationList();
+	}
+
+	public void showLocationList() {
+		if (dialogAdapter == null) {
+			dialogAdapter = new AddressDialogAdapter();
+			groupCircleList.setAdapter(dialogAdapter);
+			listController = new ListController(groupCircleList, dialogAdapter);
+			groupCircleList.setFloatViewManager(listController);
+			groupCircleList.setOnItemClickListener(listController);
+		} else {
+			dialogAdapter.notifyDataSetChanged();
+		}
+	}
+
+	public class AddressDialogAdapter extends BaseAdapter {
+		public List<Location> addressList;
+
+		public AddressDialogAdapter() {
+			addressList = new ArrayList<Data.UserInformation.User.Location>(thisController.data.userInformation.currentUser.commonUsedLocations);
+			Location location = data.userInformation.currentUser.new Location();
+			location.address = thisController.address;
+			location.longitude = thisController.longitude;
+			location.latitude = thisController.latitude;
+			location.remark = "当前地址";
+			addressList.add(0, location);
+		}
+
+		@Override
+		public void notifyDataSetChanged() {
+			super.notifyDataSetChanged();
+		}
+
+		@Override
+		public int getCount() {
+			return addressList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return addressList.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			Holder holder = null;
+			if (convertView == null) {
+				holder = new Holder();
+				convertView = mInflater.inflate(R.layout.address_list_dialog_item, null, false);
+				holder.selectedStatus = (ImageView) convertView.findViewById(R.id.selectedStatus);
+				holder.name = (TextView) convertView.findViewById(R.id.name);
+				holder.address = (TextView) convertView.findViewById(R.id.address);
+				convertView.setTag(holder);
+			} else {
+				holder = (Holder) convertView.getTag();
+			}
+			Location location = addressList.get(position);
+			holder.name.setText(location.remark);
+			holder.address.setText(location.address);
+			return convertView;
+		}
+
+		class Holder {
+			public ImageView status, selectedStatus;
+			public TextView name, address;
+		}
+	}
+
+	public class ListController extends DragSortController implements android.widget.AdapterView.OnItemClickListener {
+		private AddressDialogAdapter adapter;
+
+		public ListController(DragSortListView dslv, AddressDialogAdapter dialogAdapter) {
+			super(dslv);
+			this.adapter = dialogAdapter;
+			setRemoveEnabled(false);
+			setSortEnabled(false);
+		}
+
+		@Override
+		public View onCreateFloatView(int position) {
+			View view = adapter.getView(position, null, thisView.groupCircleList);
+			view.setBackgroundResource(R.drawable.card_login_background_press);
+			return null;
+		}
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			Location location = (Location) adapter.getItem(position);
+			thisController.address = location.address;
+			thisController.longitude = location.longitude;
+			thisController.latitude = location.latitude;
+			thisView.address.setText(thisController.address);
+			changePopupWindow();
+		}
+	}
+
+	public void changePopupWindow() {
+		if (popDialogView.isShowing()) {
+			popDialogView.dismiss();
+		} else {
+			popDialogView.showAtLocation(maxView, Gravity.CENTER, 0, 0);
 		}
 	}
 

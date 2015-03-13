@@ -14,12 +14,12 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="100dp"
             android:ellipsize="end"
+            android:lineSpacingMultiplier="1.2"
             android:lines="3"
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="7dp"
-            android:lineSpacingMultiplier="1.2"
             android:text=""
             android:textColor="#99000000"
             android:textSize="14sp" />
@@ -82,6 +82,7 @@
             android:layout_marginRight="9dp" >
 
             <TextView
+                android:id="@+id/time"
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

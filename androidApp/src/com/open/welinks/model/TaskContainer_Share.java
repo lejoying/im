@@ -227,6 +227,8 @@ public class TaskContainer_Share {
 		public String gtype;
 		public String sid;
 		public String chatTextContent;
+		public String address;
+		public double longitude, latitude;
 
 		public String imageListString = "";
 
@@ -335,9 +337,14 @@ public class TaskContainer_Share {
 			params.addBodyParameter("phone", currentUser.phone);
 			params.addBodyParameter("nickName", currentUser.nickName);
 			params.addBodyParameter("accessKey", currentUser.accessKey);
+			params.addBodyParameter("head", currentUser.head);
 			params.addBodyParameter("gid", gid);
 			params.addBodyParameter("ogsid", shareMessage.gsid);
 			params.addBodyParameter("sid", sid);
+			if (longitude != 0 && latitude != 0) {
+				params.addBodyParameter("location", longitude + "," + latitude);
+				params.addBodyParameter("address", address);
+			}
 			SendShareMessage sendShareMessage = subData.new SendShareMessage();
 			sendShareMessage.type = "imagetext";
 			sendShareMessage.content = shareMessage.content;
@@ -388,7 +395,7 @@ public class TaskContainer_Share {
 				data.boards.isModified = true;
 
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送成功");
-			} else if (response.失败原因.equals("发布群分享失败")) {
+			} else if (response.提示信息.equals("发布群分享失败")) {
 				parser.check();
 				// String gid = response.gid;
 				String sid = response.sid;

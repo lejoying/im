@@ -127,6 +127,8 @@ public class ShareReleaseImageTextController {
 			// imageHeightScale);
 		}
 		data.tempData.selectedImageList = null;
+
+		log.e(gid + ":::::" + sid + ":::::" + address + ":::::" + longitude + ":::::" + latitude);
 	}
 
 	public OnTouchListener mScrollOnTouchListener;
@@ -313,6 +315,10 @@ public class ShareReleaseImageTextController {
 				} else if (view == thisView.mSelectImageButtonView) {
 					Intent intent = new Intent(thisActivity, ImagesDirectoryActivity.class);
 					thisActivity.startActivityForResult(intent, RESULT_REQUESTCODE_SELECTIMAGE);
+				} else if (view == thisView.addressLayout) {
+					thisView.changePopupWindow();
+				} else if (view == thisView.background) {
+					thisView.changePopupWindow();
 				} else if (view.getTag() != null) {
 					// selected images onclick handle
 					Log.e(tag, view.getTag().toString() + "------------------current");
@@ -328,6 +334,9 @@ public class ShareReleaseImageTextController {
 		thisView.mCancleButtonView.setOnClickListener(monClickListener);
 		thisView.mConfirmButtonView.setOnClickListener(monClickListener);
 		thisView.mSelectImageButtonView.setOnClickListener(monClickListener);
+		thisView.addressLayout.setOnClickListener(monClickListener);
+		if (thisView.background != null)
+			thisView.background.setOnClickListener(monClickListener);
 		thisView.mCancleButtonView.setOnTouchListener(monOnTouchListener);
 		thisView.mConfirmButtonView.setOnTouchListener(monOnTouchListener);
 		thisView.mSelectImageButtonView.setOnTouchListener(monOnTouchListener);
@@ -363,6 +372,9 @@ public class ShareReleaseImageTextController {
 		task.gid = gid;
 		task.sid = sid;
 		task.gtype = gtype;
+		task.address = address;
+		task.latitude = latitude;
+		task.longitude = longitude;
 		if (data.tempData.selectedImageList != null) {
 			task.imageListString = gson.toJson(data.tempData.selectedImageList);
 		}
@@ -380,137 +392,137 @@ public class ShareReleaseImageTextController {
 		data.tempData.selectedImageList = null;
 	}
 
-	private void sendImageTextShare() {
-
-		final String sendContent = thisView.mEditTextView.getText().toString().trim();
-		boolean flag = false;
-		if (data.tempData.selectedImageList == null) {
-			flag = true;
-		} else {
-			if (data.tempData.selectedImageList.size() == 0) {
-				flag = true;
-			} else {
-				flag = false;
-			}
-		}
-		if ("".equals(sendContent) && flag) {
-			return;
-		}
-		taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
-		thisActivity.finish();
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
-				// PostTask task = mTaskContainer_Share.new PostTask();
-				// task.API = API.SHARE_SENDSHARE;
-				// task.gid = gid;
-				// task.sid = sid;
-				// task.gtype = gtype;
-				// if (data.tempData.selectedImageList != null) {
-				// task.imageListString = gson.toJson(data.tempData.selectedImageList);
-				// }
-				// task.chatTextContent = thisView.mEditTextView.getText().toString();
-				// if (data.tempData.selectedImageList != null && data.tempData.selectedImageList.size() > 0) {
-				// task.myFileList = new ArrayList<MyFile>();
-				// for (int i = 0; i < data.tempData.selectedImageList.size(); i++) {
-				// MyFile myFile = new MyFile();
-				// myFile.uploadFileType = myFile.UPLOAD_TYPE_IMAGE;
-				// myFile.path = data.tempData.selectedImageList.get(i);
-				// task.myFileList.add(myFile);
-				// }
-				// }
-				// taskManageHolder.taskManager.pushTask(task);
-				// data.tempData.selectedImageList = null;
-
-				// Package structure to share news
-				long time = new Date().getTime();
-				parser.check();
-				ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
-				shareDraft.gid = gid;
-				shareDraft.sid = sid;
-				shareDraft.gsid = currentUser.phone + "_" + time;
-				shareDraft.gtype = gtype;
-				shareDraft.content = thisView.mEditTextView.getText().toString();
-				if (data.tempData.selectedImageList != null) {
-					if (data.tempData.selectedImageList.size() != 0) {
-						shareDraft.imagesContent = gson.toJson(data.tempData.selectedImageList);
-					} else {
-						shareDraft.imagesContent = "";
-					}
-				} else {
-					shareDraft.imagesContent = "";
-				}
-				if (data.localStatus.localData.shareReleaseSequece == null) {
-					data.localStatus.localData.shareReleaseSequece = new ArrayList<String>();
-				}
-				if (data.localStatus.localData.shareReleaseSequeceMap == null) {
-					data.localStatus.localData.shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
-				}
-				data.localStatus.localData.shareReleaseSequece.add(shareDraft.gsid);
-				data.localStatus.localData.shareReleaseSequeceMap.put(shareDraft.gsid, shareDraft);
-
-				if (data.boards == null) {
-					data.boards = data.new Boards();
-				}
-				if (data.boards.boardsMap.get(sid) == null) {
-					Board board = data.boards.new Board();
-					data.boards.boardsMap.put(sid, board);
-				}
-				Board board = data.boards.boardsMap.get(sid);
-				shareMessage = data.boards.new ShareMessage();
-				shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
-				shareMessage.gsid = currentUser.phone + "_" + time;
-				shareMessage.type = "imagetext";
-				shareMessage.sid = sid;
-				shareMessage.phone = currentUser.phone;
-				shareMessage.nickName = currentUser.nickName;
-				shareMessage.head = currentUser.head;
-				shareMessage.time = time;
-				shareMessage.status = "sending";
-
-				ShareContent shareContent = SubData.getInstance().new ShareContent();
-				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
-				shareContentItem.type = "text";
-				shareContentItem.detail = sendContent;
-				shareContent.shareContentItems.add(shareContentItem);
-
-				if (data.tempData.selectedImageList != null) {
-					totalUploadCount = data.tempData.selectedImageList.size();
-					if (totalUploadCount != 0) {
-						copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems);
-					} else {
-						String content = gson.toJson(shareContent.shareContentItems);
-						sendMessageToServer(content, shareMessage.gsid);
-					}
-				} else {
-					String content = gson.toJson(shareContent.shareContentItems);
-					sendMessageToServer(content, shareMessage.gsid);
-				}
-
-				String content = gson.toJson(shareContent.shareContentItems);
-				// Log.e(tag, content);
-				shareMessage.content = content;
-
-				// To add data to the data
-				board.shareMessagesOrder.add(0, shareMessage.gsid);
-				data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
-				data.boards.isModified = true;
-
-				// Local data diaplay in MainHandler
-				if ("square".equals(gtype)) {
-					taskManageHolder.viewManage.postNotifyView("SquareSubViewMessage");
-				}
-				if ("share".equals(gtype)) {
-					taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
-				}
-
-				// init tempData data
-				data.tempData.selectedImageList = null;
-			}
-		}).start();
-	}
+	// public void sendImageTextShare() {
+	//
+	// final String sendContent = thisView.mEditTextView.getText().toString().trim();
+	// boolean flag = false;
+	// if (data.tempData.selectedImageList == null) {
+	// flag = true;
+	// } else {
+	// if (data.tempData.selectedImageList.size() == 0) {
+	// flag = true;
+	// } else {
+	// flag = false;
+	// }
+	// }
+	// if ("".equals(sendContent) && flag) {
+	// return;
+	// }
+	// taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
+	// thisActivity.finish();
+	// new Thread(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// // TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
+	// // PostTask task = mTaskContainer_Share.new PostTask();
+	// // task.API = API.SHARE_SENDSHARE;
+	// // task.gid = gid;
+	// // task.sid = sid;
+	// // task.gtype = gtype;
+	// // if (data.tempData.selectedImageList != null) {
+	// // task.imageListString = gson.toJson(data.tempData.selectedImageList);
+	// // }
+	// // task.chatTextContent = thisView.mEditTextView.getText().toString();
+	// // if (data.tempData.selectedImageList != null && data.tempData.selectedImageList.size() > 0) {
+	// // task.myFileList = new ArrayList<MyFile>();
+	// // for (int i = 0; i < data.tempData.selectedImageList.size(); i++) {
+	// // MyFile myFile = new MyFile();
+	// // myFile.uploadFileType = myFile.UPLOAD_TYPE_IMAGE;
+	// // myFile.path = data.tempData.selectedImageList.get(i);
+	// // task.myFileList.add(myFile);
+	// // }
+	// // }
+	// // taskManageHolder.taskManager.pushTask(task);
+	// // data.tempData.selectedImageList = null;
+	//
+	// // Package structure to share news
+	// long time = new Date().getTime();
+	// parser.check();
+	// ShareDraft shareDraft = data.localStatus.localData.new ShareDraft();
+	// shareDraft.gid = gid;
+	// shareDraft.sid = sid;
+	// shareDraft.gsid = currentUser.phone + "_" + time;
+	// shareDraft.gtype = gtype;
+	// shareDraft.content = thisView.mEditTextView.getText().toString();
+	// if (data.tempData.selectedImageList != null) {
+	// if (data.tempData.selectedImageList.size() != 0) {
+	// shareDraft.imagesContent = gson.toJson(data.tempData.selectedImageList);
+	// } else {
+	// shareDraft.imagesContent = "";
+	// }
+	// } else {
+	// shareDraft.imagesContent = "";
+	// }
+	// if (data.localStatus.localData.shareReleaseSequece == null) {
+	// data.localStatus.localData.shareReleaseSequece = new ArrayList<String>();
+	// }
+	// if (data.localStatus.localData.shareReleaseSequeceMap == null) {
+	// data.localStatus.localData.shareReleaseSequeceMap = new HashMap<String, ShareDraft>();
+	// }
+	// data.localStatus.localData.shareReleaseSequece.add(shareDraft.gsid);
+	// data.localStatus.localData.shareReleaseSequeceMap.put(shareDraft.gsid, shareDraft);
+	//
+	// if (data.boards == null) {
+	// data.boards = data.new Boards();
+	// }
+	// if (data.boards.boardsMap.get(sid) == null) {
+	// Board board = data.boards.new Board();
+	// data.boards.boardsMap.put(sid, board);
+	// }
+	// Board board = data.boards.boardsMap.get(sid);
+	// shareMessage = data.boards.new ShareMessage();
+	// shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
+	// shareMessage.gsid = currentUser.phone + "_" + time;
+	// shareMessage.type = "imagetext";
+	// shareMessage.sid = sid;
+	// shareMessage.phone = currentUser.phone;
+	// shareMessage.nickName = currentUser.nickName;
+	// shareMessage.head = currentUser.head;
+	// shareMessage.time = time;
+	// shareMessage.status = "sending";
+	//
+	// ShareContent shareContent = SubData.getInstance().new ShareContent();
+	// ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+	// shareContentItem.type = "text";
+	// shareContentItem.detail = sendContent;
+	// shareContent.shareContentItems.add(shareContentItem);
+	//
+	// if (data.tempData.selectedImageList != null) {
+	// totalUploadCount = data.tempData.selectedImageList.size();
+	// if (totalUploadCount != 0) {
+	// copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems);
+	// } else {
+	// String content = gson.toJson(shareContent.shareContentItems);
+	// sendMessageToServer(content, shareMessage.gsid);
+	// }
+	// } else {
+	// String content = gson.toJson(shareContent.shareContentItems);
+	// sendMessageToServer(content, shareMessage.gsid);
+	// }
+	//
+	// String content = gson.toJson(shareContent.shareContentItems);
+	// // Log.e(tag, content);
+	// shareMessage.content = content;
+	//
+	// // To add data to the data
+	// board.shareMessagesOrder.add(0, shareMessage.gsid);
+	// data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+	// data.boards.isModified = true;
+	//
+	// // Local data diaplay in MainHandler
+	// if ("square".equals(gtype)) {
+	// taskManageHolder.viewManage.postNotifyView("SquareSubViewMessage");
+	// }
+	// if ("share".equals(gtype)) {
+	// taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
+	// }
+	//
+	// // init tempData data
+	// data.tempData.selectedImageList = null;
+	// }
+	// }).start();
+	// }
 
 	public SubData subData = SubData.getInstance();
 
@@ -529,10 +541,6 @@ public class ShareReleaseImageTextController {
 		params.addBodyParameter("ogsid", gsid);
 		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
-		if (longitude != 0 && latitude != 0) {
-			params.addBodyParameter("location", longitude + "," + latitude);
-			params.addBodyParameter("address", address);
-		}
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		responseHandlers.share_sendShareCallBack.gid = currentSelectedGroup;

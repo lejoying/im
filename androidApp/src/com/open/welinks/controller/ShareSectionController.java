@@ -587,7 +587,7 @@ public class ShareSectionController {
 				thisView.showGroupBoards();
 				thisView.dismissGroupBoardsDialog();
 				getCurrentGroupShareMessages();
-			}else if (view_class.equals("DecrementView")) {
+			} else if (view_class.equals("DecrementView")) {
 				onTouchDownView.setTag(R.id.time, null);
 				onTouchDownView.performClick();
 			} else if (view_class.equals("IncrementView")) {
@@ -714,7 +714,7 @@ public class ShareSectionController {
 	public void finish() {
 		thisView.dismissGroupBoardsDialog();
 		taskManageHolder.viewManage.shareSectionView = null;
-		thisView.currentGroup.currentBoard = thisView.currentGroup.boards.get(0);
+		thisView.currentGroup.currentBoard = thisView.currentBoard.sid;
 		taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
 		taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
 	}
@@ -856,7 +856,7 @@ public class ShareSectionController {
 					data.boards.isModified = true;
 					if (group != null) {
 						group.boards = response.boards;
-						if (group.boards.size() > 0)
+						if (group.currentBoard.equals("") && group.boards.size() > 0)
 							group.currentBoard = group.boards.get(0);
 					}
 					thisView.currentBoard = data.boards.boardsMap.get(group.currentBoard);

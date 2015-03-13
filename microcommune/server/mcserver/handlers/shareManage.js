@@ -1152,7 +1152,7 @@ shareManage.sendboardshare = function (data, response) {
                     data: {
                         key: serverSetting.LBS.KEY,
                         tableid: serverSetting.LBS.SHARESTABLEID,
-                        loctype: 2,
+                        loctype: 1,
                         data: JSON.stringify({
                             _name: share.nickName,
                             _location: data.location,
@@ -1164,7 +1164,6 @@ shareManage.sendboardshare = function (data, response) {
                             type: share.type,
                             content: share.content,
                             totalScore: share.totalScore,
-                            scores: share.scores,
                             time: share.time
                         })
                     }, success: function (info) {
@@ -1172,7 +1171,7 @@ shareManage.sendboardshare = function (data, response) {
                         if (info.status == 1) {
                             console.log("success--" + info._id)
                         } else {
-                            console.log("error--" + info.status)
+                            console.log("error--" + info.info)
                         }
                     }
                 });

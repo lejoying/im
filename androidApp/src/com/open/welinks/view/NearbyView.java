@@ -1,6 +1,5 @@
 package com.open.welinks.view;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -13,13 +12,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -50,8 +46,14 @@ import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.UserInformation.User.Location;
+import com.open.welinks.model.SubData.ShareContent;
+import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
-import com.open.welinks.utils.StreamParser;
+import com.open.welinks.utils.DateUtil;
 
 public class NearbyView {
 
@@ -255,13 +257,12 @@ public class NearbyView {
 	}
 
 	public void reflashFirst() {
-		// TODO 获取最新数据
-		log.e("获取最新数据");
+		thisController.nowpage = 0;
+		thisController.searchNearby();
 	}
 
 	public void nextPageData() {
-		// TODO 获取下一页数据
-		log.e("获取下一页数据");
+		thisController.searchNearby();
 	}
 
 	public float transleteSpeed = 3f;
@@ -288,125 +289,83 @@ public class NearbyView {
 	public void fillData2() {
 
 		nearbyAdapter = new NearbyAdapter();
-		try {
-			byte[] bytes = StreamParser.parseToByteArray(thisActivity.getAssets().open("testhot.js"));
-			String result = new String(bytes);
-			this.hots = gson.fromJson(result, new TypeToken<ArrayList<HotContent>>() {
-			}.getType());
-			nearbyListView.setAdapter(nearbyAdapter);
-			final GestureDetector mGesture = new GestureDetector(thisActivity, new GestureListener());
-			this.nearbyListView.setOnTouchListener(new OnTouchListener() {
+		nearbyListView.setAdapter(nearbyAdapter);
+		this.nearbyListView.setOnTouchListener(new OnTouchListener() {
 
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					int id = event.getAction();
-					if (id == MotionEvent.ACTION_DOWN) {
-						status.state = status.Down;
-						openLooper.stop();
-						touch_pre_x = event.getX();
-						touch_pre_y = event.getY();
-						percent = 0;
-						currentPosition = -viewManage.screenWidth;
-						nextPosition = -viewManage.screenWidth;
-						// isTranslate = false;
-					} else if (id == MotionEvent.ACTION_MOVE) {
-						float x = event.getX();
-						float y = event.getY();
-						if (status.state == status.Down) {
-							View firstView = nearbyListView.getChildAt(0);
-							int firstVisiblePosition = nearbyListView.getFirstVisiblePosition();
-							int top = firstView.getTop();
-							int firstViewHeight = firstView.getHeight();
-							int topDistance = -top + firstVisiblePosition * firstViewHeight;
-							int buttomDistance = topDistance + nearbyListView.getHeight();
-							int totalHeight = firstViewHeight * nearbyListView.getCount();
-							MarginLayoutParams params = (MarginLayoutParams) nearbyListView.getLayoutParams();
-							int topMarigin = params.topMargin;
-							int error = 2;
-							if (topMarigin == (int) (84 * thisView.metrics.density)) {
-								error = 4;
-							} else {
-								error = 2;
-							}
-							if (topDistance == 0) {
-								status.state = status.T;
-							} else if (buttomDistance == totalHeight - error) {
-								status.state = status.B;
-							}
-						} else if (status.state == status.T || status.state == status.B) {
-							float Δy = y - touch_pre_y;
-							touch_pre_x = x;
-							touch_pre_y = y;
-							isTranslate = true;
-							percent += Δy;
-							if (status.state == status.T && percent < 0) {
-								status.state = status.Down;
-								percent = 0;
-								isTranslate = false;
-							}
-							if (status.state == status.B && percent > 0) {
-								status.state = status.Down;
-								percent = 0;
-								isTranslate = false;
-							}
-							currentPosition = (float) (-viewManage.screenWidth + Math.abs(percent) * 2);
-							if (currentPosition >= 0) {
-								currentPosition = 0;
-							}
-							progressView.setTranslationX(currentPosition);
-						}
-					} else if (id == MotionEvent.ACTION_UP) {
-						float distance = Math.abs(percent) * 2;
-						if (distance > viewManage.screenWidth / 2) {
-							nextPosition = 0;
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				int id = event.getAction();
+				if (id == MotionEvent.ACTION_DOWN) {
+					status.state = status.Down;
+					openLooper.stop();
+					touch_pre_x = event.getX();
+					touch_pre_y = event.getY();
+					percent = 0;
+					currentPosition = -viewManage.screenWidth;
+					nextPosition = -viewManage.screenWidth;
+					// isTranslate = false;
+				} else if (id == MotionEvent.ACTION_MOVE) {
+					float x = event.getX();
+					float y = event.getY();
+					if (status.state == status.Down) {
+						View firstView = nearbyListView.getChildAt(0);
+						int firstVisiblePosition = nearbyListView.getFirstVisiblePosition();
+						int top = firstView.getTop();
+						int firstViewHeight = firstView.getHeight();
+						int topDistance = -top + firstVisiblePosition * firstViewHeight;
+						int buttomDistance = topDistance + nearbyListView.getHeight();
+						int totalHeight = firstViewHeight * nearbyListView.getCount();
+						MarginLayoutParams params = (MarginLayoutParams) nearbyListView.getLayoutParams();
+						int topMarigin = params.topMargin;
+						int error = 2;
+						if (topMarigin == (int) (84 * thisView.metrics.density)) {
+							error = 4;
 						} else {
-							nextPosition = -viewManage.screenWidth;
+							error = 2;
 						}
-						isTranslate = false;
-						openLooper.start();
-						loopCallback.state = status.state;
-						status.state = status.Up;
-						// isTranslate = false;
+						if (topDistance == 0) {
+							status.state = status.T;
+						} else if (buttomDistance == totalHeight - error) {
+							status.state = status.B;
+						}
+					} else if (status.state == status.T || status.state == status.B) {
+						float Δy = y - touch_pre_y;
+						touch_pre_x = x;
+						touch_pre_y = y;
+						isTranslate = true;
+						percent += Δy;
+						if (status.state == status.T && percent < 0) {
+							status.state = status.Down;
+							percent = 0;
+							isTranslate = false;
+						}
+						if (status.state == status.B && percent > 0) {
+							status.state = status.Down;
+							percent = 0;
+							isTranslate = false;
+						}
+						currentPosition = (float) (-viewManage.screenWidth + Math.abs(percent) * 2);
+						if (currentPosition >= 0) {
+							currentPosition = 0;
+						}
+						progressView.setTranslationX(currentPosition);
 					}
-					mGesture.onTouchEvent(event);
-					return isTranslate;
+				} else if (id == MotionEvent.ACTION_UP) {
+					float distance = Math.abs(percent) * 2;
+					if (distance > viewManage.screenWidth / 2) {
+						nextPosition = 0;
+					} else {
+						nextPosition = -viewManage.screenWidth;
+					}
+					isTranslate = false;
+					openLooper.start();
+					loopCallback.state = status.state;
+					status.state = status.Up;
+					// isTranslate = false;
 				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	class GestureListener extends SimpleOnGestureListener {
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			log.e("velocityY:::" + velocityY);
-			return true;
-		}
-	}
-
-	public float dySpeed;
-
-	public void dampenHotScrollSpeed(long deltaMillis) {
-
-		if (dySpeed != 0.0f) {
-			dySpeed *= (1.0f - 0.002f * deltaMillis);
-			if (Math.abs(dySpeed) < 50f) {
-				dySpeed = 0.0f;
-				
+				return isTranslate;
 			}
-		}
-	}
-
-	public ArrayList<HotContent> hots = new ArrayList<HotContent>();
-
-	public class HotContent {
-		public String imageCount;
-		public String content;
-		public String totalScore;
-		public String time;
-		public double distance;
-
+		});
 	}
 
 	public ViewManage viewManage = ViewManage.getInstance();
@@ -417,12 +376,12 @@ public class NearbyView {
 
 		@Override
 		public int getCount() {
-			return hots.size();
+			return thisController.mInfomations.size();
 		}
 
 		@Override
 		public Object getItem(int posotion) {
-			return hots.get(posotion);
+			return thisController.mInfomations.get(posotion);
 		}
 
 		@Override
@@ -441,33 +400,50 @@ public class NearbyView {
 				holder.imageContentView = (ImageView) convertView.findViewById(R.id.imageContent);
 				holder.imageCountView = (TextView) convertView.findViewById(R.id.imageCount);
 				holder.distanceView = (TextView) convertView.findViewById(R.id.distance);
+				holder.timeView = (TextView) convertView.findViewById(R.id.time);
 				holder.num_picker_decrement = (ImageView) convertView.findViewById(R.id.num_picker_decrement);
 				holder.num_picker_increment = (ImageView) convertView.findViewById(R.id.num_picker_increment);
 				convertView.setTag(holder);
 			} else {
 				holder = (HotHolder) convertView.getTag();
 			}
-			HotContent hotContent = hots.get(position);
-			if (hotContent != null) {
+			ShareMessage message = (ShareMessage) getItem(position);
+			if (message != null) {
 				Typeface face = Typeface.createFromAsset(thisActivity.getAssets(), "fonts/avenirroman.ttf");
 				holder.scoreView.setTypeface(face);
-				holder.textContentView.setText(hotContent.content);
-				holder.scoreView.setText(hotContent.totalScore);
-				if (Integer.valueOf(hotContent.imageCount) > 4) {
-					holder.imageCountView.setText("(共" + hotContent.imageCount + "张)");
+				holder.scoreView.setText(String.valueOf(message.totalScore));
+				ShareContent shareContent = thisController.subData.new ShareContent();
+				shareContent.shareContentItems = gson.fromJson(message.content, new TypeToken<ArrayList<ShareContentItem>>() {
+				}.getType());
+				List<String> images = new ArrayList<String>();
+				for (ShareContentItem item : shareContent.shareContentItems) {
+					if (item.type.equals("text")) {
+						holder.textContentView.setText(item.detail);
+					} else if (item.type.equals("image")) {
+						images.add(item.detail);
+					}
+
+				}
+				if (images.size() > 4) {
+					holder.imageCountView.setText("(共" + images.size() + "张)");
 				} else {
 					holder.imageCountView.setText("");
 				}
-
-				String distance = new BigDecimal(hotContent.distance, new MathContext(4)).toPlainString();
-				if (distance.length() == 1) {
-					distance += ".000";
+				String distance;
+				if (message.distance >= 1000) {
+					distance = new BigDecimal(message.distance / 1000d, new MathContext(4)).toPlainString();
+					if (distance.length() == 1) {
+						distance += ".000";
+					}
+					if (distance.length() == 2) {
+						distance += ".00";
+					}
+					holder.distanceView.setText(distance + "km");
+				} else {
+					distance = String.valueOf(message.distance);
+					holder.distanceView.setText(distance + "m");
 				}
-				if (distance.length() == 2) {
-					distance += ".00";
-				}
-				holder.distanceView.setText(distance + "km");
-
+				holder.timeView.setText(DateUtil.getChatMessageListTime(message.time));
 				if (position % 7 == 0) {
 					imageLoader.displayImage("drawable://" + R.drawable.a1, holder.imageContentView);
 				} else if (position % 7 == 1) {
@@ -483,18 +459,8 @@ public class NearbyView {
 				} else if (position % 7 == 6) {
 					imageLoader.displayImage("drawable://" + R.drawable.a7, holder.imageContentView);
 				}
-				holder.num_picker_increment.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-					}
-				});
-				holder.num_picker_decrement.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-					}
-				});
+				holder.num_picker_increment.setOnTouchListener(thisController.mOnTouchListener);
+				holder.num_picker_decrement.setOnTouchListener(thisController.mOnTouchListener);
 			}
 			return convertView;
 		}
@@ -505,6 +471,7 @@ public class NearbyView {
 			public ImageView imageContentView;
 			public TextView imageCountView;
 			public TextView distanceView;
+			public TextView timeView;
 			public ImageView num_picker_increment;
 			public ImageView num_picker_decrement;
 		}
@@ -520,6 +487,7 @@ public class NearbyView {
 	}
 
 	public void onDestroy() {
+		viewManage.nearbyView = null;
 		mapView.onDestroy();
 	}
 
@@ -595,98 +563,8 @@ public class NearbyView {
 	public AddressDialogAdapter dialogAdapter;
 	public ListController listController;
 
-	public class Address {
-		public String name;
-		public String address;
-		public double longitude;
-		public double latitude;
-	}
-
 	public void showGroupCircles() {
 		if (dialogAdapter == null) {
-			addressList = new ArrayList<Address>() {
-				private static final long serialVersionUID = 1L;
-
-				{
-					Address address1 = new Address();
-					address1.name = "哈尔滨市";
-					address1.address = "黑龙江省哈尔滨市南岗区奋斗路街道红黄蓝亲子园(华山路)";
-					address1.longitude = 126.681934;
-					address1.latitude = 45.748676;
-
-					Address address2 = new Address();
-					address2.name = "沈阳市";
-					address2.address = "辽宁省沈阳市浑南区东湖街道古城子村";
-					address2.longitude = 123.583789;
-					address2.latitude = 41.734767;
-
-					Address address3 = new Address();
-					address3.name = "兴城市";
-					address3.address = "辽宁省葫芦岛市兴城市羊安满族乡佟屯村";
-					address3.longitude = 120.688892;
-					address3.latitude = 40.614296;
-
-					Address address4 = new Address();
-					address4.name = "秦皇岛市";
-					address4.address = "河北省秦皇岛市海港区文化路街道秦缘宾馆(人民路)";
-					address4.longitude = 119.598499;
-					address4.latitude = 39.941678;
-
-					Address address5 = new Address();
-					address5.name = "北京市";
-					address5.address = "北京市东城区天坛街道中华民族艺术珍品馆";
-					address5.longitude = 116.409717;
-					address5.latitude = 39.889013;
-
-					Address address6 = new Address();
-					address6.name = "保定市";
-					address6.address = "河北省保定市南市区南关街道南仓路80号";
-					address6.longitude = 115.492359;
-					address6.latitude = 38.840061;
-
-					Address address7 = new Address();
-					address7.name = "定州市";
-					address7.address = "河北省保定市定州市南城区街道清风南街71号";
-					address7.longitude = 114.992481;
-					address7.latitude = 38.511994;
-
-					Address address8 = new Address();
-					address8.name = "石家庄市";
-					address8.address = "河北省石家庄市桥东区中山东路街道银宏花苑";
-					address8.longitude = 114.507709;
-					address8.latitude = 38.047367;
-
-					Address address9 = new Address();
-					address9.name = "邢台市";
-					address9.address = "河北省邢台市桥东区大梁庄乡保险大厦";
-					address9.longitude = 114.522815;
-					address9.latitude = 37.055539;
-
-					Address address0 = new Address();
-					address0.name = "沙河市";
-					address0.address = "河北省邢台市沙河市褡裢街道建设路70号";
-					address0.longitude = 114.507709;
-					address0.latitude = 36.856912;
-
-					Address address01 = new Address();
-					address01.name = "邯郸市";
-					address01.address = "河北省邯郸市丛台区和平街道浴新北大街51号";
-					address01.longitude = 114.478183;
-					address01.latitude = 36.609829;
-
-					add(address1);
-					add(address2);
-					add(address3);
-					add(address4);
-					add(address5);
-					add(address6);
-					add(address7);
-					add(address8);
-					add(address9);
-					add(address0);
-					add(address01);
-				}
-			};
 			dialogAdapter = new AddressDialogAdapter();
 			groupCircleList.setAdapter(dialogAdapter);
 			listController = new ListController(groupCircleList, dialogAdapter);
@@ -700,15 +578,23 @@ public class NearbyView {
 		}
 	}
 
-	private List<Address> addressList;
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public class AddressDialogAdapter extends BaseAdapter {
+		public List<Location> addressList;
 
 		public AddressDialogAdapter() {
+			parser.check();
+			if (data.userInformation.currentUser.commonUsedLocations == null)
+				data.userInformation.currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
+			addressList = data.userInformation.currentUser.commonUsedLocations;
 		}
 
 		@Override
 		public void notifyDataSetChanged() {
+			parser.check();
+			// addressList = data.userInformation.currentUser.commonUsedLocations;
 			super.notifyDataSetChanged();
 		}
 
@@ -740,9 +626,9 @@ public class NearbyView {
 			} else {
 				holder = (Holder) convertView.getTag();
 			}
-			Address address = addressList.get(position);
-			holder.name.setText(address.name);
-			holder.address.setText(address.address);
+			Location location = addressList.get(position);
+			holder.name.setText(location.remark);
+			holder.address.setText(location.address);
 			return convertView;
 		}
 
@@ -768,10 +654,17 @@ public class NearbyView {
 
 		@Override
 		public void drop(int from, int to) {
+			List<Location> locations = thisController.data.userInformation.currentUser.commonUsedLocations;
+			locations.add(to, locations.remove(from));
+			adapter.notifyDataSetChanged();
+			thisController.modifyUserCommonUsedLocations();
 		}
 
 		@Override
 		public void remove(final int which) {
+			thisController.data.userInformation.currentUser.commonUsedLocations.remove(which);
+			adapter.notifyDataSetChanged();
+			thisController.modifyUserCommonUsedLocations();
 		}
 
 		@Override
@@ -798,9 +691,9 @@ public class NearbyView {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			changePopupWindow(false);
-			Address address = addressList.get(position);
-			Toast.makeText(thisActivity, address.name, Toast.LENGTH_SHORT).show();
-			LatLng mLatLng = new LatLng(address.latitude, address.longitude);
+			Location location = (Location) dialogAdapter.getItem(position);
+			Toast.makeText(thisActivity, location.remark, Toast.LENGTH_SHORT).show();
+			LatLng mLatLng = new LatLng(location.latitude, location.longitude);
 			mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
 		}
 	}
