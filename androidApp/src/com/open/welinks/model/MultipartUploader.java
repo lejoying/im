@@ -102,7 +102,7 @@ public class MultipartUploader {
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			myFile.status.state = myFile.status.Exception;
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@1" + ste.getLineNumber());
 		};
 	};
 
@@ -136,7 +136,7 @@ public class MultipartUploader {
 		} catch (Exception e) {
 			e.printStackTrace();
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@2" + ste.getLineNumber());
 		}
 
 		RequestParams params = new RequestParams();
@@ -168,7 +168,7 @@ public class MultipartUploader {
 			} catch (Exception e) {
 				e.printStackTrace();
 				StackTraceElement ste = new Throwable().getStackTrace()[1];
-				log.e("Exception@" + ste.getLineNumber());
+				log.e("Exception@3" + ste.getLineNumber());
 			}
 		};
 
@@ -176,7 +176,7 @@ public class MultipartUploader {
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			myFile.status.state = myFile.status.Exception;
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@4" + ste.getLineNumber());
 		};
 	};
 
@@ -236,6 +236,7 @@ public class MultipartUploader {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
+			log.e("InvalidKeyException:" + e.toString());
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
@@ -290,7 +291,7 @@ public class MultipartUploader {
 			httpUtils.send(HttpMethod.PUT, url, params, uploadResponseHandler);
 		} else {
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@5" + ste.getLineNumber());
 		}
 	}
 
@@ -332,7 +333,7 @@ public class MultipartUploader {
 			part.status = part.PART_FAILED;
 			uploadPart(myFile, partID);
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@6" + ste.getLineNumber());
 		};
 	};
 
@@ -346,7 +347,7 @@ public class MultipartUploader {
 		} catch (Exception e) {
 			e.printStackTrace();
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@7" + ste.getLineNumber());
 		}
 
 		RequestParams params = new RequestParams();
@@ -381,7 +382,7 @@ public class MultipartUploader {
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			myFile.status.state = myFile.status.Exception;
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@8" + ste.getLineNumber());
 		};
 	};
 
@@ -408,7 +409,7 @@ public class MultipartUploader {
 		} catch (Exception e) {
 			e.printStackTrace();
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@9" + ste.getLineNumber());
 		}
 		return stringWriter.toString();
 	}
@@ -446,7 +447,7 @@ public class MultipartUploader {
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			log.e("上传文件名到服务器失败**********************" + "请求错误");
 			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@" + ste.getLineNumber());
+			log.e("Exception@10" + ste.getLineNumber());
 		};
 	};
 

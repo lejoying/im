@@ -124,17 +124,17 @@ public class FileHandler {
 							}
 						} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_VOICE) {
 							// TODO voice
-							resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardVoiceFolder, ".osa");
-							myFile.task.currentResolveFileCount++;
-							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
-								myFile.task.onLocalFilesResolved();
-							}
+//							resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardVoiceFolder, ".osa");
+//							myFile.task.currentResolveFileCount++;
+//							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
+//								myFile.task.onLocalFilesResolved();
+//							}
 						} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_Gif) {
-							resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardGifImageFolder, ".osg");
-							myFile.task.currentResolveFileCount++;
-							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
-								myFile.task.onLocalFilesResolved();
-							}
+							// resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardGifImageFolder, ".osg");
+							// myFile.task.currentResolveFileCount++;
+							// if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
+							// myFile.task.onLocalFilesResolved();
+							// }
 						}
 						myFile.status.state = myFile.status.LocalStored;
 						myFileUploadQueue.offerE(myFile);
