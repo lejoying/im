@@ -22,6 +22,7 @@ import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -106,6 +107,7 @@ public class NearbyView {
 
 	public View positionView;
 
+	public ImageView screen;
 	public ImageView ico_map_pin;
 	public ImageView ico_map_pin2;
 	public ImageView ico_map_pin_shadow2;
@@ -140,6 +142,7 @@ public class NearbyView {
 		this.searChView = thisActivity.findViewById(R.id.search);
 		this.locationView = thisActivity.findViewById(R.id.location);
 		this.positionView = thisActivity.findViewById(R.id.position);
+		this.screen = (ImageView) thisActivity.findViewById(R.id.screen);
 
 		this.lbsMapView = thisActivity.findViewById(R.id.lbsmap);
 
@@ -202,6 +205,7 @@ public class NearbyView {
 		mapView = (MapView) thisActivity.findViewById(R.id.mapView);
 
 		this.initializationGroupCirclesDialog();
+		this.initializationScreenDialog();
 
 		openLooper = new OpenLooper();
 		openLooper.createOpenLooper();
@@ -557,6 +561,60 @@ public class NearbyView {
 			}
 
 			popDialogView.showAtLocation(maxView, Gravity.CENTER, 0, 0);
+		}
+	}
+
+	// screen pop
+	public PopupWindow screenPopDialog;
+	public View screenDialogView, screenBackground;
+	public LinearLayout scopeLayout, timeLayout;
+	public TextView scopeOne, scopeTwo, scopeThree, scopeFour, timeOne, timeTwo, timeThree, timeFour, screenConfirm, screenCancel;
+
+	public void initializationScreenDialog() {
+		screenDialogView = mInflater.inflate(R.layout.dialog_screen, null);
+		screenBackground = screenDialogView.findViewById(R.id.background);
+		scopeLayout = (LinearLayout) screenDialogView.findViewById(R.id.scopeLayout);
+		timeLayout = (LinearLayout) screenDialogView.findViewById(R.id.timeLayout);
+		scopeOne = (TextView) screenDialogView.findViewById(R.id.scopeOne);
+		scopeTwo = (TextView) screenDialogView.findViewById(R.id.scopeTwo);
+		scopeThree = (TextView) screenDialogView.findViewById(R.id.scopeThree);
+		scopeFour = (TextView) screenDialogView.findViewById(R.id.scopeFour);
+		timeOne = (TextView) screenDialogView.findViewById(R.id.timeOne);
+		timeTwo = (TextView) screenDialogView.findViewById(R.id.timeTwo);
+		timeThree = (TextView) screenDialogView.findViewById(R.id.timeThree);
+		timeFour = (TextView) screenDialogView.findViewById(R.id.timeFour);
+		screenConfirm = (TextView) screenDialogView.findViewById(R.id.confirm);
+		screenCancel = (TextView) screenDialogView.findViewById(R.id.cancel);
+
+		screenPopDialog = new PopupWindow(screenDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		screenPopDialog.setBackgroundDrawable(new BitmapDrawable());
+	}
+
+	public void changeScreenPopupWindow() {
+		if (screenPopDialog.isShowing()) {
+			screenPopDialog.dismiss();
+		} else {
+			screenPopDialog.showAtLocation(maxView, Gravity.CENTER, 0, 0);
+			changeScreenText();
+		}
+	}
+
+	public void changeScreenText() {
+		for (int i = 0; i < scopeLayout.getChildCount(); i += 2) {
+			TextView text = (TextView) scopeLayout.getChildAt(i);
+			if (thisController.tempSearchRadius == thisController.radius[(i + 1) / 2]) {
+				text.setTextColor(thisActivity.getResources().getColor(R.color.text_color_blue));
+			} else {
+				text.setTextColor(thisActivity.getResources().getColor(R.color.black70));
+			}
+		}
+		for (int i = 0; i < timeLayout.getChildCount(); i += 2) {
+			TextView text = (TextView) timeLayout.getChildAt(i);
+			if (thisController.tempSearchTime == thisController.times[(i + 1) / 2]) {
+				text.setTextColor(thisActivity.getResources().getColor(R.color.text_color_blue));
+			} else {
+				text.setTextColor(thisActivity.getResources().getColor(R.color.black70));
+			}
 		}
 	}
 

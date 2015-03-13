@@ -118,13 +118,18 @@ public class NearbyController {
 	public AMapLocation mAmapLocation;
 
 	public double latitude, longitude;
-	public int searchRadius = 50000;// 5000 10000 50000
-	public long searchTime = 900000;// 3600000 86400000 259200000
+	public int searchRadius = 50000;// 1500 10000 50000
+	public int tempSearchRadius = 50000;// 5000 10000 50000
+	public long searchTime = 0;// 3600000 86400000 259200000
+	public long tempSearchTime = 0;// 3600000 86400000 259200000
 
-	public Status status;
+	public int[] radius = { 1500, 5000, 10000, 50000 };
+	public long[] times = { 3600000, 86400000, 259200000, 0 };
+
+	public Status status, searchStatus;
 
 	public enum Status {
-		account, group, share
+		account, group, share, newest, hottest
 	}
 
 	public NearbyController(NearbyActivity thisActivity) {
@@ -147,6 +152,7 @@ public class NearbyController {
 			thisView.threeChoicesView.setDefaultItem(2);
 		} else if ("share".equals(type)) {
 			status = Status.share;
+			searchStatus = Status.newest;
 			mTableId = Constant.SHARETABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
 			thisView.threeChoicesView.setDefaultItem(1);
@@ -470,6 +476,39 @@ public class NearbyController {
 					}
 				} else if (view.equals(thisView.background)) {
 					thisView.changePopupWindow(false);
+				} else if (view.equals(thisView.screen) || view.equals(thisView.screenBackground) || view.equals(thisView.screenCancel)) {
+					tempSearchRadius = searchRadius;
+					tempSearchTime = searchTime;
+					thisView.changeScreenPopupWindow();
+				} else if (view.equals(thisView.screenConfirm)) {
+					searchRadius = tempSearchRadius;
+					searchTime = tempSearchTime;
+					searchNearby();
+					thisView.changeScreenPopupWindow();
+				} else if (view.equals(thisView.scopeOne)) {
+					tempSearchRadius = radius[0];
+					thisView.changeScreenText();
+				} else if (view.equals(thisView.scopeTwo)) {
+					tempSearchRadius = radius[1];
+					thisView.changeScreenText();
+				} else if (view.equals(thisView.scopeThree)) {
+					tempSearchRadius = radius[2];
+					thisView.changeScreenText();
+				} else if (view.equals(thisView.scopeFour)) {
+					tempSearchRadius = radius[3];
+					thisView.changeScreenText();
+				} else if (view.equals(thisView.timeOne)) {
+					tempSearchTime = times[0];
+					thisView.changeScreenText();
+				} else if (view.equals(thisView.timeTwo)) {
+					tempSearchTime = times[1];
+					thisView.changeScreenText();
+				} else if (view.equals(thisView.timeThree)) {
+					tempSearchTime = times[2];
+					thisView.changeScreenText();
+				} else if (view.equals(thisView.timeFour)) {
+					tempSearchTime = times[3];
+					thisView.changeScreenText();
 				} else if (view.equals(thisView.singleButton)) {
 					thisView.changePopupWindow(false);
 					thisView.img_btn_set_start.setVisibility(View.VISIBLE);
@@ -512,38 +551,16 @@ public class NearbyController {
 			@Override
 			public void onButtonCilck(int position) {
 				if (position == 3) {
-					// status = Status.account;
-					// mTableId = Constant.ACCOUNTTABLEID;
-					// thisView.NearbyLayoutID = R.layout.nearby_item_account;
+					searchStatus = Status.hottest;
 					nowpage = 0;
 					loadFinish = true;
-//					mInfomations.clear();
-					thisView.nearbyAdapter.notifyDataSetChanged();
-					thisView.nearbyListView.setSelection(0);
-					// searchNearByPolygon(nowpage);
+					searchNearby();
 				} else if (position == 2) {
-					// status = Status.group;
-					// mTableId = Constant.GROUPTABLEID;
-					// thisView.NearbyLayoutID = R.layout.nearby_item_group;
-					// nowpage = 0;
-					// loadfinish = true;
-					// thisView.nearbyListView.setSelection(0);
-					// searchNearByPolygon(nowpage);
-					mInfomations.clear();
-					thisView.nearbyAdapter.notifyDataSetChanged();
 				} else if (position == 1) {
-					// status = Status.square;
-					// mTableId = Constant.SQUARETABLEID;
-					// thisView.NearbyLayoutID = R.layout.nearby_item_group;
-					// nowpage = 0;
-					// loadfinish = true;
-					// thisView.nearbyListView.setSelection(0);
-					// searchNearByPolygon(nowpage);
+					searchStatus = Status.newest;
 					nowpage = 0;
 					loadFinish = true;
-//					mInfomations.clear();
-					thisView.nearbyAdapter.notifyDataSetChanged();
-					thisView.nearbyListView.setSelection(0);
+					searchNearby();
 				}
 			}
 		};
@@ -552,21 +569,26 @@ public class NearbyController {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void onCloudSearched(CloudResult result, int rCode) {
+				log.e("result::::::::::::::::::");
 				if (rCode == 0) {
+					log.e("result1::::::::::::::::::");
 					if (result != null && result.getQuery() != null) {
+						log.e("result2::::::::::::::::::");
 						if (result.getQuery().equals(mQuery)) {
+							log.e("result3::::::::::::::::::");
 							mCloudItems = result.getClouds();
-							if (mAmapLocation == null) {
-								return;
-							}
-							LatLng point = new LatLng(mAmapLocation.getLatitude(), mAmapLocation.getLongitude());
+							LatLng point = new LatLng(latitude, longitude);
 							if (nowpage == 0) {
 								mInfomations.clear();
 							}
 							if (mCloudItems.size() > 0) {
+								log.e("result4::::::::::::::::::");
 								nowpage++;
 								loadFinish = true;
+							} else {
+								log.e("result0::::::::::::::::::");
 							}
+							long now = System.currentTimeMillis();
 							for (CloudItem item : mCloudItems) {
 								Map<String, Object> map = new HashMap<String, Object>();
 								LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
@@ -577,10 +599,13 @@ public class NearbyController {
 								Iterator iter = item.getCustomfield().entrySet().iterator();
 								while (iter.hasNext()) {
 									Map.Entry entry = (Map.Entry) iter.next();
-									log.e(entry.getKey().toString() + "::::::::::::::" + entry.getValue());
+									log.e(entry.getKey().toString() + ":::::::::" + entry.getValue());
 									map.put(entry.getKey().toString(), entry.getValue());
 								}
-								mInfomations.add(processingData(map));
+								long time = Long.valueOf((String) map.get("time"));
+								if (searchTime == times[times.length - 1] || (now - time) < searchTime) {
+									mInfomations.add(processingData(map));
+								}
 							}
 							thisView.nearbyAdapter.notifyDataSetChanged();
 						}
@@ -664,6 +689,19 @@ public class NearbyController {
 		thisView.ico_map_pin2.setOnClickListener(this.mOnClickListener);
 		thisView.background.setOnClickListener(this.mOnClickListener);
 		thisView.dialogContainer.setOnClickListener(this.mOnClickListener);
+		thisView.screen.setOnClickListener(this.mOnClickListener);
+		thisView.screenBackground.setOnClickListener(this.mOnClickListener);
+		thisView.screenCancel.setOnClickListener(this.mOnClickListener);
+		thisView.screenConfirm.setOnClickListener(this.mOnClickListener);
+		thisView.scopeOne.setOnClickListener(this.mOnClickListener);
+		thisView.scopeTwo.setOnClickListener(this.mOnClickListener);
+		thisView.scopeThree.setOnClickListener(this.mOnClickListener);
+		thisView.scopeFour.setOnClickListener(this.mOnClickListener);
+		thisView.timeOne.setOnClickListener(this.mOnClickListener);
+		thisView.timeTwo.setOnClickListener(this.mOnClickListener);
+		thisView.timeThree.setOnClickListener(this.mOnClickListener);
+		thisView.timeFour.setOnClickListener(this.mOnClickListener);
+
 		if (thisView.singleButton != null) {
 			thisView.singleButton.setOnClickListener(mOnClickListener);
 		}
@@ -678,10 +716,13 @@ public class NearbyController {
 		}
 		mQuery.setPageSize(20);
 		mQuery.setPageNum(nowpage);
-
-		CloudSearch.Sortingrules sorting = new CloudSearch.Sortingrules("_createtime", false);
+		CloudSearch.Sortingrules sorting = null;
+		if (searchStatus == Status.newest) {
+			sorting = new CloudSearch.Sortingrules("time", false);
+		} else if (searchStatus == Status.hottest) {
+			sorting = new CloudSearch.Sortingrules("totalScore", false);
+		}
 		mQuery.setSortingrules(sorting);
-
 		mCloudSearch.searchCloudAsyn(mQuery);
 	}
 
@@ -697,10 +738,13 @@ public class NearbyController {
 		message.time = Long.valueOf((String) map.get("time"));
 		message.nickName = (String) map.get("name");
 		message.distance = (Integer) map.get("distance");
-		Object obj = map.get("scores");
-		if (obj != null)
-			message.scores = gson.fromJson((String) obj, new TypeToken<HashMap<String, Score>>() {
+		String scores = (String) map.get("scores");
+		if (scores != null && !"".equals(scores)) {
+			scores = scores.substring(0, scores.length() - 1);
+			log.e(scores);
+			message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
 			}.getType());
+		}
 		return data.boards.shareMessagesMap.put(message.sid, message);
 	}
 

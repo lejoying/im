@@ -2078,7 +2078,7 @@ shareManage.score = function (data, response) {
                                     data: JSON.stringify({
                                         _id: id,
                                         totalScore: share.totalScore,
-                                        scores: share.scores
+                                        scores: JSON.stringify(share.scores) + "@"
                                     })
                                 }, success: function (info) {
                                     var info = JSON.parse(info);
