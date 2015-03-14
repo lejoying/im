@@ -158,10 +158,12 @@ public class ShareReleaseImageTextView {
 		if (thisController.address != null) {
 			addressLayout.setVisibility(View.VISIBLE);
 			((RelativeLayout.LayoutParams) mEditTextView.getLayoutParams()).bottomMargin = BaseDataUtils.dpToPxint(90);
+			((RelativeLayout.LayoutParams) mImagesContentView.getLayoutParams()).bottomMargin = BaseDataUtils.dpToPxint(90);
 			address.setText(thisController.address);
 			initializationGroupCirclesDialog();
 		} else {
 			((RelativeLayout.LayoutParams) mEditTextView.getLayoutParams()).bottomMargin = BaseDataUtils.dpToPxint(50);
+			((RelativeLayout.LayoutParams) mImagesContentView.getLayoutParams()).bottomMargin = BaseDataUtils.dpToPxint(50);
 			addressLayout.setVisibility(View.GONE);
 		}
 	}

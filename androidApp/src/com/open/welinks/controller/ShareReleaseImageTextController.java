@@ -128,7 +128,7 @@ public class ShareReleaseImageTextController {
 		}
 		data.tempData.selectedImageList = null;
 
-		log.e(gid + ":::::" + sid + ":::::" + address + ":::::" + longitude + ":::::" + latitude);
+		// log.e(gid + ":::::" + sid + ":::::" + address + ":::::" + longitude + ":::::" + latitude);
 	}
 
 	public OnTouchListener mScrollOnTouchListener;

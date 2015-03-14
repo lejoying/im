@@ -1,6 +1,7 @@
 package com.open.welinks;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
@@ -29,6 +30,12 @@ public class NearbyActivity extends Activity {
 		thisView.fillData2();
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		thisController.onActivityResult(requestCode, resultCode, data);
+	}
+	
 	@Override
 	protected void onResume() {
 		super.onResume();

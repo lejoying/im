@@ -270,5 +270,6 @@ public class API {
 	public static String LBS_DATA_UPDATA = "http://yuntuapi.amap.com/datamanage/data/update";
 	public static String LBS_DATA_SEARCH = "http://yuntuapi.amap.com/datamanage/data/list";
 	public static String LBS_DATA_DELETE = "http://yuntuapi.amap.com/datamanage/data/delete";
+	public static String LBS_DATASEARCH_AROUND = "http://yuntuapi.amap.com/datasearch/around";
 
 }

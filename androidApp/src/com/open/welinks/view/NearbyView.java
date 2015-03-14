@@ -37,6 +37,8 @@ import android.widget.Toast;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.Circle;
+import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -110,6 +112,8 @@ public class NearbyView {
 
 	public MapView mapView;
 	public AMap mAMap;
+	public Circle ampCircle;
+	public CircleOptions circleOptions;
 
 	public TextView addressView;
 	public TextView sortView;
@@ -278,11 +282,11 @@ public class NearbyView {
 
 	public void reflashFirst() {
 		thisController.nowpage = 0;
-		thisController.searchNearby();
+		thisController.searchNearbyHttp();
 	}
 
 	public void nextPageData() {
-		thisController.searchNearby();
+		thisController.searchNearbyHttp();
 	}
 
 	public float transleteSpeed = 3f;
@@ -324,7 +328,7 @@ public class NearbyView {
 					currentPosition = -viewManage.screenWidth;
 					nextPosition = -viewManage.screenWidth;
 					// isTranslate = false;
-					log.e("listview ACTION_DOWN");
+					// log.e("listview ACTION_DOWN");
 					// String view_class = (String) view.getTag(R.id.tag_class);
 					// if (view_class != null && view_class.equals("DecrementView")) {
 					// onTouchDownView = view;
@@ -382,11 +386,11 @@ public class NearbyView {
 						}
 						progressView.setTranslationX(currentPosition);
 					}
-					log.e("listview ACTION_MOVE");
-					onclickScore(MotionEvent.ACTION_MOVE);
+					// log.e("listview ACTION_MOVE");
+					// onclickScore(MotionEvent.ACTION_MOVE);
 				} else if (id == MotionEvent.ACTION_UP) {
-					log.e("listview ACTION_UP");
-					onclickScore(MotionEvent.ACTION_UP);
+					// log.e("listview ACTION_UP");
+					// onclickScore(MotionEvent.ACTION_UP);
 					float distance = Math.abs(percent) * 2;
 					if (distance > viewManage.screenWidth / 2) {
 						nextPosition = 0;
@@ -402,124 +406,6 @@ public class NearbyView {
 				return isTranslate;
 			}
 		});
-	}
-
-	public void onclickScore(int state) {
-		if (thisController.onTouchDownView != null) {
-			String view_class = (String) thisController.onTouchDownView.getTag(R.id.tag_class);
-			if (state == MotionEvent.ACTION_MOVE) {
-				if (view_class != null && view_class.equals("DecrementView")) {
-					thisController.onTouchDownView.setAlpha(0.125f);
-				} else if (view_class != null && view_class.equals("IncrementView")) {
-					thisController.onTouchDownView.setAlpha(0.125f);
-				}
-			}
-			if (state == MotionEvent.ACTION_UP) {
-				if (view_class != null && view_class.equals("DecrementView")) {
-					int position = (Integer) thisController.onTouchDownView.getTag(R.id.tag_first);
-					View view = nearbyListView.getChildAt(position);
-					if (view == null) {
-						return;
-					}
-					HotHolder holder = (HotHolder) view.getTag();
-					ShareMessage shareMessage = thisController.mInfomations.get(position);
-					if (shareMessage.scores == null) {
-						shareMessage.scores = new HashMap<String, Data.Boards.Score>();
-					}
-					Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
-					if (score == null) {
-						score = data.boards.new Score();
-					} else {
-						if (score.negative > 0) {
-							holder.num_picker_decrement.setAlpha(1f);
-						} else {
-							holder.num_picker_decrement.setAlpha(0.125f);
-						}
-						if (score.remainNumber == 0) {
-							Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
-							return;
-						}
-					}
-					shareMessage.totalScore = shareMessage.totalScore - 1;
-					score.phone = data.userInformation.currentUser.phone;
-					score.time = new Date().getTime();
-					score.negative = 1;
-					score.remainNumber = 0;
-					shareMessage.scores.put(score.phone, score);
-					data.boards.isModified = true;
-					int num = shareMessage.totalScore;
-					holder.scoreView.setText("" + num);
-					if (num < 10 && num >= 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
-					} else if (num < 100 && num >= 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
-					} else if (num < 1000 && num >= 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
-						holder.scoreView.setText("999");
-					} else if (num < 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#00a800"));
-					}
-					if (score.negative > 0) {
-						holder.num_picker_decrement.setAlpha(1f);
-					} else {
-						holder.num_picker_decrement.setAlpha(0.125f);
-					}
-					modifyPraiseusersToMessage(false, shareMessage.gsid);
-				} else if (view_class != null && view_class.equals("IncrementView")) {
-					int position = (Integer) thisController.onTouchDownView.getTag(R.id.tag_first);
-					View view = nearbyListView.getChildAt(position);
-					if (view == null) {
-						return;
-					}
-					HotHolder holder = (HotHolder) view.getTag();
-					ShareMessage shareMessage = thisController.mInfomations.get(position);
-					if (shareMessage.scores == null) {
-						shareMessage.scores = new HashMap<String, Data.Boards.Score>();
-					}
-					Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
-					if (score == null) {
-						score = data.boards.new Score();
-					} else {
-						if (score.positive > 0) {
-							holder.num_picker_increment.setAlpha(1f);
-						} else {
-							holder.num_picker_increment.setAlpha(0.125f);
-						}
-						if (score.remainNumber == 0) {
-							Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
-							return;
-						}
-					}
-					shareMessage.totalScore = shareMessage.totalScore + 1;
-					score.phone = data.userInformation.currentUser.phone;
-					score.time = new Date().getTime();
-					score.positive = 1;
-					score.remainNumber = 0;
-					shareMessage.scores.put(score.phone, score);
-					data.boards.isModified = true;
-					int num = shareMessage.totalScore;
-					holder.scoreView.setText("" + num);
-					if (num < 10 && num >= 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
-					} else if (num < 100 && num >= 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
-					} else if (num < 1000 && num >= 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
-						holder.scoreView.setText("999");
-					} else if (num < 0) {
-						holder.scoreView.setTextColor(Color.parseColor("#00a800"));
-					}
-					if (score.positive > 0) {
-						holder.num_picker_increment.setAlpha(1f);
-					} else {
-						holder.num_picker_increment.setAlpha(0.125f);
-					}
-					modifyPraiseusersToMessage(true, shareMessage.gsid);
-				}
-			}
-			thisController.onTouchDownView = null;
-			thisController.isTouchDown = false;
-		}
 	}
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -632,18 +518,18 @@ public class NearbyView {
 					Score score = message.scores.get(data.userInformation.currentUser.phone);
 					if (score != null) {
 						if (score.positive > 0) {
-							holder.num_picker_increment.setAlpha(1f);
+							holder.num_picker_increment.setImageResource(R.drawable.num_picker_increment_on);
 						}
 						if (score.negative > 0) {
-							holder.num_picker_decrement.setAlpha(1f);
+							holder.num_picker_decrement.setImageResource(R.drawable.num_picker_decrement_on);
 						}
 					} else {
-						holder.num_picker_increment.setAlpha(0.125f);
-						holder.num_picker_decrement.setAlpha(0.125f);
+						holder.num_picker_increment.setImageResource(R.drawable.selector_num_picker_increment);
+						holder.num_picker_decrement.setImageResource(R.drawable.selector_num_picker_decrement);
 					}
 				} else {
-					holder.num_picker_increment.setAlpha(0.125f);
-					holder.num_picker_decrement.setAlpha(0.125f);
+					holder.num_picker_increment.setImageResource(R.drawable.selector_num_picker_increment);
+					holder.num_picker_decrement.setImageResource(R.drawable.selector_num_picker_decrement);
 				}
 				holder.imageContainer.removeAllViews();
 				showImages(images, holder.imageContainer);
@@ -654,14 +540,10 @@ public class NearbyView {
 				}
 
 				holder.num_picker_increment.setTag(R.id.tag_class, "IncrementView");
-				holder.num_picker_increment.setOnTouchListener(thisController.mOnTouchListener);
-				// holder.num_picker_increment.setOnClickListener(thisController.mOnClickListener);
-				holder.num_picker_increment.setColorFilter(Color.parseColor("#0099cd"));
+				holder.num_picker_increment.setOnClickListener(thisController.mOnClickListener);
 				holder.num_picker_increment.setTag(R.id.tag_first, position);
 				holder.num_picker_decrement.setTag(R.id.tag_class, "DecrementView");
-				holder.num_picker_decrement.setOnTouchListener(thisController.mOnTouchListener);
-				// holder.num_picker_decrement.setOnClickListener(thisController.mOnClickListener);
-				holder.num_picker_decrement.setColorFilter(Color.parseColor("#0099cd"));
+				holder.num_picker_decrement.setOnClickListener(thisController.mOnClickListener);
 				holder.num_picker_decrement.setTag(R.id.tag_first, position);
 			}
 			return convertView;
@@ -1056,5 +938,23 @@ public class NearbyView {
 			LatLng mLatLng = new LatLng(location.latitude, location.longitude);
 			mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
 		}
+	}
+
+	public void changeAmapCircle(double longitude, double latitude) {
+		LatLng mLatLng = new LatLng(latitude, longitude);
+		if (thisController.searchRadius == thisController.radius[thisController.radius.length - 1]) {
+			if (ampCircle != null)
+				ampCircle.setVisible(false);
+		} else {
+			if (circleOptions == null) {
+				circleOptions = new CircleOptions().center(mLatLng).radius(thisController.searchRadius).fillColor(thisActivity.getResources().getColor(R.color.card_color)).strokeWidth(0);
+				ampCircle = mAMap.addCircle(circleOptions);
+			} else {
+				ampCircle.setCenter(mLatLng);
+				ampCircle.setRadius(thisController.searchRadius);
+			}
+			ampCircle.setVisible(true);
+		}
+
 	}
 }

@@ -30,8 +30,8 @@
             android:layout_height="90dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:visibility="gone"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/imageContainer"
@@ -58,8 +58,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:padding="15dp"
-                android:src="@drawable/num_picker_decrement"
-                android:tint="#c8c8c8" />
+                android:src="@drawable/selector_num_picker_decrement" />
 
             <TextView
                 android:id="@+id/score"
@@ -79,8 +78,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:padding="15dp"
-                android:src="@drawable/num_picker_increment"
-                android:tint="#c8c8c8" />
+                android:src="@drawable/selector_num_picker_increment" />
         </RelativeLayout>
 
         <RelativeLayout
