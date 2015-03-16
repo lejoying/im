@@ -154,7 +154,7 @@ public class PushService extends Service {
 					log.e(data.userInformation.currentUser.accessKey + ":::::" + data.userInformation.currentUser.phone);
 					log.e("accessKey 无效,自动退出...");
 					if (MainActivity.instance != null) {
-						MainActivity.instance.thisController.exit();
+						MainActivity.instance.thisController.exitApplication();
 					}
 				} else {
 				}

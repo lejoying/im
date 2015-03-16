@@ -2,16 +2,11 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.location.Location;
-import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
 import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
@@ -44,54 +39,11 @@ public class SquareSubController {
 		this.mainController = mainController;
 	}
 
-	public LocationManagerProxy mLocationManagerProxy;
-	public AMapLocationListener mAMapLocationListener;
-	public AMapLocation mAmapLocation;
-
-	public void getLocation() {
-		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
-		mLocationManagerProxy.setGpsEnable(true);
-		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 1000, mAMapLocationListener);
-	}
-
 	public View onTouchDownView;
 
 	public boolean isTouchDown = false;
 
 	public void initializeListeners() {
-		mAMapLocationListener = new AMapLocationListener() {
-
-			@Override
-			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			}
-
-			@Override
-			public void onProviderEnabled(String arg0) {
-			}
-
-			@Override
-			public void onProviderDisabled(String arg0) {
-			}
-
-			@Override
-			public void onLocationChanged(Location location) {
-			}
-
-			@Override
-			public void onLocationChanged(AMapLocation amapLocation) {
-				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-				mLocationManagerProxy.destroy();
-				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
-					mAmapLocation = amapLocation;
-					if (mAmapLocation.getProvince() != null) {
-						thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
-					} else {
-						thisView.titleNameView.setText("发现");
-					}
-				}
-			}
-		};
-		getLocation();
 		this.mOnTouchListener = new OnTouchListener() {
 
 			@Override
@@ -136,6 +88,14 @@ public class SquareSubController {
 				}
 			}
 		};
+	}
+
+	public void setTitle(AMapLocation mAmapLocation) {
+		if (mAmapLocation.getProvince() != null) {
+			thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
+		} else {
+			thisView.titleNameView.setText("发现");
+		}
 	}
 
 	public void bindEvent() {

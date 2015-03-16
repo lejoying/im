@@ -78,5 +78,4 @@ public class LocationActivity extends Activity implements OnClickListener, OnGeo
 			}
 		}
 	}
-
 }

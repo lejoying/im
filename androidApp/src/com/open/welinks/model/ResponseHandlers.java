@@ -56,8 +56,6 @@ public class ResponseHandlers {
 
 	public Gson gson = new Gson();
 
-	public LBSHandler lbsHandlers = LBSHandler.getInstance();
-
 	public static ResponseHandlers getInstance() {
 		if (responseHandlers == null) {
 			responseHandlers = new ResponseHandlers();
@@ -185,7 +183,7 @@ public class ResponseHandlers {
 				if (viewManage.loginView != null) {
 					viewManage.loginView.thisController.modifyUserPasswordCallBack();
 				} else {
-					lbsHandlers.uplodUserLbsData();
+					// lbsHandlers.uplodUserLbsData();
 				}
 				viewManage.postNotifyView("ChangePasswordActivitySuccess");
 				log.e(ViewManage.getErrorLineNumber() + response.提示信息);
@@ -1092,7 +1090,6 @@ public class ResponseHandlers {
 					currentGroup.boards = group.boards;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
-				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
 				data.relationship.isModified = true;
 				viewManage.shareSubView.setGroupsDialogContent(null);
 			} else {
@@ -1338,11 +1335,6 @@ public class ResponseHandlers {
 				viewManage.postNotifyView("ShareSubView");
 				viewManage.postNotifyView("GroupListActivity");
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------修改群组信息成功, is square:" + data.relationship.squares.contains(key));
-				if (data.relationship.squares.contains(key)) {
-					lbsHandlers.uplodSquareLbsData(key);
-				} else if (data.relationship.groups.contains(key)) {
-					lbsHandlers.uplodGroupLbsData(key);
-				}
 			} else {
 				log.e(ViewManage.getErrorLineNumber() + responseInfo.result);
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -2102,69 +2094,6 @@ public class ResponseHandlers {
 				log.e(ViewManage.getErrorLineNumber() + "---------------------删除群分享成功");
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
-			}
-		};
-	};
-
-	// TODO LBS
-
-	public RequestCallBack<String> lbsdata_create = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public int status;
-			public String info;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.status == 1) {
-				log.e(tag, ViewManage.getErrorLineNumber() + "create lbs success");
-
-			} else {
-				log.e(tag, ViewManage.getErrorLineNumber() + "create*" + response.info);
-			}
-		};
-	};
-	public RequestCallBack<String> lbsdata_updata = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public int status;
-			public String info;
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.status == 1) {
-				log.e(tag, ViewManage.getErrorLineNumber() + "updata lbs success");
-
-			} else {
-				log.e(tag, ViewManage.getErrorLineNumber() + "updata*" + response.info);
-			}
-		};
-	};
-	public RequestCallBack<String> lbsdata_search = httpClient.new ResponseHandler<String>() {
-		class Response {
-			public int status;
-			// public String info;
-			public int count;
-			public ArrayList<data> datas;
-
-			class data {
-				public String _id;
-			}
-		}
-
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			try {
-
-				Response response = gson.fromJson(responseInfo.result, Response.class);
-				if (response.status == 1) {
-					if (response.count == 0) {
-						viewManage.mainView.thisController.creataLBSAccount();
-					} else {
-						viewManage.mainView.thisController.modifyLBSAccount(response.datas.get(0)._id);
-					}
-				}
-			} catch (Exception e) {
-
 			}
 		};
 	};

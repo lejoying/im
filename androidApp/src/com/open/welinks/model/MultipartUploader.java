@@ -381,8 +381,14 @@ public class MultipartUploader {
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			myFile.status.state = myFile.status.Exception;
-			StackTraceElement ste = new Throwable().getStackTrace()[1];
-			log.e("Exception@8" + ste.getLineNumber());
+			log.e("Exception@8" + msg + ",," + error.getExceptionCode());
+			String url = OSS_HOST_URL + myFile.Oss_Directory + myFile.fileName + "?uploadId=" + myFile.uploadId;
+			log.e(url);
+			log.e(writeXml(myFile.parts));
+			if (myFile.status.state == myFile.status.Completing) {
+				// myFile.status.state = myFile.status.Uploaded;
+				// taskManageHolder.fileHandler.myFileUploadQueue.offerE(myFile);
+			}
 		};
 	};
 

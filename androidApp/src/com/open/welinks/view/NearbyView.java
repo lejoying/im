@@ -306,7 +306,7 @@ public class NearbyView {
 
 	public TouchStatus status = new TouchStatus();
 
-	public void fillData2() {
+	public void fillData() {
 
 		nearbyAdapter = new NearbyAdapter();
 		nearbyListView.setAdapter(nearbyAdapter);
@@ -354,7 +354,7 @@ public class NearbyView {
 						float Δy = y - touch_pre_y;
 						touch_pre_x = x;
 						touch_pre_y = y;
-						isTranslate = true;
+						isTranslate = false;// true
 						percent += Δy;
 						if (status.state == status.T && percent < 0) {
 							status.state = status.Down;

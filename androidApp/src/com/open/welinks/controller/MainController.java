@@ -1,13 +1,7 @@
 package com.open.welinks.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -33,19 +27,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.amap.api.cloud.model.AMapCloudException;
-import com.amap.api.cloud.model.CloudItem;
-import com.amap.api.cloud.model.CloudItemDetail;
-import com.amap.api.cloud.search.CloudResult;
-import com.amap.api.cloud.search.CloudSearch;
-import com.amap.api.cloud.search.CloudSearch.OnCloudSearchListener;
-import com.amap.api.cloud.search.CloudSearch.Query;
-import com.amap.api.cloud.search.CloudSearch.SearchBound;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.model.LatLng;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringUtil;
@@ -61,10 +46,8 @@ import com.open.welinks.R;
 import com.open.welinks.ScanQRCodeActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
-import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
-import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
@@ -92,15 +75,9 @@ public class MainController {
 
 	public LocationManagerProxy mLocationManagerProxy;
 	public AMapLocationListener mAMapLocationListener;
-	public CloudSearch mCloudSearch;
-	public ArrayList<CloudItem> mCloudItems;
-	public Query mQuery;
-	// public LatLng mLatLng;
 
-	public OnCloudSearchListener mCloudSearchListener;
 	public OnClickListener mOnClickListener;
 	public OnDownloadListener downloadListener;
-
 	public ListOnTouchListener listOnTouchListener;
 
 	public SquareSubController squareSubController;
@@ -109,11 +86,9 @@ public class MainController {
 	public FriendsSubController friendsSubController;
 	public MeSubController meSubController;
 
-	Handler handler = new Handler();
-	String url_userInfomation = "http://www.we-links.com/api2/account/getuserinfomation";
-	String url_intimateFriends = "http://www.we-links.com/api2/relation/intimatefriends";
+	public Handler handler = new Handler();
 
-	Gson gson = new Gson();
+	public Gson gson = new Gson();
 
 	public String userPhone;
 
@@ -133,8 +108,6 @@ public class MainController {
 		thisActivity.registerReceiver(connectionChangeReceiver, filter);
 	}
 
-	// public BaseSpringSystem mSpringSystem = SpringSystem.create();
-	// public Spring mScaleSpring = mSpringSystem.createSpring();
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
 	private MainController thisController;
 
@@ -199,6 +172,7 @@ public class MainController {
 	}
 
 	private class ExampleSpringListener extends SimpleSpringListener {
+
 		@Override
 		public void onSpringUpdate(Spring spring) {
 			float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, 1, 0.5);
@@ -209,11 +183,11 @@ public class MainController {
 
 	public void getIntimatefriends() {
 		log.e(tag, "刷新好友分组getIntimatefriends");
-		RequestParams params = new RequestParams();
 		data = parser.check();
-		User user = data.userInformation.currentUser;
-		params.addBodyParameter("accessKey", user.accessKey);
-		params.addBodyParameter("phone", user.phone);
+		RequestParams params = new RequestParams();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("phone", currentUser.phone);
 
 		HttpUtils http = new HttpUtils();
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -236,8 +210,6 @@ public class MainController {
 
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
-				// TODO Auto-generated method stub
-
 			}
 		};
 
@@ -326,52 +298,17 @@ public class MainController {
 
 			@Override
 			public void onLocationChanged(AMapLocation aMapLocation) {
+				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+				mLocationManagerProxy.destroy();
 				if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0) {
-					data.userInformation.currentUser.address = aMapLocation.getAddress();
-					data.userInformation.currentUser.latitude = String.valueOf(aMapLocation.getLatitude());
-					data.userInformation.currentUser.longitude = String.valueOf(aMapLocation.getLongitude());
+					User currentUser = data.userInformation.currentUser;
+					currentUser.address = aMapLocation.getAddress();
+					currentUser.latitude = String.valueOf(aMapLocation.getLatitude());
+					currentUser.longitude = String.valueOf(aMapLocation.getLongitude());
+					// log.e(currentUser.longitude + "," + currentUser.latitude);
+					thisController.squareSubController.setTitle(aMapLocation);
 					modifyLocation();
 				}
-
-			}
-		};
-		mCloudSearchListener = new OnCloudSearchListener() {
-
-			@Override
-			public void onCloudSearched(CloudResult result, int rCode) {
-				if (rCode == 0) {
-					if (result != null && result.getQuery() != null) {
-						if (result.getQuery().equals(mQuery)) {
-							mCloudItems = result.getClouds();
-							parser.check();
-							if (data.relationship != null) {
-								if (data.relationship.squares == null) {
-									data.relationship.squares = new ArrayList<String>();
-								}
-								for (CloudItem item : mCloudItems) {
-									Map<String, Object> map = new HashMap<String, Object>();
-									LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
-									map.put("location", item.getLatLonPoint());
-									map.put("name", item.getTitle());
-									map.put("address", item.getSnippet());
-									// map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
-									Iterator<?> iter = item.getCustomfield().entrySet().iterator();
-									while (iter.hasNext()) {
-										Entry<?, ?> entry = (Entry<?, ?>) iter.next();
-										map.put(entry.getKey().toString(), entry.getValue());
-									}
-									addSquare(map);
-								}
-								// thisView.squareSubView.thisController.setCurrentSquare();
-							}
-						}
-					}
-				}
-
-			}
-
-			@Override
-			public void onCloudItemDetailSearched(CloudItemDetail detail, int rCode) {
 			}
 		};
 
@@ -409,182 +346,18 @@ public class MainController {
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, 60 * 1000 * 10, 1000, mAMapLocationListener);
 	}
 
-	public void searchNearBySquare() {
-		mCloudSearch = new CloudSearch(thisActivity);
-		mCloudSearch.setOnCloudSearchListener(mCloudSearchListener);
-
-		List<com.amap.api.cloud.model.LatLonPoint> points = new ArrayList<com.amap.api.cloud.model.LatLonPoint>();
-		points.add(new com.amap.api.cloud.model.LatLonPoint(5.965754, 70.136719));
-		points.add(new com.amap.api.cloud.model.LatLonPoint(56.170023, 140.097656));
-		try {
-			mQuery = new Query(Constant.SQUARETABLEID, "", new SearchBound(points));
-		} catch (AMapCloudException e) {
-			e.printStackTrace();
-		}
-		mQuery.setPageSize(20);
-		mCloudSearch.searchCloudAsyn(mQuery);
-
-	}
-
-	public void addSquare(Map<String, Object> map) {
-		data = parser.check();
-		Group group = data.relationship.new Group();
-
-		group.gid = Integer.valueOf((String) map.get("gid"));
-		group.name = (String) map.get("name");
-		group.icon = (String) map.get("icon");
-		group.description = (String) map.get("description");
-		group.distance = (Integer) map.get("distance");
-		if (map.get("conver") != null) {
-			group.cover = (String) map.get("conver");
-		}
-
-		if (!data.relationship.squares.contains(group.gid + "")) {
-			group.currentBoard = (String) map.get("sid");
-			data.relationship.squares.add(group.gid + "");
-			data.relationship.groupsMap.put(group.gid + "", group);
-		} else {
-			Group group2 = data.relationship.groupsMap.get(group.gid + "");
-			group2.name = (String) map.get("name");
-			group2.icon = (String) map.get("icon");
-			group2.description = (String) map.get("description");
-			group2.distance = (Integer) map.get("distance");
-			group2.currentBoard = (String) map.get("sid");
-			if (map.get("conver") != null) {
-				group2.cover = (String) map.get("conver");
-				// if (data.localStatus.localData.currentSelectedSquare.equals(group2.gid + "")) {
-				// // thisView.squareSubView.setConver();
-				// }
-			}
-		}
-
-		data.relationship.isModified = true;
-	}
-
 	public void modifyLocation() {
 		data = parser.check();
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("longitude", data.userInformation.currentUser.longitude);
-		params.addBodyParameter("latitude", data.userInformation.currentUser.latitude);
-		params.addBodyParameter("address", data.userInformation.currentUser.address);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("longitude", currentUser.longitude);
+		params.addBodyParameter("latitude", currentUser.latitude);
+		params.addBodyParameter("address", currentUser.address);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
-	}
-
-	public void chackLBSAccount() {
-		HttpUtils httpUtils = new HttpUtils();
-		RequestParams params = new RequestParams();
-		params.addQueryStringParameter("tableid", Constant.ACCOUNTTABLEID);
-		params.addQueryStringParameter("filter", "phone:" + data.userInformation.currentUser.phone);
-		params.addQueryStringParameter("key", Constant.LBS_SAVE_KSY);
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.GET, API.LBS_DATA_SEARCH, params, responseHandlers.lbsdata_search);
-	}
-
-	public void creataLBSAccount() {
-		final User user = data.userInformation.currentUser;
-		LBSAccountData data = new LBSAccountData();
-		data._name = user.nickName;
-		data._location = user.longitude + "," + user.latitude;
-		data._address = this.data.userInformation.currentUser.address;
-		data.phone = user.phone;
-		data.sex = user.sex;
-		data.head = user.head;
-		data.mainBusiness = user.mainBusiness;
-		data.lastlogintime = user.lastLoginTime;
-		HttpUtils httpUtils = new HttpUtils();
-		RequestParams params = new RequestParams();
-		params.addBodyParameter("key", Constant.LBS_SAVE_KSY);
-		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
-		params.addBodyParameter("loctype", "2");
-		params.addBodyParameter("data", gson.toJson(data));
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.LBS_DATA_CREATE, params, responseHandlers.lbsdata_create);
-
-	}
-
-	public void modifyLBSAccount(final String id) {
-		final User user = data.userInformation.currentUser;
-		LBSAccountData data = new LBSAccountData();
-		data._id = id;
-		data._name = user.nickName;
-		data._location = user.longitude + "," + user.latitude;
-		data._address = this.data.userInformation.currentUser.address;
-		data.phone = user.phone;
-		data.sex = user.sex;
-		if (user.age != null && !"".equals(user.age)) {
-			Pattern pattern = Pattern.compile("[0-9]*");
-			Matcher isNum = pattern.matcher(user.age);
-			if (isNum.matches()) {
-				data.age = user.age;
-			} else {
-				data.age = "20";
-			}
-		} else {
-			data.age = "20";
-		}
-		data.head = user.head;
-		data.mainBusiness = user.mainBusiness;
-		data.lastlogintime = user.lastLoginTime;
-
-		HttpUtils httpUtils = new HttpUtils();
-		RequestParams params = new RequestParams();
-		params.addBodyParameter("key", Constant.LBS_SAVE_KSY);
-		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
-		params.addBodyParameter("loctype", "2");
-		params.addBodyParameter("data", gson.toJson(data));
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.LBS_DATA_UPDATA, params, responseHandlers.lbsdata_updata);
-	}
-
-	public void creataLBSGroup(Group group, String address) {
-		LBSGroupData data = new LBSGroupData();
-		data._name = group.name;
-		data._location = group.longitude + "," + group.latitude;
-		data._address = address;
-		data.icon = group.icon;
-		data.gid = String.valueOf(group.gid);
-		data.description = group.description;
-		data.background = group.background;
-		data.gtype = "group";
-		HttpUtils httpUtils = new HttpUtils();
-		RequestParams params = new RequestParams();
-		params.addBodyParameter("key", Constant.LBS_SAVE_KSY);
-		params.addBodyParameter("tableid", Constant.GROUPTABLEID);
-		params.addBodyParameter("loctype", "2");
-		params.addBodyParameter("data", gson.toJson(data));
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.LBS_DATA_CREATE, params, responseHandlers.lbsdata_create);
-	}
-
-	public class LBSAccountData {
-		public String _id;
-		public String _name;
-		public String _location;
-		public String _address;
-		public String phone;
-		public String sex;
-		public String age;
-		public String head;
-		public String mainBusiness;
-		public String lastlogintime;
-	}
-
-	public class LBSGroupData {
-		public String _id;
-		public String _name;
-		public String _location;
-		public String _address;
-		public String icon;
-		public String gid;
-		public String description;
-		public String gtype;
-		public String background;
-		public String conver;
-
 	}
 
 	public class TouchStatus {
@@ -773,18 +546,18 @@ public class MainController {
 		});
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK) {
-			exit();
+			exitApplication();
 		} else if (requestCode == R.id.tag_second) {
-			messagesSubController.onActivityResult(requestCode, resultCode, data2);
+			messagesSubController.onActivityResult(requestCode, resultCode, data);
 		} else {
-			shareSubController.onActivityResult(requestCode, resultCode, data2);
+			shareSubController.onActivityResult(requestCode, resultCode, data);
 		}
 
 	}
 
-	public void exit() {
+	public void exitApplication() {
 		data = parser.check();
 		data.userInformation.currentUser.phone = "";
 		data.userInformation.currentUser.accessKey = "";
@@ -914,8 +687,9 @@ public class MainController {
 		String contactString = gson.toJson(contacts);
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("contact", contactString);
 
 		httpUtils.send(HttpMethod.POST, API.RELATION_UPDATECONTACT, params, responseHandlers.updateContactCallBack);

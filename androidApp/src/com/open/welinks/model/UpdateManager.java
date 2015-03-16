@@ -67,7 +67,11 @@ public class UpdateManager {
 	}
 
 	public void checkUpdate() {
-		sendMessageToServer();
+		try {
+			sendMessageToServer();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	HttpClient httpClient = new HttpClient();

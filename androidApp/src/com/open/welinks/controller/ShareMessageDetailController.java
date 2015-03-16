@@ -467,7 +467,7 @@ public class ShareMessageDetailController {
 		}
 	}
 
-	public void modifyPraiseusersToMessage(boolean option) {
+	private void modifyPraiseusersToMessage(boolean option) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		User currentUser = data.userInformation.currentUser;

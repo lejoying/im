@@ -1,7 +1,5 @@
 package com.open.welinks;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -30,7 +26,6 @@ import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.UpdateManager;
 import com.open.welinks.service.PushService;
@@ -84,20 +79,8 @@ public class MainActivity extends Activity {
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 
-		// String a = "[{\"detail\":\"呼呼\",\"type\":\"text\",\"ratio\":0.0}]";
-		String a = "[{detail=456789, type=text, ratio=0}]";
-		Gson gson = new Gson();
-
-		ArrayList<ShareContentItem> b = gson.fromJson(a, new TypeToken<ArrayList<ShareContentItem>>() {
-		}.getType());
-
-		// try {
 		UpdateManager manager = new UpdateManager(MainActivity.this);
 		manager.checkUpdate();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-
 	}
 
 	public void startPushService() {

@@ -283,7 +283,7 @@ public class Parser {
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							Log.e(tag, e.toString() + "-messageOrderXXXXXa" + e);
+							Log.e(tag, e.toString() + "----");
 						}
 					}
 				}
@@ -330,40 +330,64 @@ public class Parser {
 					List<Message> messages = data.messages.friendMessageMap.get(key_1);
 					int size = messages.size() == 0 ? 0 : messages.size() - 1;
 					Message message = messages.get(size);
-					time_1 = Long.valueOf(message.time);
+					if (message != null && message.time != null) {
+						time_1 = Long.valueOf(message.time);
+					}
 				} else if (key_1.indexOf("g") == 0) {
 					List<Message> messages = data.messages.groupMessageMap.get(key_1);
 					int size = messages.size() == 0 ? 0 : messages.size() - 1;
 					Message message = messages.get(size);
-					time_1 = Long.valueOf(message.time);
+					if (message != null && message.time != null) {
+						time_1 = Long.valueOf(message.time);
+					}
 				} else if (key_1.indexOf("event_user") == 0) {
-					String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
-					EventMessage event = data.event.userEventsMap.get(key);
-					time_1 = Long.valueOf(event.time);
+					if (data.event.userEvents.size() > 0) {
+						String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
+						EventMessage event = data.event.userEventsMap.get(key);
+						if (event != null && event.time != null) {
+							time_1 = Long.valueOf(event.time);
+						}
+					}
 				} else if (key_1.indexOf("event_group") == 0) {
-					String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
-					EventMessage event = data.event.groupEventsMap.get(key);
-					time_1 = Long.valueOf(event.time);
+					if (data.event.groupEvents.size() > 0) {
+						String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
+						EventMessage event = data.event.groupEventsMap.get(key);
+						if (event != null && event.time != null) {
+							time_1 = Long.valueOf(event.time);
+						}
+					}
 				}
 				String key_2 = list.get(j + 1);
 				if (key_2.indexOf("p") == 0) {
 					List<Message> messages = data.messages.friendMessageMap.get(key_2);
 					int size = messages.size() == 0 ? 0 : messages.size() - 1;
 					Message message = messages.get(size);
-					time_2 = Long.valueOf(message.time);
+					if (message != null && message.time != null) {
+						time_2 = Long.valueOf(message.time);
+					}
 				} else if (key_2.indexOf("g") == 0) {
 					List<Message> messages = data.messages.groupMessageMap.get(key_2);
 					int size = messages.size() == 0 ? 0 : messages.size() - 1;
 					Message message = messages.get(size);
-					time_2 = Long.valueOf(message.time);
+					if (message != null && message.time != null) {
+						time_2 = Long.valueOf(message.time);
+					}
 				} else if (key_2.indexOf("event_user") == 0) {
-					String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
-					EventMessage event = data.event.userEventsMap.get(key);
-					time_2 = Long.valueOf(event.time);
+					if (data.event.userEvents.size() > 0) {
+						String key = data.event.userEvents.get(data.event.userEvents.size() - 1);
+						EventMessage event = data.event.userEventsMap.get(key);
+						if (event != null && event.time != null) {
+							time_2 = Long.valueOf(event.time);
+						}
+					}
 				} else if (key_2.indexOf("event_group") == 0) {
-					String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
-					EventMessage event = data.event.groupEventsMap.get(key);
-					time_2 = Long.valueOf(event.time);
+					if (data.event.groupEvents.size() > 0) {
+						String key = data.event.groupEvents.get(data.event.groupEvents.size() - 1);
+						EventMessage event = data.event.groupEventsMap.get(key);
+						if (event != null && event.time != null) {
+							time_2 = Long.valueOf(event.time);
+						}
+					}
 				}
 
 				if (time_1 < time_2) {

@@ -6,13 +6,10 @@ import com.open.lib.MyLog;
 
 public class MyLinkedListQueue<E> extends LinkedList<E> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public String tag = "MyLinkedListQueue";
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public boolean isRunning = false;
 

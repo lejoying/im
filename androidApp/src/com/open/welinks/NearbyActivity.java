@@ -27,7 +27,7 @@ public class NearbyActivity extends Activity {
 		thisView.initView();
 		thisView.mapView.onCreate(savedInstanceState);
 		thisController.onCreate();
-		thisView.fillData2();
+		thisView.fillData();
 	}
 
 	@Override

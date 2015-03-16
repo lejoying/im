@@ -1,8 +1,5 @@
 package com.open.welinks.view;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
@@ -25,9 +22,11 @@ import com.open.welinks.model.Data;
 
 public class MainView {
 
+	public String tag = "MainView";
+
 	public Data data = Data.getInstance();
 
-	public String tag = "MainView";
+	public ImageLoader imageLoader = ImageLoader.getInstance();
 
 	public DisplayMetrics displayMetrics;
 
@@ -35,7 +34,6 @@ public class MainView {
 	public MainView thisView;
 	public Context context;
 	public Activity thisActivity;
-	public Map<String, View> viewsMap = new HashMap<String, View>();
 
 	public SquareSubView squareSubView;
 	public ShareSubView shareSubView;
@@ -382,6 +380,4 @@ public class MainView {
 			return false;
 		}
 	}
-
-	public ImageLoader imageLoader = ImageLoader.getInstance();
 }

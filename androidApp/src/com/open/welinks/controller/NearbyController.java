@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.cloud.model.CloudItem;
@@ -40,7 +41,6 @@ import com.amap.api.maps.LocationSource.OnLocationChangedListener;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.services.core.PoiItem;
-import com.amap.api.services.geocoder.GeocodeAddress;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.GeocodeSearch.OnGeocodeSearchListener;
@@ -223,22 +223,6 @@ public class NearbyController {
 				thisView.ico_map_pin_shadow2.startAnimation(animationShadowBottom);
 			}
 		});
-		animationShadowBottom.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				// thisView.img_btn_set_start.setVisibility(View.VISIBLE);
-				// thisView.img_btn_set_start.startAnimation(animationNearRight);
-			}
-		});
 		animationNearLeft = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_left);
 		animationNearRight = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_right);
 		animationNearLeft.setAnimationListener(new AnimationListener() {
@@ -300,7 +284,7 @@ public class NearbyController {
 				if (rCode == 0) {
 					if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
 						address = result.getRegeocodeAddress().getFormatAddress();
-						// log.e("onRegeocodeSearched:" + address);
+						// log.e("-------------***************************:" + address);
 						thisView.addressView.setText(address);
 						isChangeAddress = false;
 						thisView.ico_map_pin.startAnimation(animationTop);
@@ -317,16 +301,6 @@ public class NearbyController {
 
 			@Override
 			public void onGeocodeSearched(GeocodeResult result, int rCode) {
-				if (rCode == 0) {
-					if (result != null && result.getGeocodeAddressList() != null && result.getGeocodeAddressList().size() > 0) {
-						GeocodeAddress point = result.getGeocodeAddressList().get(0);
-						LatLng mLatLng = new LatLng(point.getLatLonPoint().getLatitude(), point.getLatLonPoint().getLongitude());
-						thisView.mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
-						String address = point.getFormatAddress();
-						// log.e("onGeocodeSearched:" + address);
-						// locationView.setText("当前地址：" + address);
-					}
-				}
 			}
 		};
 		mOnCameraChangeListener = new OnCameraChangeListener() {
@@ -369,14 +343,7 @@ public class NearbyController {
 				mOnLocationChangedListener = listener;
 				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
 				mLocationManagerProxy.setGpsEnable(true);
-				// if (positioned) {
-				// LatLng mLatLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-				// thisView.mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));
-				// locationView.setText("当前地址：" + address);
-				// positioned = false;
-				// } else {
 				mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 10, mAMapLocationListener);
-				// }
 			}
 
 			@Override
@@ -700,6 +667,12 @@ public class NearbyController {
 			public void onFailure(DownloadFile instance, int status) {
 				super.onFailure(instance, status);
 			}
+
+			@Override
+			public void onSuccess(DownloadFile instance, int status) {
+				super.onSuccess(instance, status);
+				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view);
+			}
 		};
 		mListOnItemClickListener = new android.widget.AdapterView.OnItemClickListener() {
 
@@ -778,8 +751,7 @@ public class NearbyController {
 				public int count;
 				public String info;
 				public int status;
-				public List<Data> datas;
-
+				public List<PoiData> datas;
 			}
 
 			@Override
@@ -797,24 +769,30 @@ public class NearbyController {
 						loadFinish = true;
 					}
 
-					for (Data data : response.datas) {
-						ShareMessage message = thisController.data.boards.new ShareMessage();
-						message.content = data.content;
-						message.head = data.head;
-						message.gsid = String.valueOf(data.gsid);
-						message.sid = String.valueOf(data.sid);
-						message.phone = data.phone;
-						message.totalScore = data.totalScore;
-						message.type = data.type;
-						message.time = data.time;
-						message.nickName = data._name;
-						message.distance = Integer.valueOf(data._distance);
-						String scores = data.scores;
+					for (PoiData poiData : response.datas) {
+						ShareMessage message = data.boards.new ShareMessage();
+						message.content = poiData.content;
+						message.head = poiData.head;
+						message.gsid = String.valueOf(poiData.gsid);
+						message.sid = String.valueOf(poiData.sid);
+						message.phone = poiData.phone;
+						message.totalScore = poiData.totalScore;
+						message.type = poiData.type;
+						message.time = poiData.time;
+						message.nickName = poiData._name;
+						message.distance = Integer.valueOf(poiData._distance);
+						String scores = poiData.scores;
 						if (scores != null && !"".equals(scores)) {
 							scores = scores.substring(0, scores.length() - 1);
 							message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
 							}.getType());
 						}
+						// String comments = poiData.comments;
+						// if (comments != null && !"".equals(comments)) {
+						// log.e(comments);
+						// message.comments = gson.fromJson(comments, new TypeToken<ArrayList<Comment>>() {
+						// }.getType());
+						// }
 						mInfomations.add(message);
 					}
 					thisView.loopCallback.state = thisView.status.None;
@@ -826,9 +804,9 @@ public class NearbyController {
 				}
 			}
 
-			class Data {
+			class PoiData {
 				public String _id, _location, _name, _address, _createtime, _updatetime, _distance;
-				public String content, scores, phone, type, head;
+				public String content, scores, phone, type, head, comments;
 				public int sid, gsid, totalScore;
 				public long time;
 			}
