@@ -10,6 +10,28 @@ import android.annotation.SuppressLint;
 @SuppressLint("SimpleDateFormat")
 public class DateUtil {
 
+	public static String getNearShareTime(long timeMillis) {
+		String result = "";
+		long currentTime = System.currentTimeMillis();
+		long differ = currentTime - timeMillis;
+		long minute = differ / (1000 * 60);
+		if (minute < 1) {
+			result = "刚刚";
+		} else if (minute >= 1 && minute < 60) {
+			result = minute + "分钟前";
+		} else if (minute >= 60 && minute < 24 * 60) {
+			result = minute / 60 + "小时前";
+		} else if (minute >= 24 * 60 && minute < 24 * 60 * 30) {
+			result = minute / (24 * 60) + "天前";
+		} else if (minute >= 24 * 60 * 30 && minute < 24 * 60 * 30 * 12) {
+			result = minute / (24 * 60 * 30) + "月前";
+		} else if (minute >= 24 * 60 * 30 * 12) {
+			result = minute / (24 * 60 * 30 * 12) + "年前";
+		}
+
+		return result;
+	}
+
 	public static String[] getDayMoth(long timeMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date d = new java.util.Date();

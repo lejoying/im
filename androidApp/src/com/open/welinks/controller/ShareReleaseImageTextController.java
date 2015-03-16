@@ -48,8 +48,7 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.SendShareMessage;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.TaskContainer_Share.PostTask;
 import com.open.welinks.model.TaskManageHolder;
@@ -482,26 +481,27 @@ public class ShareReleaseImageTextController {
 				shareMessage.time = time;
 				shareMessage.status = "sending";
 
-				ShareContent shareContent = SubData.getInstance().new ShareContent();
-				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+				// ShareContent shareContent = SubData.getInstance().new ShareContent();
+				List<ShareContentItem> shareContentItems = new ArrayList<ShareContentItem>();
+				ShareContentItem shareContentItem = subData.new ShareContentItem();
 				shareContentItem.type = "text";
 				shareContentItem.detail = sendContent;
-				shareContent.shareContentItems.add(shareContentItem);
+				shareContentItems.add(shareContentItem);
 
 				if (data.tempData.selectedImageList != null) {
 					totalUploadCount = data.tempData.selectedImageList.size();
 					if (totalUploadCount != 0) {
-						copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems);
+						copyFileToSprecifiedDirecytory(shareContentItems);
 					} else {
-						String content = gson.toJson(shareContent.shareContentItems);
+						String content = gson.toJson(shareContentItems);
 						sendMessageToServer(content, shareMessage.gsid);
 					}
 				} else {
-					String content = gson.toJson(shareContent.shareContentItems);
+					String content = gson.toJson(shareContentItems);
 					sendMessageToServer(content, shareMessage.gsid);
 				}
 
-				String content = gson.toJson(shareContent.shareContentItems);
+				String content = gson.toJson(shareContentItems);
 				// Log.e(tag, content);
 				shareMessage.content = content;
 
@@ -552,7 +552,7 @@ public class ShareReleaseImageTextController {
 
 	public float imageHeightScale = 0.5686505598114319f;
 
-	private void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
+	private void copyFileToSprecifiedDirecytory(List<ShareContentItem> shareContentItems) {
 		// The current selected pictures gallery
 		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
 		log.e("copy file to the position,file count:" + selectedImageList.size());
@@ -567,7 +567,7 @@ public class ShareReleaseImageTextController {
 				suffixName = ".osp";
 			}
 			try {
-				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+				ShareContentItem shareContentItem = subData.new ShareContentItem();
 				String fileName = "";
 				File fromFile = new File(key);
 				byte[] bytes = null;

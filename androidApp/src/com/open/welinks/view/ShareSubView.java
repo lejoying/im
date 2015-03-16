@@ -33,6 +33,7 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -59,8 +60,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
@@ -532,10 +532,10 @@ public class ShareSubView {
 			}
 
 			if (!isExists) {
-				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+				List<ShareContentItem> shareContentItems = gson.fromJson(shareMessage.content, new TypeToken<ArrayList<ShareContentItem>>() {
+				}.getType());
 				String textContent = "";
 				String imageContent = "";
-				List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 				float ratio = 0;
 				B: for (int j = 0; j < shareContentItems.size(); j++) {
 					ShareContentItem shareContentItem = shareContentItems.get(j);
@@ -883,10 +883,10 @@ public class ShareSubView {
 				this.headView.setOnTouchListener(thisController.mOnTouchListener);
 				this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
 				if (imageContent == null || textContent == null) {
-					ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+					List<ShareContentItem> shareContentItems = gson.fromJson(shareMessage.content, new TypeToken<ArrayList<ShareContentItem>>() {
+					}.getType());
 					textContent = "";
 					imageContent = "";
-					List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 					for (int i = 0; i < shareContentItems.size(); i++) {
 						ShareContentItem shareContentItem = shareContentItems.get(i);
 						if (shareContentItem.type.equals("image")) {
@@ -1231,7 +1231,7 @@ public class ShareSubView {
 		}
 		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group0 != null) {
-//			data.localStatus.localData.currentSelectedGroupBoard = group0.boards.get(0);
+			// data.localStatus.localData.currentSelectedGroupBoard = group0.boards.get(0);
 			this.shareTopMenuGroupName.setText(group0.name);
 			this.setMenuNameBotton(group0.name);
 		} else {

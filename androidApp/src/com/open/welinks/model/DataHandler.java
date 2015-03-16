@@ -30,8 +30,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.SendShareMessage;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.oss.UploadMultipart;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
@@ -349,28 +348,29 @@ public class DataHandler {
 
 						onUploadLoadingListListener.shareMessage = shareMessage;
 
-						ShareContent shareContent = SubData.getInstance().new ShareContent();
-						ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+						// ShareContent shareContent = SubData.getInstance().new ShareContent();
+						List<ShareContentItem> shareContentItems = new ArrayList<ShareContentItem>();
+						ShareContentItem shareContentItem = subData.new ShareContentItem();
 						shareContentItem.type = "text";
 						shareContentItem.detail = entity.content;
-						shareContent.shareContentItems.add(shareContentItem);
+						shareContentItems.add(shareContentItem);
 
 						if (!"".equals(entity.imagesContent)) {
 							List<String> imageList = gson.fromJson(entity.imagesContent, new TypeToken<List<String>>() {
 							}.getType());
 							if (imageList.size() != 0) {
 								onUploadLoadingListListener.totalUploadCount = imageList.size();
-								copyFileToSprecifiedDirecytory(shareContent, shareContent.shareContentItems, imageList, onUploadLoadingListListener);
+								copyFileToSprecifiedDirecytory(shareContentItems, imageList, onUploadLoadingListListener);
 							} else {
-								String content = gson.toJson(shareContent.shareContentItems);
+								String content = gson.toJson(shareContentItems);
 								sendMessageToServer(content, entity.gid, shareMessage.gsid, shareMessage.sid);
 							}
 						} else {
-							String content = gson.toJson(shareContent.shareContentItems);
+							String content = gson.toJson(shareContentItems);
 							sendMessageToServer(content, entity.gid, shareMessage.gsid, shareMessage.sid);
 						}
 
-						String content = gson.toJson(shareContent.shareContentItems);
+						String content = gson.toJson(shareContentItems);
 						Log.e(tag, content);
 						shareMessage.content = content;
 
@@ -400,7 +400,7 @@ public class DataHandler {
 	public float imageHeightScale = 0.5686505598114319f;
 	public OnUploadLoadingListener uploadLoadingListener;
 
-	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems, List<String> list, OnUploadLoadingListListener onUploadLoadingListListener) {
+	public void copyFileToSprecifiedDirecytory(List<ShareContentItem> shareContentItems, List<String> list, OnUploadLoadingListListener onUploadLoadingListListener) {
 		// ArrayList<String> selectedImageList = data.tempData.selectedImageList;
 		// int totalLength = 0;
 		for (int i = 0; i < list.size(); i++) {
@@ -419,7 +419,7 @@ public class DataHandler {
 					return;
 				}
 				byte[] bytes = null;
-				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+				ShareContentItem shareContentItem = subData.new ShareContentItem();
 
 				bytes = taskManageHolder.fileHandler.getImageFileBytes(shareContentItem, fromFile, viewManage.mainView.displayMetrics.heightPixels, viewManage.mainView.displayMetrics.heightPixels);
 				// int fileLength = bytes.length;

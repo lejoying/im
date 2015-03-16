@@ -8,13 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -24,10 +21,8 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.amap.api.cloud.model.AMapCloudException;
 import com.amap.api.cloud.model.CloudItem;
 import com.amap.api.cloud.model.CloudItemDetail;
-import com.amap.api.cloud.model.LatLonPoint;
 import com.amap.api.cloud.search.CloudResult;
 import com.amap.api.cloud.search.CloudSearch;
 import com.amap.api.cloud.search.CloudSearch.OnCloudSearchListener;
@@ -43,8 +38,6 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.LocationSource.OnLocationChangedListener;
 import com.amap.api.maps.model.CameraPosition;
-import com.amap.api.maps.model.Circle;
-import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.geocoder.GeocodeAddress;
@@ -83,7 +76,6 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.NearbyView;
-import com.open.welinks.view.NearbyView.NearbyAdapter.HotHolder;
 
 public class NearbyController {
 
@@ -414,20 +406,6 @@ public class NearbyController {
 						}
 					}
 				}
-				// log.e("first:::" + firstVisibleItem);
-				// if (firstVisibleItem != 0) {
-				// isScroll = true;
-				// }
-				// if (firstVisibleItem == 0 && isScroll) {
-				// MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
-				// int topMarigin = params.topMargin;
-				// if (topMarigin == (int) (88 * thisView.metrics.density)) {
-				// params.topMargin = (int) (288 * thisView.metrics.density);
-				// } else {
-				// params.topMargin = (int) (88 * thisView.metrics.density);
-				// }
-				// thisView.nearbyListView.setLayoutParams(params);
-				// }
 			}
 		};
 
@@ -510,23 +488,11 @@ public class NearbyController {
 					int topMarigin = params.topMargin;
 					if (topMarigin == (int) (84 * thisView.metrics.density)) {
 						params.topMargin = (int) (304 * thisView.metrics.density);
-						// thisView.lineView.setVisibility(View.GONE);
 					} else {
 						params.topMargin = (int) (84 * thisView.metrics.density);
-						// thisView.lineView.setVisibility(View.VISIBLE);
 					}
 					thisView.nearbyListView.setLayoutParams(params);
-					// if (thisView.lbsMapView.getVisibility() == View.VISIBLE) {
-					// // thisView.lbsMapView.setVisibility(View.INVISIBLE);
-					// params.topMargin = (int) (88 * thisView.metrics.density);
-					// thisView.lbsMapView.setLayoutParams(params);
-					// } else {
-					// // thisView.lbsMapView.setVisibility(View.VISIBLE);
-					// MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
-					// params.topMargin = (int) (288 * thisView.metrics.density);
-					// }
 				} else if (view.equals(thisView.sortView)) {
-					// Toast.makeText(thisActivity, "排序筛选", Toast.LENGTH_SHORT).show();
 					thisView.changePopupWindow(false);
 				} else if (view.equals(thisView.searChView)) {
 					Toast.makeText(thisActivity, "搜索", Toast.LENGTH_SHORT).show();
@@ -641,20 +607,20 @@ public class NearbyController {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void onCloudSearched(CloudResult result, int rCode) {
-				log.e("result::::::::::::::::::");
+				// log.e("result::::::::::::::::::");
 				if (rCode == 0) {
-					log.e("result1::::::::::::::::::");
+					// log.e("result1::::::::::::::::::");
 					if (result != null && result.getQuery() != null) {
-						log.e("result2::::::::::::::::::");
+						// log.e("result2::::::::::::::::::");
 						if (result.getQuery().equals(mQuery)) {
-							log.e("result3::::::::::::::::::");
+							// log.e("result3::::::::::::::::::");
 							mCloudItems = result.getClouds();
 							LatLng point = new LatLng(latitude, longitude);
 							if (nowpage == 0) {
 								mInfomations.clear();
 							}
 							if (mCloudItems.size() > 0) {
-								log.e("result4::::::::::::::::::");
+								// log.e("result4::::::::::::::::::");
 								nowpage++;
 								loadFinish = true;
 							} else {

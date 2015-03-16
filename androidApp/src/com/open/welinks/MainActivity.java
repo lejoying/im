@@ -1,7 +1,6 @@
 package com.open.welinks;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,9 +30,9 @@ import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.UpdateManager;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
 import com.open.welinks.service.PushService;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.NotificationUtils;
@@ -48,7 +47,9 @@ import com.open.welinks.view.ViewManage;
 public class MainActivity extends Activity {
 
 	public Data data = Data.getInstance();
+
 	public String tag = "MainActivity";
+	public MyLog log = new MyLog(tag, true);
 
 	public Context context;
 	public MainView thisView;
@@ -83,12 +84,12 @@ public class MainActivity extends Activity {
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 
-//		String a = "[{\"detail\":\"呼呼\",\"type\":\"text\",\"ratio\":0.0}]";
+		// String a = "[{\"detail\":\"呼呼\",\"type\":\"text\",\"ratio\":0.0}]";
 		String a = "[{detail=456789, type=text, ratio=0}]";
 		Gson gson = new Gson();
 
 		ArrayList<ShareContentItem> b = gson.fromJson(a, new TypeToken<ArrayList<ShareContentItem>>() {
-		}.getType());   
+		}.getType());
 
 		// try {
 		UpdateManager manager = new UpdateManager(MainActivity.this);
@@ -98,14 +99,6 @@ public class MainActivity extends Activity {
 		// }
 
 	}
-
-	public class ShareContentItem {
-		public String type;// text image
-		public String detail;
-		public float ratio = 0;
-	}
-
-	MyLog log = new MyLog(tag, true);
 
 	public void startPushService() {
 		Intent service = new Intent(thisActivity, PushService.class);

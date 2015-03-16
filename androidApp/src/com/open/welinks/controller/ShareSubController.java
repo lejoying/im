@@ -278,9 +278,6 @@ public class ShareSubController {
 					} else if (view_class.equals("share_head")) {
 						onTouchDownView = view;
 						isTouchDown = true;
-					} else if (view_class.equals("share_praise")) {
-						onTouchDownView = view;
-						isTouchDown = true;
 					} else if (view_class.equals("title_share")) {
 						long currentTime = System.currentTimeMillis();
 						if (Long.class.isInstance(view.getTag(R.id.tag_first)) == true) {
@@ -466,41 +463,6 @@ public class ShareSubController {
 					} else if ("ShareMessage".equals(type)) {
 						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, content);
 						thisView.businessCardPopView.showUserCardDialogView();
-					} else if ("SharePraise".equals(type)) {
-						// parser.check();
-						// User currentUser = data.userInformation.currentUser;
-						// ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
-						// boolean option = false;
-						// if (!shareMessage.praiseusers.contains(currentUser.phone)) {
-						// option = true;
-						// boolean flag = false;
-						// for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-						// if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-						// flag = true;
-						// break;
-						// }
-						// }
-						// if (!flag) {
-						// shareMessage.praiseusers.add(currentUser.phone);
-						// }
-						// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
-						// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-						// sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
-						// } else {
-						// ArrayList<String> list = new ArrayList<String>();
-						// for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-						// if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-						// list.add(shareMessage.praiseusers.get(i));
-						// }
-						// }
-						// shareMessage.praiseusers.removeAll(list);
-						// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
-						// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-						// sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
-						// }
-						//
-						// modifyPraiseusersToMessage(option, data.localStatus.localData.currentSelectedGroup, thisView.currentGroup.currentBoard, shareMessage.gsid);
-						// view.setTag(R.id.time, null);
 					} else if ("DecrementView".equals(type)) {
 						ShareMessage shareMessage = data.boards.shareMessagesMap.get(content);
 						SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
@@ -869,8 +831,6 @@ public class ShareSubController {
 			} else if (view_class.equals("group_head")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("share_head")) {
-				onTouchDownView.performClick();
-			} else if (view_class.equals("share_praise")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("DecrementView")) {
 				onTouchDownView.setTag(R.id.time, null);

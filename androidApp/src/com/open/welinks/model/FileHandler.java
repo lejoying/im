@@ -33,7 +33,7 @@ import com.open.welinks.MainActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.ThumbleListener;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.oss.DownloadFileList;
 import com.open.welinks.utils.SHA1;

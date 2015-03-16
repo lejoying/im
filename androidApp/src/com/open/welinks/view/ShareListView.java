@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
@@ -27,8 +29,7 @@ import com.open.welinks.controller.ShareListController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.ShareMessage;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
@@ -45,6 +46,8 @@ public class ShareListView {
 	public ShareListView thisView;
 	public ShareListController thisController;
 	public Activity thisActivity;
+
+	public Gson gson = new Gson();
 
 	public LayoutInflater mInflater;
 
@@ -181,8 +184,9 @@ public class ShareListView {
 				ShareMessage message = thisController.sharesMap.get(gsid);
 				holder.imageContainer.removeAllViews();
 				if (message != null) {
-					ShareContent shareContent = thisController.gson.fromJson("{shareContentItems:" + message.content + "}", ShareContent.class);
-					if (shareContent == null) {
+					List<ShareContentItem> shareContentItems = gson.fromJson(message.content, new TypeToken<ArrayList<ShareContentItem>>() {
+					}.getType());
+					if (shareContentItems == null) {
 						holder.imageContainer.removeAllViews();
 						holder.imageCountView.setVisibility(View.GONE);
 						holder.imageContainer.setVisibility(View.GONE);
@@ -192,7 +196,6 @@ public class ShareListView {
 					}
 					String textContent = "";
 					List<String> imageContent = new ArrayList<String>();
-					List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 					for (int i = 0; i < shareContentItems.size(); i++) {
 						ShareContentItem shareContentItem = shareContentItems.get(i);
 						if (shareContentItem.type.equals("image")) {

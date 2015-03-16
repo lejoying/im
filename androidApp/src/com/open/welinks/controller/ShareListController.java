@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -37,7 +38,6 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.utils.MyGson;
 import com.open.welinks.view.ShareListView;
 
 public class ShareListController {
@@ -63,7 +63,7 @@ public class ShareListController {
 
 	public boolean isSelf = false;
 
-	public MyGson gson = new MyGson();
+	public Gson gson = new Gson();
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 	public int nowpage = 0;
 	public int pagesize = 5;

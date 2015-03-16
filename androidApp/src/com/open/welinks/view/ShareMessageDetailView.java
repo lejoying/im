@@ -38,6 +38,8 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.open.welinks.R;
 import com.open.welinks.WebViewActivity;
@@ -47,12 +49,10 @@ import com.open.welinks.customView.ShareView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MyGson;
 
 public class ShareMessageDetailView {
 
@@ -75,7 +75,7 @@ public class ShareMessageDetailView {
 	public float screenDip;
 	public float screenDensity;
 
-	public MyGson gson = new MyGson();
+	public Gson gson = new Gson();
 
 	public RelativeLayout backView;
 	public RelativeLayout rightContainer;
@@ -291,13 +291,13 @@ public class ShareMessageDetailView {
 		if (thisController.shareMessage.type != "imagetext") {
 
 		}
-		ShareContent shareContent = gson.fromJson("{shareContentItems:" + content + "}", ShareContent.class);
-		if (shareContent == null) {
+		List<ShareContentItem> shareContentItems = gson.fromJson(content, new TypeToken<ArrayList<ShareContentItem>>() {
+		}.getType());
+		if (shareContentItems == null) {
 			// TODO why gson Exception
 			Log.e(tag, content);
 			return;
 		}
-		List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 		thisController.textContent = "";
 		thisController.imageContent = "";
 		int index = 0;

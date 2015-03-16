@@ -4,8 +4,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.Service;
@@ -65,12 +63,10 @@ import com.open.welinks.model.Data.UserInformation.User.Location;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack2;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.view.NearbyView.NearbyAdapter.HotHolder;
 
 public class NearbyView {
 
@@ -327,16 +323,6 @@ public class NearbyView {
 					percent = 0;
 					currentPosition = -viewManage.screenWidth;
 					nextPosition = -viewManage.screenWidth;
-					// isTranslate = false;
-					// log.e("listview ACTION_DOWN");
-					// String view_class = (String) view.getTag(R.id.tag_class);
-					// if (view_class != null && view_class.equals("DecrementView")) {
-					// onTouchDownView = view;
-					// onTouchDownView.setAlpha(1f);
-					// } else if (view_class != null && view_class.equals("IncrementView")) {
-					// onTouchDownView = view;
-					// onTouchDownView.setAlpha(1f);
-					// }
 				} else if (id == MotionEvent.ACTION_MOVE) {
 					float x = event.getX();
 					float y = event.getY();
@@ -386,11 +372,7 @@ public class NearbyView {
 						}
 						progressView.setTranslationX(currentPosition);
 					}
-					// log.e("listview ACTION_MOVE");
-					// onclickScore(MotionEvent.ACTION_MOVE);
 				} else if (id == MotionEvent.ACTION_UP) {
-					// log.e("listview ACTION_UP");
-					// onclickScore(MotionEvent.ACTION_UP);
 					float distance = Math.abs(percent) * 2;
 					if (distance > viewManage.screenWidth / 2) {
 						nextPosition = 0;
@@ -401,7 +383,6 @@ public class NearbyView {
 					openLooper.start();
 					loopCallback.state = status.state;
 					status.state = status.Up;
-					// isTranslate = false;
 				}
 				return isTranslate;
 			}
@@ -452,29 +433,30 @@ public class NearbyView {
 				convertView = mInflater.inflate(R.layout.view_location_hot, null);
 				holder.scoreView = (TextView) convertView.findViewById(R.id.score);
 				holder.textContentView = (TextView) convertView.findViewById(R.id.textContent);
-				holder.imageContentView = (ImageView) convertView.findViewById(R.id.imageContent);
 				holder.imageContainer = (RelativeLayout) convertView.findViewById(R.id.imageContainer);
 				holder.imageCountView = (TextView) convertView.findViewById(R.id.imageCount);
 				holder.distanceView = (TextView) convertView.findViewById(R.id.distance);
 				holder.timeView = (TextView) convertView.findViewById(R.id.time);
 				holder.num_picker_decrement = (ImageView) convertView.findViewById(R.id.num_picker_decrement);
 				holder.num_picker_increment = (ImageView) convertView.findViewById(R.id.num_picker_increment);
+				holder.imageTextContentView = (TextView) convertView.findViewById(R.id.imageTextContent);
 				convertView.setTag(holder);
 			} else {
 				holder = (HotHolder) convertView.getTag();
 			}
 			ShareMessage message = (ShareMessage) getItem(position);
 			if (message != null) {
+				holder.imageTextContentView.setText("");
 				Typeface face = Typeface.createFromAsset(thisActivity.getAssets(), "fonts/avenirroman.ttf");
 				holder.scoreView.setTypeface(face);
 				holder.scoreView.setText(String.valueOf(message.totalScore));
-				ShareContent shareContent = thisController.subData.new ShareContent();
-				shareContent.shareContentItems = gson.fromJson(message.content, new TypeToken<ArrayList<ShareContentItem>>() {
+				List<ShareContentItem> shareContentItems = gson.fromJson(message.content, new TypeToken<ArrayList<ShareContentItem>>() {
 				}.getType());
 				List<String> images = new ArrayList<String>();
-				for (ShareContentItem item : shareContent.shareContentItems) {
+				for (ShareContentItem item : shareContentItems) {
 					if (item.type.equals("text")) {
 						holder.textContentView.setText(item.detail);
+						holder.imageTextContentView.setText(item.detail);
 					} else if (item.type.equals("image")) {
 						images.add(item.detail);
 					}
@@ -495,25 +477,9 @@ public class NearbyView {
 					}
 					holder.distanceView.setText(distance + "km");
 				} else {
-					distance = String.valueOf(message.distance);
-					holder.distanceView.setText(distance + "m");
+					holder.distanceView.setText(message.distance + "m");
 				}
-				holder.timeView.setText(DateUtil.getChatMessageListTime(message.time));
-				// if (position % 7 == 0) {
-				// imageLoader.displayImage("drawable://" + R.drawable.a1, holder.imageContentView);
-				// } else if (position % 7 == 1) {
-				// imageLoader.displayImage("drawable://" + R.drawable.a2, holder.imageContentView);
-				// } else if (position % 7 == 2) {
-				// imageLoader.displayImage("drawable://" + R.drawable.a3, holder.imageContentView);
-				// } else if (position % 7 == 3) {
-				// imageLoader.displayImage("drawable://" + R.drawable.a4, holder.imageContentView);
-				// } else if (position % 7 == 4) {
-				// imageLoader.displayImage("drawable://" + R.drawable.a5, holder.imageContentView);
-				// } else if (position % 7 == 5) {
-				// imageLoader.displayImage("drawable://" + R.drawable.a6, holder.imageContentView);
-				// } else if (position % 7 == 6) {
-				// imageLoader.displayImage("drawable://" + R.drawable.a7, holder.imageContentView);
-				// }
+				holder.timeView.setText(DateUtil.getNearShareTime(message.time));
 				if (message.scores != null) {
 					Score score = message.scores.get(data.userInformation.currentUser.phone);
 					if (score != null) {
@@ -535,8 +501,10 @@ public class NearbyView {
 				showImages(images, holder.imageContainer);
 				if (images.size() == 0) {
 					holder.imageContainer.setBackgroundColor(Color.parseColor("#380099cd"));
+					holder.imageTextContentView.setVisibility(View.VISIBLE);
 				} else {
 					holder.imageContainer.setBackgroundColor(Color.parseColor("#000099cd"));
+					holder.imageTextContentView.setVisibility(View.GONE);
 				}
 
 				holder.num_picker_increment.setTag(R.id.tag_class, "IncrementView");
@@ -552,13 +520,13 @@ public class NearbyView {
 		public class HotHolder {
 			public TextView scoreView;
 			public TextView textContentView;
-			public ImageView imageContentView;
 			public TextView imageCountView;
 			public TextView distanceView;
 			public TextView timeView;
 			public ImageView num_picker_increment;
 			public ImageView num_picker_decrement;
 			public RelativeLayout imageContainer;
+			public TextView imageTextContentView;
 		}
 	}
 
@@ -717,12 +685,6 @@ public class NearbyView {
 		this.singleButton = dialogView.findViewById(R.id.singleButton);
 		this.singleButton.setVisibility(View.VISIBLE);
 
-		// buttonOneText.setText("添加地址");
-		// buttonOneText.setVisibility(View.INVISIBLE);
-		// buttonThreeText.setVisibility(View.INVISIBLE);
-		// buttonTwoText.setText("添加地址");
-		// buttonThreeText.setText("删除分组");
-
 		popDialogView = new PopupWindow(dialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		popDialogView.setBackgroundDrawable(new BitmapDrawable());
 		showGroupCircles();
@@ -754,6 +716,7 @@ public class NearbyView {
 	public LinearLayout scopeLayout, timeLayout;
 	public TextView scopeOne, scopeTwo, scopeThree, scopeFour, timeOne, timeTwo, timeThree, timeFour, screenConfirm, screenCancel;
 
+	@SuppressWarnings("deprecation")
 	public void initializationScreenDialog() {
 		screenDialogView = mInflater.inflate(R.layout.dialog_screen, null);
 		screenBackground = screenDialogView.findViewById(R.id.background);
@@ -896,7 +859,7 @@ public class NearbyView {
 
 		@Override
 		public void drop(int from, int to) {
-			List<Location> locations = thisController.data.userInformation.currentUser.commonUsedLocations;
+			List<Location> locations = data.userInformation.currentUser.commonUsedLocations;
 			locations.add(to, locations.remove(from));
 			adapter.notifyDataSetChanged();
 			thisController.modifyUserCommonUsedLocations();
@@ -904,7 +867,7 @@ public class NearbyView {
 
 		@Override
 		public void remove(final int which) {
-			thisController.data.userInformation.currentUser.commonUsedLocations.remove(which);
+			data.userInformation.currentUser.commonUsedLocations.remove(which);
 			adapter.notifyDataSetChanged();
 			thisController.modifyUserCommonUsedLocations();
 		}

@@ -30,6 +30,8 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -52,12 +54,10 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MyGson;
 
 public class ShareSectionView {
 
@@ -81,7 +81,7 @@ public class ShareSectionView {
 	public Group currentGroup;
 	public Board currentBoard;
 
-	public MyGson gson = new MyGson();
+	public Gson gson = new Gson();
 
 	public DisplayImageOptions options;
 
@@ -335,10 +335,10 @@ public class ShareSectionView {
 			}
 
 			if (!isExists) {
-				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+				List<ShareContentItem> shareContentItems = gson.fromJson(shareMessage.content, new TypeToken<ArrayList<ShareContentItem>>() {
+				}.getType());
 				String textContent = "";
 				String imageContent = "";
-				List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 				float ratio = 0;
 				B: for (int j = 0; j < shareContentItems.size(); j++) {
 					ShareContentItem shareContentItem = shareContentItems.get(j);
@@ -686,10 +686,10 @@ public class ShareSectionView {
 				this.headView.setOnTouchListener(thisController.mOnTouchListener);
 				this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
 				if (imageContent == null || textContent == null) {
-					ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+					List<ShareContentItem> shareContentItems = gson.fromJson(shareMessage.content, new TypeToken<ArrayList<ShareContentItem>>() {
+					}.getType());
 					textContent = "";
 					imageContent = "";
-					List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 					for (int i = 0; i < shareContentItems.size(); i++) {
 						ShareContentItem shareContentItem = shareContentItems.get(i);
 						if (shareContentItem.type.equals("image")) {

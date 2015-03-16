@@ -15,8 +15,7 @@ import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.SendShareMessage;
-import com.open.welinks.model.SubData.ShareContent;
-import com.open.welinks.model.SubData.ShareContent.ShareContentItem;
+import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareSectionView;
@@ -233,13 +232,12 @@ public class TaskContainer_Share {
 		public String imageListString = "";
 
 		ShareMessage shareMessage;
-		ShareContent shareContent;
 
 		public List<ShareContentItem> contentItems;
 
 		@Override
 		public void modifyData() {
-			contentItems = new ArrayList<SubData.ShareContent.ShareContentItem>();
+			contentItems = new ArrayList<ShareContentItem>();
 			parser.check();
 			User currentUser = data.userInformation.currentUser;
 			long time = new Date().getTime();
@@ -279,8 +277,7 @@ public class TaskContainer_Share {
 			shareMessage.time = time;
 			shareMessage.status = "sending";
 
-			shareContent = SubData.getInstance().new ShareContent();
-			ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+			ShareContentItem shareContentItem = subData.new ShareContentItem();
 			shareContentItem.type = "text";
 			shareContentItem.detail = chatTextContent;
 			contentItems.add(shareContentItem);
@@ -300,7 +297,7 @@ public class TaskContainer_Share {
 				resolveFileTotal = this.myFileList.size();
 				MyFile myFile = this.myFileList.get(0);
 				copyFileToSprecifiedDirecytory(myFile, true);
-				ShareContentItem contentItem = shareContent.new ShareContentItem();
+				ShareContentItem contentItem = subData.new ShareContentItem();
 				contentItem.type = "image";
 				contentItem.detail = myFile.fileName;
 				contentItems.add(contentItem);
@@ -318,7 +315,7 @@ public class TaskContainer_Share {
 		public void onLocalFilesResolved() {
 			for (int i = 1; i < this.myFileList.size(); i++) {
 				MyFile myFile = this.myFileList.get(i);
-				ShareContentItem contentItem = shareContent.new ShareContentItem();
+				ShareContentItem contentItem = subData.new ShareContentItem();
 				contentItem.type = "image";
 				contentItem.detail = myFile.fileName;
 				contentItems.add(contentItem);

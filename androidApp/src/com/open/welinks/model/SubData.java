@@ -1,7 +1,5 @@
 package com.open.welinks.model;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class SubData {
 	public static SubData subData;
@@ -26,14 +24,10 @@ public class SubData {
 		public String content;
 	}
 
-	public class ShareContent {
-		public List<ShareContentItem> shareContentItems = new ArrayList<ShareContentItem>();
-
-		public class ShareContentItem {
-			public String type;// text image
-			public String detail;
-			public float ratio = 0;
-		}
+	public class ShareContentItem {
+		public String type;// text image
+		public String detail;
+		public float ratio = 0;
 	}
 
 	public class VoiceMessageContent {
