@@ -1136,7 +1136,7 @@ accountManage.modifylocation = function (data, response) {
     var longitude = data.longitude;
     var latitude = data.latitude;
     var address = data.address;
-    var arr = [phone, accessKey, longitude, latitude];
+    var arr = [longitude, latitude];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         modifyAccountNode(phone, longitude, latitude);
     }
@@ -1168,15 +1168,9 @@ accountManage.modifylocation = function (data, response) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 var time = new Date().getTime();
-                if (longitude != undefined && longitude != null && longitude != "") {
-                    accountData.longitude = longitude;
-                }
-                if (latitude != undefined && latitude != null && latitude != "") {
-                    accountData.latitude = latitude;
-                }
-                if (time != undefined && time != null && time != "") {
-                    accountData.lastlogintime = time;
-                }
+                accountData.longitude = longitude;
+                accountData.latitude = latitude;
+                accountData.lastlogintime = time;
                 accountNode.save(function (err, node) {
                     if (err) {
                         response.write(JSON.stringify({
@@ -1185,7 +1179,6 @@ accountManage.modifylocation = function (data, response) {
                         }));
                         response.end();
                         console.error(err);
-                        return;
                     } else {
                         checkLbsAccount(accountData);
                         response.write(JSON.stringify({
@@ -1220,7 +1213,6 @@ accountManage.modifylocation = function (data, response) {
                 });
             } catch (e) {
                 console.log(e);
-                return;
             }
         }
 
@@ -1232,10 +1224,10 @@ accountManage.modifylocation = function (data, response) {
                     data: {
                         key: serverSetting.LBS.KEY,
                         tableid: serverSetting.LBS.ACCOUNTTABLEID,
-                        loctype: 2,
+                        loctype: 1,//2
                         data: JSON.stringify({
                             _name: accountData.nickName,
-                            _location: longitude + latitude,
+                            _location: longitude + "," + latitude,
                             _address: address,
                             sex: accountData.sex,
                             mainBusiness: accountData.mainBusiness,
@@ -1269,7 +1261,7 @@ accountManage.modifylocation = function (data, response) {
                         tableid: serverSetting.LBS.ACCOUNTTABLEID,
                         data: JSON.stringify({
                             _id: id,
-                            _location: longitude + latitude,
+                            _location: longitude + "," + latitude,
                             _address: address
                         })
                     }, success: function (info) {
@@ -1283,7 +1275,6 @@ accountManage.modifylocation = function (data, response) {
                 });
             } catch (e) {
                 console.log(e);
-                return;
             }
         }
     }

@@ -367,8 +367,11 @@ shareManage.addcomment = function (data, response) {
     var contentType = data.contentType;
     var content = data.content;
     var arr = [gid, sid, gsid, nickName, contentType, content];
+    var arr1 = [sid, gsid, nickName, contentType, content];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         modifyShareComments();
+    } else if (verifyEmpty.verifyEmpty(data, arr1, response)) {
+        newModifyComments();
     }
     function modifyShareComments() {
         var query = [
@@ -446,57 +449,131 @@ shareManage.addcomment = function (data, response) {
                 });
             }
         });
-        function checkLbsShare(comments) {
-            try {
-                ajax.ajax({
-                    type: "POST",
-                    url: serverSetting.LBS.DATA_SEARCH,
-                    data: {
-                        key: serverSetting.LBS.KEY,
-                        tableid: serverSetting.LBS.SHARESTABLEID,
-                        filter: "gsid:" + gsid
-                    }, success: function (info) {
-                        var info = JSON.parse(info);
-                        if (info.status == 1 && info.count >= 1) {
-                            var id = info.datas[0]._id;
-                            modifyLabsShare(comments, id);
-                            console.log("success--" + info._id)
-                        } else {
-                            console.log("check error--" + info.status)
-                        }
-                    }
-                });
-            } catch (e) {
-                console.log(e);
-                return;
-            }
-        }
+    }
 
-        function modifyLabsShare(comments, id) {
-            try {
-                ajax.ajax({
-                    type: "POST",
-                    url: serverSetting.LBS.DATA_UPDATA,
-                    data: {
-                        key: serverSetting.LBS.KEY,
-                        tableid: serverSetting.LBS.SHARESTABLEID,
-                        data: JSON.stringify({
-                            _id: id,
-                            comments: comments
-                        })
-                    }, success: function (info) {
-                        var info = JSON.parse(info);
-                        if (info.status == 1) {
-                            console.log("success--" + info._id)
-                        } else {
-                            console.log("modify error--" + info.status)
-                        }
+    function newModifyComments() {
+        var query = [
+            "MATCH (shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
+            "WHERE share.gsid={gsid} AND shares.sid={sid}",
+            "RETURN share"
+        ].join("\n");
+        var params = {
+            sid: parseInt(sid),
+            gsid: parseInt(gsid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "评论群分享失败",
+                    "失败原因": "数据异常",
+                    sid: sid,
+                    gsid: gsid
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "评论群分享失败",
+                    "失败原因": "消息不存在",
+                    sid: sid,
+                    gsid: gsid
+                }), response);
+            } else {
+                var shareNode = results.pop().share;
+                var shareData = shareNode.data;
+                var comments = shareData.comments;
+                var commentsJSON;
+                try {
+                    commentsJSON = JSON.parse(comments);
+                } catch (e) {
+                    commentsJSON = [];
+                }
+                var comment = {
+                    phone: phone,
+                    phoneTo: phoneTo,
+                    nickName: nickName,
+                    nickNameTo: nickNameTo,
+                    head: head,
+                    headTo: headTo || "",
+                    contentType: contentType,
+                    content: content,
+                    time: new Date().getTime()
+                };
+                commentsJSON.push(comment);
+                shareData.comments = JSON.stringify(commentsJSON);
+                shareNode.save(function (error, node) {
+                    if (error) {
+                        ResponseData(JSON.stringify({
+                            "提示信息": "评论群分享失败",
+                            "失败原因": "数据异常",
+                            sid: sid,
+                            gsid: gsid
+                        }), response);
+                        console.error(error);
+                        return;
+                    } else {
+                        checkLbsShare(shareData.comments);
+                        ResponseData(JSON.stringify({
+                            "提示信息": "评论群分享成功",
+                            sid: sid,
+                            gsid: gsid
+                        }), response);
                     }
                 });
-            } catch (e) {
-                console.log(e);
-                return;
             }
+        });
+    }
+
+    function checkLbsShare(comments) {
+        try {
+            ajax.ajax({
+                type: "POST",
+                url: serverSetting.LBS.DATA_SEARCH,
+                data: {
+                    key: serverSetting.LBS.KEY,
+                    tableid: serverSetting.LBS.SHARESTABLEID,
+                    filter: "gsid:" + gsid
+                }, success: function (info) {
+                    var info = JSON.parse(info);
+                    if (info.status == 1 && info.count >= 1) {
+                        var id = info.datas[0]._id;
+                        modifyLabsShare(comments, id);
+                        console.log("success--" + info._id)
+                    } else {
+                        console.log("check error--" + info.status)
+                    }
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return;
+        }
+    }
+
+    function modifyLabsShare(comments, id) {
+        try {
+            ajax.ajax({
+                type: "POST",
+                url: serverSetting.LBS.DATA_UPDATA,
+                data: {
+                    key: serverSetting.LBS.KEY,
+                    tableid: serverSetting.LBS.SHARESTABLEID,
+                    data: JSON.stringify({
+                        _id: id,
+                        comments: comments
+                    })
+                }, success: function (info) {
+                    var info = JSON.parse(info);
+                    if (info.status == 1) {
+                        console.log("success--" + info._id)
+                    } else {
+                        console.log("modify error--" + info.status)
+                    }
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return;
         }
     }
 }
@@ -1164,7 +1241,8 @@ shareManage.sendboardshare = function (data, response) {
                             type: share.type,
                             content: share.content,
                             totalScore: share.totalScore,
-                            time: share.time
+                            time: share.time,
+                            comments: share.comments
                         })
                     }, success: function (info) {
                         var info = JSON.parse(info);
