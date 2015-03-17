@@ -1244,8 +1244,7 @@ shareManage.sendboardshare = function (data, response) {
                             type: share.type,
                             content: share.content,
                             totalScore: share.totalScore,
-                            time: share.time,
-                            comments: share.comments
+                            time: share.time
                         })
                     }, success: function (info) {
                         var info = JSON.parse(info);
