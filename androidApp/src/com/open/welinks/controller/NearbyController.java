@@ -10,6 +10,7 @@ import java.util.Map;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -314,10 +315,10 @@ public class NearbyController {
 				RegeocodeQuery mRegeocodeQuery = new RegeocodeQuery(latLonPoint, 200, GeocodeSearch.AMAP);
 				mGeocodeSearch.getFromLocationAsyn(mRegeocodeQuery);
 				thisView.openLooper.stop();
-				thisView.currentPosition = -thisView.viewManage.screenWidth;
-				thisView.nextPosition = -thisView.viewManage.screenWidth;
+				thisView.currentPosition = 0;
+				// thisView.nextPosition = 0;
 				nowpage = 0;
-				searchNearbyHttp();
+				searchNearbyHttp(true);
 			}
 
 			@Override
@@ -330,6 +331,10 @@ public class NearbyController {
 			public void next() {
 				if (isChangeAddress == false) {
 					isChangeAddress = true;
+					thisView.currentPosition = 0;
+					thisView.nextPosition = 0;
+					// thisView.openLooper.start();
+					thisView.progressView.setTranslationX(thisView.currentPosition);
 					if (thisView.img_btn_set_start.getVisibility() == View.VISIBLE) {
 						thisView.img_btn_set_start.startAnimation(animationNearLeft);
 					}
@@ -481,7 +486,7 @@ public class NearbyController {
 				} else if (view.equals(thisView.screenConfirm)) {
 					searchRadius = tempSearchRadius;
 					searchTime = tempSearchTime;
-					searchNearbyHttp();
+					searchNearbyHttp(false);
 					thisView.changeScreenPopupWindow();
 					thisView.changeAmapCircle(longitude, latitude);
 				} else if (view.equals(thisView.scopeOne)) {
@@ -556,7 +561,7 @@ public class NearbyController {
 					thisView.openLooper.stop();
 					thisView.currentPosition = -thisView.viewManage.screenWidth;
 					thisView.nextPosition = -thisView.viewManage.screenWidth;
-					searchNearbyHttp();
+					searchNearbyHttp(false);
 				} else if (position == 2) {
 				} else if (position == 1) {
 					searchStatus = Status.newest;
@@ -565,7 +570,7 @@ public class NearbyController {
 					thisView.openLooper.stop();
 					thisView.currentPosition = -thisView.viewManage.screenWidth;
 					thisView.nextPosition = -thisView.viewManage.screenWidth;
-					searchNearbyHttp();
+					searchNearbyHttp(false);
 				}
 			}
 		};
@@ -723,10 +728,23 @@ public class NearbyController {
 		}
 	}
 
-	public void searchNearbyHttp() {
-		thisView.loopCallback.state = thisView.status.None;
-		thisView.nextPosition = thisView.viewManage.screenWidth / 3f;
-		thisView.openLooper.start();
+	boolean isRun = false;
+
+	public Handler handler = new Handler();
+
+	public void searchNearbyHttp(final boolean isAnimation) {
+		if (isAnimation) {
+			thisView.transleteSpeed = 0.4f;
+			thisView.loopCallback.state = thisView.status.None;
+			thisView.currentPosition = 0;
+			thisView.nextPosition = thisView.viewManage.screenWidth / 2f;
+			handler.postDelayed(new Runnable() {
+				public void run() {
+					isRun = true;
+					thisView.openLooper.start();
+				}
+			}, 500);
+		}
 
 		long now = System.currentTimeMillis();
 		RequestParams params = new RequestParams();
@@ -756,9 +774,16 @@ public class NearbyController {
 
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				thisView.loopCallback.state = thisView.status.None;
-				thisView.nextPosition = thisView.viewManage.screenWidth / 3f * 2;
-				thisView.openLooper.start();
+				if (isAnimation) {
+					thisView.loopCallback.state = thisView.status.None;
+					thisView.transleteSpeed = 0.6f;
+					if (!isRun && thisView.nextPosition == thisView.viewManage.screenWidth / 2f) {
+						thisView.nextPosition = thisView.viewManage.screenWidth / 3f * 2;
+						thisView.openLooper.start();
+					} else {
+						thisView.nextPosition = thisView.viewManage.screenWidth / 3f * 2;
+					}
+				}
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if ("OK".equals(response.info)) {
 					if (nowpage == 0) {
@@ -795,9 +820,19 @@ public class NearbyController {
 						// }
 						mInfomations.add(message);
 					}
-					thisView.loopCallback.state = thisView.status.None;
-					thisView.nextPosition = thisView.viewManage.screenWidth;
-					thisView.openLooper.start();
+					if (isAnimation) {
+						thisView.loopCallback.state = thisView.status.None;
+						thisView.transleteSpeed = 1f;
+						thisView.nextPosition = thisView.viewManage.screenWidth;
+						thisView.openLooper.start();
+						if (!isRun && thisView.nextPosition == thisView.viewManage.screenWidth / 3f * 2) {
+							thisView.nextPosition = thisView.viewManage.screenWidth;
+							thisView.openLooper.start();
+						} else {
+							thisView.nextPosition = thisView.viewManage.screenWidth;
+						}
+						isRun = false;
+					}
 					thisView.nearbyAdapter.notifyDataSetChanged();
 				} else {
 					log.e(response.info + "::::::" + response.status);
@@ -902,7 +937,7 @@ public class NearbyController {
 			thisView.openLooper.stop();
 			thisView.currentPosition = -thisView.viewManage.screenWidth;
 			thisView.nextPosition = -thisView.viewManage.screenWidth;
-			searchNearbyHttp();
+			searchNearbyHttp(false);
 		}
 	}
 }

@@ -261,6 +261,14 @@ public class NearbyView {
 				}
 			}
 			progressView.setTranslationX(currentPosition);
+
+			// MarginLayoutParams params = (MarginLayoutParams) nearbyListView.getLayoutParams();
+			// int topMarigin = params.topMargin;
+			// if (topMarigin > (int) (84 * thisView.metrics.density)) {
+			// float currentMargin = topMarigin + distance;
+			// params.topMargin = (int) currentMargin;
+			// nearbyListView.setLayoutParams(params);
+			// }
 		} else {
 			currentPosition -= distance;
 			if (nextPosition >= currentPosition) {
@@ -272,20 +280,21 @@ public class NearbyView {
 		if (isStop) {
 			openLooper.stop();
 			isTranslate = false;
+			transleteSpeed = 3f;
 			// log.e("停止了");
 		}
 	}
 
 	public void reflashFirst() {
 		thisController.nowpage = 0;
-		thisController.searchNearbyHttp();
+		thisController.searchNearbyHttp(true);
 	}
 
 	public void nextPageData() {
-		thisController.searchNearbyHttp();
+		thisController.searchNearbyHttp(true);
 	}
 
-	public float transleteSpeed = 3f;
+	public float transleteSpeed = 3f;// 3f
 
 	public Gson gson = new Gson();
 
@@ -323,6 +332,13 @@ public class NearbyView {
 					percent = 0;
 					currentPosition = -viewManage.screenWidth;
 					nextPosition = -viewManage.screenWidth;
+					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
+					int topMarigin = params.topMargin;
+					if (topMarigin == (int) (304 * thisView.metrics.density)) {
+						params.topMargin = (int) (84 * thisView.metrics.density);
+						thisView.nearbyListView.setLayoutParams(params);
+						touch_pre_y += 220 * thisView.metrics.density;
+					}
 				} else if (id == MotionEvent.ACTION_MOVE) {
 					float x = event.getX();
 					float y = event.getY();
@@ -342,8 +358,6 @@ public class NearbyView {
 						int error = 2;
 						if (topMarigin == (int) (84 * thisView.metrics.density)) {
 							error = 4;
-						} else {
-							error = 2;
 						}
 						if (topDistance == 0) {
 							status.state = status.T;
@@ -497,6 +511,16 @@ public class NearbyView {
 					holder.num_picker_increment.setImageResource(R.drawable.selector_num_picker_increment);
 					holder.num_picker_decrement.setImageResource(R.drawable.selector_num_picker_decrement);
 				}
+				if (message.totalScore < 10 && message.totalScore >= 0) {
+					holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+				} else if (message.totalScore < 100 && message.totalScore >= 0) {
+					holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+				} else if (message.totalScore < 1000 && message.totalScore >= 0) {
+					holder.scoreView.setTextColor(Color.parseColor("#0099cd"));
+					holder.scoreView.setText("999");
+				} else if (message.totalScore < 0) {
+					holder.scoreView.setTextColor(Color.parseColor("#00a800"));
+				}
 				holder.imageContainer.removeAllViews();
 				showImages(images, holder.imageContainer);
 				if (images.size() == 0) {
@@ -542,7 +566,7 @@ public class NearbyView {
 				if (file.exists()) {
 					imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
 				} else {
-					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q", file.getAbsolutePath());
+					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
 					downloadFile.view = imageView;
 					downloadFile.setDownloadFileListener(thisController.downloadListener);
 					taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
@@ -562,7 +586,7 @@ public class NearbyView {
 				if (file.exists()) {
 					imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
 				} else {
-					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
+					DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width + "w_" + height + "h_1c_1e_100q", file.getAbsolutePath());
 					downloadFile.view = imageView;
 					downloadFile.setDownloadFileListener(thisController.downloadListener);
 					taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
@@ -578,18 +602,18 @@ public class NearbyView {
 					name = "@1_2";
 					params.leftMargin = 0;
 					params.height = height;
-					suffix = "@" + width / 2 + "w_" + width + "h_1c_1e_100q";
+					suffix = "@" + width + "w_" + height + "h_1c_1e_100q";
 				} else if (i == 1) {
 					name = "@1_1";
 					params.leftMargin = (int) (width + (metrics.density * 1));
 					params.height = width;
-					suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+					suffix = "@" + width + "w_" + width + "h_1c_1e_100q";
 				} else {
 					name = "@1_1";
 					params.leftMargin = (int) (width + (metrics.density * 1));
 					params.topMargin = (int) (width + (metrics.density * 1));
 					params.height = width;
-					suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+					suffix = "@" + width + "w_" + width + "h_1c_1e_100q";
 				}
 				container.addView(imageView, params);
 				File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
@@ -606,7 +630,7 @@ public class NearbyView {
 				int width = (int) (metrics.density * 44.5f);
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
 				String suffix = "";
-				suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+				suffix = "@" + width + "w_" + width + "h_1c_1e_100q";
 				String name = "@1_1";
 				if (i == 0) {
 				} else if (i == 1) {
