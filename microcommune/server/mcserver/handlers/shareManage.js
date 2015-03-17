@@ -1042,7 +1042,7 @@ shareManage.getgroupshares = function (data, response) {
 shareManage.getusershares = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
-    var phone = data.phone;
+    var phone = data.target;
     var nowpage = data.nowpage;
     var pagesize = data.pagesize;
     var arr = [phone, nowpage, pagesize];
