@@ -291,7 +291,11 @@ public class GroupListView {
 				Group group = thisController.groupsMap.get(gid);
 				taskManageHolder.fileHandler.getHeadImage(group.icon, holder.headView, taskManageHolder.viewManage.options50);
 				holder.nameView.setText(group.name);
-				holder.descriptionView.setText(group.description);
+				if ("请输入群组描述信息".equals(group.description)) {
+					holder.descriptionView.setText("");
+				} else {
+					holder.descriptionView.setText(group.description);
+				}
 				if (thisController.isGroupEditor) {
 					holder.checkBoxView.setVisibility(View.VISIBLE);
 					if (thisController.editorGroups.contains(gid)) {

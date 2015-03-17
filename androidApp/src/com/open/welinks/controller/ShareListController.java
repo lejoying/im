@@ -64,7 +64,9 @@ public class ShareListController {
 	public boolean isSelf = false;
 
 	public Gson gson = new Gson();
+
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
 	public int nowpage = 0;
 	public int pagesize = 5;
 
@@ -75,6 +77,9 @@ public class ShareListController {
 		this.context = thisActivity;
 		this.thisController = this;
 		this.thisActivity = thisActivity;
+
+		this.shares = new ArrayList<String>();
+		this.sharesMap = new HashMap<String, ShareMessage>();
 	}
 
 	public void onCrate() {
@@ -86,8 +91,6 @@ public class ShareListController {
 		} else {
 			friend = data.relationship.friendsMap.get(key);
 		}
-		this.shares = new ArrayList<String>();
-		this.sharesMap = new HashMap<String, ShareMessage>();
 		getUserShares();
 	}
 
@@ -185,8 +188,9 @@ public class ShareListController {
 	public void getUserShares() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", key);
+		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("target", key);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
 		HttpClient httpClient = new HttpClient();
@@ -247,9 +251,9 @@ public class ShareListController {
 		});
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == resultCodeDetail && resultCode == Activity.RESULT_OK) {
-			String gsid = data2.getStringExtra("key");
+			String gsid = data.getStringExtra("key");
 			if (gsid != null) {
 				shares.remove(gsid);
 				thisView.shareListAdapter.notifyDataSetChanged();

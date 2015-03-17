@@ -36,6 +36,7 @@ import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.TaskManageHolder;
@@ -66,12 +67,12 @@ public class DynamicListActivity extends Activity {
 	public GroupEventListAdapter groupEventListAdapter;
 	public UserEventListAdapter userEventListAdapter;
 
-	public List<String> groupEventMessages = new ArrayList<String>();
-	public List<String> userEventMessages = new ArrayList<String>();
+	public List<String> groupEventMessages;
+	public List<String> userEventMessages;
 	public Map<String, Friend> friendsMap;
 	public Gson gson = new Gson();
 
-	public int selectType = 3;
+	public int selectType = 1;
 	public ThreeChoicesView threeChoicesView;
 
 	public DisplayMetrics displayMetrics;
@@ -82,7 +83,7 @@ public class DynamicListActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		selectType = getIntent().getIntExtra("type", 3);
+		selectType = getIntent().getIntExtra("type", 1);
 
 		taskManageHolder.viewManage.dynamicListActivity = this;
 		friendsMap = data.relationship.friendsMap;
@@ -143,8 +144,6 @@ public class DynamicListActivity extends Activity {
 
 	public void showEventList() {
 		if (selectType == 1) {
-			// TODO square event
-		} else if (selectType == 2) {
 			if (groupEventListAdapter == null) {
 				groupEventListAdapter = new GroupEventListAdapter();
 				groupEventContainer.setAdapter(groupEventListAdapter);
@@ -166,6 +165,8 @@ public class DynamicListActivity extends Activity {
 	public SmallBusinessCardPopView businessCardPopView;
 
 	public void initView() {
+		this.groupEventMessages = new ArrayList<String>();
+		this.userEventMessages = new ArrayList<String>();
 		mInflater = this.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -182,6 +183,9 @@ public class DynamicListActivity extends Activity {
 		userEventContainer = (ListView) findViewById(R.id.userEventContainer);
 
 		threeChoicesView = new ThreeChoicesView(this, selectType);
+		threeChoicesView.setTwoChoice();
+		threeChoicesView.setButtonOneText("群组");
+		threeChoicesView.setButtonThreeText("好友");
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainerView.addView(threeChoicesView, params);
@@ -228,19 +232,18 @@ public class DynamicListActivity extends Activity {
 
 	private void changData(int selectType) {
 		if (selectType == 1) {
-			squareEventContainer.setVisibility(View.VISIBLE);
-			groupEventContainer.setVisibility(View.GONE);
-			userEventContainer.setVisibility(View.GONE);
-		} else if (selectType == 2) {
 			squareEventContainer.setVisibility(View.GONE);
 			groupEventContainer.setVisibility(View.VISIBLE);
 			userEventContainer.setVisibility(View.GONE);
+		} else if (selectType == 2) {
+			// squareEventContainer.setVisibility(View.VISIBLE);
+			// groupEventContainer.setVisibility(View.GONE);
+			// userEventContainer.setVisibility(View.GONE);
 		} else if (selectType == 3) {
 			squareEventContainer.setVisibility(View.GONE);
 			groupEventContainer.setVisibility(View.GONE);
 			userEventContainer.setVisibility(View.VISIBLE);
 		}
-
 	}
 
 	public void bindEvent() {
@@ -594,8 +597,9 @@ public class DynamicListActivity extends Activity {
 	public void getRequareAddFriendList() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 
 		httpUtils.send(HttpMethod.POST, API.RELATION_GETASKFRIENDS, params, responseHandlers.getaskfriendsCallBack);
 	}
@@ -603,8 +607,9 @@ public class DynamicListActivity extends Activity {
 	public void agreeAddFriend(String phoneTo) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("target", phoneTo);
 		// params.addBodyParameter("status", "true");
 

@@ -118,15 +118,16 @@ public class CreateGroupLocationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_creategrouplocation);
 		mInflater = getLayoutInflater();
-		String type = getIntent().getStringExtra("type");
+		Intent intent = this.getIntent();
+		String type = intent.getStringExtra("type");
 		if (type != null) {
 			isScanAddress = true;
 		} else {
 			isScanAddress = false;
 		}
-		latitude = getIntent().getStringExtra("latitude");
-		longitude = getIntent().getStringExtra("longitude");
-		address = getIntent().getStringExtra("address");
+		latitude = intent.getStringExtra("latitude");
+		longitude = intent.getStringExtra("longitude");
+		address = intent.getStringExtra("address");
 		initData();
 		initView();
 		initListener();

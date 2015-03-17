@@ -34,6 +34,7 @@ import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
@@ -229,8 +230,10 @@ public class GroupListController {
 						}
 						thisView.groupListAdapter.notifyDataSetChanged();
 					} else {
-						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, groups.get(position));
+						String gid = groups.get(position);
+						thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, gid);
 						thisView.businessCardPopView.showUserCardDialogView();
+						DataHandler.getGroupBoards(gid);
 					}
 				} else {
 					Alert.createDialog(thisActivity).setTitle(getDialogTitle(position)).setOnConfirmClickListener(new OnDialogClickListener() {
@@ -555,8 +558,10 @@ public class GroupListController {
 	}
 
 	public void onResume() {
-		if (thisView.dialogAdapter != null)
+		if (thisView.dialogAdapter != null) {
 			thisView.dialogAdapter.notifyDataSetChanged();
+		}
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 
 	public void onDestroy() {

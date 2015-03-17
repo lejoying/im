@@ -326,6 +326,12 @@ public class ShareSubController {
 					Log.i(tag, "ACTION_DOWN---" + view_class);
 					// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 				}
+				if (action == MotionEvent.ACTION_MOVE) {
+					String view_class = (String) view.getTag(R.id.tag_class);
+					if (view_class.equals("CommentHeadView")) {
+						log.e("CommentHeadView--------------------Move");
+					}
+				}
 				return false;
 			}
 		};

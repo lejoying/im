@@ -85,7 +85,7 @@ public class MeSubController {
 				} else if (view.equals(thisView.dynamicListView)) {
 					Intent intent = new Intent(mainController.thisActivity, DynamicListActivity.class);
 					if (data.event.userNotReadMessage) {
-						intent.putExtra("type", 2);
+						intent.putExtra("type", 1);
 					} else if (data.event.groupNotReadMessage) {
 						intent.putExtra("type", 3);
 					}

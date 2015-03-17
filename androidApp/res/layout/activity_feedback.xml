@@ -2,38 +2,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
     android:orientation="vertical" >
 
     <include layout="@layout/view_back_view" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/background_white_radius"
-        android:padding="10dp" >
+         android:background="@drawable/main_background"
+        android:layout_height="wrap_content" >
 
-        <EditText
-            android:id="@+id/opinion"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="20dp"
-            android:background="#fff"
-            android:gravity="top"
-            android:hint="请输入意见反馈，最多300字。"
-            android:maxLength="300" >
+            android:layout_height="250dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/background_white_radius"
+            android:padding="10dp" >
 
-            <requestFocus />
-        </EditText>
+            <EditText
+                android:id="@+id/opinion"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="20dp"
+                android:background="#fff"
+                android:gravity="top"
+                android:hint="请输入意见反馈，最多300字。"
+                android:maxLength="300" >
 
-        <TextView
-            android:id="@+id/num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:text="300" />
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="300" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>

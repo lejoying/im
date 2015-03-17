@@ -1043,6 +1043,9 @@ shareManage.getusershares = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.target;
+    if (!phone) {
+        phone = data.phone;
+    }
     var nowpage = data.nowpage;
     var pagesize = data.pagesize;
     var arr = [phone, nowpage, pagesize];

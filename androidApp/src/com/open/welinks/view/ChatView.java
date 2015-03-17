@@ -170,7 +170,6 @@ public class ChatView {
 		backImageView.setColorFilter(Color.parseColor("#0099cd"));
 
 		initAnimations();
-
 	}
 
 	private void initAnimations() {

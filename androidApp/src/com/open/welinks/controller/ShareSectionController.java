@@ -102,10 +102,6 @@ public class ShareSectionController {
 	}
 
 	public void onCrate() {
-		thisController.initializeListeners();
-		thisView.initView();
-		thisController.bindEvent();
-
 		String key = thisActivity.getIntent().getStringExtra("key");
 		if (key == null || "".equals(key)) {
 			thisView.currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);

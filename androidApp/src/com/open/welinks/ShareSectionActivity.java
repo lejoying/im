@@ -39,6 +39,10 @@ public class ShareSectionActivity extends Activity {
 		this.thisController.thisView = this.thisView;
 
 		thisController.onCrate();
+		thisController.initializeListeners();
+		thisView.initView();
+		thisController.bindEvent();
+
 	}
 
 	@Override

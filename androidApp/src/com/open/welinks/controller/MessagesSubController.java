@@ -61,7 +61,7 @@ public class MessagesSubController {
 							mainController.thisActivity.startActivity(intent);
 						} else if ("event_group".equals(key)) {
 							Intent intent = new Intent(mainController.thisActivity, DynamicListActivity.class);
-							intent.putExtra("type", 2);
+							intent.putExtra("type", 1);
 							mainController.thisActivity.startActivity(intent);
 						} else {
 
