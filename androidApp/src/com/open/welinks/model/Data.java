@@ -94,6 +94,10 @@ public class Data {
 
 			public String currentSelectedGroup = "";
 			public String currentSelectedGroupBoard = "";
+			public String currentGroupCircle = "";
+			public String currentFunctionPage = "";
+			public int currentSearchRadius = 0;
+			public long currentSearchTime = 0;
 
 			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
 			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();

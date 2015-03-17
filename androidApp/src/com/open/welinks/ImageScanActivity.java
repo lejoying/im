@@ -105,7 +105,8 @@ public class ImageScanActivity extends FragmentActivity {
 		imageNumberView.setText("浏览  (" + (currentPosition + 1) + "/" + imagesBrowseList.size() + ")");
 		backView.setBackgroundResource(R.drawable.selector_back_transparent);
 		// backView.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_back_transparent));
-		backMaxView.setBackgroundColor(Color.parseColor("#00000000"));
+		backMaxView.setBackgroundColor(Color.TRANSPARENT);
+		backImageView.setColorFilter(Color.WHITE);
 		imageNumberView.setTextColor(Color.WHITE);
 		deleteButtonView = new ImageView(this);
 		int padding = (int) (10 * displaymetrics.density);

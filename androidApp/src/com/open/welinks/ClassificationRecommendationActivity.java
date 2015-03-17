@@ -132,6 +132,8 @@ public class ClassificationRecommendationActivity extends Activity {
 		searchImageView.setLayoutParams(params);
 		seletedLabelParentView.addView(searchImageView, 0);
 		backTitleView.setText("分类推荐");
+		backTitleView.setTextColor(Color.WHITE);
+		backImageView.setColorFilter(Color.WHITE);
 
 		businessCardPopView = new SmallBusinessCardPopView(this, mainView);
 		businessCardPopView.cardView.setHot(false);

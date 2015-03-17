@@ -115,10 +115,10 @@ public class NearbyController {
 	public AMapLocation mAmapLocation;
 
 	public double latitude, longitude;
-	public int searchRadius = 50000;// 1500 10000 50000
-	public int tempSearchRadius = 50000;// 5000 10000 50000
-	public long searchTime = 0;// 3600000 86400000 259200000
-	public long tempSearchTime = 0;// 3600000 86400000 259200000
+	public int searchRadius = 50000;
+	public int tempSearchRadius = 50000;
+	public long searchTime = 0;
+	public long tempSearchTime = 0;
 
 	public int[] radius = { 1500, 5000, 10000, 50000 };
 	public long[] times = { 3600000, 86400000, 259200000, 0 };
@@ -184,6 +184,10 @@ public class NearbyController {
 
 		mGeocodeSearch = new GeocodeSearch(thisActivity);
 		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
+
+		if (data.localStatus.localData.currentSearchRadius != 0)
+			searchRadius = data.localStatus.localData.currentSearchRadius;
+		searchTime = data.localStatus.localData.currentSearchTime;
 
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
 		getUserCommonUsedLocations();
@@ -655,6 +659,8 @@ public class NearbyController {
 					LatLng mLatLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
 					// thisView.mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));
 					thisView.mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
+					thisView.changeAmapCircle(longitude, latitude);
+					thisView.changeScreenText();
 					// searchNearby(amapLocation);
 					// searchNearByPolygon(0);
 				} else {

@@ -161,6 +161,7 @@ public class MainController {
 
 	public void onPause() {
 		thisView.meSubView.mMePageAppIconScaleSpring.removeListener(mSpringListener);
+		thisView.shareSubView.thisController.onPause();
 	}
 
 	public void onDestroy() {
@@ -168,7 +169,7 @@ public class MainController {
 		mLocationManagerProxy.destroy();
 		thisView.messagesSubView.onDestroy();
 		thisView.squareSubView.thisController.onDestroy();
-
+		thisView.shareSubView.thisController.onDestroy();
 	}
 
 	private class ExampleSpringListener extends SimpleSpringListener {

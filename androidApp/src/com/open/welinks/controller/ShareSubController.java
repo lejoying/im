@@ -636,7 +636,7 @@ public class ShareSubController {
 					groups.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
 				}
 				// modify local data
-				String rid = data.relationship.groupCircles.get(0);
+				String rid = String.valueOf(thisView.currentGroupCircle.rid);
 				String oldSequece = gson.toJson(data.relationship.groupCirclesMap.get(rid).groups);
 				data.relationship.groupCirclesMap.get(rid).groups = groups;
 				data.relationship.isModified = true;
@@ -880,5 +880,15 @@ public class ShareSubController {
 			}
 		}
 		return true;
+	}
+
+	public void onDestroy() {
+	}
+
+	public void onPause() {
+		data.localStatus.localData.currentGroupCircle = String.valueOf(thisView.currentGroupCircle.rid);
+		data.localStatus.localData.currentSelectedGroup = String.valueOf(thisView.currentGroup.gid);
+		data.localStatus.localData.currentSelectedGroupBoard = thisView.currentGroup.currentBoard;
+		data.localStatus.localData.isModified = true;
 	}
 }

@@ -3,7 +3,7 @@
     android:id="@+id/maxView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
+    android:background="@color/background"
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
@@ -18,6 +18,7 @@
         android:lineSpacingMultiplier="1.1"
         android:padding="10dp"
         android:textColor="#fff"
+        android:textColorHint="#88ffffff"
         android:textCursorDrawable="@drawable/edit_cursor"
         android:textSize="20sp" />
 

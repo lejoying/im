@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/maxView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/maxView"
-    android:background="@drawable/background"
+    android:background="@color/background"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="#33000000" >
+        android:background="@color/white" >
 
         <LinearLayout
             android:id="@+id/backView"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:gravity="center"
             android:background="@drawable/backview_background"
+            android:gravity="center"
             android:orientation="horizontal"
             android:paddingRight="10dp" >
 
@@ -25,7 +25,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_marginLeft="20dp"
-                android:src="@drawable/back" />
+                android:src="@drawable/back"
+                android:tint="@color/icon_color" />
 
             <TextView
                 android:id="@+id/groupMemberCount"
@@ -33,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
                 android:text="成员管理 ( 6人) "
-                android:textColor="#fff"
+                android:textColor="@color/icon_color"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -47,7 +48,7 @@
             android:background="@drawable/squaredetail_comment_notselected"
             android:gravity="center"
             android:text="完成"
-            android:textColor="#fff"
+            android:textColor="@color/icon_color"
             android:visibility="gone" />
     </RelativeLayout>
 

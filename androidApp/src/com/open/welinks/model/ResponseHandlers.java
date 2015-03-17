@@ -1118,8 +1118,9 @@ public class ResponseHandlers {
 				data.boards.isModified = true;
 				if (group != null) {
 					group.boards = response.boards;
-					if (group.boards.size() > 0)
+					if ((group.currentBoard == null || "".equals(group.currentBoard)) && group.boards.size() > 0) {
 						group.currentBoard = group.boards.get(0);
+					}
 					// if (viewManage.shareSectionView != null) {
 					// viewManage.shareSectionView.showGroupBoards();
 					// viewManage.shareSectionView.showShareMessages();

@@ -3,6 +3,7 @@
 
     <color name="Transparent">#00ffffff</color>
     <color name="background_white">#ffffff</color>
+    <color name="background">#75c2b8</color>
     <color name="card_color">#380099cd</color>
     <color name="card_color2">#380099cd</color>
     <color name="card_color3">#510099cd</color>
