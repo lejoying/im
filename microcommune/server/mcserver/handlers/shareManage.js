@@ -2189,8 +2189,8 @@ shareManage.score = function (data, response) {
                                     ids: id
                                 }, success: function (info) {
                                     var info = JSON.parse(info);
-                                    if (info.status == 1 && info.count >= 1) {
-                                        console.log("success--" + info._id)
+                                    if (info.status == 1 && info.success>= 1) {
+                                        console.log("success--" + info.success)
                                     } else {
                                         console.log("delete error--" + info.status)
                                     }
