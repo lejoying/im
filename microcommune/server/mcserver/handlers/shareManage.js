@@ -1244,8 +1244,7 @@ shareManage.sendboardshare = function (data, response) {
                             type: share.type,
                             content: share.content,
                             totalScore: share.totalScore,
-                            time: share.time,
-                            comments: share.comments
+                            time: share.time
                         })
                     }, success: function (info) {
                         var info = JSON.parse(info);
@@ -2135,7 +2134,11 @@ shareManage.score = function (data, response) {
                                     var info = JSON.parse(info);
                                     if (info.status == 1 && info.count >= 1) {
                                         var id = info.datas[0]._id;
-                                        modifyLabsShare(share, id);
+                                        if (share.totalScore <= -5) {
+                                            deleteLbsShare(id);
+                                        } else {
+                                            modifyLabsShare(share, id);
+                                        }
                                         console.log("success--" + info._id)
                                     } else {
                                         console.log("check error--" + info.status)
@@ -2172,7 +2175,29 @@ shareManage.score = function (data, response) {
                             });
                         } catch (e) {
                             console.log(e);
-                            return;
+                        }
+                    }
+
+                    function deleteLbsShare(id) {
+                        try {
+                            ajax.ajax({
+                                type: "POST",
+                                url: serverSetting.LBS.DATA_DELETE,
+                                data: {
+                                    key: serverSetting.LBS.KEY,
+                                    tableid: serverSetting.LBS.SHARESTABLEID,
+                                    ids: id
+                                }, success: function (info) {
+                                    var info = JSON.parse(info);
+                                    if (info.status == 1 && info.count >= 1) {
+                                        console.log("success--" + info._id)
+                                    } else {
+                                        console.log("delete error--" + info.status)
+                                    }
+                                }
+                            });
+                        } catch (e) {
+                            console.log(e);
                         }
                     }
                 }
