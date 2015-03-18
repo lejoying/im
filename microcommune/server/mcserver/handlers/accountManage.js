@@ -857,7 +857,7 @@ function initDefaultGroup(phone) {
     ].join("\n");
     var params = {
         phone: phone,
-        gid: "1887"
+        gid: 1887
     };
     db.query(query, params, function (error, results) {
         if (error) {
