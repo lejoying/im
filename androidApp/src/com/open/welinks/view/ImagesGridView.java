@@ -3,6 +3,7 @@ package com.open.welinks.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -40,7 +41,7 @@ public class ImagesGridView {
 	public Activity thisActivity;
 	public ImagesGridController thisController;
 	public ImagesGridView thisView;
-	
+
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	DisplayImageOptions options;
@@ -84,7 +85,8 @@ public class ImagesGridView {
 		mConfirmView.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
 		mConfirmView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		mConfirmView.setText("确定(0)");
-		mConfirmView.setBackgroundResource(R.drawable.textview_bg);
+		mConfirmView.setBackgroundResource(R.drawable.shape_text_blue_bg);
+		mConfirmView.setTextColor(thisActivity.getResources().getColor(R.color.icon_color));
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);

@@ -45,10 +45,10 @@ public class GroupListView {
 
 	public LayoutInflater mInflater;
 
-	public RelativeLayout backView, rightContainer, maxView;
+	public RelativeLayout backView, rightContainer, maxView, backMaxView;
 	public TextView dialogGroupEditorConfirm, dialogGroupEditorCancel, groupEditorConfirmView, groupEditorCancelView, backTitileView, titleView, sectionNameTextView, buttonOneText, buttonTwoText, buttonThreeText;
 	public LinearLayout rightContainerLinearLayout;
-	public ImageView moreView, rditorLine;
+	public ImageView moreView, rditorLine, backImageView;
 	public View groupEditor, dialogGroupEditor, dialogView, buttomBarView, settingView, buttonOne, buttonTwo, buttonThree, background, onTouchDownView, onLongPressView;
 	public PopupWindow popDialogView;
 	public ListView groupListContainer;
@@ -82,9 +82,12 @@ public class GroupListView {
 		this.backTitileView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		this.titleView = (TextView) thisActivity.findViewById(R.id.titleContent);
 
+		this.backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
+
 		this.groupEditorConfirmView = (TextView) thisActivity.findViewById(R.id.confirm);
 		this.groupEditorCancelView = (TextView) thisActivity.findViewById(R.id.cancel);
 		this.rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		this.backMaxView = (RelativeLayout) thisActivity.findViewById(R.id.backMaxView);
 
 		this.groupListContainer = (ListView) thisActivity.findViewById(R.id.groupListContainer);
 		// this.createGroupButton = new TextView(this);
@@ -93,6 +96,10 @@ public class GroupListView {
 
 		businessCardPopView = new SmallBusinessCardPopView(thisActivity, maxView);
 		businessCardPopView.cardView.setHot(false);
+
+		backMaxView.setBackgroundColor(thisActivity.getResources().getColor(R.color.card_color));
+		backImageView.setColorFilter(Color.WHITE);
+		backTitileView.setTextColor(Color.WHITE);
 
 		if (thisController.status == Status.list_group) {
 			this.backTitileView.setText("群组列表");

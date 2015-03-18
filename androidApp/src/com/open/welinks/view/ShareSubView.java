@@ -369,7 +369,10 @@ public class ShareSubView {
 		}
 		GroupCircle groupCircle = currentGroupCircle;
 		if (groupCircle == null) {
-			String gid = data.relationship.groupCircles.get(0);
+			String gid = data.localStatus.localData.currentGroupCircle;
+			if (gid.equals("")) {
+				gid = data.relationship.groupCircles.get(0);
+			}
 			groupCircle = data.relationship.groupCirclesMap.get(gid);
 		}
 		if (groupCircle == null || groupCircle.groups == null) {
@@ -428,7 +431,6 @@ public class ShareSubView {
 				DataHandler.getGroupBoards(currentGroup.gid + "");
 			}
 		}
-
 		// set conver
 		// TODO conver setting
 		taskManageHolder.fileHandler.getHeadImage(currentGroup.icon, this.groupHeadView, taskManageHolder.viewManage.options56);
@@ -1211,7 +1213,9 @@ public class ShareSubView {
 			return;
 		}
 		if (groupCircle == null) {
-			String gid = data.relationship.groupCircles.get(0);
+			String gid = data.localStatus.localData.currentGroupCircle;
+			if ("".equals(gid))
+				gid = data.relationship.groupCircles.get(0);
 			groupCircle = data.relationship.groupCirclesMap.get(gid);
 		}
 		currentGroupCircle = groupCircle;

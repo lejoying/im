@@ -7,14 +7,14 @@
         android:id="@+id/backMaxView"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/card_color" >
+        android:background="@color/white" >
 
         <ImageView
             android:id="@+id/progress"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:visibility="gone"
-            android:background="#380099cd" />
+            android:background="#380099cd"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/backView"
@@ -29,7 +29,8 @@
                 android:layout_height="25dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:src="@drawable/back" />
+                android:src="@drawable/back"
+                android:tint="#0099cd" />
 
             <TextView
                 android:id="@+id/backTitleView"
@@ -40,7 +41,7 @@
                 android:clickable="false"
                 android:singleLine="true"
                 android:text=""
-                android:textColor="#fff"
+                android:textColor="@color/icon_color"
                 android:textSize="18sp" />
         </RelativeLayout>
 
@@ -54,7 +55,7 @@
             android:gravity="left"
             android:singleLine="true"
             android:text=""
-            android:textColor="#fff"
+            android:textColor="@color/icon_color"
             android:textSize="16sp" />
 
         <RelativeLayout

@@ -129,7 +129,7 @@ public class FindMoreActivity extends Activity {
 		}
 		if (selectItem == 1) {
 			Intent intent = new Intent(FindMoreActivity.this, NearbyActivity.class);
-			intent.putExtra("type", type);
+			intent.putExtra("type", "share");
 			startActivity(intent);
 		} else if (selectItem == 2) {
 			startActivity(new Intent(FindMoreActivity.this, SearchFriendActivity.class));

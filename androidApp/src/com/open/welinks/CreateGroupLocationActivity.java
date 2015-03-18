@@ -8,7 +8,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
@@ -196,11 +195,11 @@ public class CreateGroupLocationActivity extends Activity {
 		mAMap = mapView.getMap();
 
 		commitView = new TextView(this);
-		commitView.setTextColor(Color.WHITE);
+		commitView.setTextColor(getResources().getColor(R.color.icon_color));
 		commitView.setPadding((int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density), (int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density));
 		commitView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		commitView.setGravity(Gravity.CENTER);
-		commitView.setBackgroundResource(R.drawable.textview_bg);
+		commitView.setBackgroundResource(R.drawable.shape_text_blue_bg);
 		commitView.setText("完成");
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.CENTER_VERTICAL);
