@@ -124,6 +124,8 @@ public class ResponseEventHandler {
 					handleGroupAddMeEvent(message, eventMessage);
 				} else if ("group_removeme".equals(contentType)) {
 					handleGroupRemoveMeEvent(message, eventMessage);
+				} else if ("group_removeme".equals(contentType)) {
+					handleGroupAllMeEvent(message, eventMessage);
 				} else if ("group_sequence".equals(contentType)) {
 					handleGroupSequenceEvent(message, eventMessage);
 				} else if ("group_newboard".equals(contentType)) {
@@ -137,6 +139,18 @@ public class ResponseEventHandler {
 				}
 				data.event.isModified = true;
 			}
+		}
+	}
+
+	private void handleGroupAllMeEvent(Message message, EventMessage eventMessage) {
+		String key = eventMessage.eid;
+		if (!data.event.groupEvents.contains(key)) {
+			data.event.groupEvents.add(key);
+			data.event.groupEventsMap.put(key, eventMessage);
+			data.event.groupNotReadMessage = true;
+			String eventKey = "event_group";
+			checkEventIsMessageOrder(eventKey);
+			DataHandler.getUserCurrentAllGroup();
 		}
 	}
 
