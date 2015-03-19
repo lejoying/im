@@ -688,6 +688,7 @@ public class SmallBusinessCardPopView {
 							group0.latitude = group.latitude;
 							group0.description = group.description;
 							group0.background = group.background;
+							group0.relation = group.relation;
 						} else {
 							data.relationship.groupsMap.put(gid, group);
 						}

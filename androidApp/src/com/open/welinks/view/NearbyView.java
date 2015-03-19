@@ -464,7 +464,12 @@ public class NearbyView {
 				Typeface face = Typeface.createFromAsset(thisActivity.getAssets(), "fonts/avenirroman.ttf");
 				holder.scoreView.setTypeface(face);
 				holder.scoreView.setText(String.valueOf(message.totalScore));
-				List<ShareContentItem> shareContentItems = gson.fromJson(message.content, new TypeToken<ArrayList<ShareContentItem>>() {
+				String content = message.content;
+				log.e(content);
+				if (content.lastIndexOf("@") == content.length() - 1) {
+					content = content.substring(0, content.length() - 1);
+				}
+				List<ShareContentItem> shareContentItems = gson.fromJson(content, new TypeToken<ArrayList<ShareContentItem>>() {
 				}.getType());
 				List<String> images = new ArrayList<String>();
 				for (ShareContentItem item : shareContentItems) {

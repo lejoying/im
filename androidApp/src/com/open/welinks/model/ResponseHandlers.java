@@ -1069,6 +1069,7 @@ public class ResponseHandlers {
 					currentGroup.cover = group.cover;
 					currentGroup.permission = group.permission;
 					currentGroup.boards = group.boards;
+					currentGroup.relation = group.relation;
 				} else {
 					data.relationship.groups.add(key);
 					currentGroup = null;
@@ -1088,6 +1089,7 @@ public class ResponseHandlers {
 					currentGroup.cover = group.cover;
 					currentGroup.permission = group.permission;
 					currentGroup.boards = group.boards;
+					currentGroup.relation = group.relation;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
 				data.relationship.isModified = true;
@@ -1166,6 +1168,7 @@ public class ResponseHandlers {
 							group.members = currentGroup.members;
 							group.boards = currentGroup.boards;
 							group.labels = currentGroup.labels;
+							group.relation = currentGroup.relation;
 							// for (String str : group.labels) {
 							// log.e(str + "::::::::::::::::::::::::标签");
 							// }
@@ -1325,6 +1328,7 @@ public class ResponseHandlers {
 				currentGroup.description = group.description;
 				currentGroup.background = group.background;
 				currentGroup.boards = group.boards;
+				currentGroup.relation = group.relation;
 				if (currentGroup.cover != null && !currentGroup.cover.equals(group.cover)) {
 					if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 						viewManage.shareSubView.setConver();
@@ -1398,6 +1402,7 @@ public class ResponseHandlers {
 					currentGroup.background = group.background;
 					currentGroup.boards = group.boards;
 					currentGroup.labels = group.labels;
+					currentGroup.relation = group.relation;
 					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
 					if (flag) {
 						boolean flag2 = group.cover.equals(currentGroup.cover);
@@ -1448,6 +1453,7 @@ public class ResponseHandlers {
 					currentGroup.permission = group.permission;
 					currentGroup.members = members;
 					currentGroup.boards = group.boards;
+					currentGroup.relation = group.relation;
 				} else {
 					data.relationship.groups.add(key0);
 					data.relationship.groupsMap.put(key0, group);

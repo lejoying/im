@@ -37,4 +37,21 @@
         android:textColor="#99000000"
         android:textSize="16dp" />
 
+    <com.open.lib.TouchTextView
+        android:id="@+id/follow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:background="@drawable/icon_background"
+        android:paddingBottom="2dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="2dp"
+        android:singleLine="true"
+        android:text="已关注"
+        android:textColor="#fff"
+        android:textSize="12sp"
+        android:translationX="-7dp"
+        android:visibility="gone" />
+
 </com.open.lib.TouchView>

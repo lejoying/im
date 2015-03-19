@@ -1317,6 +1317,8 @@ public class ShareSubView {
 
 		public ImageView gripCardBackground;
 
+		public TextView followView;
+
 		public Group group;
 
 		public View initialize() {
@@ -1324,6 +1326,7 @@ public class ShareSubView {
 			this.groupIconView = (ImageView) this.cardView.findViewById(R.id.groupIcon);
 			this.groupNameView = (TextView) this.cardView.findViewById(R.id.groupName);
 			this.groupSelectedStatusView = (ImageView) this.cardView.findViewById(R.id.groupSelectedStatus);
+			this.followView = (TextView) this.cardView.findViewById(R.id.follow);
 
 			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
 
@@ -1337,6 +1340,9 @@ public class ShareSubView {
 			taskManageHolder.fileHandler.getHeadImage(group.icon, this.groupIconView, taskManageHolder.viewManage.options40);
 			if ("follow".equals(group.relation)) {
 				this.groupNameView.setTextColor(Color.parseColor("#0099cd"));
+				this.followView.setVisibility(View.GONE);
+			} else {
+				this.followView.setVisibility(View.GONE);
 			}
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {

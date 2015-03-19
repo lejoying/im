@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -391,7 +392,7 @@ public class NearbyController {
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_class) != null) {
 					String type = (String) view.getTag(R.id.tag_class);
-					int position = (Integer) view.getTag(R.id.tag_first);
+					final int position = (Integer) view.getTag(R.id.tag_first);
 					// + thisView.nearbyListView.getFirstVisiblePosition();
 					log.e(position + ":::::::::::::::::::");
 					if ("IncrementView".equals(type)) {
@@ -418,28 +419,48 @@ public class NearbyController {
 						thisView.nearbyAdapter.notifyDataSetChanged();
 						thisView.modifyPraiseusersToMessage(true, shareMessage.gsid);
 					} else if ("DecrementView".equals(type)) {
-						ShareMessage shareMessage = thisController.mInfomations.get(position);
+						final ShareMessage shareMessage = thisController.mInfomations.get(position);
 						if (shareMessage.scores == null) {
 							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
 						}
-						Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
-						if (score == null) {
-							score = data.boards.new Score();
+						Score score1 = shareMessage.scores.get(data.userInformation.currentUser.phone);
+						if (score1 == null) {
+							score1 = data.boards.new Score();
 						} else {
-							if (score.remainNumber == 0) {
+							if (score1.remainNumber == 0) {
 								Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
 								return;
 							}
 						}
-						shareMessage.totalScore = shareMessage.totalScore - 1;
-						score.phone = data.userInformation.currentUser.phone;
-						score.time = new Date().getTime();
-						score.negative = 1;
-						score.remainNumber = 0;
-						shareMessage.scores.put(score.phone, score);
-						data.boards.isModified = true;
-						thisView.nearbyAdapter.notifyDataSetChanged();
-						thisView.modifyPraiseusersToMessage(false, shareMessage.gsid);
+						final Score score = score1;
+						if (shareMessage.totalScore == -4) {
+							Alert.createDialog(thisActivity).setTitle("帖子分数少于-5将被删除.").setOnConfirmClickListener(new AlertInputDialog.OnDialogClickListener() {
+								@Override
+								public void onClick(AlertInputDialog dialog) {
+									shareMessage.totalScore = shareMessage.totalScore - 1;
+									score.phone = data.userInformation.currentUser.phone;
+									score.time = new Date().getTime();
+									score.negative = 1;
+									score.remainNumber = 0;
+									shareMessage.scores.put(score.phone, score);
+									data.boards.isModified = true;
+									thisView.nearbyAdapter.notifyDataSetChanged();
+									thisView.modifyPraiseusersToMessage(false, shareMessage.gsid);
+									thisController.mInfomations.remove(position);
+									thisView.nearbyAdapter.notifyDataSetChanged();
+								}
+							}).show();
+						} else {
+							shareMessage.totalScore = shareMessage.totalScore - 1;
+							score.phone = data.userInformation.currentUser.phone;
+							score.time = new Date().getTime();
+							score.negative = 1;
+							score.remainNumber = 0;
+							shareMessage.scores.put(score.phone, score);
+							data.boards.isModified = true;
+							thisView.nearbyAdapter.notifyDataSetChanged();
+							thisView.modifyPraiseusersToMessage(false, shareMessage.gsid);
+						}
 					}
 				} else if (view.getTag(R.id.tag_first) != null) {
 					String type = (String) view.getTag(R.id.tag_first);
@@ -761,6 +782,7 @@ public class NearbyController {
 		params.addQueryStringParameter("radius", String.valueOf(searchRadius));
 		params.addQueryStringParameter("limit", String.valueOf(20));
 		params.addQueryStringParameter("page", String.valueOf(nowpage + 1));
+		params.addQueryStringParameter("time", now + "");
 		if (searchStatus == Status.newest) {
 			params.addQueryStringParameter("sortrule", "time:0");
 		} else if (searchStatus == Status.hottest) {
