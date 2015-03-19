@@ -18,9 +18,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -52,12 +50,15 @@ import com.open.lib.OpenLooper.LoopCallback;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
+import com.open.welinks.controller.NearbyController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Data.UserInformation.User.Location;
 import com.open.welinks.model.Parser;
@@ -90,9 +91,8 @@ public class NearbyView {
 	public ListView nearbyListView;
 	public ThreeChoicesView threeChoicesView;
 
-	public NearbyAdapter nearbyAdapter;
-
-	public int NearbyLayoutID;
+	public NearbyShareAdapter nearbyShareAdapter;
+	public NearbyRelationAdapter nearbyRelationAdapter;
 
 	public View maxView;
 
@@ -105,7 +105,7 @@ public class NearbyView {
 	public SmallBusinessCardPopView businessCardPopView;
 
 	public DisplayMetrics metrics;
-	public ImageView menuImage;
+	public ImageView shareMenuImage, releationMenuImage;
 
 	public MapView mapView;
 	public AMap mAMap;
@@ -203,23 +203,46 @@ public class NearbyView {
 		params.width = (int) (width + 5 * this.metrics.density);
 		this.backView.setPadding(0, 0, (int) (10 * this.metrics.density), 0);
 
-		this.menuImage = new ImageView(thisActivity);
-		this.menuImage.setImageResource(R.drawable.button_modifygroupname);
-		this.menuImage.setColorFilter(Color.parseColor("#0099cd"));
-		this.menuImage.setAlpha(0.875f);
-		int moreWidth = (int) (53 * this.metrics.density);
-		RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
-		int padding = (int) (5 * this.metrics.density);
-		this.menuImage.setPadding(padding, padding, padding, padding);
-		this.menuImage.setBackgroundResource(R.drawable.backview_background);
-		this.rightContainer.addView(this.menuImage, menuImageParams);
-
+		if (thisController.status == Status.account || thisController.status == Status.group) {
+			this.releationMenuImage = new ImageView(thisActivity);
+			this.releationMenuImage.setImageResource(R.drawable.chat_add_on);
+			this.releationMenuImage.setColorFilter(Color.parseColor("#0099cd"));
+			this.releationMenuImage.setAlpha(0.875f);
+			int moreWidth = (int) (53 * this.metrics.density);
+			RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
+			int padding = (int) (5 * this.metrics.density);
+			this.releationMenuImage.setPadding(padding, padding, padding, padding);
+			this.releationMenuImage.setBackgroundResource(R.drawable.backview_background);
+			this.rightContainer.addView(this.releationMenuImage, menuImageParams);
+			this.threeChoicesView.setButtonOneText("附近的群");
+			this.threeChoicesView.setButtonThreeText("附近的人");
+		} else {
+			this.shareMenuImage = new ImageView(thisActivity);
+			this.shareMenuImage.setImageResource(R.drawable.button_modifygroupname);
+			this.shareMenuImage.setColorFilter(Color.parseColor("#0099cd"));
+			this.shareMenuImage.setAlpha(0.875f);
+			int moreWidth = (int) (53 * this.metrics.density);
+			RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
+			int padding = (int) (5 * this.metrics.density);
+			this.shareMenuImage.setPadding(padding, padding, padding, padding);
+			this.shareMenuImage.setBackgroundResource(R.drawable.backview_background);
+			this.rightContainer.addView(this.shareMenuImage, menuImageParams);
+			this.threeChoicesView.setButtonOneText("最新");
+			this.threeChoicesView.setButtonThreeText("最热");
+		}
+		this.threeChoicesView.setTwoChoice();
+		if (thisController.status == Status.account || thisController.status == Status.hottest) {
+			this.threeChoicesView.setDefaultItem(3);
+		} else {
+			this.threeChoicesView.setDefaultItem(1);
+		}
 		RelativeLayout.LayoutParams rightLayoutParams = (LayoutParams) this.rightContainer.getLayoutParams();
 		rightLayoutParams.rightMargin = 0;
 
 		this.businessCardPopView = new SmallBusinessCardPopView(thisActivity, this.maxView);
 
 		mapView = (MapView) thisActivity.findViewById(R.id.mapView);
+		this.mAMap = thisView.mapView.getMap();
 
 		this.initializationGroupCirclesDialog();
 		this.initializationScreenDialog();
@@ -317,91 +340,13 @@ public class NearbyView {
 	public TouchStatus status = new TouchStatus();
 
 	public void fillData() {
-
-		nearbyAdapter = new NearbyAdapter();
-		nearbyListView.setAdapter(nearbyAdapter);
-		this.nearbyListView.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-				int id = event.getAction();
-				if (id == MotionEvent.ACTION_DOWN) {
-					status.state = status.Down;
-					openLooper.stop();
-					touch_pre_x = event.getX();
-					touch_pre_y = event.getY();
-					percent = 0;
-					currentPosition = -viewManage.screenWidth;
-					nextPosition = -viewManage.screenWidth;
-					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
-					int topMarigin = params.topMargin;
-					if (topMarigin == (int) (304 * thisView.metrics.density)) {
-						params.topMargin = (int) (84 * thisView.metrics.density);
-						thisView.nearbyListView.setLayoutParams(params);
-						touch_pre_y += 220 * thisView.metrics.density;
-					}
-				} else if (id == MotionEvent.ACTION_MOVE) {
-					float x = event.getX();
-					float y = event.getY();
-					if (status.state == status.Down) {
-						View firstView = nearbyListView.getChildAt(0);
-						if (firstView == null) {
-							return false;
-						}
-						int firstVisiblePosition = nearbyListView.getFirstVisiblePosition();
-						int top = firstView.getTop();
-						int firstViewHeight = firstView.getHeight();
-						int topDistance = -top + firstVisiblePosition * firstViewHeight;
-						int buttomDistance = topDistance + nearbyListView.getHeight();
-						int totalHeight = firstViewHeight * nearbyListView.getCount();
-						MarginLayoutParams params = (MarginLayoutParams) nearbyListView.getLayoutParams();
-						int topMarigin = params.topMargin;
-						int error = 2;
-						if (topMarigin == (int) (84 * thisView.metrics.density)) {
-							error = 4;
-						}
-						if (topDistance == 0) {
-							status.state = status.T;
-						} else if (buttomDistance == totalHeight - error) {
-							status.state = status.B;
-						}
-					} else if (status.state == status.T || status.state == status.B) {
-						float Δy = y - touch_pre_y;
-						touch_pre_x = x;
-						touch_pre_y = y;
-						isTranslate = false;// true
-						percent += Δy;
-						if (status.state == status.T && percent < 0) {
-							status.state = status.Down;
-							percent = 0;
-							isTranslate = false;
-						}
-						if (status.state == status.B && percent > 0) {
-							status.state = status.Down;
-							percent = 0;
-							isTranslate = false;
-						}
-						currentPosition = (float) (-viewManage.screenWidth + Math.abs(percent) * 2);
-						if (currentPosition >= 0) {
-							currentPosition = 0;
-						}
-						progressView.setTranslationX(currentPosition);
-					}
-				} else if (id == MotionEvent.ACTION_UP) {
-					float distance = Math.abs(percent) * 2;
-					if (distance > viewManage.screenWidth / 2) {
-						nextPosition = 0;
-					} else {
-						nextPosition = -viewManage.screenWidth;
-					}
-					isTranslate = false;
-					openLooper.start();
-					loopCallback.state = status.state;
-					status.state = status.Up;
-				}
-				return isTranslate;
-			}
-		});
+		if (thisController.status == Status.account || thisController.status == Status.group) {
+			nearbyRelationAdapter = new NearbyRelationAdapter();
+			nearbyListView.setAdapter(nearbyRelationAdapter);
+		} else {
+			nearbyShareAdapter = new NearbyShareAdapter();
+			nearbyListView.setAdapter(nearbyShareAdapter);
+		}
 	}
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -423,7 +368,7 @@ public class NearbyView {
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
-	public class NearbyAdapter extends BaseAdapter {
+	public class NearbyShareAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
@@ -550,16 +495,98 @@ public class NearbyView {
 		}
 
 		public class HotHolder {
-			public TextView scoreView;
-			public TextView textContentView;
-			public TextView imageCountView;
-			public TextView distanceView;
-			public TextView timeView;
-			public ImageView num_picker_increment;
-			public ImageView num_picker_decrement;
+			public TextView scoreView, textContentView, imageCountView, distanceView, timeView, imageTextContentView;
+			public ImageView num_picker_increment, num_picker_decrement;
 			public RelativeLayout imageContainer;
-			public TextView imageTextContentView;
 		}
+	}
+
+	public class NearbyRelationAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			return thisController.mInfomations.size();
+		}
+
+		@Override
+		public Object getItem(int posotion) {
+			return thisController.mInfomations.get(posotion);
+		}
+
+		@Override
+		public long getItemId(int posotion) {
+			return posotion;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			Holder holder = null;
+			if (convertView == null) {
+				holder = new Holder();
+				convertView = mInflater.inflate(R.layout.nearby_item_account, null);
+				holder.accountLayout = convertView.findViewById(R.id.accountLayout);
+				holder.head = (ImageView) convertView.findViewById(R.id.head);
+				holder.sex = (ImageView) convertView.findViewById(R.id.sex);
+				holder.name = (TextView) convertView.findViewById(R.id.name);
+				holder.age = (TextView) convertView.findViewById(R.id.age);
+				holder.distance = (TextView) convertView.findViewById(R.id.distance);
+				holder.mainBusiness = (TextView) convertView.findViewById(R.id.mainBusiness);
+				holder.time = (TextView) convertView.findViewById(R.id.time);
+				convertView.setTag(holder);
+			} else {
+				holder = (Holder) convertView.getTag();
+			}
+			int distance = 0;
+			String head = "";
+			if (thisController.status == Status.account) {
+				holder.accountLayout.setVisibility(View.VISIBLE);
+				Friend friend = (Friend) getItem(position);
+				holder.age.setText(String.valueOf(friend.age));
+				holder.name.setText(friend.nickName);
+				holder.mainBusiness.setText(BaseDataUtils.generateMainBusiness("point", friend.mainBusiness));
+				if (BaseDataUtils.determineSex(friend.sex)) {
+					holder.sex.setImageResource(R.drawable.personalinfo_male);
+				} else {
+					holder.sex.setImageResource(R.drawable.personalinfo_female);
+				}
+				head = friend.head;
+				distance = friend.distance;
+			} else if (thisController.status == Status.group) {
+				holder.accountLayout.setVisibility(View.GONE);
+				Group group = (Group) getItem(position);
+				holder.name.setText(group.name);
+				holder.mainBusiness.setText(BaseDataUtils.generateMainBusiness("point", group.description));
+				distance = group.distance;
+				head = group.icon;
+			}
+			thisController.taskManageHolder.fileHandler.getHeadImage(head, holder.head, viewManage.options40);
+			if (distance >= 1000) {
+				String distanceStr = new BigDecimal(distance / 1000d, new MathContext(4)).toPlainString();
+				if (distanceStr.length() == 1) {
+					distanceStr += ".000";
+				}
+				if (distanceStr.length() == 2) {
+					distanceStr += ".00";
+				}
+				holder.distance.setText(distanceStr + "km");
+			} else {
+				holder.distance.setText(distance + "m");
+			}
+			return convertView;
+		}
+
+		class Holder {
+			View accountLayout;
+			ImageView head, sex;
+			TextView name, age, distance, mainBusiness, time;
+		}
+	}
+
+	public void notifyData() {
+		if (nearbyRelationAdapter != null)
+			nearbyRelationAdapter.notifyDataSetChanged();
+		if (nearbyShareAdapter != null)
+			nearbyShareAdapter.notifyDataSetChanged();
 	}
 
 	public void showImages(List<String> list, RelativeLayout container) {
@@ -722,7 +749,7 @@ public class NearbyView {
 
 		popDialogView = new PopupWindow(dialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		popDialogView.setBackgroundDrawable(new BitmapDrawable());
-		showGroupCircles();
+		showAddressDialog();
 	}
 
 	public void changePopupWindow(boolean isEditor) {
@@ -749,7 +776,7 @@ public class NearbyView {
 	public PopupWindow screenPopDialog;
 	public View screenDialogView, screenBackground;
 	public LinearLayout scopeLayout, timeLayout;
-	public TextView scopeOne, scopeTwo, scopeThree, scopeFour, timeOne, timeTwo, timeThree, timeFour, screenConfirm, screenCancel;
+	public TextView scopeOne, scopeTwo, scopeThree, scopeFour, timeOne, timeTwo, timeThree, timeFour, screenConfirm, screenCancel, titleTwo;
 
 	@SuppressWarnings("deprecation")
 	public void initializationScreenDialog() {
@@ -767,6 +794,12 @@ public class NearbyView {
 		timeFour = (TextView) screenDialogView.findViewById(R.id.timeFour);
 		screenConfirm = (TextView) screenDialogView.findViewById(R.id.confirm);
 		screenCancel = (TextView) screenDialogView.findViewById(R.id.cancel);
+		titleTwo = (TextView) screenDialogView.findViewById(R.id.titleTwo);
+
+		if (thisController.status == Status.group || thisController.status == Status.account) {
+			timeLayout.setVisibility(View.GONE);
+			titleTwo.setVisibility(View.GONE);
+		}
 
 		screenPopDialog = new PopupWindow(screenDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		screenPopDialog.setBackgroundDrawable(new BitmapDrawable());
@@ -803,7 +836,7 @@ public class NearbyView {
 	public AddressDialogAdapter dialogAdapter;
 	public ListController listController;
 
-	public void showGroupCircles() {
+	public void showAddressDialog() {
 		if (dialogAdapter == null) {
 			dialogAdapter = new AddressDialogAdapter();
 			groupCircleList.setAdapter(dialogAdapter);

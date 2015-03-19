@@ -487,7 +487,7 @@ public class ResponseHandlers {
 				data.userInformation.currentUser.commonUsedLocations.clear();
 				data.userInformation.currentUser.commonUsedLocations.addAll(response.commonUsedLocations);
 				if (viewManage.nearbyView != null) {
-					viewManage.nearbyView.showGroupCircles();
+					viewManage.nearbyView.showAddressDialog();
 				}
 
 			} else {

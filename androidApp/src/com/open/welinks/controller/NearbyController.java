@@ -12,8 +12,10 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -69,11 +71,13 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.FileHandler;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.oss.DownloadFile;
@@ -83,6 +87,7 @@ public class NearbyController {
 
 	public Data data = Data.getInstance();
 	public SubData subData = SubData.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String tag = "NearbyController";
 	public MyLog log = new MyLog(tag, true);
@@ -105,6 +110,7 @@ public class NearbyController {
 	public OnDownloadListener downloadListener;
 	public OnScrollListener mOnScrollListener;
 	public android.widget.AdapterView.OnItemClickListener mListOnItemClickListener;
+	public OnTouchListener mOnTouchListener;
 
 	public HttpClient httpClient = HttpClient.getInstance();
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -113,7 +119,7 @@ public class NearbyController {
 	public Gson gson = new Gson();
 
 	public String mTableId;
-	public ArrayList<ShareMessage> mInfomations;
+	public ArrayList<Object> mInfomations;
 	public AMapLocation mAmapLocation;
 
 	public double latitude, longitude;
@@ -127,10 +133,10 @@ public class NearbyController {
 
 	public int RESULTCODE = 0x1;
 
-	public Status status, searchStatus;
+	public Status status;
 
 	public enum Status {
-		account, group, share, newest, hottest
+		account, group, newest, hottest
 	}
 
 	public NearbyController(NearbyActivity thisActivity) {
@@ -144,108 +150,22 @@ public class NearbyController {
 		if ("account".equals(type)) {
 			status = Status.account;
 			mTableId = Constant.ACCOUNTTABLEID;
-			thisView.NearbyLayoutID = R.layout.nearby_item_account;
-			thisView.threeChoicesView.setDefaultItem(3);
 		} else if ("group".equals(type)) {
 			status = Status.group;
 			mTableId = Constant.GROUPTABLEID;
-			thisView.NearbyLayoutID = R.layout.nearby_item_group;
-			thisView.threeChoicesView.setDefaultItem(2);
-		} else if ("share".equals(type)) {
-			status = Status.share;
-			searchStatus = Status.newest;
+		} else if ("newest".equals(type)) {
+			status = Status.newest;
 			mTableId = Constant.SHARETABLEID;
-			thisView.NearbyLayoutID = R.layout.nearby_item_group;
-			thisView.threeChoicesView.setDefaultItem(1);
+		} else if ("hottest".equals(type)) {
+			status = Status.hottest;
+			mTableId = Constant.SHARETABLEID;
 		}
-		thisView.threeChoicesView.setButtonOneText("最新");
 		// thisView.threeChoicesView.setButtonTwoText("关注");
-		thisView.threeChoicesView.setButtonThreeText("最热");
-		thisView.threeChoicesView.setTwoChoice();
-		mInfomations = new ArrayList<ShareMessage>();
-		mCloudSearch = new CloudSearch(thisActivity);
-
-		initializeListeners();
-		bindEvent();
-
-		thisView.mAMap = thisView.mapView.getMap();
-
-		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
-		mLocationManagerProxy.setGpsEnable(true);
-
-		thisView.mAMap.setLocationSource(mLocationSource);
-		thisView.mAMap.getUiSettings().setMyLocationButtonEnabled(false);
-		thisView.mAMap.getUiSettings().setZoomControlsEnabled(false);
-		// thisView.mAMap.getUiSettings().setScaleControlsEnabled(false);
-		thisView.mAMap.setMyLocationEnabled(true);
-
-		thisView.mAMap.getUiSettings().setRotateGesturesEnabled(false);
-		thisView.mAMap.getUiSettings().setTiltGesturesEnabled(false);
-
-		thisView.mAMap.setOnCameraChangeListener(mOnCameraChangeListener);
-
-		mGeocodeSearch = new GeocodeSearch(thisActivity);
-		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
 
 		if (data.localStatus.localData.currentSearchRadius != 0)
 			searchRadius = data.localStatus.localData.currentSearchRadius;
 		searchTime = data.localStatus.localData.currentSearchTime;
 
-		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
-		getUserCommonUsedLocations();
-
-		// requestMyLocation();
-		animationTop = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_beat_top);
-		animationBottom = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_beat_bottom);
-		animationTop.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				thisView.ico_map_pin.startAnimation(animationBottom);
-			}
-		});
-		animationShadowTop = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_shadow2_beat_top);
-		animationShadowBottom = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_shadow2_beat_bottom);
-		animationShadowTop.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				thisView.ico_map_pin_shadow2.startAnimation(animationShadowBottom);
-			}
-		});
-		animationNearLeft = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_left);
-		animationNearRight = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_right);
-		animationNearLeft.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				thisView.img_btn_set_start.setVisibility(View.INVISIBLE);
-			}
-		});
 	}
 
 	public Animation animationTop;
@@ -269,8 +189,6 @@ public class NearbyController {
 		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
 	}
 
-	public boolean loadFinish = true;
-
 	public int nowpage = 0;
 
 	public RegeocodeQuery mRegeocodeQuery;
@@ -290,7 +208,6 @@ public class NearbyController {
 				if (rCode == 0) {
 					if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
 						address = result.getRegeocodeAddress().getFormatAddress();
-						// log.e("-------------***************************:" + address);
 						thisView.addressView.setText(address);
 						isChangeAddress = false;
 						thisView.ico_map_pin.startAnimation(animationTop);
@@ -374,15 +291,6 @@ public class NearbyController {
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				int lastItemid = thisView.nearbyListView.getLastVisiblePosition();
-				if ((lastItemid + 1) == totalItemCount) {
-					if (totalItemCount > 0) {
-						if (loadFinish) {
-							loadFinish = false;
-							// searchNearby();
-						}
-					}
-				}
 			}
 		};
 
@@ -394,9 +302,8 @@ public class NearbyController {
 					String type = (String) view.getTag(R.id.tag_class);
 					final int position = (Integer) view.getTag(R.id.tag_first);
 					// + thisView.nearbyListView.getFirstVisiblePosition();
-					log.e(position + ":::::::::::::::::::");
 					if ("IncrementView".equals(type)) {
-						ShareMessage shareMessage = thisController.mInfomations.get(position);
+						ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 						if (shareMessage.scores == null) {
 							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
 						}
@@ -416,7 +323,7 @@ public class NearbyController {
 						score.remainNumber = 0;
 						shareMessage.scores.put(score.phone, score);
 						data.boards.isModified = true;
-						thisView.nearbyAdapter.notifyDataSetChanged();
+						thisView.notifyData();
 						thisView.modifyPraiseusersToMessage(true, shareMessage.gsid);
 					} else if ("DecrementView".equals(type)) {
 						final ShareMessage shareMessage = thisController.mInfomations.get(position);
@@ -542,6 +449,8 @@ public class NearbyController {
 					thisView.changePopupWindow(false);
 					thisView.img_btn_set_start.setVisibility(View.VISIBLE);
 					thisView.img_btn_set_start.startAnimation(animationNearRight);
+				} else if (view.equals(thisView.releationMenuImage)) {
+
 				} else if (view.equals(thisView.img_btn_set_start)) {
 					Alert.createInputDialog(thisActivity).setTitle("请输入地址备注信息").setInputText(title).setInputHint("请输入地址备注").setDescription("当前位置：" + address).setOnConfirmClickListener(new OnDialogClickListener() {
 
@@ -561,7 +470,7 @@ public class NearbyController {
 						}
 
 					}).show();
-				} else if (view.equals(thisView.menuImage)) {
+				} else if (view.equals(thisView.shareMenuImage)) {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("mode", "NearbyView");
 					intent.putExtra("gtype", "share");
@@ -575,23 +484,114 @@ public class NearbyController {
 				}
 			}
 		};
+		mOnTouchListener = new OnTouchListener() {
 
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				if (view.equals(thisView.nearbyListView)) {
+
+					int id = event.getAction();
+					if (id == MotionEvent.ACTION_DOWN) {
+						thisView.status.state = thisView.status.Down;
+						thisView.openLooper.stop();
+						thisView.touch_pre_x = event.getX();
+						thisView.touch_pre_y = event.getY();
+						thisView.percent = 0;
+						thisView.currentPosition = -thisView.viewManage.screenWidth;
+						thisView.nextPosition = -thisView.viewManage.screenWidth;
+						MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
+						int topMarigin = params.topMargin;
+						if (topMarigin == (int) (304 * thisView.metrics.density)) {
+							params.topMargin = (int) (84 * thisView.metrics.density);
+							thisView.nearbyListView.setLayoutParams(params);
+							thisView.touch_pre_y += 220 * thisView.metrics.density;
+						}
+					} else if (id == MotionEvent.ACTION_MOVE) {
+						float x = event.getX();
+						float y = event.getY();
+						if (thisView.status.state == thisView.status.Down) {
+							View firstView = thisView.nearbyListView.getChildAt(0);
+							if (firstView == null) {
+								return false;
+							}
+							int firstVisiblePosition = thisView.nearbyListView.getFirstVisiblePosition();
+							int top = firstView.getTop();
+							int firstViewHeight = firstView.getHeight();
+							int topDistance = -top + firstVisiblePosition * firstViewHeight;
+							int buttomDistance = topDistance + thisView.nearbyListView.getHeight();
+							int totalHeight = firstViewHeight * thisView.nearbyListView.getCount();
+							MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
+							int topMarigin = params.topMargin;
+							int error = 2;
+							if (topMarigin == (int) (84 * thisView.metrics.density)) {
+								error = 4;
+							}
+							if (topDistance == 0) {
+								thisView.status.state = thisView.status.T;
+							} else if (buttomDistance == totalHeight - error) {
+								thisView.status.state = thisView.status.B;
+							}
+						} else if (thisView.status.state == thisView.status.T || thisView.status.state == thisView.status.B) {
+							float Δy = y - thisView.touch_pre_y;
+							thisView.touch_pre_x = x;
+							thisView.touch_pre_y = y;
+							thisView.isTranslate = false;// true
+							thisView.percent += Δy;
+							if (thisView.status.state == thisView.status.T && thisView.percent < 0) {
+								thisView.status.state = thisView.status.Down;
+								thisView.percent = 0;
+								thisView.isTranslate = false;
+							}
+							if (thisView.status.state == thisView.status.B && thisView.percent > 0) {
+								thisView.status.state = thisView.status.Down;
+								thisView.percent = 0;
+								thisView.isTranslate = false;
+							}
+							thisView.currentPosition = (float) (-thisView.viewManage.screenWidth + Math.abs(thisView.percent) * 2);
+							if (thisView.currentPosition >= 0) {
+								thisView.currentPosition = 0;
+							}
+							thisView.progressView.setTranslationX(thisView.currentPosition);
+						}
+					} else if (id == MotionEvent.ACTION_UP) {
+						float distance = Math.abs(thisView.percent) * 2;
+						if (distance > thisView.viewManage.screenWidth / 2) {
+							thisView.nextPosition = 0;
+						} else {
+							thisView.nextPosition = -thisView.viewManage.screenWidth;
+						}
+						thisView.isTranslate = false;
+						thisView.openLooper.start();
+						thisView.loopCallback.state = thisView.status.state;
+						thisView.status.state = thisView.status.Up;
+					}
+					return thisView.isTranslate;
+				}
+				return false;
+			}
+		};
 		mOnItemClickListener = thisView.threeChoicesView.new OnItemClickListener() {
 			@Override
 			public void onButtonCilck(int position) {
 				if (position == 3) {
-					searchStatus = Status.hottest;
+					if (status == Status.newest) {
+						status = Status.hottest;
+					} else if (status == Status.group) {
+						status = Status.account;
+					}
 					nowpage = 0;
-					loadFinish = true;
 					thisView.openLooper.stop();
 					thisView.currentPosition = -thisView.viewManage.screenWidth;
 					thisView.nextPosition = -thisView.viewManage.screenWidth;
 					searchNearbyHttp(false);
 				} else if (position == 2) {
 				} else if (position == 1) {
-					searchStatus = Status.newest;
+					if (status == Status.hottest) {
+						status = Status.newest;
+					} else if (status == Status.account) {
+						status = Status.group;
+					}
 					nowpage = 0;
-					loadFinish = true;
 					thisView.openLooper.stop();
 					thisView.currentPosition = -thisView.viewManage.screenWidth;
 					thisView.nextPosition = -thisView.viewManage.screenWidth;
@@ -604,24 +604,17 @@ public class NearbyController {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void onCloudSearched(CloudResult result, int rCode) {
-				// log.e("result::::::::::::::::::");
 				if (rCode == 0) {
-					// log.e("result1::::::::::::::::::");
 					if (result != null && result.getQuery() != null) {
-						// log.e("result2::::::::::::::::::");
 						if (result.getQuery().equals(mQuery)) {
-							// log.e("result3::::::::::::::::::");
 							mCloudItems = result.getClouds();
 							LatLng point = new LatLng(latitude, longitude);
 							if (nowpage == 0) {
 								mInfomations.clear();
 							}
 							if (mCloudItems.size() > 0) {
-								// log.e("result4::::::::::::::::::");
 								nowpage++;
-								loadFinish = true;
 							} else {
-								log.e("result0::::::::::::::::::");
 							}
 							long now = System.currentTimeMillis();
 							for (CloudItem item : mCloudItems) {
@@ -638,10 +631,10 @@ public class NearbyController {
 								}
 								long time = Long.valueOf((String) map.get("time"));
 								if (searchTime == times[times.length - 1] || (now - time) < searchTime) {
-									mInfomations.add(processingData(map));
+									// mInfomations.add(processingData(map));
 								}
 							}
-							thisView.nearbyAdapter.notifyDataSetChanged();
+							thisView.notifyData();
 						}
 					}
 				} else {
@@ -710,12 +703,16 @@ public class NearbyController {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				ShareMessage shareMessage = thisController.mInfomations.get(position);
-				Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
-				intent.putExtra("gid", shareMessage.gid);
-				intent.putExtra("sid", shareMessage.sid);
-				intent.putExtra("gsid", shareMessage.gsid);
-				thisActivity.startActivity(intent);
+				if (status == Status.newest || status == Status.hottest) {
+					ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
+					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+					intent.putExtra("gid", shareMessage.gid);
+					intent.putExtra("sid", shareMessage.sid);
+					intent.putExtra("gsid", shareMessage.gsid);
+					thisActivity.startActivity(intent);
+				} else {
+
+				}
 			}
 		};
 	}
@@ -728,7 +725,6 @@ public class NearbyController {
 		mCloudSearch.setOnCloudSearchListener(mCloudSearchListener);
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.nearbyListView.setOnScrollListener(mOnScrollListener);
-		thisView.menuImage.setOnClickListener(this.mOnClickListener);
 		thisView.positionView.setOnClickListener(this.mOnClickListener);
 		thisView.sortView.setOnClickListener(this.mOnClickListener);
 		thisView.searChView.setOnClickListener(this.mOnClickListener);
@@ -750,9 +746,16 @@ public class NearbyController {
 		thisView.timeThree.setOnClickListener(this.mOnClickListener);
 		thisView.timeFour.setOnClickListener(this.mOnClickListener);
 		thisView.nearbyListView.setOnItemClickListener(mListOnItemClickListener);
+		thisView.nearbyListView.setOnTouchListener(mOnTouchListener);
+		if (thisView.shareMenuImage != null)
+			thisView.shareMenuImage.setOnClickListener(this.mOnClickListener);
+		if (thisView.releationMenuImage != null)
+			thisView.releationMenuImage.setOnClickListener(this.mOnClickListener);
 		if (thisView.singleButton != null) {
 			thisView.singleButton.setOnClickListener(mOnClickListener);
 		}
+		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
+		thisView.mAMap.setOnCameraChangeListener(mOnCameraChangeListener);
 	}
 
 	boolean isRun = false;
@@ -777,21 +780,23 @@ public class NearbyController {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addQueryStringParameter("key", Constant.LBS_SAVE_KSY);
-		params.addQueryStringParameter("tableid", Constant.SHARETABLEID);
+		params.addQueryStringParameter("tableid", mTableId);
 		params.addQueryStringParameter("center", longitude + "," + latitude);
 		params.addQueryStringParameter("radius", String.valueOf(searchRadius));
 		params.addQueryStringParameter("limit", String.valueOf(20));
 		params.addQueryStringParameter("page", String.valueOf(nowpage + 1));
-		params.addQueryStringParameter("time", now + "");
-		if (searchStatus == Status.newest) {
-			params.addQueryStringParameter("sortrule", "time:0");
-		} else if (searchStatus == Status.hottest) {
-			params.addQueryStringParameter("sortrule", "totalScore:0");
+		if (status == Status.account || status == Status.group) {
+			params.addQueryStringParameter("sortrule", "_distance:1");
+		} else {
+			if (status == Status.newest) {
+				params.addQueryStringParameter("sortrule", "time:0");
+			} else if (status == Status.hottest) {
+				params.addQueryStringParameter("sortrule", "totalScore:0");
+			}
+			if (searchTime != times[times.length - 1]) {
+				params.addQueryStringParameter("filter", "time:[" + (now - searchTime) + "," + now + "]");
+			}
 		}
-		if (searchTime != times[times.length - 1]) {
-			params.addQueryStringParameter("filter", "time:[" + (now - searchTime) + "," + now + "]");
-		}
-
 		httpUtils.send(HttpMethod.GET, API.LBS_DATASEARCH_AROUND, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public int count;
@@ -819,34 +824,16 @@ public class NearbyController {
 					}
 					if (response.count > 0) {
 						nowpage++;
-						loadFinish = true;
 					}
 
 					for (PoiData poiData : response.datas) {
-						ShareMessage message = data.boards.new ShareMessage();
-						message.content = poiData.content;
-						message.head = poiData.head;
-						message.gsid = String.valueOf(poiData.gsid);
-						message.sid = String.valueOf(poiData.sid);
-						message.phone = poiData.phone;
-						message.totalScore = poiData.totalScore;
-						message.type = poiData.type;
-						message.time = poiData.time;
-						message.nickName = poiData._name;
-						message.distance = Integer.valueOf(poiData._distance);
-						String scores = poiData.scores;
-						if (scores != null && !"".equals(scores)) {
-							scores = scores.substring(0, scores.length() - 1);
-							message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
-							}.getType());
+						if (status == Status.account) {
+							processingAccountData(poiData);
+						} else if (status == Status.group) {
+							processingGroupData(poiData);
+						} else {
+							processingShareData(poiData);
 						}
-						// String comments = poiData.comments;
-						// if (comments != null && !"".equals(comments)) {
-						// log.e(comments);
-						// message.comments = gson.fromJson(comments, new TypeToken<ArrayList<Comment>>() {
-						// }.getType());
-						// }
-						mInfomations.add(message);
 					}
 					if (isAnimation) {
 						thisView.loopCallback.state = thisView.status.None;
@@ -861,41 +848,60 @@ public class NearbyController {
 						}
 						isRun = false;
 					}
-					thisView.nearbyAdapter.notifyDataSetChanged();
+					thisView.notifyData();
 				} else {
 					log.e(response.info + "::::::" + response.status);
 				}
 			}
 
-			class PoiData {
-				public String _id, _location, _name, _address, _createtime, _updatetime, _distance;
-				public String content, scores, phone, type, head, comments;
-				public int sid, gsid, totalScore;
-				public long time;
-			}
 		});
 	}
 
-	public ShareMessage processingData(Map<String, Object> map) {
+	public void processingShareData(PoiData poiData) {
 		ShareMessage message = data.boards.new ShareMessage();
-		message.content = (String) map.get("content");
-		message.head = (String) map.get("head");
-		message.gsid = (String) map.get("gsid");
-		message.sid = (String) map.get("sid");
-		message.phone = (String) map.get("phone");
-		message.totalScore = Integer.valueOf((String) map.get("totalScore"));
-		message.type = (String) map.get("type");
-		message.time = Long.valueOf((String) map.get("time"));
-		message.nickName = (String) map.get("name");
-		message.distance = (Integer) map.get("distance");
-		String scores = (String) map.get("scores");
+		message.content = poiData.content;
+		message.head = poiData.head;
+		message.gsid = String.valueOf(poiData.gsid);
+		message.sid = String.valueOf(poiData.sid);
+		message.phone = poiData.phone;
+		message.totalScore = poiData.totalScore;
+		message.type = poiData.type;
+		message.time = poiData.time;
+		message.nickName = poiData._name;
+		message.distance = Integer.valueOf(poiData._distance);
+		String scores = poiData.scores;
 		if (scores != null && !"".equals(scores)) {
 			scores = scores.substring(0, scores.length() - 1);
-			log.e(scores);
 			message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
 			}.getType());
 		}
-		return data.boards.shareMessagesMap.put(message.sid, message);
+		mInfomations.add(message);
+		data.boards.shareMessagesMap.put(message.sid, message);
+	}
+
+	public void processingAccountData(PoiData poiData) {
+		Friend friend = data.relationship.new Friend();
+		friend.nickName = poiData._name;
+		friend.sex = poiData.sex;
+		friend.mainBusiness = poiData.mainBusiness;
+		friend.head = poiData.head;
+		friend.phone = poiData.phone;
+		friend.age = poiData.age;
+		friend.lastLoginTime = String.valueOf(poiData.lastlogintime);
+		friend.distance = Integer.valueOf(poiData._distance);
+		mInfomations.add(friend);
+	}
+
+	public void processingGroupData(PoiData poiData) {
+		Group group = data.relationship.new Group();
+		group.name = poiData._name;
+		group.icon = poiData.icon;
+		group.gid = Integer.valueOf(poiData.gid);
+		group.description = poiData.description;
+		group.cover = poiData.cover;
+		group.createTime = String.valueOf(poiData.createTime);
+		group.distance = Integer.valueOf(poiData._distance);
+		mInfomations.add(group);
 	}
 
 	public boolean judgeTempRelation(Map<String, Object> infomation) {
@@ -967,5 +973,98 @@ public class NearbyController {
 			thisView.nextPosition = -thisView.viewManage.screenWidth;
 			searchNearbyHttp(false);
 		}
+	}
+
+	public void initData() {
+		initializeListeners();
+		mInfomations = new ArrayList<Object>();
+		mCloudSearch = new CloudSearch(thisActivity);
+
+		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
+		mLocationManagerProxy.setGpsEnable(true);
+
+		thisView.mAMap.setLocationSource(mLocationSource);
+		thisView.mAMap.getUiSettings().setMyLocationButtonEnabled(false);
+		thisView.mAMap.getUiSettings().setZoomControlsEnabled(false);
+		// thisView.mAMap.getUiSettings().setScaleControlsEnabled(false);
+		thisView.mAMap.setMyLocationEnabled(true);
+
+		thisView.mAMap.getUiSettings().setRotateGesturesEnabled(false);
+		thisView.mAMap.getUiSettings().setTiltGesturesEnabled(false);
+
+		mGeocodeSearch = new GeocodeSearch(thisActivity);
+
+		// requestMyLocation();
+		animationTop = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_beat_top);
+		animationBottom = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_beat_bottom);
+		animationTop.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				thisView.ico_map_pin.startAnimation(animationBottom);
+			}
+		});
+		animationShadowTop = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_shadow2_beat_top);
+		animationShadowBottom = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_point_shadow2_beat_bottom);
+		animationShadowTop.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				thisView.ico_map_pin_shadow2.startAnimation(animationShadowBottom);
+			}
+		});
+		animationNearLeft = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_left);
+		animationNearRight = AnimationUtils.loadAnimation(thisActivity, R.anim.animation_nearby_address_right);
+		animationNearLeft.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				thisView.img_btn_set_start.setVisibility(View.INVISIBLE);
+			}
+		});
+		bindEvent();
+		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
+		getUserCommonUsedLocations();
+	}
+
+	class PoiAccountData {
+		public String _id, _location, _name, _address, _createtime, _updatetime, _distance;
+		public String phone, sex, mainBusiness, status;
+		public int age, uid, lastlogintime;
+	}
+
+	class PoiData {
+		public String _id, _location, _name, _address, _createtime, _updatetime, _distance;
+		public String content, scores, phone, type, head, comments;
+		public String sex, mainBusiness, status;
+		public String icon, gid, description, cover, permission;
+		public int sid, gsid, totalScore;
+		public int age, uid;
+		public int createTime;
+		public long time, lastlogintime;
 	}
 }

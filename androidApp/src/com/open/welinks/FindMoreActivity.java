@@ -121,15 +121,15 @@ public class FindMoreActivity extends Activity {
 	private void skipActivity(int selectType, int selectItem) {
 		String type = "";
 		if (selectType == 1) {
-			type = "square";
+			type = "newest";
 		} else if (selectType == 2) {
-			type = "group";
+			type = "hottest";
 		} else if (selectType == 3) {
-			type = "account";
+			type = "newest";
 		}
 		if (selectItem == 1) {
 			Intent intent = new Intent(FindMoreActivity.this, NearbyActivity.class);
-			intent.putExtra("type", "share");
+			intent.putExtra("type", type);
 			startActivity(intent);
 		} else if (selectItem == 2) {
 			startActivity(new Intent(FindMoreActivity.this, SearchFriendActivity.class));

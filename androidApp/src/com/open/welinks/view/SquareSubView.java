@@ -282,23 +282,23 @@ public class SquareSubView {
 			// thisController.isTouchDown = false;
 			// }
 			if (id == R.drawable.sidebar_icon_discover_normal) {
-				Intent intent = new Intent(thisController.thisActivity, ShareSectionActivity.class);
-				intent.putExtra("key", "91");
+				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				intent.putExtra("type", "newest");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_days_normal) {
-				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-				intent.putExtra("type", "share");
-				thisController.thisActivity.startActivity(intent);
+				// Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				// intent.putExtra("type", "hottest");
+				// thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_group_normal) {
 				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-				intent.putExtra("type", "share");
+				intent.putExtra("type", "group");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_category_normal) {
 				Intent intent = new Intent(thisController.thisActivity, ClassificationRecommendationActivity.class);
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_test_normal) {
 				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-				intent.putExtra("type", "share");
+				intent.putExtra("type", "account");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_beauty_normal) {
 				Intent intent = new Intent(thisController.thisActivity, ShareListActivity.class);
