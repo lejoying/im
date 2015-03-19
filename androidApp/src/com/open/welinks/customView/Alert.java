@@ -7,10 +7,12 @@ import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -449,7 +451,14 @@ public class Alert {
 				int height = (int) (45 * viewManage.displayMetrics.density);
 				LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) input.getLayoutParams();
 				params.height = height;
+				input.setOnFocusChangeListener(new OnFocusChangeListener() {
 
+					@Override
+					public void onFocusChange(View v, boolean hasFocus) {
+						Log.e("Alert", "-------------:" + hasFocus);
+
+					}
+				});
 				input.addTextChangedListener(new TextWatcher() {
 
 					@Override

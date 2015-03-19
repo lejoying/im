@@ -579,6 +579,7 @@ public class ShareSubController {
 
 							@Override
 							public void onClick(AlertInputCommentDialog dialog) {
+								dialog.requestFocus();
 								String commentContent = dialog.getInputText().trim();
 								if ("".equals(commentContent)) {
 								} else {

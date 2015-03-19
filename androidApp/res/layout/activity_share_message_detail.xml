@@ -2,305 +2,104 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
+    android:id="@+id/maxView"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <include layout="@layout/view_back_view" />
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="48dp"
+        android:background="@color/background" >
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.0" >
-
-            <include layout="@layout/view_back_view" />
-
-            <ScrollView
-                android:id="@+id/mainScrollView"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="48dp"
-                android:background="@color/white"
-                android:scrollbars="none" >
-
-                <LinearLayout
-                    android:id="@+id/mainScrollInnerView"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:orientation="vertical" >
-
-                    <!-- <ScrollView -->
-                    <!-- android:id="@+id/detailScrollView" -->
-                    <!-- android:layout_width="fill_parent" -->
-                    <!-- android:layout_height="wrap_content" > -->
-
-                    <LinearLayout
-                        android:id="@+id/shareMessageDetailContentView"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" >
-                    </LinearLayout>
-                    <!-- </com.open.welinks.customView.InnerScrollView> -->
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:background="#fff" />
-
-                    <LinearLayout
-                        android:id="@+id/ll_praise"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:background="#26ffffff"
-                        android:visibility="gone"
-                        android:orientation="horizontal" >
-
-                        <TextView
-                            android:id="@+id/praiseusersNum"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="5dp"
-                            android:layout_weight="1"
-                            android:padding="5dp"
-                            android:singleLine="true"
-                            android:text="共获得0个赞"
-                            android:textColor="@color/text_color_black"
-                            android:textSize="12sp" />
-
-                        <LinearLayout
-                            android:id="@+id/praiseUserContentView"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_weight="2.2"
-                            android:orientation="horizontal"
-                            android:padding="5dp" >
-                        </LinearLayout>
-
-                        <ImageView
-                            android:id="@+id/iv_intoPraise"
-                            android:layout_width="10dp"
-                            android:layout_height="15dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="20dp"
-                            android:src="@drawable/into" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:background="@color/gray60" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:background="#26ffffff"
-                        android:orientation="horizontal" >
-
-                        <TextView
-                            android:id="@+id/checkCommentNumber"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="10dp"
-                            android:layout_weight="1"
-                            android:singleLine="true"
-                            android:text="查看全部0条评论..."
-                            android:textColor="@color/text_color_black"
-                            android:textSize="12sp" />
-
-                        <ImageView
-                            android:id="@+id/praiseIconView"
-                            android:layout_width="54dp"
-                            android:layout_height="50dp"
-                            android:padding="12dp"
-                            android:visibility="gone"
-                            android:src="@drawable/praise_icon" />
-
-                        <ImageView
-                            android:id="@+id/commentIcon"
-                            android:layout_width="54dp"
-                            android:layout_height="50dp"
-                            android:padding="12dp"
-                            android:src="@drawable/comment_icon" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/messageDetailComments"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        tools:ignore="UselessLeaf" >
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:background="@color/gray60" />
-                </LinearLayout>
-            </ScrollView>
-
-            <ImageView
-                android:id="@+id/shareMessageUserHead"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="25dp"
-                android:visibility="gone" />
-
-            <RelativeLayout
-                android:id="@+id/menuOptions"
-                android:layout_width="146dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="50dp"
-                android:background="#999999"
-                android:visibility="gone" >
-
-                <RelativeLayout
-                    android:id="@+id/shareOption"
-                    android:layout_width="146dp"
-                    android:layout_height="47dp"
-                    android:background="#b2000000" >
-
-                    <ImageView
-                        android:id="@+id/stickImageOption"
-                        android:layout_width="20dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="30dp"
-                        android:src="@drawable/confirm_stick" />
-
-                    <TextView
-                        android:id="@+id/stickTextOption"
-                        android:layout_width="116dp"
-                        android:layout_height="47dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginLeft="20dp"
-                        android:gravity="center"
-                        android:text="分享"
-                        android:textColor="#fff" />
-                </RelativeLayout>
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="47dp"
-                    android:background="#000" />
-
-                <RelativeLayout
-                    android:id="@+id/deleteOption"
-                    android:layout_width="146dp"
-                    android:layout_height="47dp"
-                    android:layout_marginTop="48dp"
-                    android:background="#b2000000"
-                    android:visibility="visible" >
-
-                    <ImageView
-                        android:id="@+id/deleteImageOption"
-                        android:layout_width="20dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="30dp"
-                        android:src="@drawable/delete_message" />
-
-                    <TextView
-                        android:id="@+id/deleteTextOption"
-                        android:layout_width="116dp"
-                        android:layout_height="47dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginLeft="20dp"
-                        android:gravity="center"
-                        android:text="删除"
-                        android:textColor="#fff" />
-                </RelativeLayout>
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/commentInputView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="@color/white"
-            android:paddingBottom="10dp"
-            android:visibility="gone" >
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/contentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="70dp" >
+                android:orientation="vertical" >
+            </LinearLayout>
 
-                <EditText
-                    android:id="@+id/commentEditTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:background="#0000"
-                    android:hint=" 添加评论 ... ..."
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="5dp"
-                    android:textColor="@color/icon_color"
-                    android:textCursorDrawable="@null"
-                    android:textSize="14sp"
-                    tools:ignore="TextFields" />
+            <LinearLayout
+                android:id="@+id/commentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
-                <ImageView
-                    android:id="@+id/iv_comment"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerHorizontal="true"
-                    android:padding="5dp"
-                    android:src="@drawable/release_face"
-                    android:visibility="gone" />
+    <RelativeLayout
+        android:id="@+id/menuOptions"
+        android:layout_width="146dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="50dp"
+        android:background="#999999"
+        android:visibility="gone" >
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/icon_color" />
+        <RelativeLayout
+            android:id="@+id/shareOption"
+            android:layout_width="146dp"
+            android:layout_height="47dp"
+            android:background="#b2000000" >
 
-                <ImageView
-                    android:layout_width="1dp"
-                    android:layout_height="15dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:background="@color/icon_color" />
+            <ImageView
+                android:id="@+id/stickImageOption"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30dp"
+                android:src="@drawable/confirm_stick" />
 
-                <ImageView
-                    android:layout_width="1dp"
-                    android:layout_height="15dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:background="@color/icon_color" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rl_sendComment"
-                android:layout_width="70dp"
-                android:layout_height="35dp"
-                android:layout_alignParentBottom="true"
+            <TextView
+                android:id="@+id/stickTextOption"
+                android:layout_width="116dp"
+                android:layout_height="47dp"
                 android:layout_alignParentRight="true"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp" >
-
-                <TextView
-                    android:id="@+id/sendComment"
-                    android:layout_width="50dp"
-                    android:layout_height="25dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@drawable/comment_notselected"
-                    android:gravity="center"
-                    android:text="完成"
-                    android:textColor="@color/icon_color"
-                    android:textSize="18sp" />
-            </RelativeLayout>
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="分享"
+                android:textColor="#fff" />
         </RelativeLayout>
-    </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="47dp"
+            android:background="#000" />
+
+        <RelativeLayout
+            android:id="@+id/deleteOption"
+            android:layout_width="146dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="48dp"
+            android:background="#b2000000"
+            android:visibility="visible" >
+
+            <ImageView
+                android:id="@+id/deleteImageOption"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30dp"
+                android:src="@drawable/delete_message" />
+
+            <TextView
+                android:id="@+id/deleteTextOption"
+                android:layout_width="116dp"
+                android:layout_height="47dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="删除"
+                android:textColor="#fff" />
+        </RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

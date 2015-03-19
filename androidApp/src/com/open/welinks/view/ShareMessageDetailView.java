@@ -4,33 +4,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.rebound.BaseSpringSystem;
@@ -41,14 +32,16 @@ import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.open.lib.MyLog;
 import com.open.welinks.R;
-import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.ShareMessageDetailController;
-import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.ShareView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Comment;
+import com.open.welinks.model.Data.Boards.Score;
+import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.BaseDataUtils;
@@ -58,6 +51,7 @@ public class ShareMessageDetailView {
 
 	public Data data = Data.getInstance();
 	public String tag = "ShareMessageDetailView";
+	public MyLog log = new MyLog(tag, true);
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
@@ -83,33 +77,7 @@ public class ShareMessageDetailView {
 	public View backMaxView;
 	public ImageView backImageView;
 
-	public LinearLayout shareMessageDetailContentView;
-	public ScrollView mainScrollView;
-	// public InnerScrollView detailScrollView;
-
-	public LinearLayout mainScrollInnerView;
-
-	public LinearLayout praiseUserContentView;
-
-	public RelativeLayout commentInputView;
-	public EditText commentEditTextView;
-	public RelativeLayout confirmSendCommentView;
-
-	public LinearLayout commentContentView;
-
-	public TextView commentNumberView;
-
-	public TextView sendCommentView;
-
-	public ImageView commentIconView;
-	public ImageView praiseIconView;
-	public ImageView iv_intoPraise;
-
-	public TextView praiseusersNumView;
-
-	// public TextView sendShareMessageUserNameView;
 	public TextView shareMessageTimeView;
-	// public ImageView shareMessageUserHeadView;
 
 	public InputMethodManager inputMethodManager;
 
@@ -127,9 +95,6 @@ public class ShareMessageDetailView {
 	public ImageView deleteImageOptionView;
 	public TextView deleteTextOptionView;
 
-	public View controlProgressView;
-	public ControlProgress controlProgress;
-
 	public ShareMessageDetailView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
@@ -142,28 +107,32 @@ public class ShareMessageDetailView {
 
 	public ImageView menuImage;
 
+	public LinearLayout contentContainer;
+	public LinearLayout commentContainer;
+
+	public View maxView;
+
 	@SuppressWarnings("deprecation")
 	public void initView() {
-		initData();
-
+		mInflater = thisActivity.getLayoutInflater();
+		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		displayMetrics = new DisplayMetrics();
-
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		screenDensity = displayMetrics.density;
+		screenDip = (int) (40 * screenDensity + 0.5f);
+		screenHeight = displayMetrics.heightPixels;
+		screenWidth = displayMetrics.widthPixels;
 
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		thisActivity.setContentView(R.layout.activity_share_message_detail);
-		shareMessageDetailContentView = (LinearLayout) thisActivity.findViewById(R.id.shareMessageDetailContentView);
-		mainScrollView = (ScrollView) thisActivity.findViewById(R.id.mainScrollView);
-		// detailScrollView = (InnerScrollView) thisActivity.findViewById(R.id.detailScrollView);
-		mainScrollInnerView = (LinearLayout) thisActivity.findViewById(R.id.mainScrollInnerView);
-		// detailScrollView.parentScrollView = mainScrollView;
-		mainScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		// detailScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-
+		this.maxView = thisActivity.findViewById(R.id.maxView);
 		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitleView.setText("分享详情");
 		backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
+
+		this.contentContainer = (LinearLayout) thisActivity.findViewById(R.id.contentContainer);
+		this.commentContainer = (LinearLayout) thisActivity.findViewById(R.id.commentContainer);
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		RelativeLayout.LayoutParams layoutParams1 = (android.widget.RelativeLayout.LayoutParams) rightContainer.getLayoutParams();
@@ -197,28 +166,6 @@ public class ShareMessageDetailView {
 		menuImage.setPadding(2 * padding, padding, 2 * padding, padding);
 		menuImage.setBackgroundResource(R.drawable.backview_background);
 		view.addView(menuImage, params);
-		sendCommentView = (TextView) thisActivity.findViewById(R.id.sendComment);
-		commentNumberView = (TextView) thisActivity.findViewById(R.id.checkCommentNumber);
-		commentContentView = (LinearLayout) thisActivity.findViewById(R.id.messageDetailComments);
-
-		praiseusersNumView = (TextView) thisActivity.findViewById(R.id.praiseusersNum);
-
-		praiseUserContentView = (LinearLayout) thisActivity.findViewById(R.id.praiseUserContentView);
-
-		commentInputView = (RelativeLayout) thisActivity.findViewById(R.id.commentInputView);
-		commentEditTextView = (EditText) thisActivity.findViewById(R.id.commentEditTextView);
-		confirmSendCommentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_sendComment);
-
-		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
-		controlProgress = new ControlProgress();
-		controlProgress.initialize(this.controlProgressView, displayMetrics);
-
-		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
-		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
-		iv_intoPraise = (ImageView) thisActivity.findViewById(R.id.iv_intoPraise);
-		commentIconView.setColorFilter(Color.parseColor("#0099cd"));
-		praiseIconView.setColorFilter(Color.parseColor("#0099cd"));
-		iv_intoPraise.setColorFilter(Color.parseColor("#0099cd"));
 		// menu option
 		menuOptionsView = (RelativeLayout) thisActivity.findViewById(R.id.menuOptions);
 		shareOptionView = (RelativeLayout) thisActivity.findViewById(R.id.shareOption);
@@ -250,17 +197,6 @@ public class ShareMessageDetailView {
 		}
 	}
 
-	public void initData() {
-		mInflater = thisActivity.getLayoutInflater();
-		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		screenDensity = displayMetrics.density;
-		screenDip = (int) (40 * screenDensity + 0.5f);
-		screenHeight = displayMetrics.heightPixels;
-		screenWidth = displayMetrics.widthPixels;
-	}
-
 	public ArrayList<String> showImages;
 	public Friend friend;
 
@@ -268,12 +204,9 @@ public class ShareMessageDetailView {
 	public ImageView imageView;
 
 	public void showShareMessageDetails() {
-		shareMessageDetailContentView.removeAllViews();
-		friend = data.relationship.friendsMap.get(thisController.shareMessage.phone);
-		if (friend != null) {
-			// shareMessageUserHeadView.setImageBitmap(bitmap);
-		}
 		shareMessageTimeView.setText(DateUtil.getTime(thisController.shareMessage.time));
+
+		// this.scoreView.setText(thisController.shareMessage.totalScore);
 		if (thisController.shareMessage.phone.equals(data.userInformation.currentUser.phone)) {
 			deleteOptionView.setVisibility(View.VISIBLE);
 		} else {
@@ -287,222 +220,253 @@ public class ShareMessageDetailView {
 				layoutParams.topMargin = 0;
 			}
 		}
-		String content = thisController.shareMessage.content;
-		if (thisController.shareMessage.type != "imagetext") {
-
+		if (body == null) {
+			body = new ShareBody();
+			body.initViews();
 		}
-		List<ShareContentItem> shareContentItems = gson.fromJson(content, new TypeToken<ArrayList<ShareContentItem>>() {
-		}.getType());
-		if (shareContentItems == null) {
-			// TODO why gson Exception
-			Log.e(tag, content);
-			return;
-		}
-		thisController.textContent = "";
-		thisController.imageContent = "";
-		int index = 0;
-		showImages = new ArrayList<String>();
-		for (int i = 0; i < shareContentItems.size(); i++) {
-			final ImageView imageView = new ImageView(thisActivity);
-			imageView.setTag(R.id.tag_first, "max");
-			shareMessageDetailContentView.addView(imageView);
-			ShareContentItem shareContentItem = shareContentItems.get(i);
-			String type = shareContentItem.type;
-			if (type.equals("text")) {
-				thisController.textContent = shareContentItem.detail;
-				continue;
-			}
-			String imageFileName = shareContentItem.detail;
-			if ("".equals(thisController.imageContent)) {
-				thisController.imageContent = imageFileName;
-				this.imageView = imageView;
-				imageView.setDrawingCacheEnabled(true);
-			}
-			imageView.setTag("ShareMessageDetailImage#" + index);
-			index++;
-			imageView.setOnClickListener(thisController.mOnClickListener);
-
-			taskManageHolder.fileHandler.getImage(imageFileName, imageView, displayImageOptions);
-
-			File currentImageFile = new File(mImageFile, imageFileName);
-			String filepath = currentImageFile.getAbsolutePath();
-			showImages.add(filepath);
-		}
-		if (!"".equals(thisController.textContent)) {
-			TextView textView = new TextView(thisActivity);
-			textView.setTextColor(Color.parseColor("#99000000"));
-			textView.setBackgroundColor(Color.parseColor("#26ffffff"));
-			textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-			int padding = (int) (10 * screenDensity + 0.5f);
-			textView.setPadding(padding, padding, padding, padding);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			textView.setLayoutParams(params);
-
-			// SpannableString spannableString = new SpannableString(thisController.textContent);
-
-			textView.setText(thisController.textContent);
-			textView.setAutoLinkMask(Linkify.WEB_URLS);
-			textView.setMovementMethod(LinkMovementMethod.getInstance());
-			shareMessageDetailContentView.addView(textView);
-			URLSpan[] urls = textView.getUrls();
-			SpannableStringBuilder style = new SpannableStringBuilder(thisController.textContent);
-
-			String contentString = thisController.textContent;
-			Map<String, Integer> positionMap = new HashMap<String, Integer>();
-			if (urls.length > 0) {
-				// Log.e(tag, "Url length:" + urls.length);
-				for (int i = 0; i < urls.length; i++) {
-					String str = urls[i].getURL();
-					Log.e(tag, "Url content:" + str);
-					int start = 0;
-					int end = 0;
-					if (positionMap.get(str) == null) {
-						start = contentString.indexOf(str);
-						end = start + str.length();
-					} else {
-						start = positionMap.get(str);
-						start = contentString.indexOf(str, start);
-						end = start + str.length();
-					}
-					MyURLSpan myURLSpan = new MyURLSpan(str);
-					if (start == -1 || end > contentString.length()) {
-						continue;
-					} else {
-						positionMap.put(str, end);
-						style.setSpan(myURLSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-					}
-					// spannableString.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-				}
-			} else {
-				Log.e(tag, "Url length:" + urls.length);
-			}
-			// Log.e(tag, contentString);
-			// textView.setText(spannableString);
-			textView.setText(style);
-		}
-
-		// if (thisController.shareMessage.praiseusers.contains(thisController.currentUser.phone)) {
-		// praiseIconView.setImageResource(R.drawable.praised_icon);
-		// } else {
-		// praiseIconView.setImageResource(R.drawable.praise_icon);
-		// }
-		shareView.phone = data.userInformation.currentUser.phone;
-		shareView.sid = thisController.sid;
-		shareView.gsid = thisController.gsid;
-		shareView.content = thisController.textContent;
-		notifyShareMessageComments();
+		this.contentContainer.removeAllViews();
+		body.setContent(thisController.shareMessage, null);
+		this.contentContainer.addView(body.cardView);
+		this.showShareComments();
 	}
 
-	private class MyURLSpan extends ClickableSpan {
+	public ShareBody body;
 
-		private String mUrl;
-
-		MyURLSpan(String url) {
-			mUrl = url;
-		}
-
-		@Override
-		public void onClick(View widget) {
-			Intent intent = new Intent(thisActivity, WebViewActivity.class);
-			intent.putExtra("url", mUrl);
-			thisActivity.startActivity(intent);
-		}
-	}
-
-	public HashMap<String, CommentBody> commentBodysMap = new HashMap<String, CommentBody>();
-
-	public void notifyShareMessageComments() {
-		List<Comment> comments = thisController.shareMessage.comments;
-		commentIconView.setImageResource(R.drawable.comment_icon);
-		for (Comment comment : comments) {
-			if (comment.phone.equals(thisController.currentUser.phone)) {
-				commentIconView.setImageResource(R.drawable.commented_icon);
-				break;
-			}
-		}
-		commentNumberView.setText("查看全部" + comments.size() + "条评论...");
-		commentContentView.removeAllViews();
-
-		for (int i = comments.size() - 1; i >= 0; i--) {
-			final Comment comment = comments.get(i);
-			String key = comment.phone + "_" + comment.time + "_" + comment.content;
-			CommentBody body = this.commentBodysMap.get(key);
-			if (body == null) {
-				body = new CommentBody();
-				body.initialize();
-				this.commentBodysMap.put(key, body);
-			}
-			body.setContent(comment);
-			commentContentView.addView(body.cardView);
-		}
-	}
-
-	public class CommentBody {
+	public class ShareBody {
 
 		public View cardView;
 
-		public TextView timeView;
-		public TextView contentView;
-		public TextView replyView;
-		public TextView receiveView;
-		public TextView receivedView;
 		public ImageView headView;
+		public TextView nickNameView;
+		public TextView timeView;
+		public ImageView decrementView;
+		public ImageView incrementView;
+		public TextView scoreView;
 
+		public LinearLayout contentContainer;
+
+		public ShareMessage shareMessage;
 		public Comment comment;
 
-		public void initialize() {
-			this.cardView = mInflater.inflate(R.layout.groupshare_commentchild, null);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			params.setMargins((int) (10 * screenDensity), 0, (int) (10 * screenDensity), 0);
-			this.cardView.setLayoutParams(params);
-			timeView = (TextView) this.cardView.findViewById(R.id.time);
-			contentView = (TextView) this.cardView.findViewById(R.id.content);
-			replyView = (TextView) this.cardView.findViewById(R.id.reply);
-			receiveView = (TextView) this.cardView.findViewById(R.id.receive);
-			receivedView = (TextView) this.cardView.findViewById(R.id.received);
-			headView = (ImageView) this.cardView.findViewById(R.id.head);
+		public View commentBar;
+		public View commentControlView;
+
+		public User currentUser;
+
+		public void initViews() {
+			this.cardView = mInflater.inflate(R.layout.share_detail_item, null);
+			this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
+			this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
+			this.timeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
+			this.decrementView = (ImageView) this.cardView.findViewById(R.id.num_picker_decrement);
+			this.incrementView = (ImageView) this.cardView.findViewById(R.id.num_picker_increment);
+			this.scoreView = (TextView) this.cardView.findViewById(R.id.totalScore);
+			this.contentContainer = (LinearLayout) this.cardView.findViewById(R.id.contentContainer);
+			// commentControl
+			this.commentBar = mInflater.inflate(R.layout.view_share_detail_comment, null);
+			this.commentControlView = this.commentBar.findViewById(R.id.commentControl);
+			this.commentControlView.setAlpha(0.5f);
+			this.currentUser = data.userInformation.currentUser;
 		}
 
-		public void setContent(Comment comment2) {
-			this.comment = comment2;
-			this.contentView.setText(comment.content);
-			this.timeView.setText(DateUtil.getTime(comment.time));
-			this.receiveView.setText(comment.nickName);
-			this.receivedView.setText(comment.nickNameTo);
-
-			if ("".equals(comment.nickNameTo)) {
-				this.replyView.setVisibility(View.GONE);
-				this.receivedView.setVisibility(View.GONE);
-			}
-			taskManageHolder.fileHandler.getHeadImage(comment.head, this.headView, taskManageHolder.viewManage.options40);
-			this.cardView.setTag("ShareComment#" + comment.phone);
-			this.cardView.setTag(R.id.commentEditTextView, comment);
-
-			this.cardView.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					if (commentInputView.getVisibility() == View.GONE) {
-						commentInputView.setVisibility(View.VISIBLE);
-					}
-					if (!comment.phone.equals(data.userInformation.currentUser.phone)) {
-						thisController.phoneTo = comment.phone;
-						if (!comment.nickName.equals("")) {
-							thisController.nickNameTo = comment.nickName;
-						} else {
-							thisController.nickNameTo = thisController.phoneTo;
-						}
-						thisController.headTo = comment.head;
-						commentEditTextView.setHint("回复" + thisController.nickNameTo);
-					} else {
-						thisController.phoneTo = "";
-						thisController.nickNameTo = "";
-						thisController.headTo = "";
-						commentEditTextView.setHint("添加评论 ... ...");
-					}
+		public void setContent(ShareMessage shareMessage, Comment comment) {
+			this.shareMessage = shareMessage;
+			this.comment = comment;
+			String phone = null, nickName = null, head = null;
+			long time = 0;
+			int type = 1;
+			if (this.shareMessage == null) {
+				friend = data.relationship.friendsMap.get(this.comment.phone);
+				if (friend != null) {
+					phone = friend.phone;
+					nickName = friend.nickName;
+					head = friend.head;
+				} else {
+					phone = this.comment.phone;
+					nickName = this.comment.nickName;
+					head = this.comment.head;
 				}
-			});
+				time = this.comment.time;
+				type = 2;
+			} else if (this.comment == null) {
+				friend = data.relationship.friendsMap.get(this.shareMessage.phone);
+				if (friend != null) {
+					phone = friend.phone;
+					nickName = friend.nickName;
+					head = friend.head;
+				} else {
+					phone = this.shareMessage.phone;
+					nickName = this.shareMessage.nickName;
+					head = this.shareMessage.head;
+				}
+				time = this.shareMessage.time;
+				type = 1;
+			}
+			this.contentContainer.removeAllViews();
+			taskManageHolder.fileHandler.getHeadImage(head, this.headView, taskManageHolder.viewManage.options40);
+			this.nickNameView.setText(nickName);
+			if (currentUser.phone.equals(phone)) {
+				taskManageHolder.fileHandler.getHeadImage(currentUser.head, this.headView, taskManageHolder.viewManage.options40);
+				this.nickNameView.setText(currentUser.nickName);
+			}
+			this.timeView.setText(DateUtil.formatHourMinute(time));
+
+			if (type == 1) {
+				if (shareMessage.type != "imagetext") {
+				}
+				String content = this.shareMessage.content;
+				List<ShareContentItem> shareContentItems = gson.fromJson(content, new TypeToken<ArrayList<ShareContentItem>>() {
+				}.getType());
+				if (shareContentItems == null) {
+					Log.e(tag, content);
+					return;
+				}
+				this.scoreView.setText(this.shareMessage.totalScore + "");
+				thisController.textContent = "";
+				thisController.imageContent = "";
+				int index = 0;
+				showImages = new ArrayList<String>();
+				for (int i = 0; i < shareContentItems.size(); i++) {
+					final ImageView imageView = new ImageView(thisActivity);
+					imageView.setTag(R.id.tag_first, "max");
+					this.contentContainer.addView(imageView);
+					ShareContentItem shareContentItem = shareContentItems.get(i);
+					String type1 = shareContentItem.type;
+					if (type1.equals("text")) {
+						thisController.textContent = shareContentItem.detail;
+						continue;
+					}
+					String imageFileName = shareContentItem.detail;
+					if ("".equals(thisController.imageContent)) {
+						thisController.imageContent = imageFileName;
+						thisView.imageView = imageView;
+						imageView.setDrawingCacheEnabled(true);
+					}
+					imageView.setTag("ShareMessageDetailImage#" + index);
+					index++;
+					imageView.setOnClickListener(thisController.mOnClickListener);
+
+					taskManageHolder.fileHandler.getImage(imageFileName, imageView, displayImageOptions);
+
+					File currentImageFile = new File(mImageFile, imageFileName);
+					String filepath = currentImageFile.getAbsolutePath();
+					showImages.add(filepath);
+				}
+
+				if (!"".equals(thisController.textContent)) {
+					TextView textView = new TextView(thisActivity);
+					textView.setTextColor(Color.parseColor("#99000000"));
+					textView.setBackgroundColor(Color.parseColor("#26ffffff"));
+					textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+					int padding = (int) (10 * screenDensity + 0.5f);
+					textView.setPadding(padding, padding, padding, 0);
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+					textView.setLayoutParams(params);
+
+					textView.setText(thisController.textContent);
+					textView.setAutoLinkMask(Linkify.WEB_URLS);
+					textView.setMovementMethod(LinkMovementMethod.getInstance());
+					this.contentContainer.addView(textView);
+				}
+				this.contentContainer.addView(commentBar);
+				if (!"".equals(thisController.textContent)) {
+					LinearLayout.LayoutParams params0 = (android.widget.LinearLayout.LayoutParams) commentBar.getLayoutParams();
+					params0.topMargin = (int) (-35 * displayMetrics.density);
+					commentBar.setLayoutParams(params0);
+				}
+
+				scoreState();
+				this.decrementView.setOnClickListener(thisController.mOnClickListener);
+				this.decrementView.setTag(R.id.tag_class, "DecrementView");
+				this.incrementView.setOnClickListener(thisController.mOnClickListener);
+				this.incrementView.setTag(R.id.tag_class, "IncrementView");
+				this.commentControlView.setOnClickListener(thisController.mOnClickListener);
+				this.commentControlView.setTag(R.id.tag_class, "CommentControlView");
+
+				shareView.phone = data.userInformation.currentUser.phone;
+				shareView.sid = thisController.sid;
+				shareView.gsid = thisController.gsid;
+				shareView.content = thisController.textContent;
+			} else if (type == 2) {
+				this.scoreView.setText("0");
+				TextView textView = new TextView(thisActivity);
+				textView.setTextColor(Color.parseColor("#99000000"));
+				textView.setBackgroundColor(Color.parseColor("#26ffffff"));
+				textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+				int padding = (int) (10 * screenDensity + 0.5f);
+				textView.setPadding(padding, padding, padding, 0);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				textView.setLayoutParams(params);
+
+				// SpannableString spannableString = new SpannableString(thisController.textContent);
+
+				textView.setText(this.comment.content);
+				textView.setAutoLinkMask(Linkify.WEB_URLS);
+				textView.setMovementMethod(LinkMovementMethod.getInstance());
+				this.contentContainer.addView(textView);
+				this.contentContainer.addView(commentBar);
+				LinearLayout.LayoutParams params0 = (android.widget.LinearLayout.LayoutParams) commentBar.getLayoutParams();
+				params0.topMargin = (int) (-35 * displayMetrics.density);
+				commentBar.setLayoutParams(params0);
+			}
+			this.cardView.findViewById(R.id.share).setBackgroundResource(R.drawable.card_login_background_white);
 		}
+	}
+
+	public void scoreState() {
+		User currentUser = data.userInformation.currentUser;
+		if (thisController.shareMessage.scores != null) {
+			Score score = thisController.shareMessage.scores.get(currentUser.phone);
+			body.scoreView.setText(thisController.shareMessage.totalScore + "");
+			if (score != null) {
+				if (score.positive > 0) {
+					body.incrementView.setImageResource(R.drawable.num_picker_increment_on);
+				}
+				if (score.negative > 0) {
+					body.decrementView.setImageResource(R.drawable.num_picker_decrement_on);
+				}
+			} else {
+				body.incrementView.setImageResource(R.drawable.selector_num_picker_increment);
+				body.decrementView.setImageResource(R.drawable.selector_num_picker_decrement);
+			}
+		} else {
+			body.incrementView.setImageResource(R.drawable.selector_num_picker_increment);
+			body.decrementView.setImageResource(R.drawable.selector_num_picker_decrement);
+		}
+		if (thisController.shareMessage.totalScore < 10 && thisController.shareMessage.totalScore >= 0) {
+			body.scoreView.setTextColor(Color.parseColor("#0099cd"));
+		} else if (thisController.shareMessage.totalScore < 100 && thisController.shareMessage.totalScore >= 0) {
+			body.scoreView.setTextColor(Color.parseColor("#0099cd"));
+		} else if (thisController.shareMessage.totalScore < 1000 && thisController.shareMessage.totalScore >= 0) {
+			body.scoreView.setTextColor(Color.parseColor("#0099cd"));
+			body.scoreView.setText("999");
+		} else if (thisController.shareMessage.totalScore < 0) {
+			body.scoreView.setTextColor(Color.parseColor("#00a800"));
+		}
+	}
+
+	public HashMap<String, ShareBody> commentsMap = new HashMap<String, ShareBody>();
+
+	public void showShareComments() {
+		this.commentContainer.removeAllViews();
+		List<Comment> comments = thisController.shareMessage.comments;
+		for (int i = comments.size() - 1; i >= 0; i--) {
+			Comment comment = comments.get(i);
+			String key = i + "_" + comment.phone + "_" + comment.time;
+			ShareBody body = this.commentsMap.get(key);
+			if (body == null) {
+				body = new ShareBody();
+				body.initViews();
+				commentsMap.put(key, body);
+			}
+			body.setContent(null, comment);
+
+			this.commentContainer.addView(body.cardView);
+		}
+		TextView textView = new TextView(thisActivity);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (10 * this.displayMetrics.density));
+		textView.setLayoutParams(params);
+		this.commentContainer.addView(textView);
 	}
 
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();

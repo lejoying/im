@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.model.Data;
@@ -67,17 +69,16 @@ public class ShareMessageDetailActivity extends SwipeBackActivity {
 		thisController.onBackPressed();
 		super.onBackPressed();
 	}
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		Log.e(tag, "aaaaaaaaaaaaaaaaaaaa");
+		return super.onKeyUp(keyCode, event);
+	}
 
 	@Override
 	protected void onResume() {
 		thisController.onResume();
 		super.onResume();
-	}
-
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		thisController.onWindwoFocusChanged();
-		super.onWindowFocusChanged(hasFocus);
 	}
 
 	@Override
