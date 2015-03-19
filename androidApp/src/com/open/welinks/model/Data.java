@@ -238,6 +238,8 @@ public class Data {
 			public String cover;
 			public String permission;
 
+			public String relation;// join follow
+
 			public String currentBoard = "";
 
 			public List<String> boards;

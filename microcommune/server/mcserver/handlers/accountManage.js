@@ -801,6 +801,7 @@ accountManage.modify = function (data, response) {
                                 return;
                             }
                         });
+                        initDefaultGroup(phone);
                     }
                 }
                 if (account.head != undefined && account.head != null && account.head != "") {
@@ -846,6 +847,27 @@ accountManage.modify = function (data, response) {
             }
         });
     }
+}
+function initDefaultGroup(phone) {
+    var query = [
+        'MATCH (account:Account),(group:Group)',
+        'WHERE account.phone={phone} AND group.gid={gid}',
+        'CREATE UNIQUE group-[r:HAS_MEMBER]->account',
+        'RETURN account,group'
+    ].join("\n");
+    var params = {
+        phone: phone,
+        gid: 1887
+    };
+    db.query(query, params, function (error, results) {
+        if (error) {
+            console.error("initDefaultGroup:" + error);
+        } else if (results.length == 0) {
+            console.log("初始化好友向导群组失败");
+        } else {
+            console.log("初始化好友向导群组成功");
+        }
+    });
 }
 
 //使数据库中的注册用户数据和高德Lbs云中数据保持一致

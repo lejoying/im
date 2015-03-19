@@ -1242,16 +1242,20 @@ shareManage.sendboardshare = function (data, response) {
                             phone: share.phone,
                             head: share.head,
                             type: share.type,
-                            content: share.content,
+                            content: share.content + "@",
                             totalScore: share.totalScore,
                             time: share.time
                         })
                     }, success: function (info) {
-                        var info = JSON.parse(info);
-                        if (info.status == 1) {
-                            console.log("success--" + info._id)
-                        } else {
-                            console.log("error--" + info.info)
+                        try {
+                            var info = JSON.parse(info);
+                            if (info.status == 1) {
+                                console.log("success--" + info._id)
+                            } else {
+                                console.log("error--" + info.info)
+                            }
+                        } catch (e) {
+                            console.log(info);
                         }
                     }
                 });
@@ -2189,8 +2193,8 @@ shareManage.score = function (data, response) {
                                     ids: id
                                 }, success: function (info) {
                                     var info = JSON.parse(info);
-                                    if (info.status == 1 && info.count >= 1) {
-                                        console.log("success--" + info._id)
+                                    if (info.status == 1 && info.success >= 1) {
+                                        console.log("success--" + info.success)
                                     } else {
                                         console.log("delete error--" + info.status)
                                     }

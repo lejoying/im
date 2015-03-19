@@ -219,11 +219,13 @@ groupManage.create = function (data, response) {
             'MATCH (account:Account)',
             'WHERE account.phone IN {members}',
             'CREATE UNIQUE group-[r:HAS_MEMBER]->account',
+            'SET r.relation={relation}',
             'RETURN r,group'
         ].join('\n');
         var params = {
             gid: parseInt(gid),
-            members: members
+            members: members,
+            relation: "join"
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -449,11 +451,13 @@ groupManage.addmembers = function (data, response) {
             'MATCH (account:Account)',
             'WHERE account.phone IN {members}',
             'CREATE UNIQUE group-[r:HAS_MEMBER]->account',
+            'SET r.relation={relation}',
             'RETURN r'
         ].join('\n');
         var params = {
             gid: gid,
-            members: members
+            members: members,
+            relation: "join"
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -1598,9 +1602,9 @@ groupManage.getgroupmembers = function (data, response) {
 
     function getGroupsMembers(groupIDs) {
         var query = [
-            'MATCH (group:Group)-[r1:HAS_MEMBER]->(account:Account)',
+            'MATCH (group:Group)-[r:HAS_MEMBER]->(account:Account)',
             'WHERE group.gid IN {groupIDs}',
-            'RETURN group,account'
+            'RETURN group,account,r'
         ].join('\n');
         var params = {
             groupIDs: groupIDs
@@ -1620,6 +1624,7 @@ groupManage.getgroupmembers = function (data, response) {
                     var it = results[index];
                     var groupData = it.group.data;
                     var accountData = it.account.data;
+                    var rData = it.r.data;
                     var location;
 
                     if (groupData.location) {
@@ -1670,8 +1675,10 @@ groupManage.getgroupmembers = function (data, response) {
                             background: groupData.background,
                             cover: groupData.cover || "",
                             permission: groupData.permission || "",
+                            relation: rData.relation,
                             labels: []
                         };
+                        //console.log(groupData.name + "---" + rData.relation);
                         if (groupData.boardSequenceString) {
                             try {
                                 group.boards = JSON.parse(groupData.boardSequenceString);
@@ -1683,13 +1690,21 @@ groupManage.getgroupmembers = function (data, response) {
                             group.boards = [];
                         }
                         var members = [];
-                        members.push(account.phone);
+                        if (rData.relation == "join") {//join follow
+                            members.push(account.phone);
+                        }
                         group.members = members;
                         groupsMap[groupData.gid + ""] = group;
                     } else {
                         var group = groupsMap[groupData.gid + ""];
-                        group.members.push(account.phone);
+                        if (rData.relation == "join") {//join follow
+                            group.members.push(account.phone);
+                        }
                         groupsMap[groupData.gid + ""] = group;
+                    }
+                    if (phone == account.phone) {
+                        var group = groupsMap[groupData.gid + ""];
+                        group.relation = rData.relation;
                     }
                 }
                 getLabels(groups);
@@ -2550,6 +2565,87 @@ groupManage.movegroupstocircle = function (data, response) {
         });
     }
 }
+
+
+groupManage.follow = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var gid = data.gid;
+    if (verifyEmpty.verifyEmpty(data, [gid], response)) {
+        createRelation();
+    }
+    function createRelation() {
+        var query = [
+            'MATCH (account:Account),(group:Group)',
+            'WHERE account.phone AND group.gid={gid}',
+            'CREATE UNIQUE group-[r:HAS_MEMBER]->account',
+            'RETURN r,group'
+        ].join("\n");
+        var params = {};
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "关注群组失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "关注群组失败",
+                    "失败原因": "用户或群组不存在"
+                }), response);
+            } else {
+                var pop = results.pop();
+                var rNode = pop.r;
+                var rData = rNode.data;
+                rData.relation = "follow";
+                rNode.save(function (err, node) {
+                });
+                var groupData = pop.group.data;
+                var group = {
+                    gid: groupData.gid,
+                    icon: groupData.icon || "",
+                    name: groupData.name,
+                    longitude: location.longitude || 0,
+                    latitude: location.latitude || 0,
+                    createTime: groupData.createTime || 0,
+                    description: groupData.description || "",
+                    background: groupData.background || "",
+                    cover: groupData.cover || "",
+                    permission: groupData.permission || "",
+                    labels: []
+                };
+                ResponseData(JSON.stringify({
+                    "提示信息": "关注群组成功",
+                    group: group
+                }), response);
+                var time = new Date().getTime();
+                var eid = phone + "_" + time;
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_all",
+                    content: JSON.stringify({
+                        type: "group_all",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: "",
+                        eid: eid
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
+            }
+        });
+    }
+}
 function ResponseData(responseContent, response) {
     response.writeHead(200, {
         "Content-Type": "application/json; charset=UTF-8",
@@ -2611,9 +2707,9 @@ function checkGroupIsExists(group) {
                     var pois = info.datas;
                     for (var index in pois) {
                         var poi = pois[index];
-                        if(ids==""){
+                        if (ids == "") {
                             ids = poi._id;
-                        }else{
+                        } else {
                             ids = ids + "," + poi._id;
                         }
                     }

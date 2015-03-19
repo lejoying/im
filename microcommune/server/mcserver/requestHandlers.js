@@ -337,6 +337,10 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.movegroupstocircle(data, response);
         });
+    }else if (operation == "follow") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.follow(data, response);
+        });
     }
 
 }

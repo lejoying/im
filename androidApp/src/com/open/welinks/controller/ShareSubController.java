@@ -886,9 +886,13 @@ public class ShareSubController {
 	}
 
 	public void onPause() {
-		data.localStatus.localData.currentGroupCircle = String.valueOf(thisView.currentGroupCircle.rid);
-		data.localStatus.localData.currentSelectedGroup = String.valueOf(thisView.currentGroup.gid);
-		data.localStatus.localData.currentSelectedGroupBoard = thisView.currentGroup.currentBoard;
-		data.localStatus.localData.isModified = true;
+		if (thisView.currentGroupCircle != null) {
+			data.localStatus.localData.currentGroupCircle = String.valueOf(thisView.currentGroupCircle.rid);
+		}
+		if (thisView.currentGroup != null) {
+			data.localStatus.localData.currentSelectedGroup = String.valueOf(thisView.currentGroup.gid);
+			data.localStatus.localData.currentSelectedGroupBoard = thisView.currentGroup.currentBoard;
+			data.localStatus.localData.isModified = true;
+		}
 	}
 }

@@ -370,11 +370,12 @@ public class ShareSubView {
 		GroupCircle groupCircle = currentGroupCircle;
 		if (groupCircle == null) {
 			String gid = data.localStatus.localData.currentGroupCircle;
-			if (gid.equals("")) {
+			if (gid == null || gid.equals("")) {
 				gid = data.relationship.groupCircles.get(0);
 			}
 			groupCircle = data.relationship.groupCirclesMap.get(gid);
 		}
+		// log.e("------------------------------*******" + groupCircle);
 		if (groupCircle == null || groupCircle.groups == null) {
 			log.e("return groups or localData");
 			return;
@@ -1214,10 +1215,11 @@ public class ShareSubView {
 		}
 		if (groupCircle == null) {
 			String gid = data.localStatus.localData.currentGroupCircle;
-			if ("".equals(gid))
+			if (gid == null || "".equals(gid))
 				gid = data.relationship.groupCircles.get(0);
 			groupCircle = data.relationship.groupCirclesMap.get(gid);
 		}
+		// log.e("------------------------------*******00000000000：" + groupCircle);
 		currentGroupCircle = groupCircle;
 		if (groupCircle == null || groupCircle.groups == null) {
 			log.e("return groups or localData");
@@ -1315,6 +1317,8 @@ public class ShareSubView {
 
 		public ImageView gripCardBackground;
 
+		public TextView followView;
+
 		public Group group;
 
 		public View initialize() {
@@ -1322,6 +1326,7 @@ public class ShareSubView {
 			this.groupIconView = (ImageView) this.cardView.findViewById(R.id.groupIcon);
 			this.groupNameView = (TextView) this.cardView.findViewById(R.id.groupName);
 			this.groupSelectedStatusView = (ImageView) this.cardView.findViewById(R.id.groupSelectedStatus);
+			this.followView = (TextView) this.cardView.findViewById(R.id.follow);
 
 			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
 
@@ -1333,6 +1338,12 @@ public class ShareSubView {
 			data = parser.check();
 			this.group = group;
 			taskManageHolder.fileHandler.getHeadImage(group.icon, this.groupIconView, taskManageHolder.viewManage.options40);
+			if ("follow".equals(group.relation)) {
+				this.groupNameView.setTextColor(Color.parseColor("#0099cd"));
+				this.followView.setVisibility(View.GONE);
+			} else {
+				this.followView.setVisibility(View.GONE);
+			}
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
