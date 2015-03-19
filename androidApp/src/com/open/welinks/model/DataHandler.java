@@ -241,6 +241,11 @@ public class DataHandler {
 			data.event.userEventsMap.clear();
 
 			data.localStatus.localData.currentSelectedGroup = "";
+			data.localStatus.localData.currentSelectedGroupBoard = "";
+			data.localStatus.localData.currentFunctionPage = "";
+			data.localStatus.localData.currentGroupCircle = "";
+			data.localStatus.localData.currentSearchRadius = 0;
+			data.localStatus.localData.currentSearchTime = 0;
 			// data.localStatus.localData.currentSelectedSquare = "";
 		} catch (Exception e) {
 			e.printStackTrace();

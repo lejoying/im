@@ -24,39 +24,40 @@ public class NearbyActivity extends Activity {
 		thisView.thisController = thisController;
 		thisController.thisView = thisView;
 
+		thisController.onCreate();
 		thisView.initView();
 		thisView.mapView.onCreate(savedInstanceState);
-		thisController.onCreate();
+		thisController.initData();
 		thisView.fillData();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
 		thisController.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 	@Override
 	protected void onResume() {
-		super.onResume();
 		thisView.onResume();
+		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		super.onPause();
 		thisView.onPause();
+		super.onPause();
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
 		thisView.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
 		thisView.onDestroy();
+		super.onDestroy();
 	}
 }
