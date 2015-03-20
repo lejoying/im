@@ -1,8 +1,8 @@
 package com.open.welinks;
 
+import com.open.welink.R;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

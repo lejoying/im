@@ -44,7 +44,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.MyLog;
 import com.open.welinks.ChatActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.WebViewActivity;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.customView.ChatFaceView;

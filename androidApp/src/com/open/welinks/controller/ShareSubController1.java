@@ -34,12 +34,12 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
+import com.open.welink.R;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.CreateGroupStartActivity;
 import com.open.welinks.FindMoreActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.GroupListActivity;
-import com.open.welink.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.MyOnClickListener;
@@ -60,12 +60,12 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
+import com.open.welinks.view.ShareSubView1;
 import com.open.welinks.view.ViewManage;
 
-public class ShareSubController {
+public class ShareSubController1 {
 
 	public Data data = Data.getInstance();
 	public String tag = "ShareSubController";
@@ -74,11 +74,11 @@ public class ShareSubController {
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
-	public ShareSubView thisView;
+	public ShareSubView1 thisView;
 	public Context context;
 	public Activity thisActivity;
 
-	public MainController mainController;
+	public MainController1 mainController;
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
@@ -106,7 +106,7 @@ public class ShareSubController {
 
 	public BodyCallback shareBodyCallback;
 
-	public ShareSubController(MainController mainController) {
+	public ShareSubController1(MainController1 mainController) {
 		thisActivity = mainController.thisActivity;
 
 		this.mainController = mainController;

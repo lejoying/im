@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import com.open.welink.R;
 import com.open.welinks.controller.LoginController;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;

@@ -3,7 +3,6 @@ package com.open.welinks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -19,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.lidroid.xutils.HttpUtils;
@@ -27,6 +25,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.welink.R;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;

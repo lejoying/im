@@ -69,7 +69,7 @@ import com.open.welinks.GroupMemberManageActivity;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.LocationActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.customListener.AudioListener;
 import com.open.welinks.customListener.MyOnClickListener;

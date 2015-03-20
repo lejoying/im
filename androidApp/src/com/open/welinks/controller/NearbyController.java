@@ -60,7 +60,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.NearbyActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.OnDownloadListener;

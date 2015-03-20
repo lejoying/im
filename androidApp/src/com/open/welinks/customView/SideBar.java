@@ -1,6 +1,6 @@
 package com.open.welinks.customView;
 
-import com.open.welinks.R;
+import com.open.welink.R;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -22,7 +22,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -31,9 +30,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -41,13 +37,12 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.ListBody1;
-import com.open.welinks.LoginActivity;
 import com.open.welink.R;
+import com.open.welinks.LoginActivity;
 import com.open.welinks.ScanQRCodeActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
@@ -55,10 +50,10 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
-import com.open.welinks.view.MainView;
+import com.open.welinks.view.MainView1;
 import com.open.welinks.view.ViewManage;
 
-public class MainController {
+public class MainController1 {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
@@ -66,7 +61,7 @@ public class MainController {
 	public String tag = "MainController";
 	public MyLog log = new MyLog(tag, true);
 
-	public MainView thisView;
+	public MainView1 thisView;
 	public Context context;
 	public Activity thisActivity;
 
@@ -80,11 +75,7 @@ public class MainController {
 	public OnDownloadListener downloadListener;
 	public ListOnTouchListener listOnTouchListener;
 
-	public SquareSubController squareSubController;
-	public ShareSubController shareSubController;
-	public MessagesSubController messagesSubController;
-	public FriendsSubController friendsSubController;
-	public MeSubController meSubController;
+	public ShareSubController1 shareSubController;
 
 	public Handler handler = new Handler();
 
@@ -97,7 +88,7 @@ public class MainController {
 	public static final String CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
 	public ConnectionChangeReceiver connectionChangeReceiver;
 
-	public MainController(Activity thisActivity) {
+	public MainController1(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 
@@ -108,8 +99,7 @@ public class MainController {
 		thisActivity.registerReceiver(connectionChangeReceiver, filter);
 	}
 
-	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
-	private MainController thisController;
+	private MainController1 thisController;
 
 	private DataHandler dataHandlers = DataHandler.getInstance();
 
@@ -121,9 +111,6 @@ public class MainController {
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 		mListGesture = new GestureDetector(thisActivity, new GestureListener());
 		parser.check();
-
-		thisView.friendsSubView.showCircles();
-		thisView.messagesSubView.showMessagesSequence();
 
 		thisView.shareSubView.showShareMessages();
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
@@ -143,10 +130,8 @@ public class MainController {
 
 	public void onResume() {
 		data.localStatus.thisActivityName = "MainActivity";
-		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 		thisView.shareSubView.dismissGroupDialog();
 		thisView.shareSubView.dismissReleaseShareDialogView();
-		thisView.friendsSubView.businessCardPopView.dismissUserCardDialogView();
 		thisView.shareSubView.businessCardPopView.dismissUserCardDialogView();
 		// thisView.shareSubView.onResume();
 		// thisView.messagesSubView.onResume();
@@ -160,26 +145,13 @@ public class MainController {
 	}
 
 	public void onPause() {
-		thisView.meSubView.mMePageAppIconScaleSpring.removeListener(mSpringListener);
 		thisView.shareSubView.thisController.onPause();
 	}
 
 	public void onDestroy() {
 		mLocationManagerProxy.removeUpdates(mAMapLocationListener);
 		mLocationManagerProxy.destroy();
-		thisView.messagesSubView.onDestroy();
-		thisView.squareSubView.thisController.onDestroy();
 		thisView.shareSubView.thisController.onDestroy();
-	}
-
-	private class ExampleSpringListener extends SimpleSpringListener {
-
-		@Override
-		public void onSpringUpdate(Spring spring) {
-			float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, 1, 0.5);
-			thisView.meSubView.mAppIconToNameView.setScaleX(mappedValue);
-			thisView.meSubView.mAppIconToNameView.setScaleY(mappedValue);
-		}
 	}
 
 	public void getIntimatefriends() {
@@ -240,36 +212,7 @@ public class MainController {
 					thisView.mainPagerBody.flipTo(2);
 				}
 
-				else if (view.equals(thisView.friendsSubView.modifyCircleNameView)) {
-					if (thisView.friendsSubView.currentStatus == thisView.friendsSubView.SHOW_DIALOG) {
-						thisView.friendsSubView.dialogSpring.removeListener(thisView.friendsSubView.dialogSpringListener);
-						thisView.friendsSubView.currentStatus = thisView.friendsSubView.DIALOG_SWITCH;
-						thisView.friendsSubView.dialogOutSpring.addListener(thisView.friendsSubView.dialogSpringListener);
-						thisView.friendsSubView.dialogOutSpring.setCurrentValue(1.0);
-						thisView.friendsSubView.dialogOutSpring.setEndValue(0);
-						thisView.friendsSubView.dialogInSpring.addListener(thisView.friendsSubView.dialogSpringListener);
-						thisView.friendsSubView.inputDialigView.setVisibility(View.VISIBLE);
-						thisView.friendsSubView.dialogInSpring.setCurrentValue(1);
-						thisView.friendsSubView.dialogInSpring.setEndValue(0);
-					}
-				} else if (view.equals(thisView.friendsSubView.deleteCircleView)) {
-					thisView.friendsSubView.thisController.deleteCircle(String.valueOf((Integer) (view.getTag(R.id.tag_first))));
-					thisView.friendsSubView.dismissCircleSettingDialog();
-				} else if (view.equals(thisView.friendsSubView.createCircleView)) {
-					thisView.friendsSubView.thisController.createCircle();
-					thisView.friendsSubView.dismissCircleSettingDialog();
-				} else if (view.equals(thisView.friendsSubView.cancleButton)) {
-					thisView.friendsSubView.dismissCircleSettingDialog();
-				} else if (view.equals(thisView.friendsSubView.confirmButton)) {
-					EditText editText = ((EditText) (view.getTag(R.id.tag_first)));
-					String inputContent = editText.getText().toString().trim();
-					Circle circle = (Circle) view.getTag(R.id.tag_second);
-					if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-						friendsSubController.onConfirmButton(inputContent, circle);
-					}
-
-					thisView.friendsSubView.dismissCircleSettingDialog();
-				} else if (view.equals(thisView.scannerCodeView)) {
+				if (view.equals(thisView.scannerCodeView)) {
 					Intent intent = new Intent(thisActivity, ScanQRCodeActivity.class);
 					thisActivity.startActivity(intent);
 				} else if (view.getTag() != null) {
@@ -307,7 +250,6 @@ public class MainController {
 					currentUser.latitude = String.valueOf(aMapLocation.getLatitude());
 					currentUser.longitude = String.valueOf(aMapLocation.getLongitude());
 					// log.e(currentUser.longitude + "," + currentUser.latitude);
-					thisController.squareSubController.setTitle(aMapLocation);
 					modifyLocation();
 				}
 			}
@@ -315,11 +257,7 @@ public class MainController {
 
 		listOnTouchListener = new ListOnTouchListener();
 
-		this.thisController.squareSubController.initializeListeners();
 		this.thisController.shareSubController.initializeListeners();
-		this.thisController.messagesSubController.initializeListeners();
-		this.thisController.friendsSubController.initializeListeners();
-		this.thisController.meSubController.initializeListeners();
 	}
 
 	public void bindEvent() {
@@ -334,11 +272,7 @@ public class MainController {
 		thisView.shareMenuView.setOnClickListener(mOnClickListener);
 		thisView.messages_friends_me_menuView.setOnClickListener(mOnClickListener);
 
-		this.thisController.squareSubController.bindEvent();
 		this.thisController.shareSubController.bindEvent();
-		this.thisController.messagesSubController.bindEvent();
-		this.thisController.friendsSubController.bindEvent();
-		this.thisController.meSubController.bindEvent();
 	}
 
 	public void requestLocation() {
@@ -376,15 +310,12 @@ public class MainController {
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
-				thisView.messagesSubView.messageListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-				thisView.friendsSubView.friendListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
 				thisView.shareSubView.groupListBody.onTouchDown(event);
 				thisView.shareSubView.releaseChannelListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.locationListBody.onTouchDown(event);
 			}
 
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
@@ -392,36 +323,26 @@ public class MainController {
 			thisView.mainPagerBody.onTouchMove(event);
 
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
-				thisView.messagesSubView.messageListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-				thisView.friendsSubView.friendListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
 				thisView.shareSubView.groupListBody.onTouchMove(event);
 				thisView.shareSubView.releaseChannelListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.locationListBody.onTouchMove(event);
 			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
-				messagesSubController.onSingleTapUp(event);
-				thisView.messagesSubView.messageListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-				friendsSubController.onSingleTapUp(event);
-				thisView.friendsSubView.friendListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onSingleTapUp(event);
 				thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 				thisView.shareSubView.groupListBody.onTouchUp(event);
 				thisView.shareSubView.releaseChannelListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
-				meSubController.onSingleTapUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.locationListBody.onTouchUp(event);
-				squareSubController.onSingleTapUp(event);
 			}
 		}
 		mGesture.onTouchEvent(event);
@@ -436,13 +357,10 @@ public class MainController {
 			int motionEvent = event.getAction();
 			if (motionEvent == MotionEvent.ACTION_DOWN) {
 				Log.d(tag, "List on touch down");
-				thisView.friendsSubView.friendListBody.onTouchDown(event);
 			} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 				Log.d(tag, "List on touch move");
-				thisView.friendsSubView.friendListBody.onTouchMove(event);
 			} else if (motionEvent == MotionEvent.ACTION_UP) {
 				Log.d(tag, "List on touch up");
-				thisView.friendsSubView.friendListBody.onTouchUp(event);
 
 			}
 			mListGesture.onTouchEvent(event);
@@ -457,9 +375,7 @@ public class MainController {
 			ListBody1 listBody = null;
 
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
-				listBody = thisView.messagesSubView.messageListBody;
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-				listBody = thisView.friendsSubView.friendListBody;
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				listBody = thisView.shareSubView.shareMessageListBody;
 				// listBody = thisView.shareSubView.shareMessageListBody;
@@ -467,7 +383,6 @@ public class MainController {
 				// listBody = thisView.shareSubView.groupListBody;
 				// }
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				listBody = thisView.squareSubView.locationListBody;
 			}
 			if (listBody != null) {
 				if (listBody.bodyStatus.state == listBody.bodyStatus.DRAGGING) {
@@ -491,7 +406,6 @@ public class MainController {
 
 		public void onLongPress(MotionEvent event) {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-				friendsSubController.onLongPress(event);
 			}
 			if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onLongPress(event);
@@ -505,7 +419,6 @@ public class MainController {
 
 		public boolean onDoubleTapEvent(MotionEvent event) {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-				friendsSubController.onDoubleTapEvent(event);
 			}
 			return false;
 		}
@@ -522,15 +435,11 @@ public class MainController {
 
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-				friendsSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				squareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
-				meSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
-				messagesSubController.onScroll();
 			}
 
 			return false;
@@ -551,7 +460,6 @@ public class MainController {
 		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK) {
 			exitApplication();
 		} else if (requestCode == R.id.tag_second) {
-			messagesSubController.onActivityResult(requestCode, resultCode, data);
 		} else {
 			shareSubController.onActivityResult(requestCode, resultCode, data);
 		}

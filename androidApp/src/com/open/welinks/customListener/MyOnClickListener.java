@@ -3,7 +3,7 @@ package com.open.welinks.customListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.open.welinks.R;
+import com.open.welink.R;
 
 public class MyOnClickListener implements OnClickListener {
 

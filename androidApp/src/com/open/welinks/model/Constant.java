@@ -3,7 +3,7 @@ package com.open.welinks.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.open.welinks.R;
+import com.open.welink.R;
 
 public class Constant {
 	public static void init() {
@@ -56,7 +56,7 @@ public class Constant {
 	public static String SQUARETABLEID = "54101cade4b0dfd37f863ace";
 	public static String SHARETABLEID = "54f520e3e4b0ff22e1fc52d3";
 	// lbs key
-	public static String LBS_KSY = "7b7b0483c25df5414ba05d81957dac5a";// old key ： 32b48639b260edd1916960614151eec3
+//	public static String LBS_KSY = "7b7b0483c25df5414ba05d81957dac5a";// old key ： 32b48639b260edd1916960614151eec3
 	public static String LBS_SAVE_KSY = "0cd819a62c50d40b75a73f66cb14aa06";
 
 	// wechat id

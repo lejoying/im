@@ -16,7 +16,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.FriendsSortListActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;

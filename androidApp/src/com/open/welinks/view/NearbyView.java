@@ -48,7 +48,7 @@ import com.open.lib.MyLog;
 import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
 import com.open.welinks.NearbyActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;

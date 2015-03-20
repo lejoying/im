@@ -31,7 +31,7 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.controller.ImagesDirectoryController;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;

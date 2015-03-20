@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.controller.BusinessCardController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;

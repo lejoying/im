@@ -2,12 +2,12 @@ package com.open.welinks;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import com.open.welink.R;
 
 public class StatementActivity extends Activity implements OnClickListener {
 

@@ -39,7 +39,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfoActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;

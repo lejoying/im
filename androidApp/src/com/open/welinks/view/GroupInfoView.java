@@ -17,7 +17,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.controller.GroupInfoController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;

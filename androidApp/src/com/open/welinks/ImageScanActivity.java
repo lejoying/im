@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -27,10 +26,10 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.open.welink.R;
 import com.open.welinks.customView.ImageDetailFragment;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.TaskManageHolder;

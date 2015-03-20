@@ -31,7 +31,7 @@ import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.ClassificationRecommendationActivity;
 import com.open.welinks.NearbyActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.ShareListActivity;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.controller.SquareSubController;

@@ -18,7 +18,7 @@ import android.os.Vibrator;
 import com.open.lib.MyLog;
 import com.open.welinks.LaunchActivity;
 import com.open.welinks.MainActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;

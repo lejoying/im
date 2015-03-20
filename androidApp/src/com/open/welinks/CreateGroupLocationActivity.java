@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
@@ -27,7 +26,6 @@ import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.amap.api.cloud.model.AMapCloudException;
 import com.amap.api.cloud.model.CloudItem;
 import com.amap.api.cloud.model.CloudItemDetail;
@@ -61,6 +59,7 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.Inputtips.InputtipsListener;
 import com.amap.api.services.help.Tip;
+import com.open.welink.R;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.LBSHandler;
 

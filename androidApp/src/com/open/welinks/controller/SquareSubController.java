@@ -9,7 +9,7 @@ import android.view.View.OnTouchListener;
 import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;

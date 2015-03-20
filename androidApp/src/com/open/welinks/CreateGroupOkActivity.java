@@ -1,9 +1,9 @@
 package com.open.welinks;
 
 import com.open.lib.MyLog;
+import com.open.welink.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;

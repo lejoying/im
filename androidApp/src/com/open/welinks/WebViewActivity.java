@@ -1,7 +1,6 @@
 package com.open.welinks;
 
 import java.lang.reflect.Field;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -25,13 +24,13 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.open.lib.MyLog;
+import com.open.welink.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 

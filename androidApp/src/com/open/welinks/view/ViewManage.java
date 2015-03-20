@@ -14,7 +14,7 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.ChangePasswordActivity;
 import com.open.welinks.DynamicListActivity;
 import com.open.welinks.GroupListActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.SearchFriendActivity;
 
 public class ViewManage {
@@ -23,6 +23,7 @@ public class ViewManage {
 
 	public LoginView loginView = null;
 	public MainView mainView = null;
+	public MainView1 mainView1 = null;
 	public MeSubView meSubView = null;
 	public FriendsSubView friendsSubView = null;
 	public SquareSubView squareSubView = null;

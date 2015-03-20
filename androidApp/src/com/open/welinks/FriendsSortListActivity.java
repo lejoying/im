@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -33,7 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-
+import com.open.welink.R;
 import com.open.welinks.customView.ClearEditText;
 import com.open.welinks.customView.SideBar;
 import com.open.welinks.customView.SideBar.OnTouchingLetterChangedListener;

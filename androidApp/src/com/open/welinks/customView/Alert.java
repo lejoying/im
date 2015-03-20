@@ -23,7 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.view.ViewManage;
 
 public class Alert {

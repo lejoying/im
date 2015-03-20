@@ -31,7 +31,7 @@ import com.open.lib.OpenLooper.LoopCallback;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;

@@ -31,7 +31,7 @@ import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.CreateBoardActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.MyOnClickListener;

@@ -26,7 +26,7 @@ import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.ShareListActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;

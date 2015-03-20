@@ -28,7 +28,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TouchImageView;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.controller.ShareReleaseImageTextController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;

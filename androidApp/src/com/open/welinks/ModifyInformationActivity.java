@@ -2,7 +2,6 @@ package com.open.welinks;
 
 import java.io.File;
 import java.util.Map;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,11 +21,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welink.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;

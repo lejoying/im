@@ -26,7 +26,7 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.controller.LoginController;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;

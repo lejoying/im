@@ -22,7 +22,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.open.welinks.ImageGridActivity;
-import com.open.welinks.R;
+import com.open.welink.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.Data.TempData.ImageBean;
