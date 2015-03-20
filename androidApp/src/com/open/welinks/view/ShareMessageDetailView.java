@@ -174,7 +174,6 @@ public class ShareMessageDetailView {
 		deleteOptionView = (RelativeLayout) thisActivity.findViewById(R.id.deleteOption);
 		deleteImageOptionView = (ImageView) thisActivity.findViewById(R.id.deleteImageOption);
 		deleteTextOptionView = (TextView) thisActivity.findViewById(R.id.deleteTextOption);
-
 		shareView = new ShareView(thisActivity);
 		// shareView.firstPath = API.DOMAIN_COMMONIMAGE + "images/" + imagePath;
 		// shareView.phone = data.userInformation.currentUser.phone;
