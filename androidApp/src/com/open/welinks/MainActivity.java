@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -21,21 +21,16 @@ import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.controller.MainController;
 import com.open.welinks.controller.MeSubController;
 import com.open.welinks.controller.MessagesSubController;
-import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
-import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
-import com.open.welinks.model.UpdateManager;
 import com.open.welinks.service.PushService;
-import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.MeSubView;
 import com.open.welinks.view.MessagesSubView;
-import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.SquareSubView;
 import com.open.welinks.view.ViewManage;
 
@@ -65,22 +60,22 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
-		parser.initialize(this);
+		// parser.initialize(this);
 
 		// Context context = instance.instance.context;
 		instance = this;
-		initImageLoader(getApplicationContext());
-		BaseDataUtils.initBaseData(this);
-		Constant.init();
-		startPushService();
+		// initImageLoader(getApplicationContext());
+		// BaseDataUtils.initBaseData(this);
+		// Constant.init();
+		// startPushService();
 
-		taskManageHolder = TaskManageHolder.getInstance();
-		taskManageHolder.initialize();
+		// taskManageHolder = TaskManageHolder.getInstance();
+		// taskManageHolder.initialize();
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 
-		UpdateManager manager = new UpdateManager(MainActivity.this);
-		manager.checkUpdate();
+		// UpdateManager manager = new UpdateManager(MainActivity.this);
+		// manager.checkUpdate();
 	}
 
 	public void startPushService() {
@@ -133,25 +128,21 @@ public class MainActivity extends Activity {
 	void linkSubViewController() {
 
 		this.thisView.squareSubView = new SquareSubView(this.thisView);
-		this.thisView.shareSubView = new ShareSubView(this.thisView);
 		this.thisView.messagesSubView = new MessagesSubView(this.thisView);
 		this.thisView.friendsSubView = new FriendsSubView(this.thisView);
 		this.thisView.meSubView = new MeSubView(this.thisView);
 
 		this.thisController.squareSubController = new SquareSubController(this.thisController);
-		this.thisController.shareSubController = new ShareSubController(this.thisController);
 		this.thisController.messagesSubController = new MessagesSubController(this.thisController);
 		this.thisController.friendsSubController = new FriendsSubController(this.thisController);
 		this.thisController.meSubController = new MeSubController(this.thisController);
 
 		this.thisController.squareSubController.thisView = this.thisView.squareSubView;
-		this.thisController.shareSubController.thisView = this.thisView.shareSubView;
 		this.thisController.messagesSubController.thisView = this.thisView.messagesSubView;
 		this.thisController.friendsSubController.thisView = this.thisView.friendsSubView;
 		this.thisController.meSubController.thisView = this.thisView.meSubView;
 
 		this.thisView.squareSubView.thisController = this.thisController.squareSubController;
-		this.thisView.shareSubView.thisController = this.thisController.shareSubController;
 		this.thisView.messagesSubView.thisController = this.thisController.messagesSubController;
 		this.thisView.friendsSubView.thisController = this.thisController.friendsSubController;
 		this.thisView.meSubView.thisController = this.thisController.meSubController;
@@ -231,20 +222,6 @@ public class MainActivity extends Activity {
 	protected void onDestroy() {
 		thisController.onDestroy();
 		super.onDestroy();
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		boolean flag = thisController.onKeyDown(keyCode, event);
-		if (!flag) {
-			return flag;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		return thisController.onKeyUp(keyCode, event);
 	}
 
 	@Override

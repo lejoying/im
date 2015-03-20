@@ -563,7 +563,7 @@ public class ShareMessageDetailController {
 		data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 		data.boards.isModified = true;
 
-		taskManageHolder.viewManage.mainView.shareSubView.showShareMessages();
+		taskManageHolder.viewManage.mainView1.shareSubView.showShareMessages();
 
 		sendShareToServer(key, shareMessage.content, shareMessage.gsid);
 

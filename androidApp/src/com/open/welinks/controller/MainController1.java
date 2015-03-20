@@ -17,7 +17,6 @@ import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -483,44 +482,6 @@ public class MainController1 {
 	}
 
 	boolean isShowDialg = false;
-
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (isExit) {
-				thisActivity.finish();
-			} else {
-				if (!shareSubController.thisView.isShowGroupDialog && !isShowDialg) {
-					Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-					isExit = true;
-					new Thread() {
-						@Override
-						public void run() {
-							try {
-								sleep(2000);
-								isExit = false;
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							super.run();
-						}
-					}.start();
-				}
-			}
-		}
-		return true;
-	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		isShowDialg = false;
-		boolean flag = shareSubController.onKeyDown(keyCode, event);
-		// if (flag) {
-		// flag = squareSubController.onKeyDown(keyCode, event);
-		// }
-		if (!flag) {
-			isShowDialg = true;
-		}
-		return flag;
-	}
 
 	public void finish() {
 		if (this.connectionChangeReceiver != null) {

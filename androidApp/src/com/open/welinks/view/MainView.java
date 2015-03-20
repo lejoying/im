@@ -36,7 +36,6 @@ public class MainView {
 	public Activity thisActivity;
 
 	public SquareSubView squareSubView;
-	public ShareSubView shareSubView;
 	public MessagesSubView messagesSubView;
 	public FriendsSubView friendsSubView;
 	public MeSubView meSubView;
@@ -130,6 +129,7 @@ public class MainView {
 		scannerCodeView = (ImageView) title_messages_friends_me.findViewById(R.id.scanner_code);
 		userTopbarNameView = (TextView) title_messages_friends_me.findViewById(R.id.userTopbarName);
 		userTopbarNameParentView = (RelativeLayout) title_messages_friends_me.findViewById(R.id.userTopbarNameParent);
+		// userTopbarNameParentView.setVisibility(View.GONE);
 
 		botton = (ImageView) title_messages_friends_me.findViewById(R.id.botton);
 
@@ -205,7 +205,6 @@ public class MainView {
 		messages_friends_me_PagerBody.inActive();
 
 		this.thisView.squareSubView.initViews();
-		this.thisView.shareSubView.initViews();
 		this.thisView.messagesSubView.initViews();
 		this.thisView.friendsSubView.initViews();
 		this.thisView.meSubView.initViews();
@@ -261,15 +260,17 @@ public class MainView {
 			} else if (bodyTag.equals("mainPagerBody")) {
 				if (variable == 0) {
 					lastOnFlipingIndex = -1;
-					squareMenuImageView.setImageResource(R.drawable.square);
-					shareMenuImageView.setImageResource(R.drawable.group1);
-					messages_friends_me_menuImageView.setImageResource(R.drawable.me);
-				} else if (variable == 1) {
-					lastOnFlipingIndex = 1;
 					squareMenuImageView.setImageResource(R.drawable.square1);
 					shareMenuImageView.setImageResource(R.drawable.group);
 					messages_friends_me_menuImageView.setImageResource(R.drawable.me);
-				} else if (variable == 2) {
+				}
+				// else if (variable == 1) {
+				// lastOnFlipingIndex = 1;
+				// squareMenuImageView.setImageResource(R.drawable.square1);
+				// shareMenuImageView.setImageResource(R.drawable.group);
+				// messages_friends_me_menuImageView.setImageResource(R.drawable.me);
+				// }
+				else if (variable == 1) {
 					squareMenuImageView.setImageResource(R.drawable.square);
 					shareMenuImageView.setImageResource(R.drawable.group);
 					messages_friends_me_menuImageView.setImageResource(R.drawable.me1);
@@ -290,16 +291,12 @@ public class MainView {
 			thisView.messages_friends_me_PagerBody.active();
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
 
-				thisView.shareSubView.shareMessageListBody.inActive();
-				thisView.shareSubView.groupListBody.inActive();
 				thisView.messagesSubView.messageListBody.active();
 				thisView.friendsSubView.friendListBody.inActive();
 				thisView.squareSubView.locationListBody.inActive();
 
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 
-				thisView.shareSubView.shareMessageListBody.inActive();
-				thisView.shareSubView.groupListBody.inActive();
 				thisView.messagesSubView.messageListBody.inActive();
 				thisView.friendsSubView.friendListBody.active();
 				thisView.squareSubView.locationListBody.inActive();
@@ -307,8 +304,6 @@ public class MainView {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
 
-				thisView.shareSubView.shareMessageListBody.inActive();
-				thisView.shareSubView.groupListBody.inActive();
 				thisView.messagesSubView.messageListBody.inActive();
 				thisView.friendsSubView.friendListBody.inActive();
 				thisView.squareSubView.locationListBody.inActive();
@@ -326,8 +321,6 @@ public class MainView {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
 					thisView.activityStatus.subState = thisView.activityStatus.MESSAGES;
 
-					thisView.shareSubView.shareMessageListBody.inActive();
-					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.active();
 					thisView.friendsSubView.friendListBody.inActive();
 					thisView.squareSubView.locationListBody.inActive();
@@ -336,8 +329,6 @@ public class MainView {
 					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
 					thisView.activityStatus.subState = thisView.activityStatus.FRIENDS;
 
-					thisView.shareSubView.shareMessageListBody.inActive();
-					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.inActive();
 					thisView.friendsSubView.friendListBody.active();
 					thisView.squareSubView.locationListBody.inActive();
@@ -346,8 +337,6 @@ public class MainView {
 					thisView.activityStatus.state = thisView.activityStatus.ME;
 					thisView.activityStatus.subState = thisView.activityStatus.ME;
 
-					thisView.shareSubView.shareMessageListBody.inActive();
-					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.inActive();
 					thisView.friendsSubView.friendListBody.inActive();
 					thisView.squareSubView.locationListBody.inActive();
@@ -357,32 +346,15 @@ public class MainView {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.SHARE;
 
-					thisView.shareSubView.shareMessageListBody.active();
-					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.inActive();
 					thisView.friendsSubView.friendListBody.inActive();
 					thisView.squareSubView.locationListBody.inActive();
 
-					squareMenuImageView.setImageResource(R.drawable.square);
-					shareMenuImageView.setImageResource(R.drawable.group1);
+					squareMenuImageView.setImageResource(R.drawable.square1);
+					shareMenuImageView.setImageResource(R.drawable.group);
 					messages_friends_me_menuImageView.setImageResource(R.drawable.me);
 					data.localStatus.localData.currentFunctionPage = "share";
-				} 
-//				else if (variable == 1) {
-//					thisView.activityStatus.state = thisView.activityStatus.SQUARE;
-//
-//					thisView.squareSubView.locationListBody.active();
-//					thisView.shareSubView.shareMessageListBody.inActive();
-//					thisView.shareSubView.groupListBody.inActive();
-//					thisView.messagesSubView.messageListBody.inActive();
-//					thisView.friendsSubView.friendListBody.inActive();
-//
-//					squareMenuImageView.setImageResource(R.drawable.square1);
-//					shareMenuImageView.setImageResource(R.drawable.group);
-//					messages_friends_me_menuImageView.setImageResource(R.drawable.me);
-//					data.localStatus.localData.currentFunctionPage = "square";
-//				} 
-				else if (variable == 1) {
+				} else if (variable == 1) {
 					switchTo2();
 				}
 			}

@@ -23,6 +23,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.CirclesManageActivity;
+import com.open.welinks.NearbyActivity;
 import com.open.welink.R;
 import com.open.welinks.SearchFriendActivity;
 import com.open.welinks.customListener.MyOnClickListener;
@@ -76,8 +77,12 @@ public class FriendsSubController {
 
 			public void onClickEffective(View view) {
 				if (view.equals(mainController.thisView.userTopbarNameParentView)) {
-					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, data.userInformation.currentUser.phone);
-					thisView.businessCardPopView.showUserCardDialogView();
+					// thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, data.userInformation.currentUser.phone);
+					// thisView.businessCardPopView.showUserCardDialogView();
+					Intent intent = new Intent(thisView.mainView.thisActivity, NearbyActivity.class);
+					intent.putExtra("type", "newest");
+					thisView.mainView.thisActivity.startActivity(intent);
+					thisView.mainView.thisActivity.finish();
 				}
 				Friend friend = null;
 				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {

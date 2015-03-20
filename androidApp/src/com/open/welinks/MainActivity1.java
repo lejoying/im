@@ -181,20 +181,6 @@ public class MainActivity1 extends Activity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		boolean flag = thisController.onKeyDown(keyCode, event);
-		if (!flag) {
-			return flag;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		return thisController.onKeyUp(keyCode, event);
-	}
-
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (thisController != null) {
 			thisController.onActivityResult(requestCode, resultCode, data);

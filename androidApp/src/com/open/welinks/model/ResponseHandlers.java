@@ -147,7 +147,7 @@ public class ResponseHandlers {
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
 							}
-							viewManage.mainView.shareSubView.setGroupsDialogContent(null);
+							viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
 							viewManage.postNotifyView("GroupListActivity");
 						}
 					} else {
@@ -159,7 +159,7 @@ public class ResponseHandlers {
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
 							}
-							viewManage.mainView.shareSubView.setGroupsDialogContent(null);
+							viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
 							viewManage.postNotifyView("GroupListActivity");
 						}
 					}
@@ -1238,14 +1238,14 @@ public class ResponseHandlers {
 					// Set the option group dialog content
 					// log.e(tag, ViewManage.getErrorLineNumber() + data.relationship.groups.toString());
 					if (!gid.equals("")) {
-						viewManage.mainView.shareSubView.showShareMessages();
-						viewManage.mainView.shareSubView.showTopMenuRoomName();
-						viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
+						viewManage.mainView1.shareSubView.showShareMessages();
+						viewManage.mainView1.shareSubView.showTopMenuRoomName();
+						viewManage.mainView1.shareSubView.getCurrentGroupShareMessages();
 					}
 					if (!"".equals(data.localStatus.localData.currentSelectedGroup)) {
 						Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 						if (group != null) {
-							viewManage.mainView.shareSubView.showTopMenuRoomName();
+							viewManage.mainView1.shareSubView.showTopMenuRoomName();
 							boolean flag = false;
 							if (group.currentBoard != null && !"".equals(group.currentBoard)) {
 								if (group.boards == null) {
@@ -1277,7 +1277,7 @@ public class ResponseHandlers {
 						}
 						log.e(ViewManage.getErrorLineNumber() + "board:" + group.currentBoard);
 					}
-					viewManage.mainView.shareSubView.setGroupsDialogContent(null);
+					viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
 					viewManage.squareSubView.setConver();
 					viewManage.postNotifyView("GroupListActivity");
 					DataHandler.clearInvalidGroupMessages();
@@ -1752,7 +1752,7 @@ public class ResponseHandlers {
 					}
 				} else {
 					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-						viewManage.mainView.shareSubView.showShareMessages();
+						viewManage.mainView1.shareSubView.showShareMessages();
 					}
 				}
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送成功");
@@ -1775,7 +1775,7 @@ public class ResponseHandlers {
 					}
 				} else {
 					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-						viewManage.mainView.shareSubView.showShareMessages();
+						viewManage.mainView1.shareSubView.showShareMessages();
 					}
 				}
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -1796,7 +1796,7 @@ public class ResponseHandlers {
 				shareMessage.status = "failed";
 			}
 			if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-				viewManage.mainView.shareSubView.showShareMessages();
+				viewManage.mainView1.shareSubView.showShareMessages();
 			}
 			log.e(ViewManage.getErrorLineNumber() + msg);
 		};

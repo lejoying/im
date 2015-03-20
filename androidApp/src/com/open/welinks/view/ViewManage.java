@@ -120,19 +120,19 @@ public class ViewManage {
 				groupListActivity.thisView.groupListAdapter.notifyDataSetChanged();
 			}
 		} else if (viewName.equals("ShareSubView")) {
-			if (mainView.shareSubView != null) {
-				mainView.shareSubView.setGroupsDialogContent(null);
+			if (mainView1.shareSubView != null) {
+				mainView1.shareSubView.setGroupsDialogContent(null);
 			}
 		} else if (viewName.equals("ShareSubViewMessage")) {
-			if (mainView.shareSubView != null) {
-				mainView.shareSubView.showShareMessages();
+			if (mainView1.shareSubView != null) {
+				mainView1.shareSubView.showShareMessages();
 			}
 		} else if (viewName.equals("ShareSubViewConver")) {
-			if (mainView.shareSubView != null) {
-				mainView.shareSubView.setConver();
+			if (mainView1.shareSubView != null) {
+				mainView1.shareSubView.setConver();
 			}
 		} else if (viewName.equals("SquareSubViewMessage")) {
-			if (mainView.shareSubView != null) {
+			if (mainView1.shareSubView != null) {
 				// mainView.squareSubView.showSquareMessages(true);
 			}
 		} else if (viewName.equals("ChangePasswordActivitySuccess")) {

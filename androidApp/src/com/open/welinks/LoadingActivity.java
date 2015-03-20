@@ -32,6 +32,7 @@ public class LoadingActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
 		thisActivity.setContentView(R.layout.activity_login);
+		
 		// // linkViewController();
 		//
 		// if (thisView.status == Status.welcome) {
@@ -59,7 +60,9 @@ public class LoadingActivity extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				startActivity(new Intent(thisActivity, MainActivity.class));
+				Intent intent = new Intent(thisActivity, NearbyActivity.class);
+				intent.putExtra("type", "newest");
+				startActivity(intent);
 				thisActivity.finish();
 			}
 		}).start();

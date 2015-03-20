@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,6 +62,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.NearbyActivity;
 import com.open.welink.R;
+import com.open.welinks.MainActivity;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -388,7 +390,9 @@ public class NearbyController {
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (view.equals(thisView.backView)) {
-					thisActivity.finish();
+					Intent intent = new Intent(thisActivity, MainActivity.class);
+					thisActivity.startActivity(intent);
+					// thisActivity.finish();
 				} else if (view.equals(thisView.positionView)) {
 					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
 					int topMarigin = params.topMargin;
@@ -909,7 +913,10 @@ public class NearbyController {
 				// log.e(response.datas.size() + "------------");
 				ArrayList<PoiData> list = response.datas;
 				ArrayList<ShareMessage> needList = new ArrayList<ShareMessage>();
-				ShareMessage shareMessage = (ShareMessage) mInfomations.get(0);
+				ShareMessage shareMessage = null;
+				if (mInfomations.size() > 0) {
+					shareMessage = (ShareMessage) mInfomations.get(0);
+				}
 				for (int i = 0; i < list.size(); i++) {
 					PoiData poiEntity = list.get(i);
 					ShareMessage currentShareMessage = processingShareMessage(poiEntity);
@@ -925,9 +932,6 @@ public class NearbyController {
 				}
 				mInfomations.addAll(needList);
 				sortMInformations();
-				for (int i = 0; i < mInfomations.size(); i++) {
-					log.e(((ShareMessage) (mInfomations.get(i))).time + "");
-				}
 				thisView.notifyData();
 			}
 
@@ -1202,5 +1206,34 @@ public class NearbyController {
 		public String icon, gid, description, cover;
 		public int sid, gsid, totalScore, age;
 		public long createTime, time, lastlogintime;
+	}
+
+	boolean isShowDialg = false;
+	public boolean isExit = false;
+
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (isExit) {
+				thisActivity.finish();
+			} else {
+				if (!isShowDialg) {
+					Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+					isExit = true;
+					new Thread() {
+						@Override
+						public void run() {
+							try {
+								sleep(2000);
+								isExit = false;
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							super.run();
+						}
+					}.start();
+				}
+			}
+		}
+		return true;
 	}
 }

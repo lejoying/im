@@ -2,6 +2,7 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -10,6 +11,7 @@ import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
 import com.open.welink.R;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
@@ -74,7 +76,12 @@ public class SquareSubController {
 		mOnClickListener = new MyOnClickListener() {
 			@Override
 			public void onClickEffective(View view) {
-				if (view.getTag(R.id.tag_class) != null) {
+				if (view.equals(thisView.titleNameView)) {
+					Intent intent = new Intent(thisActivity, NearbyActivity.class);
+					intent.putExtra("type", "newest");
+					thisActivity.startActivity(intent);
+					thisActivity.finish();
+				} else if (view.getTag(R.id.tag_class) != null) {
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("SelectBody")) {
 
@@ -91,14 +98,15 @@ public class SquareSubController {
 	}
 
 	public void setTitle(AMapLocation mAmapLocation) {
-		if (mAmapLocation.getProvince() != null) {
-			thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
-		} else {
-			thisView.titleNameView.setText("发现");
-		}
+		// if (mAmapLocation.getProvince() != null) {
+		// thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
+		// } else {
+		thisView.titleNameView.setText("广场");
+		// }
 	}
 
 	public void bindEvent() {
+		thisView.titleNameView.setOnClickListener(this.mOnClickListener);
 	}
 
 	public void onSingleTapUp(MotionEvent event) {

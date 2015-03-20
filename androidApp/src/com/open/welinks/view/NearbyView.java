@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -47,8 +48,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
 import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
-import com.open.welinks.NearbyActivity;
 import com.open.welink.R;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;
@@ -176,10 +177,20 @@ public class NearbyView {
 
 		ImageView lineView = new ImageView(thisActivity);
 		lineView.setBackgroundColor(Color.parseColor("#0099cd"));
-		int lineWidth = (int) (1 * this.metrics.density);
-		int linePadding = (int) (5 * this.metrics.density);
-		RelativeLayout.LayoutParams lineParams = new RelativeLayout.LayoutParams(lineWidth, width - linePadding * 4);
-		this.centerContainer.addView(lineView, lineParams);
+		// int lineWidth = (int) (1 * this.metrics.density);
+		// int linePadding = (int) (5 * this.metrics.density);
+		// RelativeLayout.LayoutParams lineParams = new RelativeLayout.LayoutParams(lineWidth, width - linePadding * 4);
+		// this.centerContainer.addView(lineView, lineParams);
+
+		TextView textView = new TextView(thisActivity);
+		textView.setText("发现");
+		textView.setGravity(Gravity.CENTER_VERTICAL);
+		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
+		textView.setTextColor(Color.parseColor("#0099cd"));
+		RelativeLayout.LayoutParams textViewParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+		int padding2 = (int) (10 * metrics.density);
+		textView.setPadding(padding2 * 2, padding2, padding2 * 2, padding2);
+		backMaxView.addView(textView, textViewParams);
 
 		RelativeLayout.LayoutParams centerContainerParams = (LayoutParams) this.centerContainer.getLayoutParams();
 		// this.centerContainer.setBackgroundColor(Color.parseColor("#380099cd"));
@@ -191,6 +202,7 @@ public class NearbyView {
 		threeChoicesViewParams.leftMargin = (int) (((this.metrics.widthPixels - this.metrics.density * 180) / 2) - 48 * this.metrics.density);
 
 		ImageView backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
+		backImageView.setVisibility(View.GONE);
 		backImageView.setImageResource(R.drawable.ab3);
 		backImageView.setColorFilter(Color.parseColor("#0099cd"));
 		backImageView.setAlpha(0.875f);
@@ -448,7 +460,7 @@ public class NearbyView {
 				holder.timeView.setText(DateUtil.getNearShareTime(message.time));
 				if ("synchronous".equals(message.getStatus)) {
 					holder.timeView.setTextColor(Color.parseColor("#580099cd"));
-				}else{
+				} else {
 					holder.timeView.setTextColor(Color.parseColor("#B9B6AF"));
 				}
 				if (message.scores != null) {
@@ -717,7 +729,7 @@ public class NearbyView {
 		data.localStatus.localData.currentSearchRadius = thisController.searchRadius;
 		data.localStatus.localData.currentSearchTime = thisController.searchTime;
 		data.localStatus.localData.isModified = true;
-		taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(taskManageHolder.viewManage.shareSubView.currentGroupCircle);
+		// taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(taskManageHolder.viewManage.shareSubView.currentGroupCircle);
 		mapView.onDestroy();
 	}
 

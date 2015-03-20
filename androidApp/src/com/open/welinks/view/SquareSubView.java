@@ -29,11 +29,11 @@ import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-import com.open.welinks.ClassificationRecommendationActivity;
-import com.open.welinks.NearbyActivity;
 import com.open.welink.R;
+import com.open.welinks.ClassificationRecommendationActivity;
+import com.open.welinks.MainActivity1;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.ShareListActivity;
-import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -108,7 +108,7 @@ public class SquareSubView {
 		@SuppressWarnings("serial")
 		ArrayList<String> list = new ArrayList<String>() {
 			{
-				add("附近的分享");
+				add("群组分享");
 				add("热门话题");
 				add("附近的群");
 				add("分类推荐");
@@ -282,7 +282,7 @@ public class SquareSubView {
 			// thisController.isTouchDown = false;
 			// }
 			if (id == R.drawable.sidebar_icon_discover_normal) {
-				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				Intent intent = new Intent(thisController.thisActivity, MainActivity1.class);
 				intent.putExtra("type", "newest");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_days_normal) {
