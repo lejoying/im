@@ -8,7 +8,6 @@ import java.util.List;
 
 import android.app.Service;
 import android.content.Context;
-import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -68,7 +67,6 @@ import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack2;
 import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.utils.Base64Coder;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
 
@@ -413,11 +411,11 @@ public class NearbyView {
 				holder.scoreView.setTypeface(face);
 				holder.scoreView.setText(String.valueOf(message.totalScore));
 				String content = message.content;
-				content = new String(Base64Coder.decode(content));
-				log.e(content);
-				if (content.lastIndexOf("@") == content.length() - 1) {
-					content = content.substring(0, content.length() - 1);
-				}
+				// content = new String(Base64Coder.decode(content));
+				// // log.e(content);
+				// if (content.lastIndexOf("@") == content.length() - 1) {
+				// content = content.substring(0, content.length() - 1);
+				// }
 				List<ShareContentItem> shareContentItems = gson.fromJson(content, new TypeToken<ArrayList<ShareContentItem>>() {
 				}.getType());
 				List<String> images = new ArrayList<String>();
@@ -448,6 +446,11 @@ public class NearbyView {
 					holder.distanceView.setText(message.distance + "m");
 				}
 				holder.timeView.setText(DateUtil.getNearShareTime(message.time));
+				if ("synchronous".equals(message.getStatus)) {
+					holder.timeView.setTextColor(Color.parseColor("#580099cd"));
+				}else{
+					holder.timeView.setTextColor(Color.parseColor("#B9B6AF"));
+				}
 				if (message.scores != null) {
 					Score score = message.scores.get(data.userInformation.currentUser.phone);
 					if (score != null) {

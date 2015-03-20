@@ -315,6 +315,7 @@ public class ShareMessageDetailView {
 				if (shareMessage.type != "imagetext") {
 				}
 				String content = this.shareMessage.content;
+
 				List<ShareContentItem> shareContentItems = gson.fromJson(content, new TypeToken<ArrayList<ShareContentItem>>() {
 				}.getType());
 				if (shareContentItems == null) {

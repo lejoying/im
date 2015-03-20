@@ -313,7 +313,9 @@ public class Data {
 			public long time;
 			public int totalScore;
 
-			public int distance;
+			public String getStatus;
+
+			public double distance;
 			// public ArrayList<String> praiseusers = new ArrayList<String>();
 			public HashMap<String, Score> scores = new HashMap<String, Score>();
 			public List<Comment> comments = new ArrayList<Comment>();
