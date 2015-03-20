@@ -528,7 +528,6 @@ public class NearbyController {
 							if (topMarigin == (int) (84 * thisView.metrics.density)) {
 								error = 5;
 							}
-							log.e(buttomDistance + ":::" + totalHeight + ":::" + error);
 							if (topDistance == 0) {
 								thisView.status.state = thisView.status.T;
 							} else if (buttomDistance >= totalHeight - error) {

@@ -1317,7 +1317,7 @@ groupManage.get = function (data, response) {
                         }), response);
                         console.error(error);
                         return;
-                    } else if (results.length > 0) {
+                    } else if (results.length >= 0) {
                         var labels = [];
                         for (var index in results) {
                             var label = results[index].label.data;
@@ -2578,11 +2578,14 @@ groupManage.follow = function (data, response) {
     function createRelation() {
         var query = [
             'MATCH (account:Account),(group:Group)',
-            'WHERE account.phone AND group.gid={gid}',
+            'WHERE account.phone={phone} AND group.gid={gid}',
             'CREATE UNIQUE group-[r:HAS_MEMBER]->account',
             'RETURN r,group'
         ].join("\n");
-        var params = {};
+        var params = {
+            phone: phone,
+            gid: parseInt(gid)
+        };
         db.query(query, params, function (error, results) {
             if (error) {
                 ResponseData(JSON.stringify({
@@ -2600,9 +2603,14 @@ groupManage.follow = function (data, response) {
                 var rNode = pop.r;
                 var rData = rNode.data;
                 rData.relation = "follow";
+                rData.rid = "8888888";
                 rNode.save(function (err, node) {
                 });
                 var groupData = pop.group.data;
+                var location = JSON.parse(groupData.location || {
+                    longitude: 0,
+                    latitude: 0
+                });
                 var group = {
                     gid: groupData.gid,
                     icon: groupData.icon || "",
