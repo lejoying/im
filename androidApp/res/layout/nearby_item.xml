@@ -6,16 +6,19 @@
 
     <ImageView
         android:id="@+id/head"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_centerVertical="true"
-        android:layout_margin="10dp" />
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="40dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginBottom="25dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginLeft="80dp"
         android:layout_marginTop="5dp"
         android:orientation="vertical" >
 
@@ -31,12 +34,13 @@
 
         <TextView
             android:id="@+id/age"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="25dp"
             android:layout_marginBottom="2dp"
             android:gravity="center_vertical"
             android:paddingLeft="22dp"
-            android:textColor="#99000000" />
+            android:textColor="#99000000"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/mainBusiness"

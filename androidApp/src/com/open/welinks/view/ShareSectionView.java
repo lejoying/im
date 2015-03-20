@@ -1048,6 +1048,8 @@ public class ShareSectionView {
 	public void showGroupBoards() {
 		data = parser.check();
 		List<String> boards = currentGroup.boards;
+		if (boards == null)
+			return;
 		groupListBody.height = 0;
 		groupListBody.listItemsSequence.clear();
 		groupsDialogContent.removeAllViews();

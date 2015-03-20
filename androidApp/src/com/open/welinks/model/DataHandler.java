@@ -147,6 +147,19 @@ public class DataHandler {
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, responseHandlers.group_getGroupBoards);
 	}
 
+	public static void moveGroupsToCircle(String rid, String groups) {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("groups", groups);
+		params.addBodyParameter("groupCircles", gson.toJson(data.relationship.groupCircles));
+		params.addBodyParameter("groupCirclesMap", gson.toJson(data.relationship.groupCirclesMap));
+		params.addBodyParameter("rid", rid);
+		httpUtils.send(HttpMethod.POST, API.GROUP_MOVEGROUPSTOCIRCLE, params, responseHandlers.group_movegroupstocircle);
+	}
+
 	public static void clearInvalidGroupMessages() {
 		try {
 			parser.check();
@@ -293,7 +306,7 @@ public class DataHandler {
 		return flag;
 	}
 
-	public Gson gson = new Gson();
+	public static Gson gson = new Gson();
 
 	public ArrayList<String> sequece = null;
 	public Map<String, ShareDraft> sequeceMap = null;

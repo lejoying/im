@@ -1389,6 +1389,8 @@ public class ResponseHandlers {
 				group.latitude = response.group.latitude;
 				group.longitude = response.group.longitude;
 				group.name = response.group.name;
+
+				DataHandler.moveGroupsToCircle(Constant.DEFAULTGROUPCIRCLE, "[\"" + group.gid + "\"]");
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}

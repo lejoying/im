@@ -710,7 +710,8 @@ public class ShareSectionController {
 	public void finish() {
 		thisView.dismissGroupBoardsDialog();
 		taskManageHolder.viewManage.shareSectionView = null;
-		thisView.currentGroup.currentBoard = thisView.currentBoard.sid;
+		if (thisView.currentGroup != null && thisView.currentBoard != null)
+			thisView.currentGroup.currentBoard = thisView.currentBoard.sid;
 		taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
 		taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
 	}
@@ -786,16 +787,17 @@ public class ShareSectionController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("type", "group");
-
 		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
+				public String 失败原因;
 				public Group group;
 			}
 
 			public void onSuccess(ResponseInfo<String> responseInfo) {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if ("获取群组信息成功".equals(response.提示信息)) {
+					log.e(ViewManage.getErrorLineNumber() + "-------------------获取群组信息成功");
 					Group group = response.group;
 					if (group != null) {
 						Group currentGroup = null;
@@ -819,6 +821,8 @@ public class ShareSectionController {
 						thisView.currentGroup = currentGroup;
 						getBoards();
 					}
+				} else {
+					log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 				}
 			}
 		});
@@ -844,6 +848,7 @@ public class ShareSectionController {
 			public void onSuccess(ResponseInfo<String> responseInfo) {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取版块成功")) {
+					log.e(ViewManage.getErrorLineNumber() + "-------------------获取版块成功");
 					data = parser.check();
 					Group group = data.relationship.groupsMap.get(response.gid);
 					for (Board board : response.boardsMap.values()) {
@@ -852,7 +857,7 @@ public class ShareSectionController {
 					data.boards.isModified = true;
 					if (group != null) {
 						group.boards = response.boards;
-						if (group.currentBoard.equals("") && group.boards.size() > 0)
+						if ((group.currentBoard == null || group.currentBoard.equals("")) && group.boards.size() > 0)
 							group.currentBoard = group.boards.get(0);
 					}
 					thisView.currentBoard = data.boards.boardsMap.get(group.currentBoard);

@@ -567,7 +567,7 @@ public class NearbyView {
 				distance = group.distance;
 				head = group.icon;
 			}
-			thisController.taskManageHolder.fileHandler.getHeadImage(head, holder.head, viewManage.options70);
+			thisController.taskManageHolder.fileHandler.getHeadImage(head, holder.head, viewManage.options40);
 			if (distance >= 1000) {
 				String distanceStr = new BigDecimal(distance / 1000d, new MathContext(4)).toPlainString();
 				if (distanceStr.length() == 1) {
@@ -714,6 +714,7 @@ public class NearbyView {
 		data.localStatus.localData.currentSearchRadius = thisController.searchRadius;
 		data.localStatus.localData.currentSearchTime = thisController.searchTime;
 		data.localStatus.localData.isModified = true;
+		taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(taskManageHolder.viewManage.shareSubView.currentGroupCircle);
 		mapView.onDestroy();
 	}
 

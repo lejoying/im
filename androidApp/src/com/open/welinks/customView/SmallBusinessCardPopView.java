@@ -42,6 +42,7 @@ import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Boards.Board;
@@ -384,9 +385,12 @@ public class SmallBusinessCardPopView {
 					this.optionTwoView2.setVisibility(View.GONE);
 				}
 				if (data.relationship.groups.contains(key)) {
-					if (data.relationship.groupsMap.get(key) != null && data.relationship.groupsMap.get(key).relation.equals("follow")) {
+					Group group = data.relationship.groupsMap.get(key);
+					if (group != null && group.relation != null && group.relation.equals("follow")) {
+						log.e(group.relation + ":::::::::");
 						goInfomationView.setText("加入群组");
 					} else {
+						log.e(group.relation + ":::::::::");
 						goInfomationView.setText("聊天室");
 					}
 				} else {
@@ -696,7 +700,7 @@ public class SmallBusinessCardPopView {
 							group0.latitude = group.latitude;
 							group0.description = group.description;
 							group0.background = group.background;
-							group0.relation = group.relation;
+							// group0.relation = group.relation;
 						} else {
 							data.relationship.groupsMap.put(gid, group);
 						}
@@ -718,6 +722,9 @@ public class SmallBusinessCardPopView {
 			data.relationship.groupsMap.put(gid, group);
 		}
 		group.relation = "follow";
+		data.relationship.groups.add(gid);
+		data.relationship.groupCirclesMap.get(Constant.DEFAULTGROUPCIRCLE).groups.add(gid);
+		data.relationship.isModified = true;
 		this.cardView.goInfomationView.setText("加入群组");
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -731,6 +738,11 @@ public class SmallBusinessCardPopView {
 	public void joinGroup(String gid) {
 		Group group = data.relationship.groupsMap.get(gid);
 		group.members.add(data.userInformation.currentUser.phone);
+		group.relation = "join";
+		data.relationship.isModified = true;
+		if (gid.equals(this.cardView.key)) {
+			this.cardView.goInfomationView.setText("聊天室");
+		}
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		User currentUser = data.userInformation.currentUser;
@@ -745,7 +757,6 @@ public class SmallBusinessCardPopView {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		User user = data.userInformation.currentUser;
-		this.cardView.goInfomationView.setText("聊天室");
 		params.addBodyParameter("phone", user.phone);
 		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("gid", gid);

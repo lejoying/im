@@ -72,6 +72,8 @@ public class Constant {
 	 */
 	public static long defaultContactId = 9999999;
 
+	public static String DEFAULTGROUPCIRCLE = "8888888";
+
 	// faces
 	public static String[] FACES = { "tosiji", "lengtu", "ninimao", "feiniaobulu", "donki", "xiaotumei", "chouerguang", "xiaoan", "oujisang", "tudandan", "mengleyuan", "chouchoumao", "malimalihong", "yangxiaojian", "xiongnini" };
 	public static String[] DEFAULT_FACE_NAMES = { "[呲牙]", "[微笑]", "[大笑]", "[墨镜]", "[捂嘴]", "[亲亲]", "[抠鼻]", "[蔑视]", "[惊讶]", "[疑问]", "[可怜]", "[害羞]", "[出汗]", "[撇嘴]", "[无奈]", "[鼓掌]", "[生气]", "[大哭]", "[快哭了]", "[闭嘴]", "[嘘]", "[再见]", "[叹气]", "[吐舌]", "[挥手]", "[板砖]", "[困]", "[哈欠]", "[色]", "[吐]", "[吐血]", "[爆汗]", "[奋斗]", "[咒骂]", "[可爱]", "[鄙视]", "[钱]", "[吃]", "[迷糊]", "[无聊]", "[嘚瑟]", "[左哼哼]", "[右哼哼]", "[委屈]", "[撅嘴]", "[发狂]", "[阴险]", "[坏笑]", "[OK]", "[胜利]", "[过来]", "[赞]", "[踩]", "[握手]", "[路过]", "[大便]", "[魔鬼]", "[狂怒]", "[天使]", "[幽灵]", "[爱心]", "[心碎]", "[汽车]", "[蛋糕]", "[礼物]", "[月亮]", "[玫瑰]", "[太阳]", "[炸弹]", "[酒]", "[食物]", "[面条]", "[猪]", "[嘴]", "[拥抱]", "[抱拳]" };

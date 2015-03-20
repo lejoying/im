@@ -296,22 +296,24 @@ public class GroupListView {
 			} else {
 				String gid = thisController.groups.get(position);
 				Group group = thisController.groupsMap.get(gid);
-				taskManageHolder.fileHandler.getHeadImage(group.icon, holder.headView, taskManageHolder.viewManage.options50);
-				holder.nameView.setText(group.name);
-				if ("请输入群组描述信息".equals(group.description)) {
-					holder.descriptionView.setText("");
-				} else {
-					holder.descriptionView.setText(group.description);
-				}
-				if (thisController.isGroupEditor) {
-					holder.checkBoxView.setVisibility(View.VISIBLE);
-					if (thisController.editorGroups.contains(gid)) {
-						holder.checkBoxView.setImageResource(R.drawable.icon_checkbox_checked);
+				if (group != null) {
+					taskManageHolder.fileHandler.getHeadImage(group.icon, holder.headView, taskManageHolder.viewManage.options50);
+					holder.nameView.setText(group.name);
+					if ("请输入群组描述信息".equals(group.description)) {
+						holder.descriptionView.setText("");
 					} else {
-						holder.checkBoxView.setImageResource(R.drawable.icon_checkbox);
+						holder.descriptionView.setText(group.description);
 					}
-				} else {
-					holder.checkBoxView.setVisibility(View.GONE);
+					if (thisController.isGroupEditor) {
+						holder.checkBoxView.setVisibility(View.VISIBLE);
+						if (thisController.editorGroups.contains(gid)) {
+							holder.checkBoxView.setImageResource(R.drawable.icon_checkbox_checked);
+						} else {
+							holder.checkBoxView.setImageResource(R.drawable.icon_checkbox);
+						}
+					} else {
+						holder.checkBoxView.setVisibility(View.GONE);
+					}
 				}
 			}
 			return convertView;
