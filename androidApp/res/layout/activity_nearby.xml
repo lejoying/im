@@ -200,8 +200,7 @@
         android:layout_marginTop="304dp"
         android:background="#f1f2f5"
         android:cacheColorHint="#0000"
-        android:divider="#0000"
-        android:dividerHeight="0dp"
+        android:divider="#77000000"
         android:fadingEdge="none"
         android:listSelector="#0000"
         android:scrollbars="none" >

@@ -1362,7 +1362,39 @@ public class ResponseHandlers {
 			DataHandler.getUserCurrentAllGroup();
 		};
 	};
+	public RequestCallBack<String> group_follow = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Group group;
+		}
 
+		public void onSuccess(com.lidroid.xutils.http.ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("关注群组成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------关注群组成功");
+
+				Group group = data.relationship.groupsMap.get(response.group.gid + "");
+				if (group == null) {
+					group = data.relationship.new Group();
+					data.relationship.groupsMap.put(response.group.gid + "", group);
+				}
+				group.gid = response.group.gid;
+				group.background = response.group.background;
+				group.cover = response.group.cover;
+				group.createTime = response.group.createTime;
+				group.description = response.group.description;
+				group.icon = response.group.icon;
+				group.labels = response.group.labels;
+				group.latitude = response.group.latitude;
+				group.longitude = response.group.longitude;
+				group.name = response.group.name;
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		};
+
+	};
 	public RequestCallBack<String> removeMembersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;

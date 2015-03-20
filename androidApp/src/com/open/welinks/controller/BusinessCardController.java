@@ -298,7 +298,7 @@ public class BusinessCardController {
 				if ("获取用户信息成功".equals(response.提示信息)) {
 					Friend account = response.accounts.get(0);
 					Friend friend = null;
-					if (data.relationship.friends.contains(account.phone)) {
+					if (data.relationship.friendsMap.containsKey(account.phone)) {
 						friend = data.relationship.friendsMap.get(account.phone);
 					} else {
 						friend = data.relationship.new Friend();
@@ -356,7 +356,7 @@ public class BusinessCardController {
 					Group group = response.group;
 					if (group != null) {
 						Group currentGroup = null;
-						if (data.relationship.groups.contains(group.gid + "")) {
+						if (data.relationship.groupsMap.containsKey(group.gid + "")) {
 							currentGroup = data.relationship.groupsMap.get(group.gid + "");
 						} else {
 							currentGroup = data.relationship.new Group();

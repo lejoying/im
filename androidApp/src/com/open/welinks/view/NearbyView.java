@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.app.Service;
 import android.content.Context;
+import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -411,7 +412,6 @@ public class NearbyView {
 				holder.scoreView.setTypeface(face);
 				holder.scoreView.setText(String.valueOf(message.totalScore));
 				String content = message.content;
-				log.e(content);
 				if (content.lastIndexOf("@") == content.length() - 1) {
 					content = content.substring(0, content.length() - 1);
 				}
@@ -521,8 +521,8 @@ public class NearbyView {
 			Holder holder = null;
 			if (convertView == null) {
 				holder = new Holder();
-				convertView = mInflater.inflate(R.layout.nearby_item_account, null);
-				holder.accountLayout = convertView.findViewById(R.id.accountLayout);
+				convertView = mInflater.inflate(R.layout.nearby_item, null);
+				holder.buttomLine = convertView.findViewById(R.id.buttomLine);
 				holder.head = (ImageView) convertView.findViewById(R.id.head);
 				holder.sex = (ImageView) convertView.findViewById(R.id.sex);
 				holder.name = (TextView) convertView.findViewById(R.id.name);
@@ -537,27 +537,34 @@ public class NearbyView {
 			int distance = 0;
 			String head = "";
 			if (thisController.status == Status.account) {
-				holder.accountLayout.setVisibility(View.VISIBLE);
+				holder.age.setVisibility(View.VISIBLE);
+				holder.time.setVisibility(View.VISIBLE);
+				holder.buttomLine.setVisibility(View.VISIBLE);
 				Friend friend = (Friend) getItem(position);
 				holder.age.setText(String.valueOf(friend.age));
 				holder.name.setText(friend.nickName);
 				holder.mainBusiness.setText(BaseDataUtils.generateMainBusiness("point", friend.mainBusiness));
 				if (BaseDataUtils.determineSex(friend.sex)) {
-					holder.sex.setImageResource(R.drawable.personalinfo_male);
+					holder.age.setBackgroundResource(R.drawable.personalinfo_male);
 				} else {
-					holder.sex.setImageResource(R.drawable.personalinfo_female);
+					holder.age.setBackgroundResource(R.drawable.personalinfo_female);
+				}
+				if (!"".equals(friend.lastLoginTime)) {
+					holder.time.setText(DateUtil.getNearShareTime(Long.valueOf(friend.lastLoginTime)));
 				}
 				head = friend.head;
 				distance = friend.distance;
 			} else if (thisController.status == Status.group) {
-				holder.accountLayout.setVisibility(View.GONE);
+				holder.age.setVisibility(View.GONE);
+				holder.time.setVisibility(View.GONE);
+				holder.buttomLine.setVisibility(View.GONE);
 				Group group = (Group) getItem(position);
 				holder.name.setText(group.name);
-				holder.mainBusiness.setText(BaseDataUtils.generateMainBusiness("point", group.description));
+				holder.mainBusiness.setText(BaseDataUtils.generateMainBusiness("group", group.description));
 				distance = group.distance;
 				head = group.icon;
 			}
-			thisController.taskManageHolder.fileHandler.getHeadImage(head, holder.head, viewManage.options40);
+			thisController.taskManageHolder.fileHandler.getHeadImage(head, holder.head, viewManage.options70);
 			if (distance >= 1000) {
 				String distanceStr = new BigDecimal(distance / 1000d, new MathContext(4)).toPlainString();
 				if (distanceStr.length() == 1) {
@@ -574,7 +581,7 @@ public class NearbyView {
 		}
 
 		class Holder {
-			View accountLayout;
+			View buttomLine;
 			ImageView head, sex;
 			TextView name, age, distance, mainBusiness, time;
 		}
@@ -794,9 +801,11 @@ public class NearbyView {
 		screenCancel = (TextView) screenDialogView.findViewById(R.id.cancel);
 		titleTwo = (TextView) screenDialogView.findViewById(R.id.titleTwo);
 
-		if (thisController.status == Status.group || thisController.status == Status.account) {
+		if (thisController.status == Status.group) {
 			timeLayout.setVisibility(View.GONE);
 			titleTwo.setVisibility(View.GONE);
+		} else if (thisController.status == Status.account) {
+			titleTwo.setText("最近登录");
 		}
 
 		screenPopDialog = new PopupWindow(screenDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
@@ -807,6 +816,13 @@ public class NearbyView {
 		if (screenPopDialog.isShowing()) {
 			screenPopDialog.dismiss();
 		} else {
+			if (thisController.status == Status.group) {
+				timeLayout.setVisibility(View.GONE);
+				titleTwo.setVisibility(View.GONE);
+			} else if (thisController.status == Status.account) {
+				timeLayout.setVisibility(View.VISIBLE);
+				titleTwo.setVisibility(View.VISIBLE);
+			}
 			screenPopDialog.showAtLocation(maxView, Gravity.CENTER, 0, 0);
 			changeScreenText();
 		}

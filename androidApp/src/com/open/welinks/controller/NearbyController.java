@@ -77,7 +77,6 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.FileHandler;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.oss.DownloadFile;
@@ -291,6 +290,7 @@ public class NearbyController {
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
 			}
 		};
 
@@ -326,7 +326,7 @@ public class NearbyController {
 						thisView.notifyData();
 						thisView.modifyPraiseusersToMessage(true, shareMessage.gsid);
 					} else if ("DecrementView".equals(type)) {
-						final ShareMessage shareMessage = thisController.mInfomations.get(position);
+						final ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 						if (shareMessage.scores == null) {
 							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
 						}
@@ -351,10 +351,10 @@ public class NearbyController {
 									score.remainNumber = 0;
 									shareMessage.scores.put(score.phone, score);
 									data.boards.isModified = true;
-									thisView.nearbyAdapter.notifyDataSetChanged();
+									thisView.notifyData();
 									thisView.modifyPraiseusersToMessage(false, shareMessage.gsid);
 									thisController.mInfomations.remove(position);
-									thisView.nearbyAdapter.notifyDataSetChanged();
+									thisView.notifyData();
 								}
 							}).show();
 						} else {
@@ -365,7 +365,7 @@ public class NearbyController {
 							score.remainNumber = 0;
 							shareMessage.scores.put(score.phone, score);
 							data.boards.isModified = true;
-							thisView.nearbyAdapter.notifyDataSetChanged();
+							thisView.notifyData();
 							thisView.modifyPraiseusersToMessage(false, shareMessage.gsid);
 						}
 					}
@@ -524,11 +524,12 @@ public class NearbyController {
 							int topMarigin = params.topMargin;
 							int error = 2;
 							if (topMarigin == (int) (84 * thisView.metrics.density)) {
-								error = 4;
+								error = 5;
 							}
+							log.e(buttomDistance + ":::" + totalHeight + ":::" + error);
 							if (topDistance == 0) {
 								thisView.status.state = thisView.status.T;
-							} else if (buttomDistance == totalHeight - error) {
+							} else if (buttomDistance >= totalHeight - error) {
 								thisView.status.state = thisView.status.B;
 							}
 						} else if (thisView.status.state == thisView.status.T || thisView.status.state == thisView.status.B) {
@@ -578,6 +579,7 @@ public class NearbyController {
 						status = Status.hottest;
 					} else if (status == Status.group) {
 						status = Status.account;
+						mTableId = Constant.ACCOUNTTABLEID;
 					}
 					nowpage = 0;
 					thisView.openLooper.stop();
@@ -590,6 +592,7 @@ public class NearbyController {
 						status = Status.newest;
 					} else if (status == Status.account) {
 						status = Status.group;
+						mTableId = Constant.GROUPTABLEID;
 					}
 					nowpage = 0;
 					thisView.openLooper.stop();
@@ -710,8 +713,15 @@ public class NearbyController {
 					intent.putExtra("sid", shareMessage.sid);
 					intent.putExtra("gsid", shareMessage.gsid);
 					thisActivity.startActivity(intent);
-				} else {
-
+				} else if (status == Status.group) {
+					Group group = (Group) thisController.mInfomations.get(position);
+					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, String.valueOf(group.gid));
+					thisView.businessCardPopView.showUserCardDialogView();
+				} else if (status == Status.account) {
+					Friend friend = (Friend) thisController.mInfomations.get(position);
+					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, friend.phone);
+					thisView.businessCardPopView.cardView.setMenu(false);
+					thisView.businessCardPopView.showUserCardDialogView();
 				}
 			}
 		};
@@ -785,8 +795,12 @@ public class NearbyController {
 		params.addQueryStringParameter("radius", String.valueOf(searchRadius));
 		params.addQueryStringParameter("limit", String.valueOf(20));
 		params.addQueryStringParameter("page", String.valueOf(nowpage + 1));
+		params.addQueryStringParameter("time", String.valueOf(now));
 		if (status == Status.account || status == Status.group) {
 			params.addQueryStringParameter("sortrule", "_distance:1");
+			if (status == Status.account && searchTime != times[times.length - 1]) {
+				params.addQueryStringParameter("filter", "lastlogintime:[" + (now - searchTime) + "," + now + "]");
+			}
 		} else {
 			if (status == Status.newest) {
 				params.addQueryStringParameter("sortrule", "time:0");
@@ -827,11 +841,11 @@ public class NearbyController {
 					}
 
 					for (PoiData poiData : response.datas) {
-						if (status == Status.account) {
+						if (status == Status.account && poiData.phone != null) {
 							processingAccountData(poiData);
-						} else if (status == Status.group) {
+						} else if (status == Status.group && poiData.gid != null) {
 							processingGroupData(poiData);
-						} else {
+						} else if (status == Status.newest || status == Status.hottest) {
 							processingShareData(poiData);
 						}
 					}
@@ -887,8 +901,15 @@ public class NearbyController {
 		friend.head = poiData.head;
 		friend.phone = poiData.phone;
 		friend.age = poiData.age;
+		String[] location = poiData._location.split(",");
+		friend.longitude = location[0];
+		friend.latitude = location[1];
 		friend.lastLoginTime = String.valueOf(poiData.lastlogintime);
 		friend.distance = Integer.valueOf(poiData._distance);
+
+		if (!data.relationship.friendsMap.containsKey(friend.phone)) {
+			data.relationship.friendsMap.put(friend.phone, friend);
+		}
 		mInfomations.add(friend);
 	}
 
@@ -901,6 +922,12 @@ public class NearbyController {
 		group.cover = poiData.cover;
 		group.createTime = String.valueOf(poiData.createTime);
 		group.distance = Integer.valueOf(poiData._distance);
+		String[] location = poiData._location.split(",");
+		group.longitude = location[0];
+		group.latitude = location[1];
+		if (!data.relationship.groupsMap.containsKey(poiData.gid)) {
+			data.relationship.groupsMap.put(poiData.gid, group);
+		}
 		mInfomations.add(group);
 	}
 
@@ -1051,20 +1078,12 @@ public class NearbyController {
 		getUserCommonUsedLocations();
 	}
 
-	class PoiAccountData {
-		public String _id, _location, _name, _address, _createtime, _updatetime, _distance;
-		public String phone, sex, mainBusiness, status;
-		public int age, uid, lastlogintime;
-	}
-
 	class PoiData {
-		public String _id, _location, _name, _address, _createtime, _updatetime, _distance;
-		public String content, scores, phone, type, head, comments;
-		public String sex, mainBusiness, status;
-		public String icon, gid, description, cover, permission;
-		public int sid, gsid, totalScore;
-		public int age, uid;
-		public int createTime;
-		public long time, lastlogintime;
+		public String _id, _location, _name, _address, _distance;
+		public String content, scores, phone, type, head;
+		public String sex, mainBusiness;
+		public String icon, gid, description, cover;
+		public int sid, gsid, totalScore, age;
+		public long createTime, time, lastlogintime;
 	}
 }
