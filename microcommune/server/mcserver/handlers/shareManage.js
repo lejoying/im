@@ -1226,6 +1226,34 @@ shareManage.sendboardshare = function (data, response) {
         });
         function createLbsShare(shareData) {
             try {
+                var contentObj = JSON.parse(shareData.content);
+                var newContentObj = [];
+                var imageContent = 0;
+                for (var index in contentObj) {
+                    var obj = contentObj[index];
+                    if (obj.type == "text") {
+                        var textObj = {};
+                        textObj["type"] = obj.type;
+                        var detailLength = obj.detail.length;
+                        if (detailLength > 255) {
+                            textObj["detail"] = obj.detail.substring(0, 255);
+                        } else {
+                            textObj["detail"] = obj.detail;
+                        }
+                        newContentObj.push(textObj);
+                    } else if (obj.type == "image") {
+                        imageContent++;
+                        if (imageContent > 4) {
+                            break;
+                        }
+                        var imageObj = {};
+                        imageObj["type"] = obj.type;
+                        imageObj["detail"] = obj.detail;
+                        newContentObj.push(imageObj);
+                    }
+                }
+                var contentString = JSON.stringify(newContentObj);
+                contentString = new Buffer(contentString + "@").toString("base64");
                 ajax.ajax({
                     type: "POST",
                     url: serverSetting.LBS.DATA_CREATE,
@@ -1242,7 +1270,7 @@ shareManage.sendboardshare = function (data, response) {
                             phone: share.phone,
                             head: share.head,
                             type: share.type,
-                            content: share.content + "@",
+                            content: contentString,
                             totalScore: share.totalScore,
                             time: share.time
                         })
@@ -1266,6 +1294,8 @@ shareManage.sendboardshare = function (data, response) {
         }
     }
 }
+//var b = new Buffer("qiaoxiaosong").toString("base64");
+//console.log(b);
 shareManage.getboardshares = function (data, response) {
     response.asynchronous = 1;
     console.log(data);

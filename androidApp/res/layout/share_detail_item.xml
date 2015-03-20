@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/background_white_radius_4dp" >
+
+        <com.open.lib.TouchView
+            android:id="@+id/gshare_title"
+            android:layout_width="match_parent"
+            android:layout_height="60dp" >
+
+            <ImageView
+                android:id="@+id/share_head"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:translationX="10dp"
+                android:translationY="10dp" />
+
+            <TextView
+                android:id="@+id/share_nickName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ABCD"
+                android:textColor="@color/text_color_black"
+                android:textSize="16sp"
+                android:translationX="60dp"
+                android:translationY="10dp" />
+
+            <ImageView
+                android:id="@+id/gshare_time_iv"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/time_icon"
+                android:tint="@color/icon_color"
+                android:translationX="60dp"
+                android:translationY="32dp" />
+
+            <TextView
+                android:id="@+id/share_releaseTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="08:08"
+                android:textColor="@color/text_color_black_2"
+                android:textSize="12sp"
+                android:translationX="75dp"
+                android:translationY="30dp" />
+
+            <RelativeLayout
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:translationX="-5dp" >
+
+                <ImageView
+                    android:id="@+id/num_picker_decrement"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:padding="15dp"
+                    android:src="@drawable/selector_num_picker_decrement" />
+
+                <TextView
+                    android:id="@+id/totalScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:text="999"
+                    android:textColor="#0099cd"
+                    android:textSize="24sp" />
+
+                <ImageView
+                    android:id="@+id/num_picker_increment"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:padding="15dp"
+                    android:src="@drawable/selector_num_picker_increment" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/share_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="发布成功"
+                android:textColor="@color/text_color_black_2"
+                android:textSize="12sp"
+                android:translationY="30dp"
+                android:visibility="gone" />
+        </com.open.lib.TouchView>
+
+        <LinearLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>
