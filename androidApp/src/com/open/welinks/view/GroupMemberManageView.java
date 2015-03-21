@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.GroupMemberManageController;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;

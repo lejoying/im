@@ -3,7 +3,7 @@ package com.open.welinks.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 
 public class Constant {
 	public static void init() {

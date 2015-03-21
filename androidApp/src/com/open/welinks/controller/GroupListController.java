@@ -25,8 +25,8 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
-import com.open.welink.R;
-import com.open.welink.R.color;
+import com.open.welinks.R;
+import com.open.welinks.R.color;
 import com.open.welinks.GroupListActivity;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
@@ -121,11 +121,20 @@ public class GroupListController {
 				groups = data.relationship.squares;
 			} else if (status == Status.list_group) {
 				if (data.relationship != null && data.relationship.groupCirclesMap != null && data.relationship.groupCircles != null) {
-					if (taskManageHolder.viewManage.shareSubView.currentGroupCircle != null) {
-						currentGroupCircle = data.relationship.groupCirclesMap.get(taskManageHolder.viewManage.shareSubView.currentGroupCircle.rid + "");
+					if (taskManageHolder.viewManage.shareSubView != null) {
+						if (taskManageHolder.viewManage.shareSubView.currentGroupCircle != null) {
+							currentGroupCircle = data.relationship.groupCirclesMap.get(taskManageHolder.viewManage.shareSubView.currentGroupCircle.rid + "");
 
-					} else {
-						currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+						} else {
+							currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+						}
+					} else if (taskManageHolder.viewManage.shareSubView1 != null) {
+						if (taskManageHolder.viewManage.shareSubView1.currentGroupCircle != null) {
+							currentGroupCircle = data.relationship.groupCirclesMap.get(taskManageHolder.viewManage.shareSubView1.currentGroupCircle.rid + "");
+
+						} else {
+							currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+						}
 					}
 					if (currentGroupCircle != null && currentGroupCircle.groups != null) {
 						groups = currentGroupCircle.groups;
@@ -582,6 +591,9 @@ public class GroupListController {
 		if (taskManageHolder.viewManage.shareSubView != null) {
 			taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(currentGroupCircle);
 			taskManageHolder.viewManage.shareSubView.showShareMessages();
+		} else if (taskManageHolder.viewManage.shareSubView1 != null) {
+			taskManageHolder.viewManage.shareSubView1.setGroupsDialogContent(currentGroupCircle);
+			taskManageHolder.viewManage.shareSubView1.showShareMessages();
 		}
 	}
 }

@@ -29,7 +29,7 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customView.ImageDetailFragment;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.TaskManageHolder;

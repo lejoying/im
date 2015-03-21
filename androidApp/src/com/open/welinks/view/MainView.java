@@ -15,7 +15,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.PagerBody;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.MainController;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.Data;

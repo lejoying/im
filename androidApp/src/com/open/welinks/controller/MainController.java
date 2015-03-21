@@ -39,7 +39,7 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.ListBody1;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.LoginActivity;
 import com.open.welinks.ScanQRCodeActivity;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -157,6 +157,7 @@ public class MainController {
 	}
 
 	public void onDestroy() {
+		// thisActivity.unregisterReceiver(connectionChangeReceiver);
 		mLocationManagerProxy.removeUpdates(mAMapLocationListener);
 		mLocationManagerProxy.destroy();
 		thisView.messagesSubView.onDestroy();

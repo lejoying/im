@@ -31,7 +31,7 @@ import android.util.TypedValue;
 
 import com.open.lib.MyLog;
 import com.open.welinks.MainActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customView.CustomBorderDrawable;
 
 public class AppShortCutUtil {

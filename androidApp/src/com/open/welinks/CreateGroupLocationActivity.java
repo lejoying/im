@@ -59,7 +59,7 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.Inputtips.InputtipsListener;
 import com.amap.api.services.help.Tip;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.LBSHandler;
 

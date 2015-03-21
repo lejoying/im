@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.PopupWindow;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.BaseDataUtils;
 

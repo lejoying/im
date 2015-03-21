@@ -33,7 +33,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.open.lib.MyLog;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.customView.ShareView;
 import com.open.welinks.model.Data;

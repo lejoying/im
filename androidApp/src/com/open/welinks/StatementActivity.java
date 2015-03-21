@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import com.open.welink.R;
+import com.open.welinks.R;
 
 public class StatementActivity extends Activity implements OnClickListener {
 

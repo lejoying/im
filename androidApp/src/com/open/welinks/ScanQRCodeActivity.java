@@ -35,7 +35,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customView.ScanView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;

@@ -31,7 +31,7 @@ import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.CreateBoardActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.MyOnClickListener;
@@ -712,8 +712,14 @@ public class ShareSectionController {
 		taskManageHolder.viewManage.shareSectionView = null;
 		if (thisView.currentGroup != null && thisView.currentBoard != null)
 			thisView.currentGroup.currentBoard = thisView.currentBoard.sid;
-		taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
-		taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
+		if (taskManageHolder.viewManage.shareSubView != null) {
+			taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
+			taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
+		}
+		if (taskManageHolder.viewManage.shareSubView1 != null) {
+			taskManageHolder.viewManage.shareSubView1.thisController.nowpage = 0;
+			taskManageHolder.viewManage.shareSubView1.getCurrentGroupShareMessages();
+		}
 	}
 
 	public void addCommentToMessage(String gid, String sid, String gsid, String content) {

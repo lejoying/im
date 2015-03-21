@@ -29,7 +29,8 @@ import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-import com.open.welink.R;
+import com.open.welinks.NearbyReleationActivity;
+import com.open.welinks.R;
 import com.open.welinks.ClassificationRecommendationActivity;
 import com.open.welinks.MainActivity1;
 import com.open.welinks.NearbyActivity;
@@ -290,14 +291,14 @@ public class SquareSubView {
 				// intent.putExtra("type", "hottest");
 				// thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_group_normal) {
-				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				Intent intent = new Intent(thisController.thisActivity, NearbyReleationActivity.class);
 				intent.putExtra("type", "group");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_category_normal) {
 				Intent intent = new Intent(thisController.thisActivity, ClassificationRecommendationActivity.class);
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_test_normal) {
-				Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+				Intent intent = new Intent(thisController.thisActivity, NearbyReleationActivity.class);
 				intent.putExtra("type", "account");
 				thisController.thisActivity.startActivity(intent);
 			} else if (id == R.drawable.sidebar_icon_beauty_normal) {

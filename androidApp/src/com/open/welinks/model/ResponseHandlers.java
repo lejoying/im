@@ -1093,7 +1093,11 @@ public class ResponseHandlers {
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
 				data.relationship.isModified = true;
-				viewManage.shareSubView.setGroupsDialogContent(null);
+				if (viewManage.shareSubView != null) {
+					viewManage.shareSubView.setGroupsDialogContent(null);
+				} else if (viewManage.shareSubView1 != null) {
+					viewManage.shareSubView1.setGroupsDialogContent(null);
+				}
 			} else {
 				log.d(ViewManage.getErrorLineNumber() + "创建群组失败===================" + response.失败原因);
 
@@ -1127,8 +1131,13 @@ public class ResponseHandlers {
 					// viewManage.shareSectionView.showGroupBoards();
 					// viewManage.shareSectionView.showShareMessages();
 					// }
-					viewManage.shareSubView.thisController.nowpage = 0;
-					viewManage.shareSubView.getCurrentGroupShareMessages();
+					if (viewManage.shareSubView != null) {
+						viewManage.shareSubView.thisController.nowpage = 0;
+						viewManage.shareSubView.getCurrentGroupShareMessages();
+					} else if (viewManage.shareSubView1 != null) {
+						viewManage.shareSubView1.thisController.nowpage = 0;
+						viewManage.shareSubView1.getCurrentGroupShareMessages();
+					}
 				}
 			} else {
 				log.d(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -1253,8 +1262,13 @@ public class ResponseHandlers {
 								}
 								if (group.boards.contains(group.currentBoard)) {
 									if (gid.equals("")) {
-										viewManage.shareSubView.showShareMessages();
-										viewManage.shareSubView.getCurrentGroupShareMessages();
+										if (viewManage.shareSubView != null) {
+											viewManage.shareSubView.showShareMessages();
+											viewManage.shareSubView.getCurrentGroupShareMessages();
+										} else if (viewManage.shareSubView1 != null) {
+											viewManage.shareSubView1.showShareMessages();
+											viewManage.shareSubView1.getCurrentGroupShareMessages();
+										}
 									}
 								} else {
 									flag = true;
@@ -1331,7 +1345,11 @@ public class ResponseHandlers {
 				currentGroup.relation = group.relation;
 				if (currentGroup.cover != null && !currentGroup.cover.equals(group.cover)) {
 					if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
-						viewManage.shareSubView.setConver();
+						if (viewManage.shareSubView != null) {
+							viewManage.shareSubView.setConver();
+						} else if (viewManage.shareSubView1 != null) {
+							viewManage.shareSubView1.setConver();
+						}
 					}
 				}
 				currentGroup.cover = group.cover;
@@ -1442,7 +1460,11 @@ public class ResponseHandlers {
 						boolean flag2 = group.cover.equals(currentGroup.cover);
 						if (!flag2) {
 							currentGroup.cover = group.cover;
-							viewManage.shareSubView.setConver();
+							if (viewManage.shareSubView != null) {
+								viewManage.shareSubView.setConver();
+							} else if (viewManage.shareSubView1 != null) {
+								viewManage.shareSubView1.setConver();
+							}
 						}
 					}
 					currentGroup.permission = group.permission;
@@ -1846,8 +1868,13 @@ public class ResponseHandlers {
 
 		public void onFailure(HttpException error, String msg) {
 			if (viewManage.mainView.activityStatus.state == viewManage.mainView.activityStatus.SHARE) {
-				viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Failed;
-				viewManage.shareSubView.showRoomTime();
+				if (viewManage.shareSubView != null) {
+					viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Failed;
+					viewManage.shareSubView.showRoomTime();
+				} else if (viewManage.shareSubView1 != null) {
+					viewManage.shareSubView1.thisController.reflashStatus.state = viewManage.shareSubView1.thisController.reflashStatus.Failed;
+					viewManage.shareSubView1.showRoomTime();
+				}
 			}
 		};
 	};
@@ -1930,10 +1957,17 @@ public class ResponseHandlers {
 		if (data.relationship.groups.contains(gid)) {
 			board.updateTime = new Date().getTime();
 			if ("Main".equals(type)) {
-				if (responsesShare.shareMessagesOrder.size() == 0) {
-					viewManage.shareSubView.thisController.nowpage--;
+				if (viewManage.shareSubView != null) {
+					if (responsesShare.shareMessagesOrder.size() == 0) {
+						viewManage.shareSubView.thisController.nowpage--;
+					}
+					viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Normal;
+				} else if (viewManage.shareSubView1 != null) {
+					if (responsesShare.shareMessagesOrder.size() == 0) {
+						viewManage.shareSubView1.thisController.nowpage--;
+					}
+					viewManage.shareSubView1.thisController.reflashStatus.state = viewManage.shareSubView1.thisController.reflashStatus.Normal;
 				}
-				viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Normal;
 				viewManage.postNotifyView("ShareSubViewMessage");
 			} else if ("SectionPage".equals(type)) {
 				if (responsesShare.shareMessagesOrder.size() == 0) {

@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.API;

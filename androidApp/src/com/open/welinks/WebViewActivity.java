@@ -30,7 +30,7 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.open.lib.MyLog;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 

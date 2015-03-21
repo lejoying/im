@@ -43,8 +43,7 @@ import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-import com.open.welink.R;
-import com.open.welinks.controller.ShareSubController;
+import com.open.welinks.R;
 import com.open.welinks.controller.ShareSubController1;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.ScrollListBody;
@@ -140,6 +139,7 @@ public class ShareSubView1 {
 
 	public ShareSubView1(MainView1 mainView) {
 		this.mainView = mainView;
+		taskManageHolder.viewManage.shareSubView1 = this;
 	}
 
 	public SmallBusinessCardPopView businessCardPopView;

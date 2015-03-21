@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -60,8 +61,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.welinks.NearbyActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.MainActivity;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -97,7 +97,7 @@ public class NearbyController {
 
 	public NearbyView thisView;
 	public NearbyController thisController;
-	public NearbyActivity thisActivity;
+	public Activity thisActivity;
 
 	public LocationManagerProxy mLocationManagerProxy;
 	public SearchBound bound;
@@ -142,7 +142,7 @@ public class NearbyController {
 		account, group, newest, hottest
 	}
 
-	public NearbyController(NearbyActivity thisActivity) {
+	public NearbyController(Activity thisActivity) {
 		thisController = this;
 		this.thisActivity = thisActivity;
 	}
@@ -390,9 +390,12 @@ public class NearbyController {
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (view.equals(thisView.backView)) {
-					Intent intent = new Intent(thisActivity, MainActivity.class);
-					thisActivity.startActivity(intent);
-					// thisActivity.finish();
+					if (status == Status.account || status == Status.group) {
+						thisActivity.finish();
+					} else {
+						Intent intent = new Intent(thisActivity, MainActivity.class);
+						thisActivity.startActivity(intent);
+					}
 				} else if (view.equals(thisView.positionView)) {
 					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
 					int topMarigin = params.topMargin;
@@ -926,8 +929,10 @@ public class NearbyController {
 							needList.add(currentShareMessage);
 						}
 					} else {
-						currentShareMessage.getStatus = "synchronous";
-						needList.add(shareMessage);
+						if (searchRadius >= currentShareMessage.distance) {
+							currentShareMessage.getStatus = "synchronous";
+							needList.add(shareMessage);
+						}
 					}
 				}
 				mInfomations.addAll(needList);
@@ -949,10 +954,12 @@ public class NearbyController {
 			for (int j = 0; j < mInfomations.size() - i - 1; j++) {
 				ShareMessage m1 = (ShareMessage) mInfomations.get(j);
 				ShareMessage m2 = (ShareMessage) mInfomations.get(j + 1);
-				if (m1.time < m2.time) {
-					ShareMessage temp = m1;
-					mInfomations.set(j, m2);
-					mInfomations.set(j + 1, temp);
+				if (m1 != null && m2 != null) {
+					if (m1.time < m2.time) {
+						ShareMessage temp = m1;
+						mInfomations.set(j, m2);
+						mInfomations.set(j + 1, temp);
+					}
 				}
 			}
 		}
@@ -982,10 +989,12 @@ public class NearbyController {
 			message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
 			}.getType());
 		}
+		log.e("processingShareMessage:" + message.sid);
 		return message;
 	}
 
 	public void processingShareData(PoiData poiData) {
+
 		ShareMessage message = data.boards.new ShareMessage();
 		String content = poiData.content;
 		content = new String(Base64Coder.decode(content));
@@ -1009,6 +1018,7 @@ public class NearbyController {
 			}.getType());
 		}
 		mInfomations.add(message);
+		log.e("processingShareData:" + message.sid);
 
 		// TODO error code
 		data.boards.shareMessagesMap.put(message.sid, message);

@@ -20,7 +20,7 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.mobeta.android.dslv.DragSortListView;
 import com.open.welinks.GroupListActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.GroupListController;
 import com.open.welinks.controller.GroupListController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;

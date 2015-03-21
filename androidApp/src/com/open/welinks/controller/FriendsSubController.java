@@ -24,7 +24,7 @@ import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.CirclesManageActivity;
 import com.open.welinks.NearbyActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.SearchFriendActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.customView.Alert;

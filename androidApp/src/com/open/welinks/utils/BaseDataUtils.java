@@ -2,7 +2,7 @@ package com.open.welinks.utils;
 
 import java.lang.reflect.Field;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.model.Data;
 
 import android.content.Context;

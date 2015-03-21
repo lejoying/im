@@ -16,7 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.open.lib.MyLog;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.controller.MainController;
 import com.open.welinks.controller.MeSubController;

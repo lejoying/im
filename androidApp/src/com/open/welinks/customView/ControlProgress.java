@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 
 public class ControlProgress {
 

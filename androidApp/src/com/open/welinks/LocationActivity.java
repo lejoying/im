@@ -16,7 +16,7 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.GeocodeSearch.OnGeocodeSearchListener;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.open.welink.R;
+import com.open.welinks.R;
 
 public class LocationActivity extends Activity implements OnClickListener, OnGeocodeSearchListener {
 

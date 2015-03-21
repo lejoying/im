@@ -41,7 +41,7 @@ import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.ShareSectionController;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.customView.SmallBusinessCardPopView;

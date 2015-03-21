@@ -6,6 +6,7 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.graphics.Color;
@@ -48,7 +49,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
 import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
@@ -78,7 +79,7 @@ public class NearbyView {
 
 	public NearbyView thisView;
 	public NearbyController thisController;
-	public NearbyActivity thisActivity;
+	public Activity thisActivity;
 	public Context context;
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
@@ -97,7 +98,7 @@ public class NearbyView {
 
 	public View maxView;
 
-	public NearbyView(NearbyActivity thisActivity) {
+	public NearbyView(Activity thisActivity) {
 		thisView = this;
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
@@ -175,23 +176,6 @@ public class NearbyView {
 
 		int width = (int) (this.metrics.density * 48);
 
-		ImageView lineView = new ImageView(thisActivity);
-		lineView.setBackgroundColor(Color.parseColor("#0099cd"));
-		// int lineWidth = (int) (1 * this.metrics.density);
-		// int linePadding = (int) (5 * this.metrics.density);
-		// RelativeLayout.LayoutParams lineParams = new RelativeLayout.LayoutParams(lineWidth, width - linePadding * 4);
-		// this.centerContainer.addView(lineView, lineParams);
-
-		TextView textView = new TextView(thisActivity);
-		textView.setText("发现");
-		textView.setGravity(Gravity.CENTER_VERTICAL);
-		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
-		textView.setTextColor(Color.parseColor("#0099cd"));
-		RelativeLayout.LayoutParams textViewParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-		int padding2 = (int) (10 * metrics.density);
-		textView.setPadding(padding2 * 2, padding2, padding2 * 2, padding2);
-		backMaxView.addView(textView, textViewParams);
-
 		RelativeLayout.LayoutParams centerContainerParams = (LayoutParams) this.centerContainer.getLayoutParams();
 		// this.centerContainer.setBackgroundColor(Color.parseColor("#380099cd"));
 		this.centerContainer.setGravity(Gravity.CENTER_VERTICAL);
@@ -201,21 +185,27 @@ public class NearbyView {
 		RelativeLayout.LayoutParams threeChoicesViewParams = (LayoutParams) this.threeChoicesView.getLayoutParams();
 		threeChoicesViewParams.leftMargin = (int) (((this.metrics.widthPixels - this.metrics.density * 180) / 2) - 48 * this.metrics.density);
 
-		ImageView backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
-		backImageView.setVisibility(View.GONE);
-		backImageView.setImageResource(R.drawable.ab3);
-		backImageView.setColorFilter(Color.parseColor("#0099cd"));
-		backImageView.setAlpha(0.875f);
-		RelativeLayout.LayoutParams backImageViewParams = (LayoutParams) backImageView.getLayoutParams();
-		backImageViewParams.width = width;
-		backImageViewParams.height = width;
-
 		RelativeLayout.LayoutParams params = (LayoutParams) this.backView.getLayoutParams();
 		params.height = width;
 		params.width = (int) (width + 5 * this.metrics.density);
 		this.backView.setPadding(0, 0, (int) (10 * this.metrics.density), 0);
+		ImageView backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
 
 		if (thisController.status == Status.account || thisController.status == Status.group) {
+			ImageView lineView = new ImageView(thisActivity);
+			lineView.setBackgroundColor(Color.parseColor("#0099cd"));
+			int lineWidth = (int) (1 * this.metrics.density);
+			int linePadding = (int) (5 * this.metrics.density);
+			RelativeLayout.LayoutParams lineParams = new RelativeLayout.LayoutParams(lineWidth, width - linePadding * 4);
+			this.centerContainer.addView(lineView, lineParams);
+
+			backImageView.setImageResource(R.drawable.ab3);
+			backImageView.setColorFilter(Color.parseColor("#0099cd"));
+			backImageView.setAlpha(0.875f);
+			RelativeLayout.LayoutParams backImageViewParams = (LayoutParams) backImageView.getLayoutParams();
+			backImageViewParams.width = width;
+			backImageViewParams.height = width;
+
 			this.releationMenuImage = new ImageView(thisActivity);
 			this.releationMenuImage.setImageResource(R.drawable.chat_add_on);
 			this.releationMenuImage.setColorFilter(Color.parseColor("#0099cd"));
@@ -229,6 +219,17 @@ public class NearbyView {
 			this.threeChoicesView.setButtonOneText("附近的群");
 			this.threeChoicesView.setButtonThreeText("附近的人");
 		} else {
+			backImageView.setVisibility(View.GONE);
+			TextView textView = new TextView(thisActivity);
+			textView.setText("发现");
+			textView.setGravity(Gravity.CENTER_VERTICAL);
+			textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
+			textView.setTextColor(Color.parseColor("#0099cd"));
+			RelativeLayout.LayoutParams textViewParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+			int padding2 = (int) (10 * metrics.density);
+			textView.setPadding(padding2 * 2, padding2, padding2 * 2, padding2);
+			backMaxView.addView(textView, textViewParams);
+
 			this.shareMenuImage = new ImageView(thisActivity);
 			this.shareMenuImage.setImageResource(R.drawable.button_modifygroupname);
 			this.shareMenuImage.setColorFilter(Color.parseColor("#0099cd"));

@@ -10,7 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 
 public class ScanView extends View {
 

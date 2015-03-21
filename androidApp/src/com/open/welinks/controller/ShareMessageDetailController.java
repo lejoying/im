@@ -34,7 +34,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputCommentDialog;
@@ -722,16 +722,18 @@ public class ShareMessageDetailController {
 				final Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群分享成功")) {
 					boolean flag = false;
+					ShareMessage shareMessage = null;
 					try {
 						flag = data.boards.shareMessagesMap.containsKey(response.share.gsid);
-						ShareMessage shareMessage = data.boards.shareMessagesMap.get(response.share.gsid);
+						shareMessage = data.boards.shareMessagesMap.get(response.share.gsid);
 						if (shareMessage != null) {
 							shareMessage.comments.clear();
 							shareMessage.comments.addAll(response.share.comments);
 							shareMessage.totalScore = response.share.totalScore;
 							shareMessage.scores = response.share.scores;
 						} else {
-							data.boards.shareMessagesMap.put(response.share.gsid, response.share);
+							shareMessage = response.share;
+							data.boards.shareMessagesMap.put(response.share.gsid, shareMessage);
 						}
 						data.boards.isModified = true;
 					} catch (Exception e) {

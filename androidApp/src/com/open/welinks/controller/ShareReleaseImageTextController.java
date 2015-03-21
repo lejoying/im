@@ -361,7 +361,11 @@ public class ShareReleaseImageTextController {
 		if ("".equals(sendContent) && flag) {
 			return;
 		}
-		taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
+		if (taskManageHolder.viewManage.shareSubView != null)
+			taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
+		if (taskManageHolder.viewManage.shareSubView1 != null)
+			taskManageHolder.viewManage.shareSubView1.isShowFirstMessageAnimation = true;
+
 		thisActivity.finish();
 
 		TaskContainer_Share mTaskContainer_Share = new TaskContainer_Share();
@@ -407,7 +411,11 @@ public class ShareReleaseImageTextController {
 		if ("".equals(sendContent) && flag) {
 			return;
 		}
-		taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
+		if (taskManageHolder.viewManage.shareSubView != null) {
+			taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
+		} else if (taskManageHolder.viewManage.shareSubView1 != null) {
+			taskManageHolder.viewManage.shareSubView1.isShowFirstMessageAnimation = true;
+		}
 		thisActivity.finish();
 		new Thread(new Runnable() {
 

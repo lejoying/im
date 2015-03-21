@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 
 public class ThreeChoicesView extends FrameLayout {
 	private Button button_one, button_two, button_three;

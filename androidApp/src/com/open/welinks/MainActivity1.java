@@ -6,14 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
 import com.open.lib.MyLog;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.MainController1;
 import com.open.welinks.controller.ShareSubController1;
 import com.open.welinks.model.Data;

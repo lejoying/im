@@ -20,8 +20,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.open.welink.R;
-import com.open.welink.R.color;
+import com.open.welinks.R;
+import com.open.welinks.R.color;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;

@@ -15,7 +15,7 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.view.ImagesGridView;
 
 public class ImagesGridController {

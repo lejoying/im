@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.LoginController;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;

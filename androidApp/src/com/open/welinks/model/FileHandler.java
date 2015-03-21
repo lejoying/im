@@ -30,7 +30,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.welinks.MainActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.ThumbleListener;
 import com.open.welinks.model.SubData.ShareContentItem;
@@ -96,6 +96,7 @@ public class FileHandler {
 
 	// public TaskManager mTaskManager = TaskManager.getInstance();
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
+	public Data data = Data.getInstance();
 
 	public LinkedBlockingQueue<MyFile> myFileQueue;
 
@@ -124,11 +125,11 @@ public class FileHandler {
 							}
 						} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_VOICE) {
 							// TODO voice
-//							resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardVoiceFolder, ".osa");
-//							myFile.task.currentResolveFileCount++;
-//							if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
-//								myFile.task.onLocalFilesResolved();
-//							}
+							// resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardVoiceFolder, ".osa");
+							// myFile.task.currentResolveFileCount++;
+							// if (myFile.task.currentResolveFileCount == myFile.task.resolveFileTotal) {
+							// myFile.task.onLocalFilesResolved();
+							// }
 						} else if (myFile.uploadFileType == myFile.UPLOAD_TYPE_Gif) {
 							// resolveVoiceOrGifFile(myFile, taskManageHolder.fileHandler.sdcardGifImageFolder, ".osg");
 							// myFile.task.currentResolveFileCount++;
@@ -588,7 +589,7 @@ public class FileHandler {
 						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 							if (imageView.getTag(R.id.tag_first) != null) {
 								if (imageView.getTag(R.id.tag_fifth) == null) {
-									float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
+									float screenWidth = data.baseData.screenWidth;
 									int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
 									LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
 									imageView.setLayoutParams(params);
@@ -652,7 +653,7 @@ public class FileHandler {
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 						if (imageView.getTag(R.id.tag_first) != null) {
 							if (params == null) {
-								float screenWidth = viewManage.mainView.displayMetrics.widthPixels;
+								float screenWidth = data.baseData.screenWidth;
 								int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
 								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
 								imageView.setLayoutParams(params);

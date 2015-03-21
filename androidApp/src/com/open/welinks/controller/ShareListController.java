@@ -26,7 +26,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;

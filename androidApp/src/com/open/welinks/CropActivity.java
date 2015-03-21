@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import com.open.lib.MyLog;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customView.ClipImageLayout;
 
 public class CropActivity extends Activity implements OnClickListener {

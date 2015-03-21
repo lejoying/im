@@ -32,7 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.customView.ClearEditText;
 import com.open.welinks.customView.SideBar;
 import com.open.welinks.customView.SideBar.OnTouchingLetterChangedListener;

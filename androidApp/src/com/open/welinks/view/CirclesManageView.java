@@ -28,7 +28,7 @@ import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.controller.CirclesManageController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;

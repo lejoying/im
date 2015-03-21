@@ -17,7 +17,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.open.welinks.GroupListActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.utils.WeChatShareUtils;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;

@@ -10,7 +10,7 @@ import android.view.View.OnTouchListener;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.DynamicListActivity;
 import com.open.welinks.FindMoreActivity;
-import com.open.welink.R;
+import com.open.welinks.R;
 import com.open.welinks.SettingActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
