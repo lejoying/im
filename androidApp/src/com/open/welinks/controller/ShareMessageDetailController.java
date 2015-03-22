@@ -146,6 +146,7 @@ public class ShareMessageDetailController {
 			} else {
 				board = data.boards.new Board();
 				// getShareFromServer(gid, gsid);
+				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
 				getShareMessageDetail();
 			}
 		}
@@ -476,20 +477,6 @@ public class ShareMessageDetailController {
 				}).show();
 			}
 		}
-	}
-
-	private void modifyPraiseusersToMessage(boolean option) {
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		User currentUser = data.userInformation.currentUser;
-		params.addBodyParameter("phone", currentUser.phone);
-		params.addBodyParameter("accessKey", currentUser.accessKey);
-		params.addBodyParameter("gid", gid);
-		params.addBodyParameter("sid", sid);
-		params.addBodyParameter("gsid", shareMessage.gsid);
-		params.addBodyParameter("option", option + "");
-
-		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
 	}
 
 	public void addCommentToMessage(String contentType, String content) {

@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -53,6 +52,7 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
@@ -71,7 +71,7 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.model.LBSHandler;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -79,7 +79,9 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.utils.Base64Coder;
 import com.open.welinks.view.NearbyView;
 
 public class NearbyController {
@@ -707,6 +709,7 @@ public class NearbyController {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if (status == Status.newest || status == Status.hottest) {
 					ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
+					data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 					intent.putExtra("gid", shareMessage.gid);
 					intent.putExtra("sid", shareMessage.sid);
@@ -811,12 +814,6 @@ public class NearbyController {
 			}
 		}
 		httpUtils.send(HttpMethod.GET, API.LBS_DATASEARCH_AROUND, params, httpClient.new ResponseHandler<String>() {
-			class Response {
-				public int count;
-				public String info;
-				public int status;
-				public List<PoiData> datas;
-			}
 
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -832,8 +829,10 @@ public class NearbyController {
 				}
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if ("OK".equals(response.info)) {
+					boolean isMerge = false;
 					if (nowpage == 0) {
 						mInfomations.clear();
+						isMerge = true;
 					}
 					if (response.count > 0) {
 						nowpage++;
@@ -861,7 +860,19 @@ public class NearbyController {
 						}
 						isRun = false;
 					}
-					thisView.notifyData();
+					if (status == Status.account) {
+						thisView.notifyData();
+					} else if (status == Status.group) {
+						thisView.notifyData();
+					} else if (status == Status.newest) {
+						if (isMerge) {
+							getTableListData();
+						} else {
+							thisView.notifyData();
+						}
+					} else if (status == Status.hottest) {
+						thisView.notifyData();
+					}
 				} else {
 					log.e(response.info + "::::::" + response.status);
 				}
@@ -870,9 +881,114 @@ public class NearbyController {
 		});
 	}
 
+	class Response {
+		public int count;
+		public String info;
+		public int status;
+		public ArrayList<PoiData> datas;
+	}
+
+	public void getTableListData() {
+
+		// long time = System.currentTimeMillis();
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		// params.addHeader("Cookie", "sid=f6839c7b168da4bc3bf0d2c5d13a4cf1b0829cab3047fa5ce45801a27e3bd0c60ea69cb9fc8bd465");
+		// params.addQueryStringParameter("num", "50");
+		// params.addQueryStringParameter("page", "1");
+		// params.addQueryStringParameter("order", "_id:0");
+		// params.addQueryStringParameter("_", time + "");
+		// params.addQueryStringParameter("v", "1");
+		// params.addQueryStringParameter("cid", "1");
+		httpUtils.send(HttpMethod.GET, "http://yuntuapi.amap.com/datamanage/data/list?key=0cd819a62c50d40b75a73f66cb14aa06&tableid=54f520e3e4b0ff22e1fc52d3&sortrule=time:0", params, httpClient.new ResponseHandler<String>() {
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				// log.e(responseInfo.result);
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				// log.e(response.datas.size() + "------------");
+				ArrayList<PoiData> list = response.datas;
+				ArrayList<ShareMessage> needList = new ArrayList<ShareMessage>();
+				ShareMessage shareMessage = (ShareMessage) mInfomations.get(0);
+				for (int i = 0; i < list.size(); i++) {
+					PoiData poiEntity = list.get(i);
+					ShareMessage currentShareMessage = processingShareMessage(poiEntity);
+					if (shareMessage != null) {
+						if (shareMessage.time < currentShareMessage.time && searchRadius >= currentShareMessage.distance) {
+							currentShareMessage.getStatus = "synchronous";
+							needList.add(currentShareMessage);
+						}
+					} else {
+						currentShareMessage.getStatus = "synchronous";
+						needList.add(shareMessage);
+					}
+				}
+				mInfomations.addAll(needList);
+				sortMInformations();
+				for (int i = 0; i < mInfomations.size(); i++) {
+					log.e(((ShareMessage) (mInfomations.get(i))).time + "");
+				}
+				thisView.notifyData();
+			}
+
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				super.onFailure(error, msg);
+				thisView.notifyData();
+			}
+		});
+	}
+
+	// 冒泡排序
+	public void sortMInformations() {
+		for (int i = 0; i < mInfomations.size() - 1; i++) {
+			for (int j = 0; j < mInfomations.size() - i - 1; j++) {
+				ShareMessage m1 = (ShareMessage) mInfomations.get(j);
+				ShareMessage m2 = (ShareMessage) mInfomations.get(j + 1);
+				if (m1.time < m2.time) {
+					ShareMessage temp = m1;
+					mInfomations.set(j, m2);
+					mInfomations.set(j + 1, temp);
+				}
+			}
+		}
+	}
+
+	public ShareMessage processingShareMessage(PoiData poiData) {
+		ShareMessage message = data.boards.new ShareMessage();
+		String content = poiData.content;
+		content = new String(Base64Coder.decode(content));
+		if (content.lastIndexOf("@") == content.length() - 1) {
+			content = content.substring(0, content.length() - 1);
+		}
+		message.content = content;
+		message.head = poiData.head;
+		message.gsid = String.valueOf(poiData.gsid);
+		message.sid = String.valueOf(poiData.sid);
+		message.phone = poiData.phone;
+		message.totalScore = poiData.totalScore;
+		message.type = poiData.type;
+		message.time = poiData.time;
+		message.nickName = poiData._name;
+		String location[] = poiData._location.split(",");
+		message.distance = 1000 * Double.valueOf(LBSHandler.getInstance().pointDistance(longitude + "", latitude + "", location[0], location[1]));
+		String scores = poiData.scores;
+		if (scores != null && !"".equals(scores)) {
+			scores = scores.substring(0, scores.length() - 1);
+			message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
+			}.getType());
+		}
+		return message;
+	}
+
 	public void processingShareData(PoiData poiData) {
 		ShareMessage message = data.boards.new ShareMessage();
-		message.content = poiData.content;
+		String content = poiData.content;
+		content = new String(Base64Coder.decode(content));
+		if (content.lastIndexOf("@") == content.length() - 1) {
+			content = content.substring(0, content.length() - 1);
+		}
+		message.content = content;
 		message.head = poiData.head;
 		message.gsid = String.valueOf(poiData.gsid);
 		message.sid = String.valueOf(poiData.sid);
@@ -889,6 +1005,8 @@ public class NearbyController {
 			}.getType());
 		}
 		mInfomations.add(message);
+
+		// TODO error code
 		data.boards.shareMessagesMap.put(message.sid, message);
 	}
 
