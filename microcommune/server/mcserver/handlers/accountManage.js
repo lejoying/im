@@ -1255,7 +1255,8 @@ accountManage.modifylocation = function (data, response) {
                             mainBusiness: accountData.mainBusiness,
                             lastlogintime: accountData.lastlogintime,
                             phone: accountData.phone,
-                            head: accountData.head
+                            head: accountData.head,
+                            age: accountData.age || 0
                         })
                     }, success: function (info) {
                         var info = JSON.parse(info);
