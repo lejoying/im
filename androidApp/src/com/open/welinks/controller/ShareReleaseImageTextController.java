@@ -56,7 +56,7 @@ import com.open.welinks.oss.UploadMultipart;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareReleaseImageTextView;
-import com.open.welinks.view.ShareSubView.SharesMessageBody;
+import com.open.welinks.view.ShareSubView1.SharesMessageBody;
 
 public class ShareReleaseImageTextController {
 
@@ -361,10 +361,9 @@ public class ShareReleaseImageTextController {
 		if ("".equals(sendContent) && flag) {
 			return;
 		}
-		if (taskManageHolder.viewManage.shareSubView != null)
+		if (taskManageHolder.viewManage.shareSubView != null) {
 			taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
-		if (taskManageHolder.viewManage.shareSubView1 != null)
-			taskManageHolder.viewManage.shareSubView1.isShowFirstMessageAnimation = true;
+		}
 
 		thisActivity.finish();
 
@@ -413,8 +412,6 @@ public class ShareReleaseImageTextController {
 		}
 		if (taskManageHolder.viewManage.shareSubView != null) {
 			taskManageHolder.viewManage.shareSubView.isShowFirstMessageAnimation = true;
-		} else if (taskManageHolder.viewManage.shareSubView1 != null) {
-			taskManageHolder.viewManage.shareSubView1.isShowFirstMessageAnimation = true;
 		}
 		thisActivity.finish();
 		new Thread(new Runnable() {

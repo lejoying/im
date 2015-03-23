@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
@@ -39,8 +38,8 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.ListBody1;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
-import com.open.welinks.LoginActivity;
 import com.open.welinks.ScanQRCodeActivity;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.API;
@@ -51,8 +50,6 @@ import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.service.ConnectionChangeReceiver;
-import com.open.welinks.service.PushService;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.ViewManage;
 
@@ -91,8 +88,8 @@ public class MainController {
 
 	public boolean isExit = false;
 
-	public static final String CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
-	public ConnectionChangeReceiver connectionChangeReceiver;
+	// public static final String CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
+	// public ConnectionChangeReceiver connectionChangeReceiver;
 
 	public MainController(Activity thisActivity) {
 		this.context = thisActivity;
@@ -100,9 +97,9 @@ public class MainController {
 
 		thisController = this;
 
-		connectionChangeReceiver = new ConnectionChangeReceiver();
-		IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
-		thisActivity.registerReceiver(connectionChangeReceiver, filter);
+		// connectionChangeReceiver = new ConnectionChangeReceiver();
+		// IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
+		// thisActivity.registerReceiver(connectionChangeReceiver, filter);
 	}
 
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
@@ -521,7 +518,7 @@ public class MainController {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK) {
-			exitApplication();
+			NearbyActivity.instance.exitApplication();
 		} else if (requestCode == R.id.tag_second) {
 			messagesSubController.onActivityResult(requestCode, resultCode, data);
 		} else {
@@ -529,29 +526,29 @@ public class MainController {
 
 	}
 
-	public void exitApplication() {
-		data = parser.check();
-		data.userInformation.currentUser.phone = "";
-		data.userInformation.currentUser.accessKey = "";
-		data.userInformation.isModified = true;
-		parser.save();
-		thisActivity.stopService(new Intent(thisActivity, PushService.class));
-		if (this.connectionChangeReceiver != null) {
-			thisActivity.unregisterReceiver(this.connectionChangeReceiver);
-			connectionChangeReceiver = null;
-		}
-		DataHandler.clearData();
-		thisActivity.finish();
-		thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
-	}
+	// public void exitApplication() {
+	// data = parser.check();
+	// data.userInformation.currentUser.phone = "";
+	// data.userInformation.currentUser.accessKey = "";
+	// data.userInformation.isModified = true;
+	// parser.save();
+	// thisActivity.stopService(new Intent(thisActivity, PushService.class));
+	// if (this.connectionChangeReceiver != null) {
+	// thisActivity.unregisterReceiver(this.connectionChangeReceiver);
+	// connectionChangeReceiver = null;
+	// }
+	// DataHandler.clearData();
+	// thisActivity.finish();
+	// thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
+	// }
 
 	boolean isShowDialg = false;
 
 	public void finish() {
-		if (this.connectionChangeReceiver != null) {
-			thisActivity.unregisterReceiver(this.connectionChangeReceiver);
-			connectionChangeReceiver = null;
-		}
+		// if (this.connectionChangeReceiver != null) {
+		// thisActivity.unregisterReceiver(this.connectionChangeReceiver);
+		// connectionChangeReceiver = null;
+		// }
 	}
 
 	class Contact {

@@ -27,8 +27,7 @@ public class ViewManage {
 	public MeSubView meSubView = null;
 	public FriendsSubView friendsSubView = null;
 	public SquareSubView squareSubView = null;
-	public ShareSubView shareSubView = null;
-	public ShareSubView1 shareSubView1 = null;
+	public ShareSubView1 shareSubView = null;
 	public ChatView chatView = null;
 	public MessagesSubView messagesSubView = null;
 	public ShareMessageDetailView shareMessageDetailView = null;
@@ -70,7 +69,13 @@ public class ViewManage {
 	public int screenWidth;
 	public int screenHeight;
 
-	void initialize(Activity thisActivity) {
+	public boolean isInit = false;
+
+	public void initialize(Activity thisActivity) {
+		if (isInit) {
+			isInit = true;
+			return;
+		}
 		this.thisActivity = thisActivity;
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -121,19 +126,19 @@ public class ViewManage {
 				groupListActivity.thisView.groupListAdapter.notifyDataSetChanged();
 			}
 		} else if (viewName.equals("ShareSubView")) {
-			if (mainView1.shareSubView != null) {
+			if (mainView1 != null && mainView1.shareSubView != null) {
 				mainView1.shareSubView.setGroupsDialogContent(null);
 			}
 		} else if (viewName.equals("ShareSubViewMessage")) {
-			if (mainView1.shareSubView != null) {
+			if (mainView1 != null && mainView1.shareSubView != null) {
 				mainView1.shareSubView.showShareMessages();
 			}
 		} else if (viewName.equals("ShareSubViewConver")) {
-			if (mainView1.shareSubView != null) {
+			if (mainView1 != null && mainView1.shareSubView != null) {
 				mainView1.shareSubView.setConver();
 			}
 		} else if (viewName.equals("SquareSubViewMessage")) {
-			if (mainView1.shareSubView != null) {
+			if (mainView1 != null && mainView1.shareSubView != null) {
 				// mainView.squareSubView.showSquareMessages(true);
 			}
 		} else if (viewName.equals("ChangePasswordActivitySuccess")) {

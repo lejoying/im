@@ -50,7 +50,6 @@ import com.open.lib.MyLog;
 import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
 import com.open.welinks.R;
-import com.open.welinks.NearbyActivity;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;
@@ -159,6 +158,7 @@ public class NearbyView {
 
 		// this.lineView = thisActivity.findViewById(R.id.line);
 		this.searChView = thisActivity.findViewById(R.id.search);
+		this.searChView.setVisibility(View.GONE);
 		this.locationView = thisActivity.findViewById(R.id.location);
 		this.positionView = thisActivity.findViewById(R.id.position);
 		this.screen = (ImageView) thisActivity.findViewById(R.id.screen);
@@ -210,12 +210,12 @@ public class NearbyView {
 			this.releationMenuImage.setImageResource(R.drawable.chat_add_on);
 			this.releationMenuImage.setColorFilter(Color.parseColor("#0099cd"));
 			this.releationMenuImage.setAlpha(0.875f);
-			int moreWidth = (int) (53 * this.metrics.density);
-			RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
-			int padding = (int) (5 * this.metrics.density);
-			this.releationMenuImage.setPadding(padding, padding, padding, padding);
-			this.releationMenuImage.setBackgroundResource(R.drawable.backview_background);
-			this.rightContainer.addView(this.releationMenuImage, menuImageParams);
+			// int moreWidth = (int) (53 * this.metrics.density);
+			// RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
+			// int padding = (int) (5 * this.metrics.density);
+			// this.releationMenuImage.setPadding(padding, padding, padding, padding);
+			// this.releationMenuImage.setBackgroundResource(R.drawable.backview_background);
+			// this.rightContainer.addView(this.releationMenuImage, menuImageParams);
 			this.threeChoicesView.setButtonOneText("附近的群");
 			this.threeChoicesView.setButtonThreeText("附近的人");
 		} else {
@@ -607,10 +607,12 @@ public class NearbyView {
 	}
 
 	public void notifyData() {
-		if (nearbyRelationAdapter != null)
+		if (nearbyRelationAdapter != null) {
 			nearbyRelationAdapter.notifyDataSetChanged();
-		if (nearbyShareAdapter != null)
+		}
+		if (nearbyShareAdapter != null) {
 			nearbyShareAdapter.notifyDataSetChanged();
+		}
 	}
 
 	public void showImages(List<String> list, RelativeLayout container) {

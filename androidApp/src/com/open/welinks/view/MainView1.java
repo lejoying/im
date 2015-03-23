@@ -96,6 +96,7 @@ public class MainView1 {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 		this.thisView = this;
+		viewManage.mainView1 = this;
 
 	}
 
@@ -142,14 +143,14 @@ public class MainView1 {
 		main_container.addView(shareView);
 		mainPagerBody.addChildView(shareView);
 		mainPagerBody.setTitleView(title_share, 0);
-//
-//		main_container.addView(squareView);
-//		mainPagerBody.addChildView(squareView);
-//		mainPagerBody.setTitleView(title_square, 1);
-//
-//		main_container.addView(messages_friends_me_View);
-//		mainPagerBody.addChildView(messages_friends_me_View);
-//		mainPagerBody.setTitleView(title_messages_friends_me, 2);
+		//
+		// main_container.addView(squareView);
+		// mainPagerBody.addChildView(squareView);
+		// mainPagerBody.setTitleView(title_square, 1);
+		//
+		// main_container.addView(messages_friends_me_View);
+		// mainPagerBody.addChildView(messages_friends_me_View);
+		// mainPagerBody.setTitleView(title_messages_friends_me, 2);
 
 		friendsMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimatefriends);
 		messagesMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesList);

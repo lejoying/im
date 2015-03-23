@@ -20,6 +20,7 @@ import com.open.lib.HttpClient.ResponseHandler;
 import com.open.lib.MyLog;
 import com.open.welinks.LoginActivity;
 import com.open.welinks.MainActivity;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
@@ -62,12 +63,12 @@ public class PushService extends Service {
 
 	@Override
 	public void onCreate() {
+		super.onCreate();
 		params = new RequestParams();
 		httpUtils = new HttpUtils();
 		mResponseInfoHandler = new ResponseInfoHandler(10);
 		random = new Random();
 		instance = this;
-		super.onCreate();
 		log.e("service onCreate");
 	}
 
@@ -154,7 +155,7 @@ public class PushService extends Service {
 					log.e(data.userInformation.currentUser.accessKey + ":::::" + data.userInformation.currentUser.phone);
 					log.e("accessKey 无效,自动退出...");
 					if (MainActivity.instance != null) {
-						MainActivity.instance.thisController.exitApplication();
+						NearbyActivity.instance.exitApplication();
 					}
 				} else {
 				}
@@ -166,7 +167,7 @@ public class PushService extends Service {
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
-			log.e("fail---------------------");
+			// log.e("fail---------------------");
 			checkConnect();
 			// connect();
 		};

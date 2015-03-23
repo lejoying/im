@@ -23,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -34,6 +35,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customView.Alert;
@@ -59,9 +61,11 @@ import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.view.ShareMessageDetailView;
 import com.open.welinks.view.ViewManage;
+import com.open.welinks.view.ShareMessageDetailView.ShareBody;
 
 public class ShareMessageDetailController {
 
@@ -273,39 +277,9 @@ public class ShareMessageDetailController {
 				} else if (view.equals(thisView.menuImage)) {
 					if (thisView.menuOptionsView.getVisibility() == View.GONE) {
 						thisView.menuOptionsView.setVisibility(View.VISIBLE);
-						thisView.dialogSpring.addListener(thisView.dialogSpringListener);
-						thisView.dialogSpring.setCurrentValue(0);
-						thisView.dialogSpring.setEndValue(1);
 					} else {
 						thisView.menuOptionsView.setVisibility(View.GONE);
 					}
-				} else if (view.equals(thisView)) {
-					// String commentContent = thisView.commentEditTextView.getText().toString().trim();
-					// thisView.commentEditTextView.setText("");
-					// thisView.commentEditTextView.setHint("添加评论 ... ...");
-					// if (thisView.commentInputView.getVisibility() == View.VISIBLE) {
-					// thisView.commentInputView.setVisibility(View.GONE);
-					// }
-					// if (thisView.inputMethodManager.isActive()) {
-					// thisView.inputMethodManager.hideSoftInputFromWindow(thisView.commentInputView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-					// }
-					// Comment comment = data.boards.new Comment();
-					// comment.phone = currentUser.phone;
-					// comment.nickName = currentUser.nickName;
-					// comment.head = currentUser.head;
-					// comment.phoneTo = phoneTo;
-					// comment.nickNameTo = nickNameTo;
-					// comment.headTo = headTo;
-					// comment.contentType = "text";
-					// comment.content = commentContent;
-					// comment.time = new Date().getTime();
-					// shareMessage.comments.add(comment);
-					//
-					// thisView.notifyShareMessageComments();
-					//
-					// thisView.mainScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-					//
-					// addCommentToMessage("text", commentContent);
 				} else if (view.equals(thisView.deleteOptionView)) {
 					deleteGroupShare();
 				} else if (view.equals(thisView.shareOptionView)) {
@@ -408,6 +382,28 @@ public class ShareMessageDetailController {
 							}
 						}
 					}).show().requestFocus();
+				} else if ("TimeView".equals(tag_class)) {
+					TextView textView = (TextView) view;
+					long time = (Long) view.getTag(R.id.tag_first);
+					int type = (Integer) view.getTag(R.id.tag_second);
+					if (type == 1) {
+						textView.setText(DateUtil.getNearNormalTime(time));
+						view.setTag(R.id.tag_second, 2);
+					} else if (type == 2) {
+						textView.setText(DateUtil.getNearShareTime(time));
+						view.setTag(R.id.tag_second, 1);
+					}
+				} else if ("HeadView".equals(tag_class)) {
+					String phone = (String) view.getTag(R.id.tag_first);
+					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, phone);
+					thisView.businessCardPopView.showUserCardDialogView();
+				} else if ("ShareMessageDetailImage".equals(tag_class)) {
+					ShareBody body = (ShareBody) view.getTag(R.id.tag_first);
+					int position = (Integer) view.getTag(R.id.tag_second);
+					data.tempData.selectedImageList = body.imageList;
+					Intent intent = new Intent(thisActivity, ImageScanActivity.class);
+					intent.putExtra("position", position + "");
+					thisActivity.startActivity(intent);
 				}
 			}
 		};
@@ -507,7 +503,7 @@ public class ShareMessageDetailController {
 
 	public void onBackPressed() {
 		this.isShow = false;
-		log.e("false");
+		// log.e("false");
 		if (thisView.sharePopupWindow.isShowing()) {
 			thisView.sharePopupWindow.dismiss();
 		} else {
@@ -723,17 +719,19 @@ public class ShareMessageDetailController {
 				if (response.提示信息.equals("获取群分享成功")) {
 					boolean flag = false;
 					ShareMessage shareMessage = null;
+					ShareMessage serverMessage = response.share;
 					try {
-						flag = data.boards.shareMessagesMap.containsKey(response.share.gsid);
-						shareMessage = data.boards.shareMessagesMap.get(response.share.gsid);
+						flag = data.boards.shareMessagesMap.containsKey(serverMessage.gsid);
+						shareMessage = data.boards.shareMessagesMap.get(serverMessage.gsid);
 						if (shareMessage != null) {
+							shareMessage.content = serverMessage.content;
 							shareMessage.comments.clear();
-							shareMessage.comments.addAll(response.share.comments);
-							shareMessage.totalScore = response.share.totalScore;
-							shareMessage.scores = response.share.scores;
+							shareMessage.comments.addAll(serverMessage.comments);
+							shareMessage.totalScore = serverMessage.totalScore;
+							shareMessage.scores = serverMessage.scores;
 						} else {
-							shareMessage = response.share;
-							data.boards.shareMessagesMap.put(response.share.gsid, shareMessage);
+							shareMessage = serverMessage;
+							data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 						}
 						data.boards.isModified = true;
 					} catch (Exception e) {
@@ -743,14 +741,10 @@ public class ShareMessageDetailController {
 						flag = false;
 					}
 					thisController.shareMessage = shareMessage;
-					final boolean flag0 = flag;
 					taskManageHolder.fileHandler.handler.post(new Runnable() {
 						public void run() {
-							if (flag0) {
-								thisView.showShareComments();
-							} else {
-								thisView.showShareMessageDetails();
-							}
+							thisView.showShareMessageDetails();
+							thisView.showShareComments();
 							thisView.scoreState();
 						}
 					});
@@ -810,5 +804,6 @@ public class ShareMessageDetailController {
 
 	public void onResume() {
 		thisView.sharePopupWindow.dismiss();
+		thisView.businessCardPopView.dismissUserCardDialogView();
 	}
 }

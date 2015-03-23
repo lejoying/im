@@ -32,6 +32,14 @@ public class DateUtil {
 		return result;
 	}
 
+	public static String getNearNormalTime(long timeMillis) {
+		String result = "";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+		Date date = new Date(timeMillis);
+		result = simpleDateFormat.format(date);
+		return result;
+	}
+
 	public static String[] getDayMoth(long timeMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date d = new java.util.Date();

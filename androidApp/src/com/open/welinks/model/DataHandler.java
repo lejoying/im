@@ -224,7 +224,7 @@ public class DataHandler {
 		try {
 
 			data.userInformation.isModified = true;
-			data.userInformation.currentUser.phone = "";
+			// data.userInformation.currentUser.phone = "";
 			data.userInformation.currentUser.accessKey = "";
 			data.userInformation.currentUser.flag = "none";
 

@@ -15,20 +15,18 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.facebook.rebound.BaseSpringSystem;
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -36,6 +34,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.customView.ShareView;
+import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.Score;
@@ -112,7 +111,8 @@ public class ShareMessageDetailView {
 
 	public View maxView;
 
-	@SuppressWarnings("deprecation")
+	public SmallBusinessCardPopView businessCardPopView;
+
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
 		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
@@ -127,9 +127,23 @@ public class ShareMessageDetailView {
 
 		thisActivity.setContentView(R.layout.activity_share_message_detail);
 		this.maxView = thisActivity.findViewById(R.id.maxView);
+		ScrollView scrollView = (ScrollView) thisActivity.findViewById(R.id.scrollView);
+		scrollView.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (thisView.menuOptionsView.getVisibility() == View.VISIBLE) {
+					thisView.menuOptionsView.setVisibility(View.GONE);
+				}
+				return false;
+			}
+		});
 		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitleView.setText("分享详情");
 		backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
+
+		this.businessCardPopView = new SmallBusinessCardPopView(thisActivity, this.maxView);
+		businessCardPopView.cardView.setHot(false);
 
 		this.contentContainer = (LinearLayout) thisActivity.findViewById(R.id.contentContainer);
 		this.commentContainer = (LinearLayout) thisActivity.findViewById(R.id.commentContainer);
@@ -153,7 +167,7 @@ public class ShareMessageDetailView {
 		// shareMessageUserHeadView = (ImageView)
 		// thisActivity.findViewById(R.id.shareMessageUserHead);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		backView.setBackgroundDrawable(thisActivity.getResources().getDrawable(R.drawable.selector_back_white));
+		backView.setBackgroundResource(R.drawable.selector_back_white);
 
 		menuImage = new ImageView(thisActivity);
 		menuImage.setImageResource(R.drawable.chat_more);
@@ -203,7 +217,7 @@ public class ShareMessageDetailView {
 	public ImageView imageView;
 
 	public void showShareMessageDetails() {
-		shareMessageTimeView.setText(DateUtil.getTime(thisController.shareMessage.time));
+		shareMessageTimeView.setText("");
 
 		// this.scoreView.setText(thisController.shareMessage.totalScore);
 		if (thisController.shareMessage.phone.equals(data.userInformation.currentUser.phone)) {
@@ -250,6 +264,8 @@ public class ShareMessageDetailView {
 		public View commentBar;
 		public View commentControlView;
 
+		public ArrayList<String> imageList;
+
 		public User currentUser;
 
 		public void initViews() {
@@ -266,6 +282,7 @@ public class ShareMessageDetailView {
 			this.commentControlView = this.commentBar.findViewById(R.id.commentControl);
 			this.commentControlView.setAlpha(0.5f);
 			this.currentUser = data.userInformation.currentUser;
+			this.imageList = new ArrayList<String>();
 		}
 
 		public void setContent(ShareMessage shareMessage, Comment comment) {
@@ -303,13 +320,19 @@ public class ShareMessageDetailView {
 			}
 			this.contentContainer.removeAllViews();
 			taskManageHolder.fileHandler.getHeadImage(head, this.headView, taskManageHolder.viewManage.options40);
+			this.headView.setOnClickListener(thisController.mOnClickListener);
+			this.headView.setTag(R.id.tag_class, "HeadView");
+			this.headView.setTag(R.id.tag_first, phone);
 			this.nickNameView.setText(nickName);
 			if (currentUser.phone.equals(phone)) {
 				taskManageHolder.fileHandler.getHeadImage(currentUser.head, this.headView, taskManageHolder.viewManage.options40);
 				this.nickNameView.setText(currentUser.nickName);
 			}
-			this.timeView.setText(DateUtil.formatHourMinute(time));
-
+			this.timeView.setText(DateUtil.getNearShareTime(time));
+			this.timeView.setOnClickListener(thisController.mOnClickListener);
+			this.timeView.setTag(R.id.tag_class, "TimeView");
+			this.timeView.setTag(R.id.tag_first, time);
+			this.timeView.setTag(R.id.tag_second, 1);
 			if (type == 1) {
 				if (shareMessage.type != "imagetext") {
 				}
@@ -342,9 +365,12 @@ public class ShareMessageDetailView {
 						thisView.imageView = imageView;
 						imageView.setDrawingCacheEnabled(true);
 					}
-					imageView.setTag("ShareMessageDetailImage#" + index);
-					index++;
+					this.imageList.add(imageFileName);
 					imageView.setOnClickListener(thisController.mOnClickListener);
+					imageView.setTag(R.id.tag_class, "ShareMessageDetailImage");
+					imageView.setTag(R.id.tag_first, this);
+					imageView.setTag(R.id.tag_second, index);
+					index++;
 
 					taskManageHolder.fileHandler.getImage(imageFileName, imageView, displayImageOptions);
 
@@ -371,7 +397,7 @@ public class ShareMessageDetailView {
 				this.contentContainer.addView(commentBar);
 				if (!"".equals(thisController.textContent)) {
 					LinearLayout.LayoutParams params0 = (android.widget.LinearLayout.LayoutParams) commentBar.getLayoutParams();
-					params0.topMargin = (int) (-35 * displayMetrics.density);
+					params0.topMargin = (int) (-20 * displayMetrics.density);
 					commentBar.setLayoutParams(params0);
 				}
 
@@ -467,19 +493,5 @@ public class ShareMessageDetailView {
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (10 * this.displayMetrics.density));
 		textView.setLayoutParams(params);
 		this.commentContainer.addView(textView);
-	}
-
-	public BaseSpringSystem mSpringSystem = SpringSystem.create();
-	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
-	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
-	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
-
-	private class DialogShowSpringListener extends SimpleSpringListener {
-		@Override
-		public void onSpringUpdate(Spring spring) {
-			float mappedValue = (float) spring.getCurrentValue();
-			menuOptionsView.setScaleX(mappedValue);
-			menuOptionsView.setScaleY(mappedValue);
-		}
 	}
 }

@@ -57,13 +57,13 @@ public class MainActivity1 extends Activity {
 
 		// Context context = instance.instance.context;
 		instance = this;
-		initImageLoader(getApplicationContext());
+		// initImageLoader(getApplicationContext());
 		// BaseDataUtils.initBaseData(this);
 		// Constant.init();
 		// startPushService();
 
-		taskManageHolder = TaskManageHolder.getInstance();
-		taskManageHolder.initialize();
+		// taskManageHolder = TaskManageHolder.getInstance();
+		// taskManageHolder.initialize();
 
 		thisActivity.setContentView(R.layout.activity_welinks);
 

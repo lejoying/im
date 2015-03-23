@@ -1,103 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="114dp"
-    android:background="@color/white" >
-
-    <ImageView
-        android:id="@+id/head"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="40dp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="25dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginBottom="2dp"
-            android:layout_weight="1.0"
-            android:gravity="center_vertical"
-            android:textColor="#99000000"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/age"
-            android:layout_width="50dp"
-            android:layout_height="25dp"
-            android:layout_marginBottom="2dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="22dp"
-            android:textColor="#99000000"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/mainBusiness"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1.0"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:textColor="#99000000"
-            android:textSize="14sp" />
-    </LinearLayout>
+    android:layout_height="wrap_content" >
 
     <RelativeLayout
-        android:id="@+id/buttomLayout"
-        android:layout_width="91dp"
-        android:layout_height="16dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp" >
-
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="45dp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="right"
-            android:paddingRight="3dp"
-            android:textColor="#B9B6AF"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/buttomLine"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:background="#B9B6AF"
-            android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/distance"
-            android:layout_width="45dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="left"
-            android:paddingLeft="3dp"
-            android:textColor="#B9B6AF"
-            android:textSize="12sp" />
-    </RelativeLayout>
-
-    <TextView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="#B9B6AF" />
+        android:layout_height="70dp"
+        android:background="@color/white" >
+
+        <ImageView
+            android:id="@+id/head"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="80dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginBottom="2dp"
+                android:gravity="center_vertical"
+                android:textColor="#99000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="35dp"
+                android:layout_height="15dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="18dp"
+                android:textColor="#99000000"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/mainBusiness"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_marginRight="100dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="#99000000"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/buttomLayout"
+            android:layout_width="91dp"
+            android:layout_height="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp" >
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="right"
+                android:paddingRight="3dp"
+                android:textColor="#B9B6AF"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/buttomLine"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:background="#B9B6AF"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="left"
+                android:paddingLeft="3dp"
+                android:textColor="#B9B6AF"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#B9B6AF" />
+    </RelativeLayout>
 
 </RelativeLayout>

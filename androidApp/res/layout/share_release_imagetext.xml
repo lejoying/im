@@ -47,7 +47,6 @@
             android:textColor="#fff"
             android:textSize="16sp" />
     </RelativeLayout>
-
     <RelativeLayout
         android:id="@+id/releaseButtomBar"
         android:layout_width="match_parent"
@@ -76,6 +75,7 @@
             android:layout_marginLeft="70dp"
             android:background="@drawable/backview_background"
             android:padding="10dp"
+            android:visibility="gone"
             android:src="@drawable/release_voice" />
 
         <ImageView
@@ -84,6 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="143dp"
+             android:visibility="gone"
             android:background="@drawable/backview_background"
             android:padding="10dp"
             android:src="@drawable/release_face" />
@@ -96,6 +97,7 @@
             android:layout_marginLeft="216dp"
             android:background="@drawable/backview_background"
             android:padding="10dp"
+            android:layout_centerHorizontal="true"
             android:src="@drawable/release_pic" />
 
         <TextView

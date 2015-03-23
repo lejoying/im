@@ -716,10 +716,6 @@ public class ShareSectionController {
 			taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
 			taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
 		}
-		if (taskManageHolder.viewManage.shareSubView1 != null) {
-			taskManageHolder.viewManage.shareSubView1.thisController.nowpage = 0;
-			taskManageHolder.viewManage.shareSubView1.getCurrentGroupShareMessages();
-		}
 	}
 
 	public void addCommentToMessage(String gid, String sid, String gsid, String content) {

@@ -128,9 +128,9 @@ public class GroupListController {
 						} else {
 							currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
 						}
-					} else if (taskManageHolder.viewManage.shareSubView1 != null) {
-						if (taskManageHolder.viewManage.shareSubView1.currentGroupCircle != null) {
-							currentGroupCircle = data.relationship.groupCirclesMap.get(taskManageHolder.viewManage.shareSubView1.currentGroupCircle.rid + "");
+					} else if (taskManageHolder.viewManage.shareSubView != null) {
+						if (taskManageHolder.viewManage.shareSubView.currentGroupCircle != null) {
+							currentGroupCircle = data.relationship.groupCirclesMap.get(taskManageHolder.viewManage.shareSubView.currentGroupCircle.rid + "");
 
 						} else {
 							currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
@@ -591,9 +591,6 @@ public class GroupListController {
 		if (taskManageHolder.viewManage.shareSubView != null) {
 			taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(currentGroupCircle);
 			taskManageHolder.viewManage.shareSubView.showShareMessages();
-		} else if (taskManageHolder.viewManage.shareSubView1 != null) {
-			taskManageHolder.viewManage.shareSubView1.setGroupsDialogContent(currentGroupCircle);
-			taskManageHolder.viewManage.shareSubView1.showShareMessages();
 		}
 	}
 }

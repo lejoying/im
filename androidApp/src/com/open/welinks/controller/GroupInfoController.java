@@ -424,13 +424,17 @@ public class GroupInfoController {
 		data.localStatus.localData.currentSelectedGroup = "";
 		if (viewManage.shareSubView != null) {
 			viewManage.shareSubView.setGroupsDialogContent(null);
-		} else if (viewManage.shareSubView1 != null) {
-			viewManage.shareSubView1.setGroupsDialogContent(null);
 		}
 		if (data.relationship.groups.size() != 0) {
 			data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
-			viewManage.shareSubView.shareTopMenuGroupName.setText(data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).name);
-			viewManage.shareSubView.setMenuNameBotton(data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).name);
+			Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+			if (group != null) {
+				viewManage.shareSubView.shareTopMenuGroupName.setText(group.name);
+				viewManage.shareSubView.setMenuNameBotton(group.name);
+			} else {
+				viewManage.shareSubView.shareTopMenuGroupName.setText("暂无群组");
+				viewManage.shareSubView.setMenuNameBotton("暂无群组");
+			}
 		} else {
 			viewManage.shareSubView.shareTopMenuGroupName.setText("暂无群组");
 			viewManage.shareSubView.setMenuNameBotton("暂无群组");

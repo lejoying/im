@@ -168,6 +168,7 @@ public class ShareReleaseImageTextView {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void initializationGroupCirclesDialog() {
 		dialogView = mInflater.inflate(R.layout.dialog_listview, null);
 		groupCircleList = (DragSortListView) dialogView.findViewById(R.id.content);

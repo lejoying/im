@@ -533,8 +533,9 @@ public class NearbyController {
 							int topMarigin = params.topMargin;
 							int error = 2;
 							if (topMarigin == (int) (84 * thisView.metrics.density)) {
-								error = 5;
+								error = 7;
 							}
+							// log.e(buttomDistance + "-----" + totalHeight);
 							if (topDistance == 0) {
 								thisView.status.state = thisView.status.T;
 							} else if (buttomDistance >= totalHeight - error) {
@@ -989,7 +990,7 @@ public class NearbyController {
 			message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
 			}.getType());
 		}
-		log.e("processingShareMessage:" + message.sid);
+		// log.e("processingShareMessage:" + message.sid);
 		return message;
 	}
 
@@ -1018,7 +1019,7 @@ public class NearbyController {
 			}.getType());
 		}
 		mInfomations.add(message);
-		log.e("processingShareData:" + message.sid);
+		// log.e("processingShareData:" + message.sid);
 
 		// TODO error code
 		data.boards.shareMessagesMap.put(message.sid, message);
@@ -1222,25 +1223,29 @@ public class NearbyController {
 	public boolean isExit = false;
 
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (isExit) {
-				thisActivity.finish();
-			} else {
-				if (!isShowDialg) {
-					Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-					isExit = true;
-					new Thread() {
-						@Override
-						public void run() {
-							try {
-								sleep(2000);
-								isExit = false;
-							} catch (InterruptedException e) {
-								e.printStackTrace();
+		if (status == Status.account || status == Status.group) {
+			thisActivity.finish();
+		} else {
+			if (keyCode == KeyEvent.KEYCODE_BACK) {
+				if (isExit) {
+					thisActivity.finish();
+				} else {
+					if (!isShowDialg) {
+						Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+						isExit = true;
+						new Thread() {
+							@Override
+							public void run() {
+								try {
+									sleep(2000);
+									isExit = false;
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								super.run();
 							}
-							super.run();
-						}
-					}.start();
+						}.start();
+					}
 				}
 			}
 		}

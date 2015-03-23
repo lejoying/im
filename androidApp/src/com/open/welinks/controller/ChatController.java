@@ -1353,7 +1353,7 @@ public class ChatController {
 		data.relationship.isModified = true;
 		taskManageHolder.viewManage.chatView = null;
 
-		taskManageHolder.viewManage.messagesSubView.showMessagesSequence();
+		taskManageHolder.viewManage.postNotifyView("MessagesSubView");
 	}
 
 	public void onPause() {

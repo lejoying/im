@@ -37,7 +37,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
-import com.open.welinks.view.ShareSubView.SharesMessageBody;
+import com.open.welinks.view.ShareSubView1.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
 public class ResponseHandlers {
@@ -147,7 +147,7 @@ public class ResponseHandlers {
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
 							}
-							viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
+							viewManage.postNotifyView("ShareSubView");
 							viewManage.postNotifyView("GroupListActivity");
 						}
 					} else {
@@ -159,7 +159,7 @@ public class ResponseHandlers {
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
 							}
-							viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
+							viewManage.postNotifyView("ShareSubView");
 							viewManage.postNotifyView("GroupListActivity");
 						}
 					}
@@ -1093,11 +1093,7 @@ public class ResponseHandlers {
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
 				data.relationship.isModified = true;
-				if (viewManage.shareSubView != null) {
-					viewManage.shareSubView.setGroupsDialogContent(null);
-				} else if (viewManage.shareSubView1 != null) {
-					viewManage.shareSubView1.setGroupsDialogContent(null);
-				}
+				viewManage.postNotifyView("ShareSubView");
 			} else {
 				log.d(ViewManage.getErrorLineNumber() + "创建群组失败===================" + response.失败原因);
 
@@ -1134,9 +1130,6 @@ public class ResponseHandlers {
 					if (viewManage.shareSubView != null) {
 						viewManage.shareSubView.thisController.nowpage = 0;
 						viewManage.shareSubView.getCurrentGroupShareMessages();
-					} else if (viewManage.shareSubView1 != null) {
-						viewManage.shareSubView1.thisController.nowpage = 0;
-						viewManage.shareSubView1.getCurrentGroupShareMessages();
 					}
 				}
 			} else {
@@ -1247,14 +1240,18 @@ public class ResponseHandlers {
 					// Set the option group dialog content
 					// log.e(tag, ViewManage.getErrorLineNumber() + data.relationship.groups.toString());
 					if (!gid.equals("")) {
-						viewManage.mainView1.shareSubView.showShareMessages();
-						viewManage.mainView1.shareSubView.showTopMenuRoomName();
-						viewManage.mainView1.shareSubView.getCurrentGroupShareMessages();
+						viewManage.postNotifyView("ShareSubViewMessage");
+						if (viewManage.mainView1 != null && viewManage.mainView1.shareSubView != null) {
+							viewManage.mainView1.shareSubView.showTopMenuRoomName();
+							viewManage.mainView1.shareSubView.getCurrentGroupShareMessages();
+						}
 					}
 					if (!"".equals(data.localStatus.localData.currentSelectedGroup)) {
 						Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 						if (group != null) {
-							viewManage.mainView1.shareSubView.showTopMenuRoomName();
+							if (viewManage.mainView1 != null && viewManage.mainView1.shareSubView != null) {
+								viewManage.mainView1.shareSubView.showTopMenuRoomName();
+							}
 							boolean flag = false;
 							if (group.currentBoard != null && !"".equals(group.currentBoard)) {
 								if (group.boards == null) {
@@ -1265,9 +1262,6 @@ public class ResponseHandlers {
 										if (viewManage.shareSubView != null) {
 											viewManage.shareSubView.showShareMessages();
 											viewManage.shareSubView.getCurrentGroupShareMessages();
-										} else if (viewManage.shareSubView1 != null) {
-											viewManage.shareSubView1.showShareMessages();
-											viewManage.shareSubView1.getCurrentGroupShareMessages();
 										}
 									}
 								} else {
@@ -1291,7 +1285,7 @@ public class ResponseHandlers {
 						}
 						log.e(ViewManage.getErrorLineNumber() + "board:" + group.currentBoard);
 					}
-					viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
+					viewManage.postNotifyView("ShareSubView");
 					viewManage.squareSubView.setConver();
 					viewManage.postNotifyView("GroupListActivity");
 					DataHandler.clearInvalidGroupMessages();
@@ -1347,8 +1341,6 @@ public class ResponseHandlers {
 					if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 						if (viewManage.shareSubView != null) {
 							viewManage.shareSubView.setConver();
-						} else if (viewManage.shareSubView1 != null) {
-							viewManage.shareSubView1.setConver();
 						}
 					}
 				}
@@ -1462,8 +1454,6 @@ public class ResponseHandlers {
 							currentGroup.cover = group.cover;
 							if (viewManage.shareSubView != null) {
 								viewManage.shareSubView.setConver();
-							} else if (viewManage.shareSubView1 != null) {
-								viewManage.shareSubView1.setConver();
 							}
 						}
 					}
@@ -1871,9 +1861,6 @@ public class ResponseHandlers {
 				if (viewManage.shareSubView != null) {
 					viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Failed;
 					viewManage.shareSubView.showRoomTime();
-				} else if (viewManage.shareSubView1 != null) {
-					viewManage.shareSubView1.thisController.reflashStatus.state = viewManage.shareSubView1.thisController.reflashStatus.Failed;
-					viewManage.shareSubView1.showRoomTime();
 				}
 			}
 		};
@@ -1962,11 +1949,6 @@ public class ResponseHandlers {
 						viewManage.shareSubView.thisController.nowpage--;
 					}
 					viewManage.shareSubView.thisController.reflashStatus.state = viewManage.shareSubView.thisController.reflashStatus.Normal;
-				} else if (viewManage.shareSubView1 != null) {
-					if (responsesShare.shareMessagesOrder.size() == 0) {
-						viewManage.shareSubView1.thisController.nowpage--;
-					}
-					viewManage.shareSubView1.thisController.reflashStatus.state = viewManage.shareSubView1.thisController.reflashStatus.Normal;
 				}
 				viewManage.postNotifyView("ShareSubViewMessage");
 			} else if ("SectionPage".equals(type)) {

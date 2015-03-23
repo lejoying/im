@@ -139,7 +139,7 @@ public class ShareSubView1 {
 
 	public ShareSubView1(MainView1 mainView) {
 		this.mainView = mainView;
-		taskManageHolder.viewManage.shareSubView1 = this;
+		taskManageHolder.viewManage.shareSubView = this;
 	}
 
 	public SmallBusinessCardPopView businessCardPopView;
