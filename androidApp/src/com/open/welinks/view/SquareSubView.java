@@ -226,6 +226,10 @@ public class SquareSubView {
 	}
 
 	public void setConver() {
+		if (data.relationship == null || data.relationship.groupsMap == null || data.localStatus == null || data.localStatus.localData == null) {
+			log.e("square sub view setCover null");
+			return;
+		}
 		final Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (group != null) {
 			File file = new File(taskManageHolder.fileHandler.sdcardBackImageFolder, group.cover);

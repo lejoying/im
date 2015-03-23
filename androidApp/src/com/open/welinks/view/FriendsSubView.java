@@ -40,7 +40,7 @@ public class FriendsSubView {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
-	
+
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String tag = "FriendsSubView";
@@ -84,6 +84,9 @@ public class FriendsSubView {
 
 	public void showCircles() {
 		data = parser.check();
+		if (data.relationship == null || data.relationship.circles == null || data.relationship.circlesMap == null) {
+			return;
+		}
 		circles = data.relationship.circles;
 		circlesMap = data.relationship.circlesMap;
 		friendsMap = data.relationship.friendsMap;
@@ -91,10 +94,6 @@ public class FriendsSubView {
 		this.friendListBody.containerView.removeAllViews();
 		this.friendListBody.height = 0;
 		// this.friendListBody.y = 0;
-
-		if (circles == null || circlesMap == null) {
-			return;
-		}
 
 		this.friendListBody.listItemsSequence.clear();
 

@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.open.welinks.R;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.view.ViewManage;
 
 public class Alert {
@@ -447,8 +448,7 @@ public class Alert {
 				setContentView(content, new ViewGroup.LayoutParams(context.getResources().getDisplayMetrics().widthPixels, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 				setCanceledOnTouchOutside(true);
-				final ViewManage viewManage = ViewManage.getInstance();
-				int height = (int) (45 * viewManage.displayMetrics.density);
+				int height = BaseDataUtils.dpToPxint(45);// (int) (45 * viewManage.displayMetrics.density);
 				LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) input.getLayoutParams();
 				params.height = height;
 				input.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -465,7 +465,7 @@ public class Alert {
 					public void onTextChanged(CharSequence s, int start, int before, int count) {
 						int lineCount = input.getLineCount();
 						if (lineCount == 1) {
-							int height = (int) (45 * viewManage.displayMetrics.density);
+							int height = BaseDataUtils.dpToPxint(45);
 							LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) input.getLayoutParams();
 							params.height = height;
 							input.setLayoutParams(params);

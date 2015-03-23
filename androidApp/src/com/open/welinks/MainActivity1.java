@@ -11,6 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.controller.MainController1;
@@ -53,7 +57,7 @@ public class MainActivity1 extends Activity {
 
 		// Context context = instance.instance.context;
 		instance = this;
-		// initImageLoader(getApplicationContext());
+		initImageLoader(getApplicationContext());
 		// BaseDataUtils.initBaseData(this);
 		// Constant.init();
 		// startPushService();
@@ -104,11 +108,18 @@ public class MainActivity1 extends Activity {
 
 	}
 
+	public static void initImageLoader(Context context) {
+		if (!ImageLoader.getInstance().isInited()) {
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
+			ImageLoader.getInstance().init(config);
+		}
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu_debug_1, menu);
-		return super.onCreateOptionsMenu(menu);
+		return false;
 	}
 
 	@Override

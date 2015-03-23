@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
 
 		// Context context = instance.instance.context;
 		instance = this;
-		// initImageLoader(getApplicationContext());
+		initImageLoader(getApplicationContext());
 		// BaseDataUtils.initBaseData(this);
 		// Constant.init();
 		// startPushService();
@@ -92,8 +92,10 @@ public class MainActivity extends Activity {
 	}
 
 	public static void initImageLoader(Context context) {
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
-		ImageLoader.getInstance().init(config);
+		if (!ImageLoader.getInstance().isInited()) {
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
+			ImageLoader.getInstance().init(config);
+		}
 	}
 
 	public static class Config {
@@ -153,7 +155,7 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu_debug_1, menu);
-		return super.onCreateOptionsMenu(menu);
+		return false;
 	}
 
 	@Override
