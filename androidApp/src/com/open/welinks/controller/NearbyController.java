@@ -92,6 +92,7 @@ import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.Base64Coder;
 import com.open.welinks.view.NearbyView;
+import com.open.welinks.view.NearbyView.SendShare;
 
 public class NearbyController {
 
@@ -507,7 +508,7 @@ public class NearbyController {
 					intent.putExtra("latitude", latitude);
 					intent.putExtra("longitude", longitude);
 					intent.putExtra("sid", Constant.SQUARE_SID);
-					intent.putExtra("sourcce", 2);
+					intent.putExtra("source", 2);
 					thisActivity.startActivityForResult(intent, RESULTCODE);
 				}
 			}
@@ -1045,6 +1046,7 @@ public class NearbyController {
 							thisView.notifyData();
 						}
 					} else if (status == Status.hottest) {
+						addSendingShareMessage();
 						thisView.notifyData();
 					}
 				} else {
@@ -1053,6 +1055,21 @@ public class NearbyController {
 			}
 
 		});
+	}
+
+	public void addSendingShareMessage() {
+		boolean isReflash = false;
+		for (int i = thisView.sendingSequence.size() - 1; i >= 0; i--) {
+			String key = thisView.sendingSequence.get(i);
+			SendShare sendShare = thisView.sendingShareMessage.get(key);
+			if (sendShare != null) {
+				thisController.mInfomations.add(0, sendShare.shareMessage);
+				isReflash = true;
+			}
+		}
+		if (isReflash) {
+			thisView.nearbyShareAdapter.notifyDataSetChanged();
+		}
 	}
 
 	class Response {
@@ -1104,6 +1121,7 @@ public class NearbyController {
 				}
 				mInfomations.addAll(needList);
 				sortMInformations();
+				addSendingShareMessage();
 				thisView.notifyData();
 			}
 
@@ -1133,62 +1151,64 @@ public class NearbyController {
 	}
 
 	public ShareMessage processingShareMessage(PoiData poiData) {
-		ShareMessage message = data.boards.new ShareMessage();
+		ShareMessage shareMessage = data.boards.new ShareMessage();
 		String content = poiData.content;
 		content = new String(Base64Coder.decode(content));
 		if (content.lastIndexOf("@") == content.length() - 1) {
 			content = content.substring(0, content.length() - 1);
 		}
-		message.content = content;
-		message.head = poiData.head;
-		message.gsid = String.valueOf(poiData.gsid);
-		message.sid = String.valueOf(poiData.sid);
-		message.phone = poiData.phone;
-		message.totalScore = poiData.totalScore;
-		message.type = poiData.type;
-		message.time = poiData.time;
-		message.nickName = poiData._name;
+		shareMessage.content = content;
+		shareMessage.head = poiData.head;
+		shareMessage.gsid = String.valueOf(poiData.gsid);
+		shareMessage.sid = String.valueOf(poiData.sid);
+		shareMessage.phone = poiData.phone;
+		shareMessage.totalScore = poiData.totalScore;
+		shareMessage.type = poiData.type;
+		shareMessage.time = poiData.time;
+		shareMessage.nickName = poiData._name;
+		shareMessage.status = "sent";
 		String location[] = poiData._location.split(",");
-		message.distance = 1000 * Double.valueOf(LBSHandler.getInstance().pointDistance(longitude + "", latitude + "", location[0], location[1]));
+		shareMessage.distance = 1000 * Double.valueOf(LBSHandler.getInstance().pointDistance(longitude + "", latitude + "", location[0], location[1]));
 		String scores = poiData.scores;
 		if (scores != null && !"".equals(scores)) {
 			scores = scores.substring(0, scores.length() - 1);
-			message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
+			shareMessage.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
 			}.getType());
 		}
 		// log.e("processingShareMessage:" + message.sid);
-		return message;
+		return shareMessage;
 	}
 
 	public void processingShareData(PoiData poiData) {
 
-		ShareMessage message = data.boards.new ShareMessage();
+		ShareMessage shareMessage = data.boards.new ShareMessage();
 		String content = poiData.content;
 		content = new String(Base64Coder.decode(content));
 		if (content.lastIndexOf("@") == content.length() - 1) {
 			content = content.substring(0, content.length() - 1);
 		}
-		message.content = content;
-		message.head = poiData.head;
-		message.gsid = String.valueOf(poiData.gsid);
-		message.sid = String.valueOf(poiData.sid);
-		message.phone = poiData.phone;
-		message.totalScore = poiData.totalScore;
-		message.type = poiData.type;
-		message.time = poiData.time;
-		message.nickName = poiData._name;
-		message.distance = Integer.valueOf(poiData._distance);
+		shareMessage.content = content;
+		shareMessage.head = poiData.head;
+		shareMessage.gsid = String.valueOf(poiData.gsid);
+		shareMessage.sid = String.valueOf(poiData.sid);
+		shareMessage.phone = poiData.phone;
+		shareMessage.totalScore = poiData.totalScore;
+		shareMessage.type = poiData.type;
+		shareMessage.time = poiData.time;
+		shareMessage.nickName = poiData._name;
+		shareMessage.status = "sent";
+		shareMessage.distance = Integer.valueOf(poiData._distance);
 		String scores = poiData.scores;
 		if (scores != null && !"".equals(scores)) {
 			scores = scores.substring(0, scores.length() - 1);
-			message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
+			shareMessage.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
 			}.getType());
 		}
-		mInfomations.add(message);
+		mInfomations.add(shareMessage);
 		// log.e("processingShareData:" + message.sid);
 
 		// TODO error code
-		data.boards.shareMessagesMap.put(message.sid, message);
+		data.boards.shareMessagesMap.put(shareMessage.sid, shareMessage);
 	}
 
 	public void processingAccountData(PoiData poiData) {
