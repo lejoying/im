@@ -578,7 +578,7 @@ public class GroupListController {
 	}
 
 	public void onBackPressed() {
-		if (thisView.popDialogView.isShowing()) {
+		if (thisView.popDialogView != null && thisView.popDialogView.isShowing()) {
 			thisView.changePopupWindow(false);
 		} else if (isGroupEditor) {
 			cancelEditor();

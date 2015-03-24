@@ -129,9 +129,9 @@ public class MainController {
 
 		dataHandlers.sendShareMessage();
 
-		requestLocation();
+		// requestLocation();
 
-		getContacts();
+		// getContacts();
 	}
 
 	public void onResume() {

@@ -513,6 +513,7 @@ public class ShareMessageDetailController {
 		if (requestCode == thisView.shareView.RESULT_SHAREVIEW && resultCode == Activity.RESULT_OK) {
 			String key = result.getStringExtra("key");
 			String type = result.getStringExtra("type");
+			log.e(key + "--" + type);
 			if (!"".equals(key) && !"".equals(type)) {
 				if ("message".equals(type)) {
 					sendToChat(key, result.getStringExtra("sendType"));
@@ -576,16 +577,15 @@ public class ShareMessageDetailController {
 		// params.addBodyParameter("address", currentUser.address);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-
 		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
 	}
 
 	public void sendToChat(String key, String sendType) {
-		sendChatToServer(key, sendType, addChatToLocal(key, sendType));
+		Message message = addChatToLocal(key, sendType);
+		sendChatToServer(key, sendType, message.content, message.time);
 	}
 
-	public String addChatToLocal(String key, String sendType) {
+	public Message addChatToLocal(String key, String sendType) {
 		parser.check();
 		List<String> messagesOrder = data.messages.messagesOrder;
 		String key0 = "";
@@ -604,7 +604,7 @@ public class ShareMessageDetailController {
 		}
 		data.messages.isModified = true;
 
-		User user = data.userInformation.currentUser;
+		User currentUser = data.userInformation.currentUser;
 		Message message = data.messages.new Message();
 		MessageShareContent messageContent = subData.new MessageShareContent();
 		// messageContent.gid = gid;
@@ -615,9 +615,10 @@ public class ShareMessageDetailController {
 		String content = gson.toJson(messageContent);
 		message.content = content;
 		message.contentType = "share";
-		message.phone = user.phone;
-		message.nickName = user.nickName;
-		message.time = String.valueOf(new Date().getTime());
+		message.phone = currentUser.phone;
+		message.nickName = currentUser.nickName;
+		String time = new Date().getTime() + "";
+		message.time = time;
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;
 		if ("group".equals(sendType)) {
@@ -643,11 +644,11 @@ public class ShareMessageDetailController {
 			data.messages.friendMessageMap.get(key0).add(message);
 		}
 
-		return content;
+		return message;
 	}
 
-	public void sendChatToServer(String key, String sendType, String content) {
-		String orderKay = "";
+	public void sendChatToServer(String key, String sendType, String content, String time) {
+		String orderKey = "";
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
@@ -657,8 +658,9 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("sendType", sendType);
 		params.addBodyParameter("contentType", "share");
 		params.addBodyParameter("content", content);
+		params.addBodyParameter("time", time);
 		if ("group".equals(sendType)) {
-			orderKay = "g" + key;
+			orderKey = "g" + key;
 			Group group = data.relationship.groupsMap.get(key);
 			if (group == null) {
 				group = data.relationship.new Group();
@@ -666,29 +668,26 @@ public class ShareMessageDetailController {
 			params.addBodyParameter("gid", key);
 			params.addBodyParameter("phoneto", gson.toJson(group.members));
 		} else if ("point".equals(sendType)) {
-			orderKay = "p" + key;
-			List<String> phoneto = new ArrayList<String>();
-			phoneto.add(key);
-			params.addBodyParameter("phoneto", gson.toJson(phoneto));
-			params.addBodyParameter("gid", "");
+			orderKey = "p" + key;
+			params.addBodyParameter("phoneto", "[\"" + key + "\"]");
 		}
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
 
-		if (data.messages.messagesOrder.contains(orderKay)) {
-			data.messages.messagesOrder.remove(orderKay);
-			data.messages.messagesOrder.add(0, orderKay);
+		if (data.messages.messagesOrder.contains(orderKey)) {
+			data.messages.messagesOrder.remove(orderKey);
+			data.messages.messagesOrder.add(0, orderKey);
 		} else {
-			data.messages.messagesOrder.add(orderKay);
+			data.messages.messagesOrder.add(orderKey);
 		}
-		taskManageHolder.viewManage.messagesSubView.showMessagesSequence();
-
+		taskManageHolder.viewManage.postNotifyView("MessagesSubView");
 	}
 
 	public void showTempShare() {
 		shareMessage = data.tempData.tempShareMessageMap.get(gsid);
 		thisView.showShareMessageDetails();
 	}
+
+	HttpClient httpClient = HttpClient.getInstance();
 
 	public void getShareMessageDetail() {
 		HttpUtils httpUtils = new HttpUtils();
@@ -698,7 +697,6 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("gsid", gsid);
 
-		HttpClient httpClient = HttpClient.getInstance();
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETBOARDSHARE, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;

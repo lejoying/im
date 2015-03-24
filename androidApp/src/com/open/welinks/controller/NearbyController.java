@@ -8,10 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,8 +66,8 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.welinks.R;
 import com.open.welinks.MainActivity;
+import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -73,12 +78,13 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.LBSHandler;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.LBSHandler;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.TaskManageHolder;
@@ -145,6 +151,8 @@ public class NearbyController {
 	public NearbyController(Activity thisActivity) {
 		thisController = this;
 		this.thisActivity = thisActivity;
+
+		getContacts();
 	}
 
 	public void onCreate() {
@@ -165,8 +173,9 @@ public class NearbyController {
 		}
 		// thisView.threeChoicesView.setButtonTwoText("关注");
 
-		if (data.localStatus.localData.currentSearchRadius != 0)
+		if (data.localStatus.localData.currentSearchRadius != 0) {
 			searchRadius = data.localStatus.localData.currentSearchRadius;
+		}
 		searchTime = data.localStatus.localData.currentSearchTime;
 
 	}
@@ -682,6 +691,13 @@ public class NearbyController {
 				mLocationManagerProxy.destroy();
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
 					mAmapLocation = amapLocation;
+					if ("".equals(address)) {
+						User currentUser = data.userInformation.currentUser;
+						currentUser.address = mAmapLocation.getAddress();
+						currentUser.latitude = mAmapLocation.getLatitude() + "";
+						currentUser.longitude = mAmapLocation.getLongitude() + "";
+						modifyLocation();
+					}
 					address = mAmapLocation.getAddress();
 					latitude = amapLocation.getLatitude();
 					longitude = amapLocation.getLongitude();
@@ -735,6 +751,20 @@ public class NearbyController {
 				}
 			}
 		};
+	}
+
+	public void modifyLocation() {
+		data = Parser.getInstance().check();
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("longitude", currentUser.longitude);
+		params.addBodyParameter("latitude", currentUser.latitude);
+		params.addBodyParameter("address", currentUser.address);
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
 	}
 
 	public boolean isTouchDown = false;
@@ -1250,5 +1280,78 @@ public class NearbyController {
 			}
 		}
 		return true;
+	}
+
+	public void getContacts() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				ContentResolver contentResolver = thisActivity.getContentResolver();
+				try {
+					Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+					while (cursor.moveToNext()) {
+
+						int nameFieldColumnIndex = cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME);
+						String nickName = cursor.getString(nameFieldColumnIndex);
+						String ContactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+						Cursor phone = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + ContactId, null, null);
+
+						while (phone.moveToNext()) {
+							String phoneNumber = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+							if (phoneNumber.indexOf("+86") == 0) {
+								phoneNumber = phoneNumber.substring(3);
+							}
+							phoneNumber = phoneNumber.replaceAll(" ", "");
+							if (phoneNumber.indexOf("1") == 0 && phoneNumber.length() == 11) {
+								Contact contact = new Contact();
+								contact.nickName = nickName;
+								contact.head = "abc";
+								contacts.put(phoneNumber, contact);
+								// log.e(phoneNumber.length() + "---------------------------------" + phoneNumber);
+							}
+							// TODO contact photo
+							// Uri uriNumber2Contacts = Uri.parse("content://com.android.contacts/" + "data/phones/filter/" + PhoneNumber);
+							// final Cursor cursorCantacts = contentResolver.query(uriNumber2Contacts, null, null, null, null);
+							// if (cursorCantacts.getCount() > 0) {
+							// cursorCantacts.moveToFirst();
+							// Long contactID = cursorCantacts.getLong(cursorCantacts.getColumnIndex("contact_id"));
+							// final Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactID);
+							// final InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(contentResolver, uri);
+							// }
+						}
+						phone.close();
+					}
+					cursor.close();
+					log.e("获取通讯录成功");
+					if (contacts.size() > 0) {
+						updateContactServer();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e("Exception", e.toString());
+				}
+			}
+		}).start();
+	}
+
+	class Contact {
+		public String nickName;
+		public String head;
+	}
+
+	Map<String, Contact> contacts = new HashMap<String, Contact>();
+
+	public void updateContactServer() {
+		log.e("开始上传通讯录");
+		String contactString = gson.toJson(contacts);
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("contact", contactString);
+
+		httpUtils.send(HttpMethod.POST, API.RELATION_UPDATECONTACT, params, responseHandlers.updateContactCallBack);
 	}
 }
