@@ -498,6 +498,7 @@ public class NearbyController {
 					intent.putExtra("latitude", latitude);
 					intent.putExtra("longitude", longitude);
 					intent.putExtra("sid", Constant.SQUARE_SID);
+					intent.putExtra("sourcce", 2);
 					thisActivity.startActivityForResult(intent, RESULTCODE);
 				}
 			}
@@ -1151,7 +1152,6 @@ public class NearbyController {
 				super.onSuccess(responseInfo);
 			}
 		});
-
 	}
 
 	public void onActivityResult(int requestCode, int resultCode2, Intent data2) {

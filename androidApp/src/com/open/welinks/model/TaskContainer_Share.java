@@ -11,6 +11,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.MyLog;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -18,7 +19,6 @@ import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
-import com.open.welinks.view.ShareSectionView;
 import com.open.welinks.view.ViewManage;
 
 public class TaskContainer_Share {
@@ -32,91 +32,6 @@ public class TaskContainer_Share {
 	public SubData subData = SubData.getInstance();
 
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
-
-	public class Praise extends Task {
-
-		public String gsid;
-		public String gid;
-		public String sid;
-		public boolean option = false;
-		public ShareSectionView thisView;
-
-		public ShareMessage shareMessage;
-
-		public void modifyData() {// 主UI线程
-
-			// parser.check();
-			// User currentUser = data.userInformation.currentUser;
-			// ShareMessage shareMessage = data.boards.shareMessagesMap.get(gsid);
-			// if (!shareMessage.praiseusers.contains(currentUser.phone)) {
-			// option = true;
-			// boolean flag = false;
-			// for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-			// if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-			// flag = true;
-			// break;
-			// }
-			// }
-			// if (!flag) {
-			// shareMessage.praiseusers.add(currentUser.phone);
-			// }
-			// } else {
-			// ArrayList<String> list = new ArrayList<String>();
-			// for (int i = 0; i < shareMessage.praiseusers.size(); i++) {
-			// if (shareMessage.praiseusers.get(i).equals(currentUser.phone)) {
-			// list.add(shareMessage.praiseusers.get(i));
-			// }
-			// }
-			// shareMessage.praiseusers.removeAll(list);
-			// }
-		}
-
-		public void modifyView() {// 主UI线程
-			// User currentUser = data.userInformation.currentUser;
-			// shareMessage = data.boards.shareMessagesMap.get(gsid);
-			// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
-			// if (shareMessage.praiseusers.contains(currentUser.phone)) {
-			// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-			// } else {
-			// sharesMessageBody.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-			// }
-			// sharesMessageBody.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
-		}
-
-		@Override
-		public void sendRequest() {
-
-			params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-			params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-			params.addBodyParameter("gid", gid);
-			params.addBodyParameter("sid", sid);
-			params.addBodyParameter("gsid", gsid);
-			params.addBodyParameter("option", option + "");
-
-			// httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
-
-		}
-
-		class Response {
-			public String 提示信息;
-			public String 失败原因;
-		}
-
-		Response response;
-
-		@Override
-		public boolean onResponseReceived(ResponseInfo<String> responseInfo) {
-			parser.check();
-			response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("点赞群分享成功")) {
-				log.e(tag, "---------------------点赞操作成功");
-			} else if (response.提示信息.equals("点赞群分享失败")) {
-				log.e(tag, "点赞操作失败---------------------" + response.失败原因);
-			}
-			return false;
-		}
-
-	};
 
 	public class GetShares extends Task {
 
@@ -235,6 +150,8 @@ public class TaskContainer_Share {
 
 		public List<ShareContentItem> contentItems;
 
+		public int source;// 1 group 2 square
+
 		@Override
 		public void modifyData() {
 			contentItems = new ArrayList<ShareContentItem>();
@@ -288,6 +205,21 @@ public class TaskContainer_Share {
 			board.shareMessagesOrder.add(0, shareMessage.gsid);
 			data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 			data.boards.isModified = true;
+			this.initProgress(taskManageHolder.viewManage.screenWidth / 10 * 1);
+		}
+
+		public void initProgress(int percent) {
+			if (source == 1) {
+			} else if (source == 2) {
+				NearbyActivity.instance.thisView.initShareMessage(shareMessage, percent);
+			}
+		}
+
+		public void updateProgress(int percent) {
+			if (source == 1) {
+			} else if (source == 2) {
+				NearbyActivity.instance.thisView.updateProgress(shareMessage, percent);
+			}
 		}
 
 		@Override
@@ -309,6 +241,7 @@ public class TaskContainer_Share {
 				// taskManageHolder.viewManage.postNotifyView("ShareSectionNotifyShares");
 			}
 			taskManageHolder.viewManage.postNotifyView(this.mode);// ShareSectionNotifyShares
+			this.updateProgress(taskManageHolder.viewManage.screenWidth / 10 * 3);
 		}
 
 		@Override
@@ -321,6 +254,7 @@ public class TaskContainer_Share {
 				contentItems.add(contentItem);
 			}
 			shareMessage.content = gson.toJson(contentItems);
+			this.updateProgress(taskManageHolder.viewManage.screenWidth / 10 * 5);
 		}
 
 		@Override
@@ -346,6 +280,7 @@ public class TaskContainer_Share {
 			sendShareMessage.type = "imagetext";
 			sendShareMessage.content = shareMessage.content;
 			params.addBodyParameter("message", gson.toJson(sendShareMessage));
+			this.updateProgress(taskManageHolder.viewManage.screenWidth / 10 * 7);
 		}
 
 		class Response {
@@ -368,6 +303,7 @@ public class TaskContainer_Share {
 
 		@Override
 		public void updateData() {
+			this.updateProgress(taskManageHolder.viewManage.screenWidth / 10 * 8);
 			// id time state
 			if (response.提示信息.equals("发布群分享成功")) {
 				parser.check();
@@ -409,11 +345,13 @@ public class TaskContainer_Share {
 			} else {
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 			}
+			this.updateProgress(taskManageHolder.viewManage.screenWidth / 10 * 9);
 		}
 
 		@Override
 		public void updateView() {
 			taskManageHolder.viewManage.postNotifyView(this.mode);// "ShareSectionNotifyShares"
+			this.updateProgress(taskManageHolder.viewManage.screenWidth);
 		}
 
 		public void copyFileToSprecifiedDirecytory(MyFile myFile, boolean isCompression) {

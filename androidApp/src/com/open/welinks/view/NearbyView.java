@@ -4,6 +4,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -70,6 +71,7 @@ import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.DateUtil;
+import com.open.welinks.view.NearbyView.NearbyShareAdapter.HotHolder;
 
 public class NearbyView {
 
@@ -264,10 +266,16 @@ public class NearbyView {
 		openLooper.createOpenLooper();
 		loopCallback = new ListLoopCallback(openLooper);
 		openLooper.loopCallback = loopCallback;
+		openLooper1 = new OpenLooper();
+		openLooper1.createOpenLooper();
+		loopCallback1 = new ListLoopCallback1(openLooper1);
+		openLooper1.loopCallback = loopCallback1;
 	}
 
 	public OpenLooper openLooper;
 	public ListLoopCallback loopCallback;
+	public OpenLooper openLooper1;
+	public ListLoopCallback1 loopCallback1;
 
 	public class ListLoopCallback extends LoopCallback {
 
@@ -298,14 +306,6 @@ public class NearbyView {
 				}
 			}
 			progressView.setTranslationX(currentPosition);
-
-			// MarginLayoutParams params = (MarginLayoutParams) nearbyListView.getLayoutParams();
-			// int topMarigin = params.topMargin;
-			// if (topMarigin > (int) (84 * thisView.metrics.density)) {
-			// float currentMargin = topMarigin + distance;
-			// params.topMargin = (int) currentMargin;
-			// nearbyListView.setLayoutParams(params);
-			// }
 		} else {
 			currentPosition -= distance;
 			if (nextPosition >= currentPosition) {
@@ -413,6 +413,7 @@ public class NearbyView {
 				holder.num_picker_decrement = (ImageView) convertView.findViewById(R.id.num_picker_decrement);
 				holder.num_picker_increment = (ImageView) convertView.findViewById(R.id.num_picker_increment);
 				holder.imageTextContentView = (TextView) convertView.findViewById(R.id.imageTextContent);
+				holder.progressView = convertView.findViewById(R.id.progress);
 				convertView.setTag(holder);
 			} else {
 				holder = (HotHolder) convertView.getTag();
@@ -515,6 +516,99 @@ public class NearbyView {
 			public TextView scoreView, textContentView, imageCountView, distanceView, timeView, imageTextContentView;
 			public ImageView num_picker_increment, num_picker_decrement;
 			public RelativeLayout imageContainer;
+			public View progressView;
+		}
+	}
+
+	public class ListLoopCallback1 extends LoopCallback {
+
+		public int state;// T B
+
+		public ListLoopCallback1(OpenLooper openLooper) {
+			openLooper.super();
+		}
+
+		@Override
+		public void loop(double ellapsedMillis) {
+			// updateShareProgress(ellapsedMillis);
+		}
+	}
+
+	public float progressDeep = 3.0f;
+
+	public void updateShareProgress(double millis) {
+		float distance = (float) (millis * this.progressDeep);
+		ArrayList<String> needDelete = null;
+		boolean isRunning = false;
+		for (int i = 0; i < this.sendingSequence.size(); i++) {
+			String key = this.sendingSequence.get(i);
+			SendShare sendShare = this.sendingShareMessage.get(key);
+			if (sendShare != null) {
+				int position = sendShare.position;
+				sendShare.percent += distance;
+				if (sendShare.percent > viewManage.screenWidth) {
+					sendShare.percent = viewManage.screenWidth;
+					if (needDelete == null) {
+						needDelete = new ArrayList<String>();
+					}
+					needDelete.add(key);
+				}
+				int firstVisiblePosition = this.nearbyListView.getFirstVisiblePosition();
+				int lastVisiblePosition = this.nearbyListView.getLastVisiblePosition();
+				if (position >= firstVisiblePosition && position <= lastVisiblePosition) {
+					View view = this.nearbyListView.getChildAt(position - firstVisiblePosition);
+					if (view.getTag() instanceof HotHolder) {
+						HotHolder holder = (HotHolder) view.getTag();
+
+					}
+				}
+				isRunning = true;
+			} else {
+				if (needDelete == null) {
+					needDelete = new ArrayList<String>();
+				}
+				needDelete.add(key);
+			}
+		}
+		if (needDelete != null) {
+			this.sendingSequence.removeAll(needDelete);
+			for (int i = 0; i < this.sendingSequence.size(); i++) {
+				String key = this.sendingSequence.get(i);
+				SendShare sendShare = this.sendingShareMessage.get(key);
+				if (sendShare != null) {
+					sendShare.position = i;
+				}
+			}
+		}
+		if (!isRunning) {
+			this.openLooper1.stop();
+		}
+	}
+
+	public ArrayList<String> sendingSequence = new ArrayList<String>();
+	public HashMap<String, SendShare> sendingShareMessage = new HashMap<String, SendShare>();
+
+	public class SendShare {
+		public ShareMessage shareMessage;
+		public int position;
+		public int percent;
+	}
+
+	public void initShareMessage(ShareMessage shareMessage, int percent) {
+		this.openLooper1.start();
+		this.sendingSequence.add(shareMessage.gsid);
+		SendShare sendShare = new SendShare();
+		sendShare.shareMessage = shareMessage;
+		sendShare.position = this.sendingSequence.indexOf(shareMessage.gsid);
+		sendShare.percent = percent;
+		this.sendingShareMessage.put(shareMessage.gsid, sendShare);
+	}
+
+	public void updateProgress(ShareMessage shareMessage, int percent) {
+		SendShare sendShare = this.sendingShareMessage.get(shareMessage.gsid);
+		if (sendShare != null) {
+			this.openLooper1.start();
+			sendShare.position = this.sendingSequence.indexOf(shareMessage.gsid);
 		}
 	}
 

@@ -100,6 +100,8 @@ public class ShareReleaseImageTextController {
 	public String type, gid, gtype, address, mode;
 	public double longitude, latitude;
 
+	public int source;
+
 	public ShareMessage shareMessage;
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
@@ -115,6 +117,7 @@ public class ShareReleaseImageTextController {
 		longitude = intent.getDoubleExtra("longitude", 0);
 		latitude = intent.getDoubleExtra("latitude", 0);
 		this.mode = intent.getStringExtra("mode");
+		this.source = intent.getIntExtra("source", 1);
 		currentSelectedGroup = gid;
 		// Initialize the image directory
 		sdcardImageFolder = taskManageHolder.fileHandler.sdcardImageFolder;
@@ -250,14 +253,12 @@ public class ShareReleaseImageTextController {
 
 				@Override
 				public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-					// TODO Auto-generated method stub
 					return super.onScroll(e1, e2, distanceX, distanceY);
 				}
 			});
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
 				return backviewDetector.onTouchEvent(event);
 			}
 		};
@@ -377,6 +378,7 @@ public class ShareReleaseImageTextController {
 		task.address = address;
 		task.latitude = latitude;
 		task.longitude = longitude;
+		task.source = this.source;
 		if (data.tempData.selectedImageList != null) {
 			task.imageListString = gson.toJson(data.tempData.selectedImageList);
 		}
