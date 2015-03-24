@@ -259,6 +259,23 @@ public class API {
 	 */
 	public static String CIRCLE_ADDCIRCLE = API_DOMAIN + "api2/circle/createcircle";
 
+	// lbs
+	/**
+	 * http://www.we-links.com/api2/lbs/create
+	 */
+	public static String LBS_CREATE = "http://192.168.1.8/" + "api2/lbs/create";
+	/**
+	 * http://www.we-links.com/api2/lbs/search
+	 */
+	public static String LBS_SEARCH = "http://192.168.1.8/" + "api2/lbs/search";
+	/**
+	 * http://www.we-links.com/api2/lbs/updata
+	 */
+	public static String LBS_UPDATA = "http://192.168.1.8/" + "api2/lbs/updata";
+	/**
+	 * http://www.we-links.com/api2/lbs/delete
+	 */
+	public static String LBS_DELETE = "http://192.168.1.8/" + "api2/lbs/delete";
 	// image
 
 	/**

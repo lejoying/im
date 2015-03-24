@@ -78,6 +78,7 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -252,7 +253,11 @@ public class NearbyController {
 				thisView.currentPosition = 0;
 				// thisView.nextPosition = 0;
 				nowpage = 0;
-				searchNearbyHttp(true);
+				if (status == Status.hottest || status == Status.newest) {
+					searchNearbyLBS(true);
+				} else {
+					searchNearbyHttp(true);
+				}
 			}
 
 			@Override
@@ -436,7 +441,11 @@ public class NearbyController {
 				} else if (view.equals(thisView.screenConfirm)) {
 					searchRadius = tempSearchRadius;
 					searchTime = tempSearchTime;
-					searchNearbyHttp(false);
+					if (status == Status.hottest || status == Status.newest) {
+						searchNearbyLBS(false);
+					} else {
+						searchNearbyHttp(false);
+					}
 					thisView.changeScreenPopupWindow();
 					thisView.changeAmapCircle(longitude, latitude);
 				} else if (view.equals(thisView.scopeOne)) {
@@ -604,7 +613,11 @@ public class NearbyController {
 					thisView.openLooper.stop();
 					thisView.currentPosition = -thisView.viewManage.screenWidth;
 					thisView.nextPosition = -thisView.viewManage.screenWidth;
-					searchNearbyHttp(false);
+					if (status == Status.hottest || status == Status.newest) {
+						searchNearbyLBS(false);
+					} else {
+						searchNearbyHttp(false);
+					}
 				} else if (position == 2) {
 				} else if (position == 1) {
 					if (status == Status.hottest) {
@@ -617,7 +630,11 @@ public class NearbyController {
 					thisView.openLooper.stop();
 					thisView.currentPosition = -thisView.viewManage.screenWidth;
 					thisView.nextPosition = -thisView.viewManage.screenWidth;
-					searchNearbyHttp(false);
+					if (status == Status.hottest || status == Status.newest) {
+						searchNearbyLBS(false);
+					} else {
+						searchNearbyHttp(false);
+					}
 				}
 			}
 		};
@@ -813,7 +830,7 @@ public class NearbyController {
 
 	public Handler handler = new Handler();
 
-	public void searchNearbyHttp(final boolean isAnimation) {
+	public void searchNearbyLBS(final boolean isAnimation) {
 		if (isAnimation) {
 			thisView.transleteSpeed = 0.4f;
 			thisView.loopCallback.state = thisView.status.None;
@@ -827,6 +844,124 @@ public class NearbyController {
 			}, 500);
 		}
 
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		// params.addBodyParameter("phone", currentUser.phone);
+		// params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("center", "[" + longitude + "," + latitude + "]");
+		params.addBodyParameter("radius", String.valueOf(searchRadius));
+		params.addBodyParameter("limit", String.valueOf(20));
+		params.addBodyParameter("page", String.valueOf(nowpage));
+		if (status == Status.newest) {
+			params.addBodyParameter("sortby", "time");
+		} else if (status == Status.hottest) {
+			params.addBodyParameter("sortby", "totalScore");
+		}
+		httpUtils.send(HttpMethod.POST, API.LBS_SEARCH, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public List<Point> resultPoints;
+
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				if (isAnimation) {
+					thisView.loopCallback.state = thisView.status.None;
+					thisView.transleteSpeed = 0.6f;
+					if (!isRun && thisView.nextPosition == thisView.viewManage.screenWidth / 2f) {
+						thisView.nextPosition = thisView.viewManage.screenWidth / 3f * 2;
+						thisView.openLooper.start();
+					} else {
+						thisView.nextPosition = thisView.viewManage.screenWidth / 3f * 2;
+					}
+				}
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("查找成功".equals(response.提示信息)) {
+					log.e("success:::::::::::");
+					if (nowpage == 0) {
+						mInfomations.clear();
+					}
+					if (response.resultPoints.size() > 0) {
+						nowpage++;
+					} else {
+					}
+					for (Point point : response.resultPoints) {
+						ShareMessage message = data.boards.new ShareMessage();
+
+						message.content = point.data.content;
+						message.head = point.data.head;
+						message.gsid = point.data.gsid;
+						message.sid = Constant.SQUARE_SID;
+						message.phone = point.data.phone;
+						message.totalScore = point.data.totalScore;
+						message.type = "imagetext";
+						message.time = point.data.time;
+						message.nickName = point.data.nickName;
+						message.distance = point.distance;
+						message.scores = gson.fromJson(point.data.scores, new TypeToken<HashMap<String, Score>>() {
+						}.getType());
+						// if (scores != null && !"".equals(scores)) {
+						// scores = scores.substring(0, scores.length() - 1);
+						// message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
+						// }.getType());
+						// }
+						mInfomations.add(message);
+						data.boards.shareMessagesMap.put(message.sid, message);
+					}
+					if (isAnimation) {
+						thisView.loopCallback.state = thisView.status.None;
+						thisView.transleteSpeed = 1f;
+						thisView.nextPosition = thisView.viewManage.screenWidth;
+						thisView.openLooper.start();
+						if (!isRun && thisView.nextPosition == thisView.viewManage.screenWidth / 3f * 2) {
+							thisView.nextPosition = thisView.viewManage.screenWidth;
+							thisView.openLooper.start();
+						} else {
+							thisView.nextPosition = thisView.viewManage.screenWidth;
+						}
+						isRun = false;
+					}
+					thisView.notifyData();
+				}
+			}
+
+		});
+	}
+
+	public class Point {
+		double distance;
+		double[] location;
+		SharePoint data;
+
+		public class SharePoint {
+			public String gsid;
+			public String phone;
+			public String nickName;
+			public String head;
+			public long time;
+			public int totalScore;
+
+			public double distance;
+			public String scores;
+			public String content;
+		}
+	}
+
+	public void searchNearbyHttp(final boolean isAnimation) {
+		if (isAnimation) {
+			thisView.transleteSpeed = 0.4f;
+			thisView.loopCallback.state = thisView.status.None;
+			thisView.currentPosition = 0;
+			thisView.nextPosition = thisView.viewManage.screenWidth / 2f;
+			handler.postDelayed(new Runnable() {
+				public void run() {
+					isRun = true;
+					thisView.openLooper.start();
+				}
+			}, 500);
+		}
 		long now = System.currentTimeMillis();
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -1160,7 +1295,11 @@ public class NearbyController {
 			thisView.openLooper.stop();
 			thisView.currentPosition = -thisView.viewManage.screenWidth;
 			thisView.nextPosition = -thisView.viewManage.screenWidth;
-			searchNearbyHttp(false);
+			if (status == Status.hottest || status == Status.newest) {
+				searchNearbyLBS(false);
+			} else {
+				searchNearbyHttp(false);
+			}
 		}
 	}
 

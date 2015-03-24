@@ -324,11 +324,20 @@ public class NearbyView {
 
 	public void reflashFirst() {
 		thisController.nowpage = 0;
-		thisController.searchNearbyHttp(true);
+		if (thisController.status == Status.hottest || thisController.status == Status.newest) {
+			thisController.searchNearbyLBS(true);
+		} else {
+			thisController.searchNearbyHttp(true);
+		}
+
 	}
 
 	public void nextPageData() {
-		thisController.searchNearbyHttp(true);
+		if (thisController.status == Status.hottest || thisController.status == Status.newest) {
+			thisController.searchNearbyLBS(true);
+		} else {
+			thisController.searchNearbyHttp(true);
+		}
 	}
 
 	public float transleteSpeed = 3f;// 3f
