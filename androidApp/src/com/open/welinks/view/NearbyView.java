@@ -502,6 +502,12 @@ public class NearbyView {
 					holder.imageTextContentView.setVisibility(View.GONE);
 				}
 
+				if ("sent".equals(message.status)) {
+					holder.progressView.setTranslationX(viewManage.screenWidth);
+				} else {
+
+				}
+
 				holder.num_picker_increment.setTag(R.id.tag_class, "IncrementView");
 				holder.num_picker_increment.setOnClickListener(thisController.mOnClickListener);
 				holder.num_picker_increment.setTag(R.id.tag_first, position);
@@ -530,11 +536,11 @@ public class NearbyView {
 
 		@Override
 		public void loop(double ellapsedMillis) {
-			// updateShareProgress(ellapsedMillis);
+			updateShareProgress(ellapsedMillis);
 		}
 	}
 
-	public float progressDeep = 3.0f;
+	public float progressDeep = 0.6f;
 
 	public void updateShareProgress(double millis) {
 		float distance = (float) (millis * this.progressDeep);
@@ -559,7 +565,7 @@ public class NearbyView {
 					View view = this.nearbyListView.getChildAt(position - firstVisiblePosition);
 					if (view.getTag() instanceof HotHolder) {
 						HotHolder holder = (HotHolder) view.getTag();
-
+						holder.progressView.setTranslationX(sendShare.percent);
 					}
 				}
 				isRunning = true;
@@ -582,6 +588,7 @@ public class NearbyView {
 		}
 		if (!isRunning) {
 			this.openLooper1.stop();
+			log.e("Stop.....................");
 		}
 	}
 
@@ -602,6 +609,9 @@ public class NearbyView {
 		sendShare.position = this.sendingSequence.indexOf(shareMessage.gsid);
 		sendShare.percent = percent;
 		this.sendingShareMessage.put(shareMessage.gsid, sendShare);
+		thisController.mInfomations.add(0, shareMessage);
+		this.nearbyShareAdapter.notifyDataSetChanged();
+		log.e("initShareMessage");
 	}
 
 	public void updateProgress(ShareMessage shareMessage, int percent) {
@@ -610,6 +620,7 @@ public class NearbyView {
 			this.openLooper1.start();
 			sendShare.position = this.sendingSequence.indexOf(shareMessage.gsid);
 		}
+		log.e("updateProgress");
 	}
 
 	public class NearbyRelationAdapter extends BaseAdapter {
