@@ -64,8 +64,8 @@ import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.view.ShareMessageDetailView;
-import com.open.welinks.view.ViewManage;
 import com.open.welinks.view.ShareMessageDetailView.ShareBody;
+import com.open.welinks.view.ViewManage;
 
 public class ShareMessageDetailController {
 
@@ -107,7 +107,6 @@ public class ShareMessageDetailController {
 	public String nickNameTo = "";
 	public String headTo;
 
-	public String gid;
 	public String sid;
 
 	public Bitmap WeChatBitmap;
@@ -126,7 +125,6 @@ public class ShareMessageDetailController {
 		parser.check();
 		// TODO gid to sid
 
-		gid = thisActivity.getIntent().getStringExtra("gid");
 		sid = thisActivity.getIntent().getStringExtra("sid");
 
 		if (sid == null || "".equals(sid)) {
@@ -449,7 +447,7 @@ public class ShareMessageDetailController {
 						HttpUtils httpUtils = new HttpUtils();
 						params.addBodyParameter("phone", currentUser.phone);
 						params.addBodyParameter("accessKey", currentUser.accessKey);
-						params.addBodyParameter("gid", gid);
+						// params.addBodyParameter("gid", gid);
 						params.addBodyParameter("gsid", gsid);
 
 						data = parser.check();
@@ -459,11 +457,7 @@ public class ShareMessageDetailController {
 						}
 						// share.shareMessagesMap.remove(gsid);
 						data.boards.isModified = true;
-						if (data.relationship.squares.contains(gid)) {
-							taskManageHolder.viewManage.postNotifyView("SquareSubViewMessage");
-						} else {
-							taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
-						}
+						taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
 						httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
 						Intent intent = new Intent();
 						intent.putExtra("key", gsid);
@@ -480,7 +474,7 @@ public class ShareMessageDetailController {
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
-		params.addBodyParameter("gid", gid);
+		// params.addBodyParameter("gid", gid);
 		params.addBodyParameter("sid", sid);
 		params.addBodyParameter("gsid", shareMessage.gsid);
 		params.addBodyParameter("nickName", currentUser.nickName);
@@ -547,7 +541,7 @@ public class ShareMessageDetailController {
 		shareMessage.type = this.shareMessage.type;
 		shareMessage.nickName = currentUser.nickName;
 		shareMessage.head = currentUser.head;
-		shareMessage.gid = gid;
+		// shareMessage.gid = gid;
 		shareMessage.sid = sid;
 		shareMessage.phone = currentUser.phone;
 		shareMessage.gsid = currentUser.phone + "_" + time;
@@ -562,7 +556,6 @@ public class ShareMessageDetailController {
 		taskManageHolder.viewManage.mainView1.shareSubView.showShareMessages();
 
 		sendShareToServer(key, shareMessage.content, shareMessage.gsid);
-
 	}
 
 	public void sendShareToServer(String key, String content, String gsid) {
@@ -614,7 +607,7 @@ public class ShareMessageDetailController {
 		User user = data.userInformation.currentUser;
 		Message message = data.messages.new Message();
 		MessageShareContent messageContent = subData.new MessageShareContent();
-		messageContent.gid = gid;
+		// messageContent.gid = gid;
 		messageContent.sid = sid;
 		messageContent.gsid = shareMessage.gsid;
 		messageContent.image = imageContent;

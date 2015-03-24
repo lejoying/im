@@ -225,7 +225,7 @@ public class ChatController {
 						String gid = (String) view.getTag(R.id.tag_second);
 						String gsid = (String) view.getTag(R.id.tag_third);
 						String sid = (String) view.getTag(R.id.tag_fourth);
-						if (gid.matches("[\\d]+") && gsid.matches("[\\d]+")) {
+						if (sid != null && gsid != null && sid.matches("[\\d]+") && gsid.matches("[\\d]+")) {
 							Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 							intent.putExtra("gid", gid);
 							intent.putExtra("sid", sid);
