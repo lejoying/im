@@ -6,7 +6,8 @@
         url: "/api2/share/getboardshare",//getoneshare
         data: {
             sid: Request.QueryString("sid"),
-            gsid: Request.QueryString("gsid")
+            gsid: Request.QueryString("gsid"),
+			time:new Date().getTime()
         },
         success: function (data) {
             if (data.share != undefined && data.share != null) {
