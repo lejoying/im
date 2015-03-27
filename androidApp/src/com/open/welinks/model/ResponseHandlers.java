@@ -1986,9 +1986,9 @@ public class ResponseHandlers {
 			parser.check();
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("评分成功")) {
-
+				log.e("评分成功");
 			} else {
-
+				log.e(response.失败原因 + ":::::::::::::::::::::::");
 			}
 		}
 	}

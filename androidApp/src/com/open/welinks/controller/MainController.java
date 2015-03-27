@@ -155,8 +155,10 @@ public class MainController {
 
 	public void onDestroy() {
 		// thisActivity.unregisterReceiver(connectionChangeReceiver);
-		mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-		mLocationManagerProxy.destroy();
+		if (mLocationManagerProxy != null) {
+			mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+			mLocationManagerProxy.destroy();
+		}
 		thisView.messagesSubView.onDestroy();
 		thisView.squareSubView.thisController.onDestroy();
 	}

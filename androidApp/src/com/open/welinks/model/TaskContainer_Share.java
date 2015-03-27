@@ -273,7 +273,7 @@ public class TaskContainer_Share {
 			params.addBodyParameter("ogsid", shareMessage.gsid);
 			params.addBodyParameter("sid", sid);
 			if (longitude != 0 && latitude != 0) {
-				params.addBodyParameter("location", longitude + "," + latitude);
+				params.addBodyParameter("location", "[" + longitude + "," + latitude + "]");
 				params.addBodyParameter("address", address);
 			}
 			SendShareMessage sendShareMessage = subData.new SendShareMessage();

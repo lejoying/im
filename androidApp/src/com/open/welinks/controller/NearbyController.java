@@ -134,12 +134,12 @@ public class NearbyController {
 	public AMapLocation mAmapLocation;
 
 	public double latitude, longitude;
-	public int searchRadius = 50000;
-	public int tempSearchRadius = 50000;
+	public int searchRadius = 20000;
+	public int tempSearchRadius = 20000;
 	public long searchTime = 0;
 	public long tempSearchTime = 0;
 
-	public int[] radius = { 1500, 5000, 10000, 50000 };
+	public int[] radius = { 1500, 5000, 10000, 20000 };
 	public long[] times = { 3600000, 86400000, 259200000, 0 };
 
 	public int RESULTCODE = 0x1;
@@ -343,7 +343,7 @@ public class NearbyController {
 						shareMessage.scores.put(score.phone, score);
 						data.boards.isModified = true;
 						thisView.notifyData();
-						thisView.modifyPraiseusersToMessage(true, shareMessage.gsid);
+						thisView.modifyPraiseusersToMessage(true, shareMessage.gsid, shareMessage.location);
 					} else if ("DecrementView".equals(type)) {
 						final ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 						if (shareMessage.scores == null) {
@@ -371,7 +371,7 @@ public class NearbyController {
 									shareMessage.scores.put(score.phone, score);
 									data.boards.isModified = true;
 									thisView.notifyData();
-									thisView.modifyPraiseusersToMessage(false, shareMessage.gsid);
+									thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
 									thisController.mInfomations.remove(position);
 									thisView.notifyData();
 								}
@@ -385,7 +385,7 @@ public class NearbyController {
 							shareMessage.scores.put(score.phone, score);
 							data.boards.isModified = true;
 							thisView.notifyData();
-							thisView.modifyPraiseusersToMessage(false, shareMessage.gsid);
+							thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
 						}
 					}
 				} else if (view.getTag(R.id.tag_first) != null) {
@@ -880,7 +880,6 @@ public class NearbyController {
 				}
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if ("查找成功".equals(response.提示信息)) {
-					log.e("success:::::::::::");
 					if (nowpage == 0) {
 						mInfomations.clear();
 					}
@@ -901,13 +900,10 @@ public class NearbyController {
 						message.time = point.data.time;
 						message.nickName = point.data.nickName;
 						message.distance = point.distance;
+						message.location = point.location;
 						message.scores = gson.fromJson(point.data.scores, new TypeToken<HashMap<String, Score>>() {
 						}.getType());
-						// if (scores != null && !"".equals(scores)) {
-						// scores = scores.substring(0, scores.length() - 1);
-						// message.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
-						// }.getType());
-						// }
+						message.status = "sent";
 						mInfomations.add(message);
 						data.boards.shareMessagesMap.put(message.sid, message);
 					}

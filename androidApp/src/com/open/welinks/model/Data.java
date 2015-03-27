@@ -316,6 +316,7 @@ public class Data {
 			public String getStatus;
 
 			public double distance;
+			public double[] location;
 			// public ArrayList<String> praiseusers = new ArrayList<String>();
 			public HashMap<String, Score> scores = new HashMap<String, Score>();
 			public List<Comment> comments = new ArrayList<Comment>();

@@ -373,7 +373,7 @@ public class NearbyView {
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-	public void modifyPraiseusersToMessage(boolean option, String gsid) {
+	public void modifyPraiseusersToMessage(boolean option, String gsid, double[] location) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		User currentUser = data.userInformation.currentUser;
@@ -381,6 +381,11 @@ public class NearbyView {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gsid", gsid);
 		params.addBodyParameter("option", option + "");
+		if (location != null) {
+			params.addBodyParameter("location", "[" + location[0] + "," + location[1] + "]");
+		} else {
+			log.e("location == null:::::::::::");
+		}
 		Share_scoreCallBack2 callBack = responseHandlers.new Share_scoreCallBack2();
 		callBack.option = option;
 		httpUtils.send(HttpMethod.POST, API.SHARE_SCORE, params, callBack);
