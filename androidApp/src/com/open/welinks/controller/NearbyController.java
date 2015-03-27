@@ -918,7 +918,6 @@ public class NearbyController {
 					log.e(response.info + "::::::" + response.status);
 				}
 			}
-
 		});
 	}
 

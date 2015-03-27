@@ -470,8 +470,7 @@ public class NearbyView {
 					if (score != null) {
 						if (score.positive > 0) {
 							holder.num_picker_increment.setImageResource(R.drawable.num_picker_increment_on);
-						}
-						if (score.negative > 0) {
+						} else  if (score.negative > 0) {
 							holder.num_picker_decrement.setImageResource(R.drawable.num_picker_decrement_on);
 						}
 					} else {
@@ -588,6 +587,7 @@ public class NearbyView {
 		}
 		if (!isRunning) {
 			this.openLooper1.stop();
+			notifyData();
 			log.e("Stop.....................");
 		}
 	}

@@ -8,8 +8,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Location;
-import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
@@ -24,10 +22,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringUtil;
@@ -67,9 +61,9 @@ public class MainController {
 
 	public GestureDetector mGesture;
 	public GestureDetector mListGesture;
-
-	public LocationManagerProxy mLocationManagerProxy;
-	public AMapLocationListener mAMapLocationListener;
+	//
+	// public LocationManagerProxy mLocationManagerProxy;
+	// public AMapLocationListener mAMapLocationListener;
 
 	public OnClickListener mOnClickListener;
 	public OnDownloadListener downloadListener;
@@ -155,8 +149,8 @@ public class MainController {
 
 	public void onDestroy() {
 		// thisActivity.unregisterReceiver(connectionChangeReceiver);
-		mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-		mLocationManagerProxy.destroy();
+		// mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+		// mLocationManagerProxy.destroy();
 		thisView.messagesSubView.onDestroy();
 		thisView.squareSubView.thisController.onDestroy();
 	}
@@ -263,39 +257,39 @@ public class MainController {
 			}
 		};
 
-		mAMapLocationListener = new AMapLocationListener() {
-
-			@Override
-			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			}
-
-			@Override
-			public void onProviderEnabled(String arg0) {
-			}
-
-			@Override
-			public void onProviderDisabled(String arg0) {
-			}
-
-			@Override
-			public void onLocationChanged(Location arg0) {
-			}
-
-			@Override
-			public void onLocationChanged(AMapLocation aMapLocation) {
-				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-				mLocationManagerProxy.destroy();
-				if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0) {
-					User currentUser = data.userInformation.currentUser;
-					currentUser.address = aMapLocation.getAddress();
-					currentUser.latitude = String.valueOf(aMapLocation.getLatitude());
-					currentUser.longitude = String.valueOf(aMapLocation.getLongitude());
-					// log.e(currentUser.longitude + "," + currentUser.latitude);
-					thisController.squareSubController.setTitle(aMapLocation);
-					modifyLocation();
-				}
-			}
-		};
+		// mAMapLocationListener = new AMapLocationListener() {
+		//
+		// @Override
+		// public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+		// }
+		//
+		// @Override
+		// public void onProviderEnabled(String arg0) {
+		// }
+		//
+		// @Override
+		// public void onProviderDisabled(String arg0) {
+		// }
+		//
+		// @Override
+		// public void onLocationChanged(Location arg0) {
+		// }
+		//
+		// @Override
+		// public void onLocationChanged(AMapLocation aMapLocation) {
+		// mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+		// mLocationManagerProxy.destroy();
+		// if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0) {
+		// User currentUser = data.userInformation.currentUser;
+		// currentUser.address = aMapLocation.getAddress();
+		// currentUser.latitude = String.valueOf(aMapLocation.getLatitude());
+		// currentUser.longitude = String.valueOf(aMapLocation.getLongitude());
+		// // log.e(currentUser.longitude + "," + currentUser.latitude);
+		// thisController.squareSubController.setTitle(aMapLocation);
+		// modifyLocation();
+		// }
+		// }
+		// };
 
 		listOnTouchListener = new ListOnTouchListener();
 
@@ -323,25 +317,25 @@ public class MainController {
 		this.thisController.meSubController.bindEvent();
 	}
 
-	public void requestLocation() {
-		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
-		mLocationManagerProxy.setGpsEnable(true);
-		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, 60 * 1000 * 10, 1000, mAMapLocationListener);
-	}
+	// public void requestLocation() {
+	// mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
+	// mLocationManagerProxy.setGpsEnable(true);
+	// mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, 60 * 1000 * 10, 1000, mAMapLocationListener);
+	// }
 
-	public void modifyLocation() {
-		data = parser.check();
-		HttpUtils httpUtils = new HttpUtils();
-		RequestParams params = new RequestParams();
-		User currentUser = data.userInformation.currentUser;
-		params.addBodyParameter("phone", currentUser.phone);
-		params.addBodyParameter("accessKey", currentUser.accessKey);
-		params.addBodyParameter("longitude", currentUser.longitude);
-		params.addBodyParameter("latitude", currentUser.latitude);
-		params.addBodyParameter("address", currentUser.address);
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
-	}
+	// public void modifyLocation() {
+	// data = parser.check();
+	// HttpUtils httpUtils = new HttpUtils();
+	// RequestParams params = new RequestParams();
+	// User currentUser = data.userInformation.currentUser;
+	// params.addBodyParameter("phone", currentUser.phone);
+	// params.addBodyParameter("accessKey", currentUser.accessKey);
+	// params.addBodyParameter("longitude", currentUser.longitude);
+	// params.addBodyParameter("latitude", currentUser.latitude);
+	// params.addBodyParameter("address", currentUser.address);
+	// ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+	// httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
+	// }
 
 	public class TouchStatus {
 		public int None = 4, Down = 1, Horizontal = 2, Vertical = 3, Up = 4;
