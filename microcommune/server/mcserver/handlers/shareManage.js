@@ -1136,6 +1136,7 @@ shareManage.sendboardshare = function (data, response) {
     //var content = data.content;
     var gid = data.gid; //unused
     var ogsid = data.ogsid;
+    var location = data.location;
     if (verifyEmpty.verifyEmpty(data, [gid, sid, phone, ogsid, nickName, head, message], response)) {
         try {
             message = JSON.parse(message);
@@ -1209,8 +1210,7 @@ shareManage.sendboardshare = function (data, response) {
             } else {
                 var shareData = results.pop().share.data;
                 //console.log("发布群分享成功");
-                var address = data.address;
-                if (address != null && address != undefined && address != "") {
+                if (location != null && location != undefined && location != "") {
                     createLbsShare(shareData);
                 }
                 ResponseData(JSON.stringify({
@@ -1224,73 +1224,34 @@ shareManage.sendboardshare = function (data, response) {
                 console.log("发布群分享成功");
             }
         });
+
         function createLbsShare(shareData) {
-            try {
-                var contentObj = JSON.parse(shareData.content);
-                var newContentObj = [];
-                var imageContent = 0;
-                for (var index in contentObj) {
-                    var obj = contentObj[index];
-                    if (obj.type == "text") {
-                        var textObj = {};
-                        textObj["type"] = obj.type;
-                        var detailLength = obj.detail.length;
-                        if (detailLength > 255) {
-                            textObj["detail"] = obj.detail.substring(0, 255);
-                        } else {
-                            textObj["detail"] = obj.detail;
-                        }
-                        newContentObj.push(textObj);
-                    } else if (obj.type == "image") {
-                        imageContent++;
-                        if (imageContent > 4) {
-                            break;
-                        }
-                        var imageObj = {};
-                        imageObj["type"] = obj.type;
-                        imageObj["detail"] = obj.detail;
-                        newContentObj.push(imageObj);
+            ajax.ajax({
+                type: "POST",
+                url: serverSetting.LBS_CREATE,
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                data: {
+                    location: location,
+                    primaryKey: shareData.gsid,
+                    data: JSON.stringify({
+                        nickName: encodeURI(shareData.nickName),
+                        gsid: shareData.gsid,
+                        phone: shareData.phone,
+                        head: shareData.head,
+                        content: encodeURI(shareData.content),
+                        totalScore: shareData.totalScore,
+                        time: shareData.time,
+                        scores: "{}"
+                    })
+                }, success: function (info) {
+                    var info = JSON.parse(info);
+                    if (info.提示信息 == "创建成功") {
+                        console.log("success--")
+                    } else {
+                        console.log("error--create")
                     }
                 }
-                var contentString = JSON.stringify(newContentObj);
-                contentString = new Buffer(contentString + "@").toString("base64");
-                ajax.ajax({
-                    type: "POST",
-                    url: serverSetting.LBS.DATA_CREATE,
-                    data: {
-                        key: serverSetting.LBS.KEY,
-                        tableid: serverSetting.LBS.SHARESTABLEID,
-                        loctype: 1,
-                        data: JSON.stringify({
-                            _name: share.nickName,
-                            _location: data.location,
-                            _address: data.address,
-                            gsid: parseInt(shareData.gsid),
-                            sid: parseInt(sid),
-                            phone: share.phone,
-                            head: share.head,
-                            type: share.type,
-                            content: contentString,
-                            totalScore: share.totalScore,
-                            time: share.time
-                        })
-                    }, success: function (info) {
-                        try {
-                            var info = JSON.parse(info);
-                            if (info.status == 1) {
-                                console.log("success--" + info._id)
-                            } else {
-                                console.log("error--" + info.info)
-                            }
-                        } catch (e) {
-                            console.log(info);
-                        }
-                    }
-                });
-            } catch (e) {
-                console.log(e);
-                return;
-            }
+            });
         }
     }
 }
@@ -2042,6 +2003,7 @@ shareManage.score = function (data, response) {
     var phone = data.phone;
     var option = data.option;
     var gsid = data.gsid;
+    var location = data.location;
     if (verifyEmpty.verifyEmpty(data, [phone, option, gsid], response)) {
         modifyShareNode();
     }
@@ -2113,7 +2075,12 @@ shareManage.score = function (data, response) {
                                 scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                                 status: "sent"
                             };
-                            checkLbsShare(share);
+                            if (share.totalScore <= -5) {
+                                deleteLbsShare(share, location);
+                            } else {
+                                console.log("modify")
+                                modifyLabsShare(share, location);
+                            }
                             ResponseData(JSON.stringify({
                                 "提示信息": "评分成功",
                                 share: share
@@ -2136,7 +2103,12 @@ shareManage.score = function (data, response) {
                                 scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                                 status: "sent"
                             };
-                            checkLbsShare(share);
+                            if (share.totalScore <= -5) {
+                                deleteLbsShare(share, location);
+                            } else {
+                                console.log("modify")
+                                modifyLabsShare(share, location);
+                            }
                             ResponseData(JSON.stringify({
                                 "提示信息": "评分成功",
                                 share: share
@@ -2155,55 +2127,23 @@ shareManage.score = function (data, response) {
                             gsid: gsid
                         }), response);
                     }
-                    function checkLbsShare(share) {
-                        try {
-                            ajax.ajax({
-                                type: "POST",
-                                url: serverSetting.LBS.DATA_SEARCH,
-                                data: {
-                                    key: serverSetting.LBS.KEY,
-                                    tableid: serverSetting.LBS.SHARESTABLEID,
-                                    filter: "gsid:" + gsid
-                                }, success: function (info) {
-                                    var info = JSON.parse(info);
-                                    if (info.status == 1 && info.count >= 1) {
-                                        var id = info.datas[0]._id;
-                                        if (share.totalScore <= -5) {
-                                            deleteLbsShare(id);
-                                        } else {
-                                            modifyLabsShare(share, id);
-                                        }
-                                        console.log("success--" + info._id)
-                                    } else {
-                                        console.log("check error--" + info.status)
-                                    }
-                                }
-                            });
-                        } catch (e) {
-                            console.log(e);
-                            return;
-                        }
-                    }
 
-                    function modifyLabsShare(share, id) {
+                    function modifyLabsShare(share, location) {
                         try {
                             ajax.ajax({
                                 type: "POST",
-                                url: serverSetting.LBS.DATA_UPDATA,
+                                url: serverSetting.LBS_UPDATA,
                                 data: {
-                                    key: serverSetting.LBS.KEY,
-                                    tableid: serverSetting.LBS.SHARESTABLEID,
-                                    data: JSON.stringify({
-                                        _id: id,
-                                        totalScore: share.totalScore,
-                                        scores: JSON.stringify(share.scores) + "@"
-                                    })
+                                    primaryKey: share.gsid,
+                                    location: location,
+                                    totalScore: share.totalScore,
+                                    scores: JSON.stringify(share.scores)
                                 }, success: function (info) {
                                     var info = JSON.parse(info);
-                                    if (info.status == 1) {
-                                        console.log("success--" + info._id)
+                                    if (info["提示信息"] == "修改成功") {
+                                        console.log("success--")
                                     } else {
-                                        console.log("modify error--" + info.status)
+                                        console.log("modify error--" + info.失败原因)
                                     }
                                 }
                             });
@@ -2212,21 +2152,20 @@ shareManage.score = function (data, response) {
                         }
                     }
 
-                    function deleteLbsShare(id) {
+                    function deleteLbsShare(share, location) {
                         try {
                             ajax.ajax({
                                 type: "POST",
-                                url: serverSetting.LBS.DATA_DELETE,
+                                url: serverSetting.LBS_DELETE,
                                 data: {
-                                    key: serverSetting.LBS.KEY,
-                                    tableid: serverSetting.LBS.SHARESTABLEID,
-                                    ids: id
+                                    primaryKey: share.gsid,
+                                    location: location
                                 }, success: function (info) {
                                     var info = JSON.parse(info);
-                                    if (info.status == 1 && info.success >= 1) {
-                                        console.log("success--" + info.success)
+                                    if (info.提示信息 == "删除成功") {
+                                        console.log("success--")
                                     } else {
-                                        console.log("delete error--" + info.status)
+                                        console.log("delete error--")
                                     }
                                 }
                             });
@@ -2323,7 +2262,20 @@ function createGroupShares(groups) {
         }
     });
 }
-
+function uniencode(text) {
+    text = escape(text.toString()).replace(/\+/g, "%2B");
+    var matches = text.match(/(%([0-9A-F]{2}))/gi);
+    if (matches) {
+        for (var matchid = 0; matchid < matches.length; matchid++) {
+            var code = matches[matchid].substring(1, 3);
+            if (parseInt(code, 16) >= 128) {
+                text = text.replace(matches[matchid], '%u00' + code);
+            }
+        }
+    }
+    text = text.replace('%25', '%u0025');
+    return text;
+}
 
 function ResponseData(responseContent, response) {
     response.writeHead(200, {
@@ -2333,5 +2285,29 @@ function ResponseData(responseContent, response) {
     response.write(responseContent);
     response.end();
 }
-
+function convert_int_to_utf8($intval) {
+    $intval = intval($intval);
+    switch ($intval) {
+// 1 byte, 7 bits
+        case 0:
+            return chr(0);
+        case ($intval & 0x7F):
+            return chr($intval);
+// 2 bytes, 11 bits
+        case ($intval & 0x7FF):
+            return chr(0xC0 | (($intval >> 6) & 0x1F)).
+                chr(0x80 | ($intval & 0x3F));
+// 3 bytes, 16 bits
+        case ($intval & 0xFFFF):
+            return chr(0xE0 | (($intval >> 12) & 0x0F)).
+                chr(0x80 | (($intval >> 6) & 0x3F)).
+                chr(0x80 | ($intval & 0x3F));
+// 4 bytes, 21 bits
+        case ($intval & 0x1FFFFF):
+            return chr(0xF0 | ($intval >> 18)).
+                chr(0x80 | (($intval >> 12) & 0x3F)).
+                chr(0x80 | (($intval >> 6) & 0x3F)).
+                chr(0x80 | ($intval & 0x3F));
+    }
+}
 module.exports = shareManage;

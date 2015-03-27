@@ -448,6 +448,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         });
     }
 }
+
 function setOauthAccessKey(phone, accessKey, next) {
     client.rpush(phone + "_accessKey", accessKey, function (err, reply) {
         if (err != null) {
