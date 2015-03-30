@@ -449,7 +449,9 @@ public class ShareMessageDetailController {
 						params.addBodyParameter("accessKey", currentUser.accessKey);
 						// params.addBodyParameter("gid", gid);
 						params.addBodyParameter("gsid", gsid);
-
+						if (shareMessage.location != null && shareMessage.location.length > 2) {
+							params.addBodyParameter("location", "[" + shareMessage.location[0] + "," + shareMessage.location[1] + "]");
+						}
 						data = parser.check();
 						Board board = data.boards.boardsMap.get(sid);
 						if (board != null && board.shareMessagesOrder != null) {

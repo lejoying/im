@@ -142,7 +142,7 @@ public class NearbyController {
 	public int[] radius = { 1500, 5000, 10000, 20000 };
 	public long[] times = { 3600000, 86400000, 259200000, 0 };
 
-	public int RESULTCODE = 0x1;
+	public int RESULTCODESHARERELEASE = 0x1, RESULTCODESHAREDETAIL = 0x2;
 
 	public Status status;
 
@@ -509,7 +509,7 @@ public class NearbyController {
 					intent.putExtra("longitude", longitude);
 					intent.putExtra("sid", Constant.SQUARE_SID);
 					intent.putExtra("source", 2);
-					thisActivity.startActivityForResult(intent, RESULTCODE);
+					thisActivity.startActivityForResult(intent, RESULTCODESHARERELEASE);
 				}
 			}
 		};
@@ -757,7 +757,7 @@ public class NearbyController {
 					intent.putExtra("gid", shareMessage.gid);
 					intent.putExtra("sid", shareMessage.sid);
 					intent.putExtra("gsid", shareMessage.gsid);
-					thisActivity.startActivity(intent);
+					thisActivity.startActivityForResult(intent, RESULTCODESHAREDETAIL);
 				} else if (status == Status.group) {
 					Group group = (Group) thisController.mInfomations.get(position);
 					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, String.valueOf(group.gid));
@@ -1306,7 +1306,7 @@ public class NearbyController {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode2, Intent data2) {
-		if (resultCode2 == RESULTCODE) {
+		if (requestCode == RESULTCODESHAREDETAIL) {
 			nowpage = 0;
 			thisView.openLooper.stop();
 			thisView.currentPosition = -thisView.viewManage.screenWidth;
