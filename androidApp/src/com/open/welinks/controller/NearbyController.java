@@ -847,13 +847,14 @@ public class NearbyController {
 
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
-		User currentUser = data.userInformation.currentUser;
+		long now = System.currentTimeMillis();
 		// params.addBodyParameter("phone", currentUser.phone);
 		// params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("center", "[" + longitude + "," + latitude + "]");
 		params.addBodyParameter("radius", String.valueOf(searchRadius));
 		params.addBodyParameter("limit", String.valueOf(20));
 		params.addBodyParameter("page", String.valueOf(nowpage));
+		params.addBodyParameter("time", String.valueOf(now));
 		if (status == Status.newest) {
 			params.addBodyParameter("sortby", "time");
 		} else if (status == Status.hottest) {
