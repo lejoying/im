@@ -472,26 +472,31 @@ public class ResponseHandlers {
 		};
 	};
 	public RequestCallBack<String> account_getcommonusedlocation = httpClient.new ResponseHandler<String>() {
+
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
-			public List<Data.UserInformation.User.Location> commonUsedLocations;
+			public List<User> accounts;
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if ("获取用户常用位置信息成功".equals(response.提示信息)) {
-				if (data.userInformation.currentUser.commonUsedLocations == null)
-					data.userInformation.currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
-				data.userInformation.currentUser.commonUsedLocations.clear();
-				data.userInformation.currentUser.commonUsedLocations.addAll(response.commonUsedLocations);
-				if (viewManage.nearbyView != null) {
-					viewManage.nearbyView.showAddressDialog();
+			if ("获取用户信息成功".equals(response.提示信息)) {
+				User currentUser = data.userInformation.currentUser;
+				if (response.accounts.size() > 0) {
+					User serverUser = response.accounts.get(0);
+					if (currentUser.commonUsedLocations == null) {
+						currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
+					}
+					currentUser.commonUsedLocations.clear();
+					currentUser.commonUsedLocations.addAll(serverUser.commonUsedLocations);
+					if (viewManage.nearbyView != null) {
+						viewManage.nearbyView.showAddressDialog();
+					}
 				}
-
 			} else {
-
+				log.e("account_getcommonusedlocation:" + response.失败原因);
 			}
 		}
 	};
