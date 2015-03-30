@@ -43,6 +43,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
+import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnCameraChangeListener;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -1321,15 +1322,17 @@ public class NearbyController {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode2, Intent data2) {
-		if (requestCode == RESULTCODESHAREDETAIL) {
-			nowpage = 0;
-			thisView.openLooper.stop();
-			thisView.currentPosition = -thisView.viewManage.screenWidth;
-			thisView.nextPosition = -thisView.viewManage.screenWidth;
-			if (status == Status.hottest || status == Status.newest) {
-				searchNearbyLBS(false);
-			} else {
-				searchNearbyHttp(false);
+		if (requestCode == RESULTCODESHAREDETAIL && resultCode2 == Activity.RESULT_OK && data2 != null) {
+			String deletedGsid = data2.getStringExtra("key");
+			if (status == Status.newest || status == Status.hottest) {
+				for (int i = 0; i < mInfomations.size(); i++) {
+					ShareMessage message = (ShareMessage) mInfomations.get(i);
+					if (message.gsid.equals(deletedGsid)) {
+						mInfomations.remove(i);
+						thisView.notifyData();
+						break;
+					}
+				}
 			}
 		}
 	}

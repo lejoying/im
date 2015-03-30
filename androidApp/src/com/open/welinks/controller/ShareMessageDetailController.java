@@ -447,9 +447,9 @@ public class ShareMessageDetailController {
 						HttpUtils httpUtils = new HttpUtils();
 						params.addBodyParameter("phone", currentUser.phone);
 						params.addBodyParameter("accessKey", currentUser.accessKey);
-						// params.addBodyParameter("gid", gid);
+						params.addBodyParameter("sid", shareMessage.sid);
 						params.addBodyParameter("gsid", gsid);
-						if (shareMessage.location != null && shareMessage.location.length > 2) {
+						if (shareMessage.location != null && shareMessage.location.length >= 2) {
 							params.addBodyParameter("location", "[" + shareMessage.location[0] + "," + shareMessage.location[1] + "]");
 						}
 						data = parser.check();
