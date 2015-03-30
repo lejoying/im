@@ -593,16 +593,6 @@ public class DynamicListActivity extends Activity {
 
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-	public void getRequareAddFriendList() {
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		User currentUser = data.userInformation.currentUser;
-		params.addBodyParameter("phone", currentUser.phone);
-		params.addBodyParameter("accessKey", currentUser.accessKey);
-
-		httpUtils.send(HttpMethod.POST, API.RELATION_GETASKFRIENDS, params, responseHandlers.getaskfriendsCallBack);
-	}
-
 	public void agreeAddFriend(String phoneTo) {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();

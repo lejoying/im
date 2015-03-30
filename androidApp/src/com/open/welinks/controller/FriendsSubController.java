@@ -376,7 +376,7 @@ public class FriendsSubController {
 					params.addBodyParameter("name", circleName);
 					params.addBodyParameter("rid", rid + "");
 
-					httpUtils.send(HttpMethod.POST, API.CIRCLE_ADDCIRCLE, params, responseHandlers.circle_addcircle);
+					httpUtils.send(HttpMethod.POST, API.CIRCLE_CREATECIRCLE, params, responseHandlers.circle_addcircle);
 
 				} else {
 

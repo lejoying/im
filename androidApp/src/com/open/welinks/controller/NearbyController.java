@@ -78,7 +78,6 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -772,6 +771,13 @@ public class NearbyController {
 		};
 	}
 
+	public class Account {
+		public String longitude;
+		public String latitude;
+		public String address;
+		public String commonusedlocation;
+	}
+
 	public void modifyLocation() {
 		data = Parser.getInstance().check();
 		HttpUtils httpUtils = new HttpUtils();
@@ -779,11 +785,14 @@ public class NearbyController {
 		User currentUser = data.userInformation.currentUser;
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
-		params.addBodyParameter("longitude", currentUser.longitude);
-		params.addBodyParameter("latitude", currentUser.latitude);
-		params.addBodyParameter("address", currentUser.address);
+		Account account = new Account();
+		account.longitude = currentUser.longitude;
+		account.latitude = currentUser.latitude;
+		account.address = currentUser.address;
+		String data = gson.toJson(account);
+		params.addBodyParameter("account", data);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, responseHandlers.account_modifylocation);
 	}
 
 	public boolean isTouchDown = false;
@@ -1285,7 +1294,8 @@ public class NearbyController {
 		User currentUser = data.userInformation.currentUser;
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
-		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GETCOMMONUSEDLOCATION, params, responseHandlers.account_getcommonusedlocation);
+		params.addBodyParameter("target", "[\"" + currentUser.phone + "\"]");
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, responseHandlers.account_getcommonusedlocation);
 	}
 
 	public void modifyUserCommonUsedLocations() {
@@ -1294,13 +1304,18 @@ public class NearbyController {
 		User currentUser = data.userInformation.currentUser;
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
-		params.addBodyParameter("commonusedlocation", gson.toJson(currentUser.commonUsedLocations));
+		String commonusedlocation = gson.toJson(currentUser.commonUsedLocations);
+		Account account = new Account();
+		account.commonusedlocation = commonusedlocation;
+		String data = gson.toJson(account);
+		params.addBodyParameter("account", data);
 
-		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYCOMMONUSEDLOCATION, params, httpClient.new ResponseHandler<String>() {
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, httpClient.new ResponseHandler<String>() {
 
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
 				super.onSuccess(responseInfo);
+				// 修改用户信息成功
 			}
 		});
 	}

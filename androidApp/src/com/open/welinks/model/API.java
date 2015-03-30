@@ -12,7 +12,9 @@ public class API {
 	 * http://images3.we-links.com/
 	 */
 	public static String DOMAIN_OSS_THUMBNAIL = "http://images3.we-links.com/";
-
+	/**
+	 * http://www.we-links.com/api2/bug/send
+	 */
 	public static String BUG_SEND = API_DOMAIN + "api2/bug/send";
 
 	// account
@@ -20,10 +22,6 @@ public class API {
 	 * http://www.we-links.com/api2/account/modify
 	 */
 	public static String ACCOUNT_MODIFY = API_DOMAIN + "api2/account/modify";
-	/**
-	 * http://www.we-links.com/api2/account/modifypassword
-	 */
-	public static String ACCOUNT_MODIFYPASSWORD = API_DOMAIN + "api2/account/modifypassword";
 	/**
 	 * http://www.we-links.com/api2/account/auth
 	 */
@@ -40,18 +38,7 @@ public class API {
 	 * http://www.we-links.com/api2/account/get
 	 */
 	public static String ACCOUNT_GET = API_DOMAIN + "api2/account/get";
-	/**
-	 * http://www.we-links.com/api2/account/modifylocation
-	 */
-	public static String ACCOUNT_MODIFYLOCATION = API_DOMAIN + "api2/account/modifylocation";
-	/**
-	 * http://www.we-links.com/api2/account/getcommonusedlocation
-	 */
-	public static String ACCOUNT_GETCOMMONUSEDLOCATION = API_DOMAIN + "api2/account/getcommonusedlocation";
-	/**
-	 * http://www.we-links.com/api2/account/modifycommonusedlocation
-	 */
-	public static String ACCOUNT_MODIFYCOMMONUSEDLOCATION = API_DOMAIN + "api2/account/modifycommonusedlocation";
+
 	// group
 	/**
 	 * http://www.we-links.com/api2/group/create
@@ -73,10 +60,6 @@ public class API {
 	 * http://www.we-links.com/api2/group/modify
 	 */
 	public static String GROUP_MODIFY = API_DOMAIN + "api2/group/modify";
-	/**
-	 * http://www.we-links.com/api2/group/modifysequence
-	 */
-	public static String GROUP_MODIFYGROUPSEQUENCE = API_DOMAIN + "api2/group/modifysequence";
 	/**
 	 * http://www.we-links.com/api2/group/modifygroupcirclesequence
 	 */
@@ -147,14 +130,6 @@ public class API {
 	 * http://www.we-links.com/api2/share/getusershares
 	 */
 	public static String SHARE_GETUSERSHARES = API_DOMAIN + "api2/share/getusershares";
-	/**
-	 * http://www.we-links.com/api2/share/getshare
-	 */
-	public static String SHARE_GETSHARE = API_DOMAIN + "api2/share/getshare";
-	/**
-	 * http://www.we-links.com/api2/share/addpraise
-	 */
-	public static String SHARE_ADDPRAISE = API_DOMAIN + "api2/share/addpraise";
 	/**
 	 * http://www.we-links.com/api2/share/score
 	 */
@@ -228,14 +203,7 @@ public class API {
 	 * http://www.we-links.com/api2/relation/intimatefriends
 	 */
 	public static String RELATION_GETINTIMATEFRIENDS = API_DOMAIN + "api2/relation/intimatefriends";
-	/**
-	 * http://www.we-links.com/api2/relation/getaskfriends unused
-	 */
-	public static String RELATION_GETASKFRIENDS = API_DOMAIN + "api2/relation/getaskfriends";
-	/**
-	 * http://www.we-links.com/api2/relation/addfriendagree
-	 */
-	// public static String RELATION_ADDFRIENDAGREE = API_DOMAIN + "api2/relation/addfriendagree";
+
 	/**
 	 * http://www.we-links.com/api2/relation/updatecontact
 	 */
@@ -257,7 +225,7 @@ public class API {
 	/**
 	 * http://www.we-links.com/api2/circle/createcircle
 	 */
-	public static String CIRCLE_ADDCIRCLE = API_DOMAIN + "api2/circle/createcircle";
+	public static String CIRCLE_CREATECIRCLE = API_DOMAIN + "api2/circle/createcircle";
 
 	// lbs
 	/**

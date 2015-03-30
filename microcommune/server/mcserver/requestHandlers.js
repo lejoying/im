@@ -56,24 +56,6 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
             accountManage.oauth6(data, response);
         });
     }
-    /*************************************************************
-     * * * * * * * * * * * * New Api * * * * * * * * * * * * * * *
-     *************************************************************/
-    else if (operation == "getuserinfomation") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            accountManage.getuserinfomation(data, response);
-        });
-    } else if (operation == "modifylocation") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            accountManage.modifylocation(data, response);
-        });
-    } else if (operation == "modifypassword") {
-        accountManage.modifypassword(data, response, setOauthAccessKey);
-    } else if (operation == "modifycommonusedlocation") {
-        accountManage.modifycommonusedlocation(data, response, setOauthAccessKey);
-    }else if (operation == "getcommonusedlocation") {
-        accountManage.getcommonusedlocation(data, response, setOauthAccessKey);
-    }
 }
 
 var relationManage = require("./handlers/relationManage.js");
@@ -82,12 +64,7 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "addfriend") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            //relationManage.addfriend(data, response);
-        });
-    }
-    else if (operation == "deletefriend") {
+    if (operation == "deletefriend") {
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.deletefriend(data, response);
         });
@@ -97,25 +74,6 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
             relationManage.blacklist(data, response);
         });
     }
-    else if (operation == "getcirclesandfriends") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            relationManage.getcirclesandfriends(data, response);
-        });
-    }
-    else if (operation == "getaskfriends") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            relationManage.getaskfriends(data, response);
-        });
-    }
-    else if (operation == "addfriendagree") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            //relationManage.addfriendagree(data, response);
-        });
-    }
-
-    /*************************************************************
-     * * * * * * * * * * * * New Api * * * * * * * * * * * * * * *
-     *************************************************************/
     else if (operation == "intimatefriends") {
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.intimatefriends(data, response);
@@ -142,26 +100,22 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
         });
     }
     else if (operation == "follow") {
-        console.log(data);
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.follow(data, response);
         });
     }
     else if (operation == "modifycircle") {
-        console.log(data);
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.modifycircle(data, response);
         });
     }
     else if (operation == "canclefollow") {
-        console.log(data);
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.canclefollow(data, response);
         });
     }
-
+    //Liao Liao api interface.
     else if (operation == "fuzzyquery") {
-        console.log(data);
         oauth6(data.phone, data.accessKey, response, function () {
             relationManage.fuzzyquery(data, response);
         });
@@ -182,21 +136,6 @@ requestHandlers.circleManage = function (request, response, pathObject, data) {
     else if (operation == "delete") {
         oauth6(data.phone, data.accessKey, response, function () {
             circleManage.delete(data, response);
-        });
-    }
-    else if (operation == "moveout") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            circleManage.moveout(data, response);
-        });
-    }
-    else if (operation == "moveorout") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            circleManage.moveorout(data, response);
-        });
-    }
-    else if (operation == "addcircle") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            circleManage.addcircle(data, response);
         });
     }
     else if (operation == "createcircle") {
@@ -223,7 +162,7 @@ requestHandlers.messageManage = function (request, response, pathObject, data) {
     }
     else if (operation == "deletes") {
         oauth6(data.phone, data.accessKey, response, function () {
-            messageManage.deletes(data, response);
+            //messageManage.deletes(data, response);
         });
     }
 }
@@ -275,29 +214,12 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
             groupManage.get(data, response);
         });
     }
-    else if (operation == "getusergroups") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.getusergroups(data, response);
-        });
-    }
-    else if (operation == "getgroupsandmembers") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.getgroupsandmembers(data, response);
-        });
-    }
-    /***************************************************
-     * * * * * * * *New Api* * * * * * * * * * * * * * *
-     ***************************************************/
     else if (operation == "getgroupmembers") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.getgroupmembers(data, response);
         });
     }
-    else if (operation == "modifysequence") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.modifysequence(data, response);
-        });
-    } else if (operation == "creategroupcircle") {
+    else if (operation == "creategroupcircle") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.creategroupcircle(data, response);
         });
@@ -308,10 +230,6 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
     } else if (operation == "modifygroupcircle") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.modifygroupcircle(data, response);
-        });
-    } else if (operation == "movegroupcirclegroups") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.movegroupcirclegroups(data, response);
         });
     } else if (operation == "modifygroupcirclesequence") {
         oauth6(data.phone, data.accessKey, response, function () {
@@ -337,7 +255,7 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.movegroupstocircle(data, response);
         });
-    }else if (operation == "follow") {
+    } else if (operation == "follow") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.follow(data, response);
         });
@@ -350,23 +268,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         return;
     }
     var operation = pathObject["operation"];
-    console.error(operation);
-    if (operation == "sendshare") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.sendshare(data, response);
-        });
-    }
-    else if (operation == "getshares") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.getshares(data, response);
-        });
-    }
-    else if (operation == "addpraise") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.addpraise(data, response);
-        });
-    }
-    else if (operation == "addcomment") {
+    if (operation == "addcomment") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.addcomment(data, response);
         });
@@ -376,27 +278,6 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.delete(data, response);
         });
     }
-    else if (operation == "deletecomment") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.deletecomment(data, response);
-        });
-    }
-    else if (operation == "getshare") {
-        shareManage.getshare(data, response);
-    }
-    else if (operation == "modifyvote") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.modifyvote(data, response);
-        });
-    }
-    else if (operation == "getgroupshares") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.getgroupshares(data, response);
-        });
-    }
-    /***************************************************
-     * * * * * * * *New Api* * * * * * * * * * * * * * *
-     ***************************************************/
     else if (operation == "getusershares") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.getusershares(data, response);
@@ -411,9 +292,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.getboardshares(data, response);
         });
     } else if (operation == "getboardshare") {
-//        oauth6(data.phone, data.accessKey, response, function () {
         shareManage.getboardshare(data, response);
-//        });
     } else if (operation == "addboard") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.addboard(data, response);
@@ -422,17 +301,9 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.modifyboard(data, response);
         });
-    } else if (operation == "getboards") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.getboards(data, response);
-        });
     } else if (operation == "modifysquence") {
         oauth6(data.phone, data.accessKey, response, function () {
             shareManage.modifysquence(data, response);
-        });
-    } else if (operation == "getboard") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            shareManage.getboard(data, response);
         });
     } else if (operation == "getgroupboards") {
         oauth6(data.phone, data.accessKey, response, function () {
