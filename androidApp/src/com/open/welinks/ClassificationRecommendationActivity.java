@@ -418,7 +418,7 @@ public class ClassificationRecommendationActivity extends Activity {
 		params.addBodyParameter("labels", gson.toJson(seletedLabelList));
 		params.addBodyParameter("nowpage", groupNowPage + "");
 		params.addBodyParameter("pagesize", groupPageSize + "");
-		httpUtils.send(HttpMethod.POST, API.GROUP_GETLABELSGROUPS, params, httpClient.new ResponseHandler<String>() {
+		httpUtils.send(HttpMethod.POST, API.LABEL_GETLABELSGROUPS, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
 				public String 失败原因;
@@ -461,7 +461,7 @@ public class ClassificationRecommendationActivity extends Activity {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("nowpage", labelNowPage + "");
 		params.addBodyParameter("pagesize", labelPageSize + "");
-		httpUtils.send(HttpMethod.POST, API.GROUP_GETHOTLABELS, params, httpClient.new ResponseHandler<String>() {
+		httpUtils.send(HttpMethod.POST, API.LABEL_GETHOTLABELS, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
 				public String 失败原因;

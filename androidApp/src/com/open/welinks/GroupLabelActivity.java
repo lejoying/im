@@ -408,7 +408,7 @@ public class GroupLabelActivity extends Activity {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
-		httpUtils.send(HttpMethod.POST, API.GROUP_GETHOTLABELS, params, httpClient.new ResponseHandler<String>() {
+		httpUtils.send(HttpMethod.POST, API.LABEL_GETHOTLABELS, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
 				public String 失败原因;
@@ -445,7 +445,7 @@ public class GroupLabelActivity extends Activity {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
 		params.addBodyParameter("labels", gson.toJson(currentGroup.labels));
-		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFYGROUPLABEL, params, httpClient.new ResponseHandler<String>() {
+		httpUtils.send(HttpMethod.POST, API.LABEL_MODIFYGROUPLABEL, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
 				public String 失败原因;
@@ -471,7 +471,7 @@ public class GroupLabelActivity extends Activity {
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gid", currentGroup.gid + "");
-		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPLABELS, params, httpClient.new ResponseHandler<String>() {
+		httpUtils.send(HttpMethod.POST, API.LABEL_GETGROUPLABELS, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
 				public String 失败原因;
