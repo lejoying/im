@@ -43,6 +43,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
+import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnCameraChangeListener;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -141,7 +142,7 @@ public class NearbyController {
 	public int[] radius = { 1500, 5000, 10000, 20000 };
 	public long[] times = { 3600000, 86400000, 259200000, 0 };
 
-	public int RESULTCODE = 0x1;
+	public int RESULTCODESHARERELEASE = 0x1, RESULTCODESHAREDETAIL = 0x2;
 
 	public Status status;
 
@@ -508,7 +509,7 @@ public class NearbyController {
 					intent.putExtra("longitude", longitude);
 					intent.putExtra("sid", Constant.SQUARE_SID);
 					intent.putExtra("source", 2);
-					thisActivity.startActivityForResult(intent, RESULTCODE);
+					thisActivity.startActivityForResult(intent, RESULTCODESHARERELEASE);
 				}
 			}
 		};
@@ -756,7 +757,7 @@ public class NearbyController {
 					intent.putExtra("gid", shareMessage.gid);
 					intent.putExtra("sid", shareMessage.sid);
 					intent.putExtra("gsid", shareMessage.gsid);
-					thisActivity.startActivity(intent);
+					thisActivity.startActivityForResult(intent, RESULTCODESHAREDETAIL);
 				} else if (status == Status.group) {
 					Group group = (Group) thisController.mInfomations.get(position);
 					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, String.valueOf(group.gid));
@@ -1321,15 +1322,17 @@ public class NearbyController {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode2, Intent data2) {
-		if (resultCode2 == RESULTCODE) {
-			nowpage = 0;
-			thisView.openLooper.stop();
-			thisView.currentPosition = -thisView.viewManage.screenWidth;
-			thisView.nextPosition = -thisView.viewManage.screenWidth;
-			if (status == Status.hottest || status == Status.newest) {
-				searchNearbyLBS(false);
-			} else {
-				searchNearbyHttp(false);
+		if (requestCode == RESULTCODESHAREDETAIL && resultCode2 == Activity.RESULT_OK && data2 != null) {
+			String deletedGsid = data2.getStringExtra("key");
+			if (status == Status.newest || status == Status.hottest) {
+				for (int i = 0; i < mInfomations.size(); i++) {
+					ShareMessage message = (ShareMessage) mInfomations.get(i);
+					if (message.gsid.equals(deletedGsid)) {
+						mInfomations.remove(i);
+						thisView.notifyData();
+						break;
+					}
+				}
 			}
 		}
 	}
