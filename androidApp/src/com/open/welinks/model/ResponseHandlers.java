@@ -38,6 +38,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
+import com.open.welinks.view.LoginView.Status;
 import com.open.welinks.view.ShareSubView1.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
@@ -112,6 +113,9 @@ public class ResponseHandlers {
 						if (!user.circlesOrderString.equals(friend.circlesOrderString)) {
 							user.circlesOrderString = friend.circlesOrderString;
 							try {
+								if (data.relationship.circles == null) {
+									data.relationship.circles = new ArrayList<String>();
+								}
 								data.relationship.circles = gson.fromJson(user.circlesOrderString, new TypeToken<List<String>>() {
 								}.getType());
 							} catch (JsonSyntaxException e) {
@@ -329,7 +333,9 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			final Response response = gson.fromJson(responseInfo.result, Response.class);
+			log.e(responseInfo.result + "---" + response.提示信息.substring(response.提示信息.length() - 1));
 			if (response.提示信息.substring(response.提示信息.length() - 1).equals("功")) {
+				viewManage.loginView.thisController.requestUserVerifyCodeCallBack();
 				new Handler().postDelayed(new Runnable() {
 
 					@Override
@@ -339,7 +345,7 @@ public class ResponseHandlers {
 
 							@Override
 							public void run() {
-								viewManage.loginView.thisController.requestUserVerifyCodeCallBack();
+								viewManage.loginView.mainButton.performClick();
 							}
 						}, 1000);
 					}

@@ -63,7 +63,7 @@ accountManage.verifyphone = function (data, response) {
             responseFailMessage(response, "手机号验证失败", "数据不完整");
         }
     }
-
+    var isReg = false;
     function checkContactAccount(phone) {
         var query = [
             "MATCH (account:Account)<-[r:HAS_CONTACT]-(other:Account)",
@@ -196,6 +196,7 @@ accountManage.verifyphone = function (data, response) {
                 console.error(error);
                 return;
             } else {
+                isReg = true;
                 var accountNode = results.pop().account;
                 sendSMSMessage(accountNode.data, accountNode.data.code, "手机号验证", response);
             }
@@ -256,12 +257,21 @@ accountManage.verifyphone = function (data, response) {
             next();
         }
         function next() {
-            response.write(JSON.stringify({
-                "提示信息": promptMessage + "成功",
-                "phone": account.phone,
-                "code": sha1.hex_sha1(code),
-                c: code
-            }));
+            if(isReg){
+                response.write(JSON.stringify({
+                    "提示信息": promptMessage + "成功",
+                    "phone": account.phone,
+                    "code": sha1.hex_sha1(code),
+                    c: code
+                }));
+            }else{
+                response.write(JSON.stringify({
+                    "提示信息": promptMessage + "成功",
+                    "phone": account.phone,
+                    "code": sha1.hex_sha1(code),
+                    c: ""
+                }));
+            }
             response.end();
         }
     }

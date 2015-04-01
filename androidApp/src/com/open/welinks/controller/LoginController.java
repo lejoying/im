@@ -23,7 +23,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
-import com.open.welinks.MainActivity;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
@@ -821,7 +821,7 @@ public class LoginController {
 
 	public void loginSuccessful(final String phone) {
 		thisView.progressBar.incrementProgressBy(60);
-		Intent intent = new Intent(thisActivity, MainActivity.class);
+		Intent intent = new Intent(thisActivity, NearbyActivity.class);
 		intent.putExtra("phone", phone);
 		thisActivity.startActivity(intent);
 		thisActivity.finish();

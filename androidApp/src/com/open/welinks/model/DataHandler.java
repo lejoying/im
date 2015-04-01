@@ -228,7 +228,7 @@ public class DataHandler {
 			data.userInformation.currentUser.accessKey = "";
 			data.userInformation.currentUser.flag = "none";
 
-			data.relationship = null;
+			data.relationship = data.new Relationship();
 			// data.relationship.isModified = false;
 			// data.relationship.circles.clear();
 			// data.relationship.friends.clear();
@@ -238,7 +238,7 @@ public class DataHandler {
 			// data.relationship.groupsMap.clear();
 			// data.relationship.squares.clear();
 
-			data.messages = null;
+			data.messages  = data.new Messages();
 			// data.messages.isModified = false;
 			// data.messages.friendMessageMap.clear();
 			// data.messages.groupMessageMap.clear();
