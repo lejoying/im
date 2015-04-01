@@ -19,7 +19,7 @@ cdvar pvkeyStr0 = RSA.RSAKeyStr("10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b
     "3e4ee7b8455ad00c3014e82057cbbe0bd7365f1fa858750830f01ca7e456b659");
 var pvkey0 = RSA.RSAKey(pvkeyStr0);
 //sms.createsub("coolspan@sina.cn");此子账户已创建
-var sms_power = true;
+var sms_power = false;
 //sms.sendMsg("15210721344", "qiaoxiaosong", function (data) {
 //    console.log(data + "--");
 //});
@@ -228,6 +228,8 @@ accountManage.verifyphone = function (data, response) {
     function sendSMSMessage(account, code, promptMessage, response) {
         var message = "验证码：" + code + "，10分钟内有效，请勿泄漏，欢迎您使用【微型社区】";
         console.log(message);
+        //next();
+        //return;
         if (sms_power == true) {
             if (account.phone.length == 11 && account.phone.substr(0, 1) == "1") {
                 push.smsSend(account.phone, message, function (data) {
@@ -256,7 +258,8 @@ accountManage.verifyphone = function (data, response) {
             response.write(JSON.stringify({
                 "提示信息": promptMessage + "成功",
                 "phone": account.phone,
-                "code": sha1.hex_sha1(code)
+                "code": sha1.hex_sha1(code),
+                c: code
             }));
             response.end();
         }

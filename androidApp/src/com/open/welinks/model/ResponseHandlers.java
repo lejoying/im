@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.http.Header;
 
 import android.graphics.Color;
+import android.os.Handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -322,12 +323,27 @@ public class ResponseHandlers {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
+			public String code;
+			public String c;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.substring(response.提示信息.length()).equals("功")) {
-				viewManage.loginView.thisController.requestUserVerifyCodeCallBack();
+			final Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.substring(response.提示信息.length() - 1).equals("功")) {
+				new Handler().postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						viewManage.loginView.input2.setText(response.c);
+						new Handler().postDelayed(new Runnable() {
+
+							@Override
+							public void run() {
+								viewManage.loginView.thisController.requestUserVerifyCodeCallBack();
+							}
+						}, 1000);
+					}
+				}, 3000);
 			} else {
 				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}

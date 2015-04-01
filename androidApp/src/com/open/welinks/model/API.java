@@ -88,22 +88,7 @@ public class API {
 	 * http://www.we-links.com/api2/group/movegroupcirclegroups
 	 */
 	public static String GROUP_MOVEGROUPCIRCLEGROUPS = API_DOMAIN + "api2/group/movegroupcirclegroups";
-	/**
-	 * http://www.we-links.com/api2/group/modifygrouplabel
-	 */
-	public static String GROUP_MODIFYGROUPLABEL = API_DOMAIN + "api2/group/modifygrouplabel";
-	/**
-	 * http://www.we-links.com/api2/group/getgrouplabels
-	 */
-	public static String GROUP_GETGROUPLABELS = API_DOMAIN + "api2/group/getgrouplabels";
-	/**
-	 * http://www.we-links.com/api2/group/gethotlabels
-	 */
-	public static String GROUP_GETHOTLABELS = API_DOMAIN + "api2/group/gethotlabels";
-	/**
-	 * http://www.we-links.com/api2/group/getlabelsgroups
-	 */
-	public static String GROUP_GETLABELSGROUPS = API_DOMAIN + "api2/group/getlabelsgroups";
+
 	/**
 	 * http://www.we-links.com/api2/group/movegroupstocircle
 	 */
@@ -112,6 +97,24 @@ public class API {
 	 * http://www.we-links.com/api2/group/follow 关注群组
 	 */
 	public static String GROUP_FOLLOW = API_DOMAIN + "api2/group/follow";
+
+	// label
+	/**
+	 * http://www.we-links.com/api2/label/modifygrouplabel
+	 */
+	public static String LABEL_MODIFYGROUPLABEL = API_DOMAIN + "api2/label/modifygrouplabel";
+	/**
+	 * http://www.we-links.com/api2/label/getgrouplabels
+	 */
+	public static String LABEL_GETGROUPLABELS = API_DOMAIN + "api2/label/getgrouplabels";
+	/**
+	 * http://www.we-links.com/api2/label/gethotlabels
+	 */
+	public static String LABEL_GETHOTLABELS = API_DOMAIN + "api2/label/gethotlabels";
+	/**
+	 * http://www.we-links.com/api2/label/getlabelsgroups
+	 */
+	public static String LABEL_GETLABELSGROUPS = API_DOMAIN + "api2/label/getlabelsgroups";
 
 	// share
 	/**

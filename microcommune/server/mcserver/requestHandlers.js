@@ -235,32 +235,44 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.modifygroupcirclesequence(data, response);
         });
-    } else if (operation == "modifygrouplabel") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.modifygrouplabel(data, response);
-        });
-    } else if (operation == "getgrouplabels") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.getgrouplabels(data, response);
-        });
-    } else if (operation == "getlabelsgroups") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.getlabelsgroups(data, response);
-        });
-    } else if (operation == "gethotlabels") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.gethotlabels(data, response);
-        });
-    } else if (operation == "movegroupstocircle") {
+    }
+    else if (operation == "movegroupstocircle") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.movegroupstocircle(data, response);
         });
-    } else if (operation == "follow") {
+    }
+    else if (operation == "follow") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.follow(data, response);
         });
     }
-
+}
+var labelManage = require("./handlers/labelManage.js");
+requestHandlers.labelManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "modifygrouplabel") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.modifygrouplabel(data, response);
+        });
+    }
+    else if (operation == "getgrouplabels") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.getgrouplabels(data, response);
+        });
+    }
+    else if (operation == "getlabelsgroups") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.getlabelsgroups(data, response);
+        });
+    }
+    else if (operation == "gethotlabels") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.gethotlabels(data, response);
+        });
+    }
 }
 var shareManage = require("./handlers/shareManage.js");
 requestHandlers.shareManage = function (request, response, pathObject, data) {
