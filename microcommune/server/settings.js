@@ -22,9 +22,10 @@ serverSetting.LBS.DATA_UPDATA = "http://yuntuapi.amap.com/datamanage/data/update
 serverSetting.LBS.DATA_DELETE = "http://yuntuapi.amap.com/datamanage/data/delete";
 serverSetting.LBS.DATA_SEARCH = "http://yuntuapi.amap.com/datamanage/data/list";
 
-serverSetting.LBS_CREATE = "http://182.92.107.229/api2/lbs/create";
-serverSetting.LBS_UPDATA = "http://182.92.107.229/api2/lbs/updata";
-serverSetting.LBS_DELETE = "http://182.92.107.229/api2/lbs/delete";
+serverSetting.LBS_LOCAL = "http://10.252.45.120/";
+serverSetting.LBS_CREATE = serverSetting.LBS_LOCAL + "api2/lbs/create";
+serverSetting.LBS_UPDATE = serverSetting.LBS_LOCAL + "api2/lbs/update";
+serverSetting.LBS_DELETE = serverSetting.LBS_LOCAL + "api2/lbs/delete";
 var zookeeper = {};
 zookeeper.mcServer = {
     ip: "115.28.51.197",

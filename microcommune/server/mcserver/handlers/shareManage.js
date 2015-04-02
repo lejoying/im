@@ -1288,7 +1288,7 @@ shareManage.score = function (data, response) {
                         try {
                             ajax.ajax({
                                 type: "POST",
-                                url: serverSetting.LBS_UPDATA,
+                                url: serverSetting.LBS_UPDATE,
                                 data: {
                                     primaryKey: share.gsid,
                                     location: location,

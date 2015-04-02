@@ -3,7 +3,7 @@ package com.open.welinks.model;
 public class API {
 
 	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/ 192.168.1.14 192.168.0.103
-	public static String API_LBS_DOMAIN = "http://182.92.107.229/";
+	public static String API_LBS_DOMAIN = "http://182.92.107.229/";// 182.92.107.229
 	/**
 	 * http://images2.we-links.com/
 	 */
