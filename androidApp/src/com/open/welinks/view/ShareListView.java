@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -249,113 +250,124 @@ public class ShareListView {
 							holder.monthView.setVisibility(View.INVISIBLE);
 						}
 					}
-					showImages(imageContent, holder.imageContainer);
+					showImages(message.gsid, imageContent, holder.imageContainer);
 				}
 			}
 			return convertView;
 		}
 
-		public void showImages(List<String> list, RelativeLayout container) {
+		public HashMap<String, RelativeLayout> imagesStack = new HashMap<String, RelativeLayout>();
+
+		public void showImages(String key, List<String> list, RelativeLayout container) {
 			container.removeAllViews();
-			for (int i = 0; i < list.size(); i++) {
-				if (list.size() == 1) {
-					ImageView imageView = new ImageView(context);
-					int width = (int) (displayMetrics.density * 75 + 0.5f);
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
-					container.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
-					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+			RelativeLayout layout = imagesStack.get(key);
+			if (layout == null) {
+				layout = new RelativeLayout(thisActivity);
+				android.widget.RelativeLayout.LayoutParams layoutParams = new android.widget.RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+				layout.setLayoutParams(layoutParams);
+				imagesStack.put(key, layout);
+
+				for (int i = 0; i < list.size(); i++) {
+					if (list.size() == 1) {
+						ImageView imageView = new ImageView(context);
+						int width = (int) (displayMetrics.density * 75 + 0.5f);
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
+						layout.addView(imageView, params);
+						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
+						if (file.exists()) {
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						} else {
+							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q", file.getAbsolutePath());
+							downloadFile.view = imageView;
+							downloadFile.setDownloadFileListener(thisController.downloadListener);
+							taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+						}
+					} else if (list.size() == 2) {
+						ImageView imageView = new ImageView(context);
+						int width = (int) (displayMetrics.density * 37 + 0.5f);
+						int width75 = (int) (displayMetrics.density * 75 + 0.5f);
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width75);
+						if (i == 0) {
+							params.leftMargin = 0;
+						} else {
+							params.leftMargin = (int) (38 * displayMetrics.density + 0.5f);
+						}
+						layout.addView(imageView, params);
+						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
+						if (file.exists()) {
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						} else {
+							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
+							downloadFile.view = imageView;
+							downloadFile.setDownloadFileListener(thisController.downloadListener);
+							taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+						}
+					} else if (list.size() == 3) {
+						ImageView imageView = new ImageView(context);
+						int width = (int) (displayMetrics.density * 37 + 0.5f);
+						int width75 = (int) (displayMetrics.density * 75 + 0.5f);
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width * 2);
+						String suffix = "";
+						String name = "";
+						if (i == 0) {
+							name = "@1_2";
+							params.leftMargin = 0;
+							params.height = width75;
+							suffix = "@" + width / 2 + "w_" + width + "h_1c_1e_100q";
+						} else if (i == 1) {
+							name = "@1_1";
+							params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
+							params.height = width;
+							suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+						} else {
+							name = "@1_1";
+							params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
+							params.topMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
+							params.height = width;
+							suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
+						}
+						layout.addView(imageView, params);
+						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+						if (file.exists()) {
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						} else {
+							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
+							downloadFile.view = imageView;
+							downloadFile.setDownloadFileListener(thisController.downloadListener);
+							taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+						}
 					} else {
-						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q", file.getAbsolutePath());
-						downloadFile.view = imageView;
-						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
-					}
-				} else if (list.size() == 2) {
-					ImageView imageView = new ImageView(context);
-					int width = (int) (displayMetrics.density * 37 + 0.5f);
-					int width75 = (int) (displayMetrics.density * 75 + 0.5f);
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width75);
-					if (i == 0) {
-						params.leftMargin = 0;
-					} else {
-						params.leftMargin = (int) (38 * displayMetrics.density + 0.5f);
-					}
-					container.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
-					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
-					} else {
-						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
-						downloadFile.view = imageView;
-						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
-					}
-				} else if (list.size() == 3) {
-					ImageView imageView = new ImageView(context);
-					int width = (int) (displayMetrics.density * 37 + 0.5f);
-					int width75 = (int) (displayMetrics.density * 75 + 0.5f);
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width * 2);
-					String suffix = "";
-					String name = "";
-					if (i == 0) {
-						name = "@1_2";
-						params.leftMargin = 0;
-						params.height = width75;
-						suffix = "@" + width / 2 + "w_" + width + "h_1c_1e_100q";
-					} else if (i == 1) {
-						name = "@1_1";
-						params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
-						params.height = width;
+						ImageView imageView = new ImageView(context);
+						int width = (int) (displayMetrics.density * 37 + 0.5f);
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
+						String suffix = "";
 						suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
-					} else {
-						name = "@1_1";
-						params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
-						params.topMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
-						params.height = width;
-						suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
-					}
-					container.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
-					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
-					} else {
-						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
-						downloadFile.view = imageView;
-						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
-					}
-				} else {
-					ImageView imageView = new ImageView(context);
-					int width = (int) (displayMetrics.density * 37 + 0.5f);
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
-					String suffix = "";
-					suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
-					String name = "@1_1";
-					if (i == 0) {
-					} else if (i == 1) {
-						params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
-					} else if (i == 2) {
-						params.topMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
-					} else if (i == 3) {
-						params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
-						params.topMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
-					} else {
-						break;
-					}
-					container.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
-					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
-					} else {
-						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
-						downloadFile.view = imageView;
-						downloadFile.setDownloadFileListener(thisController.downloadListener);
-						taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+						String name = "@1_1";
+						if (i == 0) {
+						} else if (i == 1) {
+							params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
+						} else if (i == 2) {
+							params.topMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
+						} else if (i == 3) {
+							params.leftMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
+							params.topMargin = (int) (width + (displayMetrics.density * 1 + 0.5f));
+						} else {
+							break;
+						}
+						layout.addView(imageView, params);
+						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+						if (file.exists()) {
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						} else {
+							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
+							downloadFile.view = imageView;
+							downloadFile.setDownloadFileListener(thisController.downloadListener);
+							taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
+						}
 					}
 				}
 			}
+			container.addView(layout);
 		}
 
 		public class ShareHolder {
