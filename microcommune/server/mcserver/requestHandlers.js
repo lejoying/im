@@ -246,6 +246,28 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
             groupManage.follow(data, response);
         });
     }
+
+
+    else if (operation == "modifygrouplabel") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.modifygrouplabel(data, response);
+        });
+    }
+    else if (operation == "getgrouplabels") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.getgrouplabels(data, response);
+        });
+    }
+    else if (operation == "getlabelsgroups") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.getlabelsgroups(data, response);
+        });
+    }
+    else if (operation == "gethotlabels") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            labelManage.gethotlabels(data, response);
+        });
+    }
 }
 var labelManage = require("./handlers/labelManage.js");
 requestHandlers.labelManage = function (request, response, pathObject, data) {
