@@ -269,7 +269,7 @@ public class NearbyController {
 			}
 
 			public void next() {
-				if (isChangeAddress == false) {
+				if (!isChangeAddress) {
 					isChangeAddress = true;
 					thisView.currentPosition = 0;
 					thisView.nextPosition = 0;
@@ -474,6 +474,12 @@ public class NearbyController {
 					tempSearchTime = times[3];
 					thisView.changeScreenText();
 				} else if (view.equals(thisView.singleButton)) {
+					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
+					int topMarigin = params.topMargin;
+					if (topMarigin == (int) (84 * thisView.metrics.density)) {
+						params.topMargin = (int) (304 * thisView.metrics.density);
+					}
+					thisView.nearbyListView.setLayoutParams(params);
 					thisView.changePopupWindow(false);
 					thisView.img_btn_set_start.setVisibility(View.VISIBLE);
 					thisView.img_btn_set_start.startAnimation(animationNearRight);
@@ -611,13 +617,14 @@ public class NearbyController {
 						mTableId = Constant.ACCOUNTTABLEID;
 					}
 					nowpage = 0;
-					thisView.openLooper.stop();
-					thisView.currentPosition = -thisView.viewManage.screenWidth;
-					thisView.nextPosition = -thisView.viewManage.screenWidth;
+					thisView.currentPosition = 0;
+					thisView.nextPosition = 0;
+					// thisView.openLooper.start();
+					thisView.progressView.setTranslationX(thisView.currentPosition);
 					if (status == Status.hottest || status == Status.newest) {
-						searchNearbyLBS(false);
+						searchNearbyLBS(true);
 					} else {
-						searchNearbyHttp(false);
+						searchNearbyHttp(true);
 					}
 				} else if (position == 2) {
 				} else if (position == 1) {
@@ -628,13 +635,14 @@ public class NearbyController {
 						mTableId = Constant.GROUPTABLEID;
 					}
 					nowpage = 0;
-					thisView.openLooper.stop();
-					thisView.currentPosition = -thisView.viewManage.screenWidth;
-					thisView.nextPosition = -thisView.viewManage.screenWidth;
+					thisView.currentPosition = 0;
+					thisView.nextPosition = 0;
+					// thisView.openLooper.start();
+					thisView.progressView.setTranslationX(thisView.currentPosition);
 					if (status == Status.hottest || status == Status.newest) {
-						searchNearbyLBS(false);
+						searchNearbyLBS(true);
 					} else {
-						searchNearbyHttp(false);
+						searchNearbyHttp(true);
 					}
 				}
 			}

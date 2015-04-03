@@ -454,6 +454,7 @@ shareManage.sendboardshare = function (data, response) {
             content: message.content,
             totalScore: 0,
             scores: "{}",
+            location: location || "[]",
             time: new Date().getTime()
         };
         var params = {
