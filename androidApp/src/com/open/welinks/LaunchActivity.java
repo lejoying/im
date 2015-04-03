@@ -7,10 +7,16 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.UserInformation;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.utils.BaseDataUtils;
 
 public class LaunchActivity extends Activity {
 
@@ -31,8 +37,13 @@ public class LaunchActivity extends Activity {
 		taskManageHolder = TaskManageHolder.getInstance();
 		taskManageHolder.initialize(this);
 
+		initImageLoader(getApplicationContext());
+
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);
+
+		BaseDataUtils.initBaseData(this);
+		Constant.init();
 
 		data = Data.getInstance();
 
@@ -68,6 +79,18 @@ public class LaunchActivity extends Activity {
 		// } else {
 		// startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
 		// }
+	}
+
+	public static void initImageLoader(Context context) {
+		if (!ImageLoader.getInstance().isInited()) {
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024)
+					.tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
+			ImageLoader.getInstance().init(config);
+		}
+	}
+
+	public static class Config {
+		public static final boolean DEVELOPER_MODE = false;
 	}
 
 	public class LocalConfig {

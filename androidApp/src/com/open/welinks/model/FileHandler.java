@@ -1,11 +1,16 @@
 package com.open.welinks.model;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -385,20 +390,90 @@ public class FileHandler {
 
 	@SuppressLint("SdCardPath")
 	public File getSdCardFile() {
-		File sdcard = Environment.getExternalStorageDirectory();
-		if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			sdcard = new File("/sdcard/");
-			log.e("sdcard  spance:" + sdcard.getFreeSpace());
-			if (sdcard.getFreeSpace() == 0) {
-				sdcard = new File("/sdcard1/");
-				log.e("sdcard1 space:" + sdcard.getFreeSpace());
-			}
-			if (sdcard.getFreeSpace() == 0) {
-				sdcard = new File("/sdcard2/");
-				log.e("sdcard2 space:" + sdcard.getFreeSpace());
+		if (sdcard != null) {
+			return sdcard;
+		}
+		List<String> list = getExtSDCardPath();
+		boolean isRun = true;
+		if (list.size() > 0) {
+			sdcard = new File(list.get(list.size() - 1));
+			if (sdcard.isDirectory()) {
+				if (sdcard.getFreeSpace() == 0) {
+					isRun = true;
+				} else {
+					isRun = false;
+				}
 			}
 		}
+		if (isRun) {
+			sdcard = Environment.getExternalStorageDirectory();
+			if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+				sdcard = new File("/sdcard/");
+				log.e("sdcard  spance:" + sdcard.getFreeSpace());
+				if (sdcard.getFreeSpace() == 0) {
+					sdcard = new File("/sdcard1/");
+					log.e("sdcard1 space:" + sdcard.getFreeSpace());
+				}
+				if (sdcard.getFreeSpace() == 0) {
+					sdcard = new File("/sdcard2/");
+					log.e("sdcard2 space:" + sdcard.getFreeSpace());
+				}
+			}
+		}
+		log.e("data:" + sdcard.getAbsolutePath());
 		return sdcard;
+	}
+
+	public List<String> getExtSDCardPath() {
+		List<String> lResult = new ArrayList<String>();
+		try {
+			Runtime rt = Runtime.getRuntime();
+			Process proc = rt.exec("mount");
+			InputStream is = proc.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (line.contains("extSdCard")) {
+					String[] arr = line.split(" ");
+					String path = arr[1];
+					if (path.lastIndexOf("extSdCard") == path.length() - 9) {
+						File file = new File(path);
+						if (file.isDirectory()) {
+							lResult.add(path);
+						}
+					}
+				} else if (line.contains("/sdcard")) {
+					String[] arr = line.split(" ");
+					String path = arr[1];
+					if (path.lastIndexOf("/sdcard") == path.length() - 6) {
+						File file = new File(path);
+						if (file.isDirectory()) {
+							lResult.add(path);
+						}
+					} else {
+						String number = path.substring(path.lastIndexOf("/sdcard") + 7);
+						try {
+							Integer.parseInt(number);
+							File file = new File(path);
+							if (file.isDirectory()) {
+								lResult.add(path);
+							}
+						} catch (Exception e) {
+						}
+					}
+					// File file = new File(path);
+					// if (file.isDirectory()) {
+					// lResult.add(path);
+					// }
+				} else {
+					// log.e("+++++:" + line);
+				}
+			}
+			isr.close();
+		} catch (Exception e) {
+		}
+		return lResult;
 	}
 
 	public void setSdcardFile() {

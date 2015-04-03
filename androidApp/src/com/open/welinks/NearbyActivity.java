@@ -1,20 +1,14 @@
 package com.open.welinks;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.NearbyController;
-import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
@@ -22,7 +16,6 @@ import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.UpdateManager;
 import com.open.welinks.service.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
-import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.view.NearbyView;
 
 public class NearbyActivity extends Activity {
@@ -55,9 +48,6 @@ public class NearbyActivity extends Activity {
 
 		startPushService();
 
-		initImageLoader(getApplicationContext());
-		BaseDataUtils.initBaseData(this);
-		Constant.init();
 		UpdateManager manager = new UpdateManager(this);
 		manager.checkUpdate();
 
@@ -106,18 +96,6 @@ public class NearbyActivity extends Activity {
 		DataHandler.clearData();
 		thisActivity.finish();
 		thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
-	}
-
-	public static void initImageLoader(Context context) {
-		if (!ImageLoader.getInstance().isInited()) {
-			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024)
-					.tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
-			ImageLoader.getInstance().init(config);
-		}
-	}
-
-	public static class Config {
-		public static final boolean DEVELOPER_MODE = false;
 	}
 
 	@Override
