@@ -462,12 +462,6 @@ public class FileHandler {
 						} catch (Exception e) {
 						}
 					}
-					// File file = new File(path);
-					// if (file.isDirectory()) {
-					// lResult.add(path);
-					// }
-				} else {
-					// log.e("+++++:" + line);
 				}
 			}
 			isr.close();

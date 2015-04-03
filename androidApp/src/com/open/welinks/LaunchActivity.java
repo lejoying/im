@@ -39,13 +39,16 @@ public class LaunchActivity extends Activity {
 
 		initImageLoader(getApplicationContext());
 
+		data = Data.getInstance();
+
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);
 
-		BaseDataUtils.initBaseData(this);
-		Constant.init();
+		// parser.check();
 
-		data = Data.getInstance();
+		BaseDataUtils.initBaseData(this);
+
+		Constant.init();
 
 		getLocalInformation();
 
@@ -69,16 +72,6 @@ public class LaunchActivity extends Activity {
 			LaunchActivity.this.finish();
 			return;
 		}
-		// parser.parse();
-		// parser.saveDataToLocal();
-		// parser.readSdFileToData();
-		// getLocalInformation();
-		// if (isDebug) {
-		// startActivity(new Intent(LaunchActivity.this,
-		// TestListActivity.class));
-		// } else {
-		// startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
-		// }
 	}
 
 	public static void initImageLoader(Context context) {

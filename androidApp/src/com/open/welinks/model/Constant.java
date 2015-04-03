@@ -6,6 +6,7 @@ import java.util.Map;
 import com.open.welinks.R;
 
 public class Constant {
+	
 	public static void init() {
 		DEFAULTFACEMAP = new HashMap<String, Integer>();
 		for (int i = 0; i < DEFAULT_FACE_NAMES.length; i++) {
