@@ -63,6 +63,7 @@ accountManage.verifyphone = function (data, response) {
         }
     }
     var isReg = false;
+
     function checkContactAccount(phone) {
         var query = [
             "MATCH (account:Account)<-[r:HAS_CONTACT]-(other:Account)",
@@ -256,14 +257,14 @@ accountManage.verifyphone = function (data, response) {
             next();
         }
         function next() {
-            if(isReg){
+            if (isReg) {
                 response.write(JSON.stringify({
                     "提示信息": promptMessage + "成功",
                     "phone": account.phone,
                     "code": sha1.hex_sha1(code),
                     c: code
                 }));
-            }else{
+            } else {
                 response.write(JSON.stringify({
                     "提示信息": promptMessage + "成功",
                     "phone": account.phone,
@@ -697,6 +698,7 @@ accountManage.modify = function (data, response) {
             } else {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
+                accountData.lastlogintime = time;
                 if (account.nickName != undefined && account.nickName != null && account.nickName != "") {
                     accountData.nickName = account.nickName;
                 }
@@ -742,8 +744,6 @@ accountManage.modify = function (data, response) {
                     accountData.head = account.head;
                 }
                 if (account.longitude != undefined && account.longitude != null && account.longitude != "") {
-                    var time = new Date().getTime();
-                    accountData.lastlogintime = time;
                     accountData.longitude = account.longitude;
                 }
                 if (account.latitude != undefined && account.latitude != null && account.latitude != "") {
@@ -766,6 +766,7 @@ accountManage.modify = function (data, response) {
                             "提示信息": "修改用户信息成功"
                         }));
                         response.end();
+                        modifyLbsAccount(accountData);
                         var event = JSON.stringify({
                             sendType: "event",
                             contentType: "account_dataupdate",
@@ -789,106 +790,52 @@ accountManage.modify = function (data, response) {
                         push.inform(phone, phone, accessKey, "*", event);
                     }
                 });
-                if (account.longitude) {
-                    longitude = account.longitude;
-                    latitude = account.latitude;
-                    address = account.address;
-                    checkLbsAccount(accountData);
-                }
             }
         });
     }
 
-    var longitude;
-    var latitude;
-    var address;
-
-    function checkLbsAccount(accountData) {
-        try {
-            ajax.ajax({
-                type: "POST",
-                url: serverSetting.LBS.DATA_SEARCH,
-                data: {
-                    key: serverSetting.LBS.KEY,
-                    tableid: serverSetting.LBS.ACCOUNTTABLEID,
-                    filter: "phone:" + accountData.phone
-                }, success: function (info) {
-                    var info = JSON.parse(info);
-                    if (info.status == 1 && info.count >= 1) {
-                        var id = info.datas[0]._id;
-                        modifyLbsAccount(id);
-                        console.log("success--" + info._id)
-                    } else {
-                        createLbsAccount(accountData);
-                        console.log("check error--" + info.status)
-                    }
-                }
-            });
-        } catch (e) {
-            console.log(e);
+    function modifyLbsAccount(accountData) {
+        var sex;
+        var location;
+        if (accountData.longitude != null && accountData.latitude != null) {
+            location = JSON.stringify([parseFloat(accountData.longitude), parseFloat(accountData.latitude)]);
+        } else {
+            location = null;
         }
-    }
-
-    function createLbsAccount(accountData) {
-        try {
-            ajax.ajax({
-                type: "POST",
-                url: serverSetting.LBS.DATA_CREATE,
-                data: {
-                    key: serverSetting.LBS.KEY,
-                    tableid: serverSetting.LBS.ACCOUNTTABLEID,
-                    loctype: 1,//2
-                    data: JSON.stringify({
-                        _name: accountData.nickName,
-                        _location: longitude + "," + latitude,
-                        _address: address,
-                        sex: accountData.sex,
-                        mainBusiness: accountData.mainBusiness,
-                        lastlogintime: accountData.lastlogintime,
-                        phone: accountData.phone,
-                        head: accountData.head
-                    })
-                }, success: function (info) {
-                    var info = JSON.parse(info);
-                    if (info.status == 1 && info.count >= 1) {
-                        var id = info.datas[0]._id;
-                        console.log("success--" + info._id)
-                    } else {
-                        console.log("check error--" + info.status)
-                    }
-                }
-            });
-        } catch (e) {
-            console.log(e);
-            return;
+        if (accountData.sex == null || accountData.sex == "" || accountData.sex == "男" || accountData.sex == "male") {
+            sex = "male";
+        } else {
+            sex = "female";
         }
-    }
-
-    function modifyLbsAccount(id) {
-        try {
-            ajax.ajax({
-                type: "POST",
-                url: serverSetting.LBS.DATA_UPDATA,
-                data: {
-                    key: serverSetting.LBS.KEY,
-                    tableid: serverSetting.LBS.ACCOUNTTABLEID,
-                    data: JSON.stringify({
-                        _id: id,
-                        _location: longitude + "," + latitude,
-                        _address: address
-                    })
-                }, success: function (info) {
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS_ACCOUNT_MODIFY,
+            data: {
+                location: location,
+                primaryKey: accountData.phone,
+                data: JSON.stringify({
+                    phone: accountData.phone,
+                    head: accountData.head || "",
+                    nickName: encodeURI(accountData.nickName || ""),
+                    mainBusiness: encodeURI(accountData.mainBusiness || ""),
+                    sex: sex,
+                    age: accountData.age || 18,
+                    time: accountData.lastlogintime
+                })
+            }, success: function (info) {
+                try {
                     var info = JSON.parse(info);
-                    if (info.status == 1) {
-                        console.log("success--" + info._id)
+                    if (info.提示信息 == "创建用户成功") {
+                        console.log("success--")
                     } else {
-                        console.log("modify error--" + info.status)
+                        console.log("modify error--")
                     }
+                } catch (e) {
+                    console.log(e);
                 }
-            });
-        } catch (e) {
-            console.log(e);
-        }
+            }
+        });
+
     }
 }
 function initDefaultGroup(phone) {

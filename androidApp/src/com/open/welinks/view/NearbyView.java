@@ -33,6 +33,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
@@ -324,20 +325,12 @@ public class NearbyView {
 
 	public void reflashFirst() {
 		thisController.nowpage = 0;
-		if (thisController.status == Status.hottest || thisController.status == Status.newest) {
-			thisController.searchNearbyLBS(true);
-		} else {
-			thisController.searchNearbyHttp(true);
-		}
+		thisController.searchNearbyLBS(true);
 
 	}
 
 	public void nextPageData() {
-		if (thisController.status == Status.hottest || thisController.status == Status.newest) {
-			thisController.searchNearbyLBS(true);
-		} else {
-			thisController.searchNearbyHttp(true);
-		}
+		thisController.searchNearbyLBS(true);
 	}
 
 	public float transleteSpeed = 3f;// 3f
@@ -860,6 +853,8 @@ public class NearbyView {
 	public void onResume() {
 		businessCardPopView.dismissUserCardDialogView();
 		mapView.onResume();
+		if (thisController.mLocationManagerProxy != null && thisController.mAMapLocationListener != null)
+			thisController.mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 1000, thisController.mAMapLocationListener);
 	}
 
 	public void onPause() {
@@ -872,6 +867,8 @@ public class NearbyView {
 		data.localStatus.localData.currentSearchTime = thisController.searchTime;
 		data.localStatus.localData.isModified = true;
 		// taskManageHolder.viewManage.shareSubView.setGroupsDialogContent(taskManageHolder.viewManage.shareSubView.currentGroupCircle);
+		thisController.mLocationManagerProxy.removeUpdates(thisController.mAMapLocationListener);
+		thisController.mLocationManagerProxy.destroy();
 		mapView.onDestroy();
 	}
 

@@ -43,11 +43,9 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnCameraChangeListener;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.LocationSource.OnLocationChangedListener;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
@@ -131,7 +129,6 @@ public class NearbyController {
 
 	public String mTableId;
 	public ArrayList<Object> mInfomations;
-	public AMapLocation mAmapLocation;
 
 	public double latitude, longitude;
 	public int searchRadius = 20000;
@@ -143,6 +140,8 @@ public class NearbyController {
 	public long[] times = { 3600000, 86400000, 259200000, 0 };
 
 	public int RESULTCODESHARERELEASE = 0x1, RESULTCODESHAREDETAIL = 0x2;
+
+	public boolean isFirstPosition = true;
 
 	public Status status;
 
@@ -189,7 +188,6 @@ public class NearbyController {
 	public Animation animationNearLeft;
 	public Animation animationNearRight;
 
-	public LocationSource mLocationSource;
 	public OnLocationChangedListener mOnLocationChangedListener;
 	public OnCameraChangeListener mOnCameraChangeListener;
 	public GeocodeSearch mGeocodeSearch;
@@ -254,11 +252,7 @@ public class NearbyController {
 				thisView.currentPosition = 0;
 				// thisView.nextPosition = 0;
 				nowpage = 0;
-				if (status == Status.hottest || status == Status.newest) {
-					searchNearbyLBS(true);
-				} else {
-					searchNearbyHttp(true);
-				}
+				searchNearbyLBS(true);
 			}
 
 			@Override
@@ -280,26 +274,6 @@ public class NearbyController {
 					}
 				}
 			}
-		};
-		mLocationSource = new LocationSource() {
-
-			@Override
-			public void activate(OnLocationChangedListener listener) {
-				mOnLocationChangedListener = listener;
-				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-				mLocationManagerProxy.setGpsEnable(true);
-				mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 10, mAMapLocationListener);
-			}
-
-			@Override
-			public void deactivate() {
-				if (mLocationManagerProxy != null) {
-					mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-					mLocationManagerProxy.destroy();
-				}
-				mLocationManagerProxy = null;
-			}
-
 		};
 		mOnScrollListener = new OnScrollListener() {
 
@@ -425,7 +399,17 @@ public class NearbyController {
 				} else if (view.equals(thisView.searChView)) {
 					Toast.makeText(thisActivity, "搜索", Toast.LENGTH_SHORT).show();
 				} else if (view.equals(thisView.locationView)) {
-					mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
+					String userLatitude = data.userInformation.currentUser.latitude;
+					String userLongitude = data.userInformation.currentUser.longitude;
+					if (!"".equals(userLatitude) && !"".equals(userLongitude)) {
+						address = data.userInformation.currentUser.address;
+						longitude = Double.valueOf(userLongitude);
+						latitude = Double.valueOf(userLatitude);
+						LatLng mLatLng = new LatLng(latitude, longitude);
+						thisView.mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
+						thisView.changeAmapCircle(longitude, latitude);
+						thisView.changeScreenText();
+					}
 				} else if (view.equals(thisView.ico_map_pin2)) {
 					if (thisView.img_btn_set_start.getVisibility() == View.VISIBLE) {
 						thisView.img_btn_set_start.startAnimation(animationNearLeft);
@@ -442,11 +426,7 @@ public class NearbyController {
 				} else if (view.equals(thisView.screenConfirm)) {
 					searchRadius = tempSearchRadius;
 					searchTime = tempSearchTime;
-					if (status == Status.hottest || status == Status.newest) {
-						searchNearbyLBS(false);
-					} else {
-						searchNearbyHttp(false);
-					}
+					searchNearbyLBS(false);
 					thisView.changeScreenPopupWindow();
 					thisView.changeAmapCircle(longitude, latitude);
 				} else if (view.equals(thisView.scopeOne)) {
@@ -621,11 +601,7 @@ public class NearbyController {
 					thisView.nextPosition = 0;
 					// thisView.openLooper.start();
 					thisView.progressView.setTranslationX(thisView.currentPosition);
-					if (status == Status.hottest || status == Status.newest) {
-						searchNearbyLBS(true);
-					} else {
-						searchNearbyHttp(true);
-					}
+					searchNearbyLBS(true);
 				} else if (position == 2) {
 				} else if (position == 1) {
 					if (status == Status.hottest) {
@@ -639,11 +615,7 @@ public class NearbyController {
 					thisView.nextPosition = 0;
 					// thisView.openLooper.start();
 					thisView.progressView.setTranslationX(thisView.currentPosition);
-					if (status == Status.hottest || status == Status.newest) {
-						searchNearbyLBS(true);
-					} else {
-						searchNearbyHttp(true);
-					}
+					searchNearbyLBS(true);
 				}
 			}
 		};
@@ -714,27 +686,25 @@ public class NearbyController {
 
 			@Override
 			public void onLocationChanged(AMapLocation amapLocation) {
-				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
-				mLocationManagerProxy.destroy();
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
-					mAmapLocation = amapLocation;
-					if ("".equals(address)) {
-						User currentUser = data.userInformation.currentUser;
-						currentUser.address = mAmapLocation.getAddress();
-						currentUser.latitude = mAmapLocation.getLatitude() + "";
-						currentUser.longitude = mAmapLocation.getLongitude() + "";
-						modifyLocation();
+					User currentUser = data.userInformation.currentUser;
+					currentUser.address = amapLocation.getAddress();
+					currentUser.latitude = amapLocation.getLatitude() + "";
+					currentUser.longitude = amapLocation.getLongitude() + "";
+					modifyLocation();
+					if (isFirstPosition) {
+						isFirstPosition = false;
+						address = amapLocation.getAddress();
+						latitude = amapLocation.getLatitude();
+						longitude = amapLocation.getLongitude();
+						// thisView.addressView.setText(address);
+						// mOnLocationChangedListener.onLocationChanged(amapLocation);
+						LatLng mLatLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
+						// thisView.mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));
+						thisView.mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
+						thisView.changeAmapCircle(longitude, latitude);
+						thisView.changeScreenText();
 					}
-					address = mAmapLocation.getAddress();
-					latitude = amapLocation.getLatitude();
-					longitude = amapLocation.getLongitude();
-					// thisView.addressView.setText(address);
-					// mOnLocationChangedListener.onLocationChanged(amapLocation);
-					LatLng mLatLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
-					// thisView.mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mLatLng));
-					thisView.mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
-					thisView.changeAmapCircle(longitude, latitude);
-					thisView.changeScreenText();
 					// searchNearby(amapLocation);
 					// searchNearByPolygon(0);
 				} else {
@@ -866,6 +836,7 @@ public class NearbyController {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		long now = System.currentTimeMillis();
+		String api = "";
 		// params.addBodyParameter("phone", currentUser.phone);
 		// params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("center", "[" + longitude + "," + latitude + "]");
@@ -875,10 +846,19 @@ public class NearbyController {
 		params.addBodyParameter("time", String.valueOf(now));
 		if (status == Status.newest) {
 			params.addBodyParameter("sortby", "time");
+			api = API.LBS_SHARE_SEARCH;
 		} else if (status == Status.hottest) {
 			params.addBodyParameter("sortby", "totalScore");
+			api = API.LBS_SHARE_SEARCH;
+		} else if (status == Status.account) {
+			params.addBodyParameter("sortby", "time");
+			api = API.LBS_ACCOUNT_SEARCH;
+		} else if (status == Status.group) {
+			params.addBodyParameter("sortby", "time");
+			api = API.LBS_GROUP_SEARCH;
+			return;
 		}
-		httpUtils.send(HttpMethod.POST, API.LBS_SEARCH, params, httpClient.new ResponseHandler<String>() {
+		httpUtils.send(HttpMethod.POST, api, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
 				public List<Point> resultPoints;
@@ -907,24 +887,13 @@ public class NearbyController {
 					} else {
 					}
 					for (Point point : response.resultPoints) {
-						ShareMessage message = data.boards.new ShareMessage();
-
-						message.content = point.data.content;
-						message.head = point.data.head;
-						message.gsid = point.data.gsid;
-						message.sid = Constant.SQUARE_SID;
-						message.phone = point.data.phone;
-						message.totalScore = point.data.totalScore;
-						message.type = "imagetext";
-						message.time = point.data.time;
-						message.nickName = point.data.nickName;
-						message.distance = point.distance;
-						message.location = point.location;
-						message.scores = gson.fromJson(point.data.scores, new TypeToken<HashMap<String, Score>>() {
-						}.getType());
-						message.status = "sent";
-						mInfomations.add(message);
-						data.boards.shareMessagesMap.put(message.sid, message);
+						if (point.data.gsid != null) {
+							processingShareData(point);
+						} else if (point.data.sex != null) {
+							processingAccountData(point);
+						} else if (point.data.gid != null) {
+							processingGroupData(point);
+						}
 					}
 					if (isAnimation) {
 						thisView.loopCallback.state = thisView.status.None;
@@ -949,9 +918,9 @@ public class NearbyController {
 	public class Point {
 		double distance;
 		double[] location;
-		SharePoint data;
+		SubPoint data;
 
-		public class SharePoint {
+		public class SubPoint {
 			public String gsid;
 			public String phone;
 			public String nickName;
@@ -962,113 +931,14 @@ public class NearbyController {
 			public double distance;
 			public String scores;
 			public String content;
-		}
-	}
 
-	public void searchNearbyHttp(final boolean isAnimation) {
-		if (isAnimation) {
-			thisView.transleteSpeed = 0.4f;
-			thisView.loopCallback.state = thisView.status.None;
-			thisView.currentPosition = 0;
-			thisView.nextPosition = thisView.viewManage.screenWidth / 2f;
-			handler.postDelayed(new Runnable() {
-				public void run() {
-					isRun = true;
-					thisView.openLooper.start();
-				}
-			}, 500);
-		}
-		long now = System.currentTimeMillis();
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		params.addQueryStringParameter("key", Constant.LBS_SAVE_KSY);
-		params.addQueryStringParameter("tableid", mTableId);
-		params.addQueryStringParameter("center", longitude + "," + latitude);
-		params.addQueryStringParameter("radius", String.valueOf(searchRadius));
-		params.addQueryStringParameter("limit", String.valueOf(20));
-		params.addQueryStringParameter("page", String.valueOf(nowpage + 1));
-		params.addQueryStringParameter("time", String.valueOf(now));
-		if (status == Status.account || status == Status.group) {
-			params.addQueryStringParameter("sortrule", "_distance:1");
-			if (status == Status.account && searchTime != times[times.length - 1]) {
-				params.addQueryStringParameter("filter", "lastlogintime:[" + (now - searchTime) + "," + now + "]");
-			}
-		} else {
-			if (status == Status.newest) {
-				params.addQueryStringParameter("sortrule", "time:0");
-			} else if (status == Status.hottest) {
-				params.addQueryStringParameter("sortrule", "totalScore:0");
-			}
-			if (searchTime != times[times.length - 1]) {
-				params.addQueryStringParameter("filter", "time:[" + (now - searchTime) + "," + now + "]");
-			}
-		}
-		httpUtils.send(HttpMethod.GET, API.LBS_DATASEARCH_AROUND, params, httpClient.new ResponseHandler<String>() {
+			public String mainBusiness;
+			public String sex;
+			public int age;
 
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				if (isAnimation) {
-					thisView.loopCallback.state = thisView.status.None;
-					thisView.transleteSpeed = 0.6f;
-					if (!isRun && thisView.nextPosition == thisView.viewManage.screenWidth / 2f) {
-						thisView.nextPosition = thisView.viewManage.screenWidth / 3f * 2;
-						thisView.openLooper.start();
-					} else {
-						thisView.nextPosition = thisView.viewManage.screenWidth / 3f * 2;
-					}
-				}
-				Response response = gson.fromJson(responseInfo.result, Response.class);
-				if ("OK".equals(response.info)) {
-					boolean isMerge = false;
-					if (nowpage == 0) {
-						mInfomations.clear();
-						isMerge = true;
-					}
-					if (response.count > 0) {
-						nowpage++;
-					}
-
-					for (PoiData poiData : response.datas) {
-						if (status == Status.account && poiData.phone != null) {
-							processingAccountData(poiData);
-						} else if (status == Status.group && poiData.gid != null) {
-							processingGroupData(poiData);
-						} else if (status == Status.newest || status == Status.hottest) {
-							processingShareData(poiData);
-						}
-					}
-					if (isAnimation) {
-						thisView.loopCallback.state = thisView.status.None;
-						thisView.transleteSpeed = 1f;
-						thisView.nextPosition = thisView.viewManage.screenWidth;
-						thisView.openLooper.start();
-						if (!isRun && thisView.nextPosition == thisView.viewManage.screenWidth / 3f * 2) {
-							thisView.nextPosition = thisView.viewManage.screenWidth;
-							thisView.openLooper.start();
-						} else {
-							thisView.nextPosition = thisView.viewManage.screenWidth;
-						}
-						isRun = false;
-					}
-					if (status == Status.account) {
-						thisView.notifyData();
-					} else if (status == Status.group) {
-						thisView.notifyData();
-					} else if (status == Status.newest) {
-						if (isMerge) {
-							getTableListData();
-						} else {
-							thisView.notifyData();
-						}
-					} else if (status == Status.hottest) {
-						addSendingShareMessage();
-						thisView.notifyData();
-					}
-				} else {
-					log.e(response.info + "::::::" + response.status);
-				}
-			}
-		});
+			public String gid;
+			public String cover;
+		}
 	}
 
 	public void addSendingShareMessage() {
@@ -1086,179 +956,62 @@ public class NearbyController {
 		}
 	}
 
-	class Response {
-		public int count;
-		public String info;
-		public int status;
-		public ArrayList<PoiData> datas;
+	public void processingShareData(Point point) {
+		ShareMessage message = data.boards.new ShareMessage();
+
+		message.content = point.data.content;
+		message.head = point.data.head;
+		message.gsid = point.data.gsid;
+		message.sid = Constant.SQUARE_SID;
+		message.phone = point.data.phone;
+		message.totalScore = point.data.totalScore;
+		message.type = "imagetext";
+		message.time = point.data.time;
+		message.nickName = point.data.nickName;
+		message.distance = point.distance;
+		message.location = point.location;
+		message.scores = gson.fromJson(point.data.scores, new TypeToken<HashMap<String, Score>>() {
+		}.getType());
+		message.status = "sent";
+		mInfomations.add(message);
+		data.boards.shareMessagesMap.put(message.sid, message);
 	}
 
-	public void getTableListData() {
-
-		// long time = System.currentTimeMillis();
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		// params.addHeader("Cookie", "sid=f6839c7b168da4bc3bf0d2c5d13a4cf1b0829cab3047fa5ce45801a27e3bd0c60ea69cb9fc8bd465");
-		// params.addQueryStringParameter("num", "50");
-		// params.addQueryStringParameter("page", "1");
-		// params.addQueryStringParameter("order", "_id:0");
-		// params.addQueryStringParameter("_", time + "");
-		// params.addQueryStringParameter("v", "1");
-		// params.addQueryStringParameter("cid", "1");
-		httpUtils.send(HttpMethod.GET, "http://yuntuapi.amap.com/datamanage/data/list?key=0cd819a62c50d40b75a73f66cb14aa06&tableid=54f520e3e4b0ff22e1fc52d3&sortrule=time:0", params, httpClient.new ResponseHandler<String>() {
-
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				// log.e(responseInfo.result);
-				Response response = gson.fromJson(responseInfo.result, Response.class);
-				// log.e(response.datas.size() + "------------");
-				ArrayList<PoiData> list = response.datas;
-				ArrayList<ShareMessage> needList = new ArrayList<ShareMessage>();
-				ShareMessage shareMessage = null;
-				if (mInfomations.size() > 0) {
-					shareMessage = (ShareMessage) mInfomations.get(0);
-				}
-				for (int i = 0; i < list.size(); i++) {
-					PoiData poiEntity = list.get(i);
-					ShareMessage currentShareMessage = processingShareMessage(poiEntity);
-					if (shareMessage != null) {
-						if (shareMessage.time < currentShareMessage.time && searchRadius >= currentShareMessage.distance) {
-							currentShareMessage.getStatus = "synchronous";
-							needList.add(currentShareMessage);
-						}
-					} else {
-						if (searchRadius >= currentShareMessage.distance) {
-							currentShareMessage.getStatus = "synchronous";
-							needList.add(shareMessage);
-						}
-					}
-				}
-				mInfomations.addAll(needList);
-				sortMInformations();
-				addSendingShareMessage();
-				thisView.notifyData();
-			}
-
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				super.onFailure(error, msg);
-				thisView.notifyData();
-			}
-		});
-	}
-
-	// 冒泡排序
-	public void sortMInformations() {
-		for (int i = 0; i < mInfomations.size() - 1; i++) {
-			for (int j = 0; j < mInfomations.size() - i - 1; j++) {
-				ShareMessage m1 = (ShareMessage) mInfomations.get(j);
-				ShareMessage m2 = (ShareMessage) mInfomations.get(j + 1);
-				if (m1 != null && m2 != null) {
-					if (m1.time < m2.time) {
-						ShareMessage temp = m1;
-						mInfomations.set(j, m2);
-						mInfomations.set(j + 1, temp);
-					}
-				}
-			}
-		}
-	}
-
-	public ShareMessage processingShareMessage(PoiData poiData) {
-		ShareMessage shareMessage = data.boards.new ShareMessage();
-		String content = poiData.content;
-		content = new String(Base64Coder.decode(content));
-		if (content.lastIndexOf("@") == content.length() - 1) {
-			content = content.substring(0, content.length() - 1);
-		}
-		shareMessage.content = content;
-		shareMessage.head = poiData.head;
-		shareMessage.gsid = String.valueOf(poiData.gsid);
-		shareMessage.sid = String.valueOf(poiData.sid);
-		shareMessage.phone = poiData.phone;
-		shareMessage.totalScore = poiData.totalScore;
-		shareMessage.type = poiData.type;
-		shareMessage.time = poiData.time;
-		shareMessage.nickName = poiData._name;
-		shareMessage.status = "sent";
-		String location[] = poiData._location.split(",");
-		shareMessage.distance = 1000 * Double.valueOf(LBSHandler.getInstance().pointDistance(longitude + "", latitude + "", location[0], location[1]));
-		String scores = poiData.scores;
-		if (scores != null && !"".equals(scores)) {
-			scores = scores.substring(0, scores.length() - 1);
-			shareMessage.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
-			}.getType());
-		}
-		// log.e("processingShareMessage:" + message.sid);
-		return shareMessage;
-	}
-
-	public void processingShareData(PoiData poiData) {
-
-		ShareMessage shareMessage = data.boards.new ShareMessage();
-		String content = poiData.content;
-		content = new String(Base64Coder.decode(content));
-		if (content.lastIndexOf("@") == content.length() - 1) {
-			content = content.substring(0, content.length() - 1);
-		}
-		shareMessage.content = content;
-		shareMessage.head = poiData.head;
-		shareMessage.gsid = String.valueOf(poiData.gsid);
-		shareMessage.sid = String.valueOf(poiData.sid);
-		shareMessage.phone = poiData.phone;
-		shareMessage.totalScore = poiData.totalScore;
-		shareMessage.type = poiData.type;
-		shareMessage.time = poiData.time;
-		shareMessage.nickName = poiData._name;
-		shareMessage.status = "sent";
-		shareMessage.distance = Integer.valueOf(poiData._distance);
-		String scores = poiData.scores;
-		if (scores != null && !"".equals(scores)) {
-			scores = scores.substring(0, scores.length() - 1);
-			shareMessage.scores = gson.fromJson(scores, new TypeToken<HashMap<String, Score>>() {
-			}.getType());
-		}
-		mInfomations.add(shareMessage);
-		// log.e("processingShareData:" + message.sid);
-
-		// TODO error code
-		data.boards.shareMessagesMap.put(shareMessage.sid, shareMessage);
-	}
-
-	public void processingAccountData(PoiData poiData) {
+	public void processingAccountData(Point point) {
 		Friend friend = data.relationship.new Friend();
-		friend.nickName = poiData._name;
-		friend.sex = poiData.sex;
-		friend.mainBusiness = poiData.mainBusiness;
-		friend.head = poiData.head;
-		friend.phone = poiData.phone;
-		friend.age = poiData.age;
-		String[] location = poiData._location.split(",");
-		friend.longitude = location[0];
-		friend.latitude = location[1];
-		friend.lastLoginTime = String.valueOf(poiData.lastlogintime);
-		friend.distance = Integer.valueOf(poiData._distance);
+		friend.nickName = point.data.nickName;
+		friend.sex = point.data.sex;
+		friend.mainBusiness = point.data.mainBusiness;
+		friend.head = point.data.head;
+		friend.phone = point.data.phone;
+		friend.age = point.data.age;
+		double[] location = point.location;
+		friend.longitude = String.valueOf(location[0]);
+		friend.latitude = String.valueOf(location[1]);
+		friend.lastLoginTime = String.valueOf(point.data.time);
+		friend.distance = (int) point.distance;
 
 		if (!data.relationship.friendsMap.containsKey(friend.phone)) {
 			data.relationship.friendsMap.put(friend.phone, friend);
 		}
+
 		mInfomations.add(friend);
 	}
 
-	public void processingGroupData(PoiData poiData) {
+	public void processingGroupData(Point point) {
 		Group group = data.relationship.new Group();
-		group.name = poiData._name;
-		group.icon = poiData.icon;
-		group.gid = Integer.valueOf(poiData.gid);
-		group.description = poiData.description;
-		group.cover = poiData.cover;
-		group.createTime = String.valueOf(poiData.createTime);
-		group.distance = Integer.valueOf(poiData._distance);
-		String[] location = poiData._location.split(",");
-		group.longitude = location[0];
-		group.latitude = location[1];
-		if (!data.relationship.groupsMap.containsKey(poiData.gid)) {
-			data.relationship.groupsMap.put(poiData.gid, group);
+		group.name = point.data.nickName;
+		group.icon = point.data.head;
+		group.gid = Integer.valueOf(point.data.gid);
+		group.description = point.data.mainBusiness;
+		group.cover = point.data.cover;
+		group.createTime = String.valueOf(point.data.time);
+		group.distance = (int) point.distance;
+		double[] location = point.location;
+		group.longitude = String.valueOf(location[0]);
+		group.latitude = String.valueOf(location[1]);
+		if (!data.relationship.groupsMap.containsKey(String.valueOf(group.gid))) {
+			data.relationship.groupsMap.put(String.valueOf(group.gid), group);
 		}
 		mInfomations.add(group);
 	}
@@ -1353,7 +1106,6 @@ public class NearbyController {
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
 		mLocationManagerProxy.setGpsEnable(true);
 
-		thisView.mAMap.setLocationSource(mLocationSource);
 		thisView.mAMap.getUiSettings().setMyLocationButtonEnabled(false);
 		thisView.mAMap.getUiSettings().setZoomControlsEnabled(false);
 		// thisView.mAMap.getUiSettings().setScaleControlsEnabled(false);
@@ -1417,7 +1169,7 @@ public class NearbyController {
 			}
 		});
 		bindEvent();
-		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
+		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 1000, mAMapLocationListener);
 		getUserCommonUsedLocations();
 	}
 
