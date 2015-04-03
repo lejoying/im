@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
     android:id="@+id/maxView"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent" >
 
     <include layout="@layout/view_back_view" />
@@ -16,6 +16,7 @@
         android:background="@color/background" >
 
         <LinearLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
@@ -35,6 +36,12 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <ImageView
+        android:id="@+id/backg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp" />
 
     <RelativeLayout
         android:id="@+id/menuOptions"

@@ -439,35 +439,36 @@ public class ShareMessageDetailController {
 			log.e("此分享==null   异常");
 		} else {
 			final User currentUser = data.userInformation.currentUser;
-			if (currentUser.phone.equals(shareMessage.phone)) {
-				Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
-					@Override
-					public void onClick(AlertInputDialog dialog) {
-						RequestParams params = new RequestParams();
-						HttpUtils httpUtils = new HttpUtils();
-						params.addBodyParameter("phone", currentUser.phone);
-						params.addBodyParameter("accessKey", currentUser.accessKey);
-						params.addBodyParameter("sid", shareMessage.sid);
-						params.addBodyParameter("gsid", gsid);
-						if (shareMessage.location != null && shareMessage.location.length >= 2) {
-							params.addBodyParameter("location", "[" + shareMessage.location[0] + "," + shareMessage.location[1] + "]");
-						}
-						data = parser.check();
-						Board board = data.boards.boardsMap.get(sid);
-						if (board != null && board.shareMessagesOrder != null) {
-							board.shareMessagesOrder.remove(gsid);
-						}
-						// share.shareMessagesMap.remove(gsid);
-						data.boards.isModified = true;
-						taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
-						httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
-						Intent intent = new Intent();
-						intent.putExtra("key", gsid);
-						thisActivity.setResult(Activity.RESULT_OK, intent);
-						thisActivity.finish();
+			// if (currentUser.phone.equals(shareMessage.phone)) {
+			Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
+				
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					RequestParams params = new RequestParams();
+					HttpUtils httpUtils = new HttpUtils();
+					params.addBodyParameter("phone", currentUser.phone);
+					params.addBodyParameter("accessKey", currentUser.accessKey);
+					params.addBodyParameter("sid", shareMessage.sid);
+					params.addBodyParameter("gsid", gsid);
+					if (shareMessage.location != null && shareMessage.location.length >= 2) {
+						params.addBodyParameter("location", "[" + shareMessage.location[0] + "," + shareMessage.location[1] + "]");
 					}
-				}).show();
-			}
+					data = parser.check();
+					Board board = data.boards.boardsMap.get(sid);
+					if (board != null && board.shareMessagesOrder != null) {
+						board.shareMessagesOrder.remove(gsid);
+					}
+					// share.shareMessagesMap.remove(gsid);
+					data.boards.isModified = true;
+					taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
+					httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
+					Intent intent = new Intent();
+					intent.putExtra("key", gsid);
+					thisActivity.setResult(Activity.RESULT_OK, intent);
+					thisActivity.finish();
+				}
+			}).show();
+			// }
 		}
 	}
 

@@ -370,7 +370,7 @@ public class ShareSubView1 {
 		GroupCircle groupCircle = currentGroupCircle;
 		if (groupCircle == null) {
 			String gid = data.localStatus.localData.currentGroupCircle;
-			if (gid == null || gid.equals("")) {
+			if (gid == null || gid.equals("") && data.relationship.groupCircles.size() > 0) {
 				gid = data.relationship.groupCircles.get(0);
 			}
 			groupCircle = data.relationship.groupCirclesMap.get(gid);
@@ -1215,8 +1215,9 @@ public class ShareSubView1 {
 		}
 		if (groupCircle == null) {
 			String gid = data.localStatus.localData.currentGroupCircle;
-			if (gid == null || "".equals(gid))
+			if (gid == null || "".equals(gid) && data.relationship.groupCircles.size() > 0) {
 				gid = data.relationship.groupCircles.get(0);
+			}
 			groupCircle = data.relationship.groupCirclesMap.get(gid);
 		}
 		// log.e("------------------------------*******00000000000：" + groupCircle);

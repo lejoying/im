@@ -1419,6 +1419,61 @@ function createGroupShares(groups) {
     });
 }
 
+//getLbsAllShares();
+function getLbsAllShares() {
+    var query = [
+        "MATCH (shares:Shares)-->(share:Share)",
+        "WHERE shares.sid={sid}",
+        "RETURN share"
+    ].join("\n")
+    var params = {};
+    db.query(query, params, function (error, results) {
+        if (error) {
+            console.error(error);
+        } else if (results.length == 0) {
+            console.log("无数据");
+        } else {
+            for (var index in results) {
+                var shareData = results[index].share.data;
+
+            }
+        }
+    });
+}
+function createLbsShare(shareData) {
+    try {
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS_CREATE,
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            data: {
+                location: location,
+                primaryKey: shareData.gsid,
+                data: JSON.stringify({
+                    nickName: encodeURI(shareData.nickName),
+                    gsid: shareData.gsid,
+                    phone: shareData.phone,
+                    head: shareData.head,
+                    content: encodeURI(shareData.content),
+                    totalScore: shareData.totalScore,
+                    time: shareData.time,
+                    scores: "{}"
+                })
+            }, success: function (info) {
+                var info = JSON.parse(info);
+                if (info.提示信息 == "创建成功") {
+                    console.log("success--")
+                } else {
+                    console.log("error--create")
+                }
+            }
+        });
+    } catch (e) {
+        console.log(e);
+        return;
+    }
+}
+
 
 function ResponseData(responseContent, response) {
     response.writeHead(200, {

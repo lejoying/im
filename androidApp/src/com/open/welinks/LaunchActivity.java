@@ -29,14 +29,14 @@ public class LaunchActivity extends Activity {
 		Log.d(tag, "hello world!");
 
 		taskManageHolder = TaskManageHolder.getInstance();
-		taskManageHolder.initialize();
+		taskManageHolder.initialize(this);
 
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);
 
 		data = Data.getInstance();
 
-		// getLocalInformation();
+		getLocalInformation();
 
 		if (data.userInformation == null) {
 			String userInformationStr = parser.getFromRootForder("userInformation.js");
@@ -79,13 +79,17 @@ public class LaunchActivity extends Activity {
 
 	public void getLocalInformation() {
 		// LocalConfig localConfig = data.userInformation.localConfig;
-		LocalConfig localConfig = new LocalConfig();
-
-		TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-		localConfig.deviceid = telephonyManager.getDeviceId();
-		localConfig.line1Number = telephonyManager.getLine1Number();
-		localConfig.imei = telephonyManager.getSimSerialNumber();
-		localConfig.imsi = telephonyManager.getSubscriberId();
-		Log.e(tag, "deviceid:" + localConfig.deviceid + "\nline1Number:" + localConfig.line1Number + "\nimei:" + localConfig.imei + "\nimsi:" + localConfig.imsi);
+		try {
+			LocalConfig localConfig = new LocalConfig();
+			TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+			localConfig.deviceid = telephonyManager.getDeviceId();
+			localConfig.line1Number = telephonyManager.getLine1Number();
+			localConfig.imei = telephonyManager.getSimSerialNumber();
+			localConfig.imsi = telephonyManager.getSubscriberId();
+			Log.e(tag, "deviceid:" + localConfig.deviceid + "\nline1Number:" + localConfig.line1Number + "\nimei:" + localConfig.imei + "\nimsi:" + localConfig.imsi);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("LaunchActivity", e.toString(), e);
+		}
 	}
 }

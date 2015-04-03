@@ -138,6 +138,15 @@ public class ShareMessageDetailView {
 				return false;
 			}
 		});
+
+		// thisActivity.findViewById(R.id.container).setOnLongClickListener(new OnLongClickListener() {
+		//
+		// @Override
+		// public boolean onLongClick(View view) {
+		// Toast.makeText(thisActivity, "onLongClick", Toast.LENGTH_SHORT).show();
+		// return true;
+		// }
+		// });
 		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitleView.setText("分享详情");
 		backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
@@ -220,11 +229,11 @@ public class ShareMessageDetailView {
 		shareMessageTimeView.setText("");
 
 		// this.scoreView.setText(thisController.shareMessage.totalScore);
-		if (thisController.shareMessage.phone.equals(data.userInformation.currentUser.phone)) {
-			deleteOptionView.setVisibility(View.VISIBLE);
-		} else {
-			deleteOptionView.setVisibility(View.GONE);
-		}
+		// if (thisController.shareMessage.phone.equals(data.userInformation.currentUser.phone)) {
+		deleteOptionView.setVisibility(View.VISIBLE);
+		// } else {
+		// deleteOptionView.setVisibility(View.GONE);
+		// }
 		if (!"sent".equals(thisController.shareMessage.status)) {
 			if (deleteOptionView.getVisibility() == View.GONE) {
 				menuOptionsView.setVisibility(View.GONE);
@@ -319,13 +328,13 @@ public class ShareMessageDetailView {
 				type = 1;
 			}
 			this.contentContainer.removeAllViews();
-			taskManageHolder.fileHandler.getHeadImage(head, this.headView, taskManageHolder.viewManage.options40);
+			taskManageHolder.fileHandler.getHeadImage(head, this.headView, taskManageHolder.viewManage.options40, null);
 			this.headView.setOnClickListener(thisController.mOnClickListener);
 			this.headView.setTag(R.id.tag_class, "HeadView");
 			this.headView.setTag(R.id.tag_first, phone);
 			this.nickNameView.setText(nickName);
 			if (currentUser.phone.equals(phone)) {
-				taskManageHolder.fileHandler.getHeadImage(currentUser.head, this.headView, taskManageHolder.viewManage.options40);
+				taskManageHolder.fileHandler.getHeadImage(currentUser.head, this.headView, taskManageHolder.viewManage.options40, null);
 				this.nickNameView.setText(currentUser.nickName);
 			}
 			this.timeView.setText(DateUtil.getNearShareTime(time));
@@ -372,7 +381,7 @@ public class ShareMessageDetailView {
 					imageView.setTag(R.id.tag_second, index);
 					index++;
 
-					taskManageHolder.fileHandler.getImage(imageFileName, imageView, displayImageOptions);
+					taskManageHolder.fileHandler.getImage(imageFileName, imageView, displayImageOptions, null);
 
 					File currentImageFile = new File(mImageFile, imageFileName);
 					String filepath = currentImageFile.getAbsolutePath();

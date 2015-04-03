@@ -222,7 +222,7 @@ public class ChatFaceView extends FrameLayout {
 		image.setLayoutParams(params);
 		image.setBackgroundResource(R.drawable.selector_chat_face_item);
 		image.setOnClickListener(mOnClickListener);
-		taskManageHolder.fileHandler.getImage(filePath, image, params, DownloadFile.TYPE_GIF_IMAGE, taskManageHolder.viewManage.options);
+		taskManageHolder.fileHandler.getImage(filePath, image, params, DownloadFile.TYPE_GIF_IMAGE, taskManageHolder.viewManage.options, null);
 		faceViewList.addView(image);
 		addSpaceView();
 		image.setTag((faceViewList.getChildCount() - 1) / 2);
@@ -350,7 +350,7 @@ public class ChatFaceView extends FrameLayout {
 					int resource = total * current + position;
 					if (resource < faceResource.size()) {
 						convertView.setBackgroundResource(R.drawable.selector_chat_face_item);
-						taskManageHolder.fileHandler.getImage(faceResource.get(resource), image, params, DownloadFile.TYPE_GIF_IMAGE, null);
+						taskManageHolder.fileHandler.getImage(faceResource.get(resource), image, params, DownloadFile.TYPE_GIF_IMAGE, null, null);
 						convertView.setTag(R.id.tag_first, faceResource.get(resource));
 						if (faceNames != null) {
 							text.setText(faceNames.get(resource));

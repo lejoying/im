@@ -95,7 +95,8 @@ public class ChatView {
 	public ChatAdapter mChatAdapter;
 	public ChatMenuAdapter mChatMenuAdapter;
 
-	public Animation chatContentAddInRotateAnimation, chatContentAddOutRotateAnimation, chatContentAddInTranslateAnimation, chatContentAddOutTranslateAnimation, chatContentSamilyInTranslateAnimation, chatContentSamilyOutTranslateAnimation, menuInTranslateAnimation, menuInAlphaAnimation, menuOutTranslateAnimation, samilyInTranslateAnimation, samilyOutTranslateAnimation, recoredInAlphAnimation, recoredOutAlphAnimation, addInTranslateAnimation, addOutTranslateAnimation;
+	public Animation chatContentAddInRotateAnimation, chatContentAddOutRotateAnimation, chatContentAddInTranslateAnimation, chatContentAddOutTranslateAnimation, chatContentSamilyInTranslateAnimation, chatContentSamilyOutTranslateAnimation, menuInTranslateAnimation, menuInAlphaAnimation,
+			menuOutTranslateAnimation, samilyInTranslateAnimation, samilyOutTranslateAnimation, recoredInAlphAnimation, recoredOutAlphAnimation, addInTranslateAnimation, addOutTranslateAnimation;
 
 	private DisplayImageOptions locationOptions;
 
@@ -154,7 +155,8 @@ public class ChatView {
 		titleImage.setLayoutParams(rightParams);
 		rightContainer.addView(titleImage);
 
-		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head).displayer(new RoundedBitmapDisplayer((int) BaseDataUtils.dpToPx(30))).build();
+		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head)
+				.displayer(new RoundedBitmapDisplayer((int) BaseDataUtils.dpToPx(30))).build();
 
 		mChatMenuAdapter = new ChatMenuAdapter();
 		chatMenu.setAdapter(mChatMenuAdapter);
@@ -730,7 +732,7 @@ public class ChatView {
 								taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.chat_location_searching, holder.shareImage, taskManageHolder.viewManage.options);
 							} else {
 								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) BaseDataUtils.dpToPx(150), (int) BaseDataUtils.dpToPx(100));
-								taskManageHolder.fileHandler.getImage(messageContent.imageFileName, holder.locationImage, params, DownloadFile.TYPE_IMAGE, locationOptions);
+								taskManageHolder.fileHandler.getImage(messageContent.imageFileName, holder.locationImage, params, DownloadFile.TYPE_IMAGE, locationOptions, null);
 								holder.locationImage.setTag(R.id.tag_first, contentType);
 								holder.locationImage.setTag(R.id.tag_second, messageContent.latitude);
 								holder.locationImage.setTag(R.id.tag_third, messageContent.longitude);

@@ -1,6 +1,5 @@
 package com.open.welinks.model;
 
-
 public class SubData {
 	public static SubData subData;
 
@@ -53,5 +52,16 @@ public class SubData {
 	public class SpecialGifMessageContent {
 		public String phone = "";
 		public String content = "";
+	}
+
+	public static class ImageListener {
+		public void onLoding() {
+		}
+
+		public void onFailed() {
+		}
+
+		public void onSuccess(float redio) {
+		}
 	}
 }

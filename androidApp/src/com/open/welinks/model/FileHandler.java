@@ -33,6 +33,7 @@ import com.open.welinks.MainActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.ThumbleListener;
+import com.open.welinks.model.SubData.ImageListener;
 import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.oss.DownloadFileList;
@@ -621,7 +622,7 @@ public class FileHandler {
 		};
 	}
 
-	public void getImage(String fileName, final ImageView imageView, final LayoutParams params, final int type, final DisplayImageOptions options) {
+	public void getImage(String fileName, final ImageView imageView, final LayoutParams params, final int type, final DisplayImageOptions options, final ImageListener imageListener) {
 		File file = null;
 		String excessivePath = "", excessiveUrl = "";
 		if (fileName == null || "".equals(fileName)) {
@@ -646,7 +647,7 @@ public class FileHandler {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadImageFile(url, path, imageView, options, type, null);
+						downloadImageFile(url, path, imageView, options, type, null, imageListener);
 					}
 
 					@Override
@@ -658,11 +659,16 @@ public class FileHandler {
 								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
 								imageView.setLayoutParams(params);
 							}
+							if (imageListener != null) {
+								float width = loadedImage.getWidth();
+								float height = loadedImage.getHeight();
+								imageListener.onSuccess(height / width);
+							}
 						}
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, type, null);
+				downloadImageFile(url, path, imageView, options, type, null, imageListener);
 			}
 		}
 
@@ -682,7 +688,7 @@ public class FileHandler {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null, null);
 					}
 
 					@Override
@@ -690,16 +696,20 @@ public class FileHandler {
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null);
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null, null);
 			}
 		}
 	}
 
-	public void getImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
-		getImage(fileName, imageView, null, DownloadFile.TYPE_IMAGE, options);
+	public void getImage(String fileName, final ImageView imageView, final DisplayImageOptions options, ImageListener imageListener) {
+		getImage(fileName, imageView, null, DownloadFile.TYPE_IMAGE, options, imageListener);
 	}
 
 	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
+		getHeadImage(fileName, imageView, options, null);
+	}
+
+	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options, final ImageListener imageListener) {
 		imageLoader.displayImage("drawable://" + R.drawable.face_man, imageView, options);
 		if (fileName != null && !"".equals(fileName)) {
 			File imageFile = new File(sdcardHeadImageFolder, fileName);
@@ -709,19 +719,30 @@ public class FileHandler {
 				imageLoader.displayImage("file://" + path, imageView, options, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
+						if (imageListener != null) {
+							imageListener.onLoding();
+						}
 					}
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE, null);
+						if (imageListener != null) {
+							imageListener.onFailed();
+						}
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE, null, imageListener);
 					}
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						// if (imageListener != null) {
+						// float width = loadedImage.getWidth();
+						// float height = loadedImage.getHeight();
+						// imageListener.onSuccess(height / width);
+						// }
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE, null);
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE, null, imageListener);
 			}
 		}
 	}
@@ -762,7 +783,7 @@ public class FileHandler {
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 						imageView.setBackgroundColor(Color.parseColor("#990099cd"));
-						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE, thumbleListener);
+						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE, thumbleListener, null);
 					}
 
 					@Override
@@ -774,7 +795,7 @@ public class FileHandler {
 					}
 				});
 			} else {
-				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE, thumbleListener);
+				downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_THUMBLE_IMAGE, thumbleListener, null);
 			}
 		}
 	}
@@ -824,12 +845,13 @@ public class FileHandler {
 		downloadFileList.addDownloadFile(downloadFile);
 	}
 
-	private void downloadImageFile(String url, String path, ImageView imageView, DisplayImageOptions options, int downloadType, ThumbleListener thumbleListener) {
+	private void downloadImageFile(String url, String path, ImageView imageView, DisplayImageOptions options, int downloadType, ThumbleListener thumbleListener, final ImageListener imageListener) {
 		DownloadFile downloadFile = new DownloadFile(url, path);
 		downloadFile.view = imageView;
 		downloadFile.options = options;
 		downloadFile.type = downloadType;
 		downloadFile.thumbleListener = thumbleListener;
+		downloadFile.imageListener = imageListener;
 		downloadFile.setDownloadFileListener(onDownloadListener);
 		downloadFileList.addDownloadFile(downloadFile);
 	}
