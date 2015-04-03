@@ -822,7 +822,7 @@ public class LoginController {
 	public void loginSuccessful(final String phone) {
 		thisView.progressBar.incrementProgressBy(60);
 		Intent intent = new Intent(thisActivity, NearbyActivity.class);
-		intent.putExtra("phone", phone);
+		intent.putExtra("type", "newest");
 		thisActivity.startActivity(intent);
 		thisActivity.finish();
 	}

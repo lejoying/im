@@ -53,7 +53,7 @@ import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
 import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
-import com.open.welinks.controller.NearbyController.Status;
+import com.open.welinks.controller.NearbyController.LBSStatus;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.model.API;
@@ -194,7 +194,7 @@ public class NearbyView {
 		this.backView.setPadding(0, 0, (int) (10 * this.metrics.density), 0);
 		ImageView backImageView = (ImageView) thisActivity.findViewById(R.id.backImageView);
 
-		if (thisController.status == Status.account || thisController.status == Status.group) {
+		if (thisController.status == LBSStatus.account || thisController.status == LBSStatus.group) {
 			ImageView lineView = new ImageView(thisActivity);
 			lineView.setBackgroundColor(Color.parseColor("#0099cd"));
 			int lineWidth = (int) (1 * this.metrics.density);
@@ -247,7 +247,7 @@ public class NearbyView {
 			this.threeChoicesView.setButtonThreeText("最热");
 		}
 		this.threeChoicesView.setTwoChoice();
-		if (thisController.status == Status.account || thisController.status == Status.hottest) {
+		if (thisController.status == LBSStatus.account || thisController.status == LBSStatus.hottest) {
 			this.threeChoicesView.setDefaultItem(3);
 		} else {
 			this.threeChoicesView.setDefaultItem(1);
@@ -355,7 +355,7 @@ public class NearbyView {
 	public TouchStatus status = new TouchStatus();
 
 	public void fillData() {
-		if (thisController.status == Status.account || thisController.status == Status.group) {
+		if (thisController.status == LBSStatus.account || thisController.status == LBSStatus.group) {
 			nearbyRelationAdapter = new NearbyRelationAdapter();
 			nearbyListView.setAdapter(nearbyRelationAdapter);
 		} else {
@@ -790,7 +790,7 @@ public class NearbyView {
 			}
 			int distance = 0;
 			String head = "";
-			if (thisController.status == Status.account) {
+			if (thisController.status == LBSStatus.account) {
 				holder.age.setVisibility(View.VISIBLE);
 				holder.time.setVisibility(View.VISIBLE);
 				holder.buttomLine.setVisibility(View.VISIBLE);
@@ -808,7 +808,7 @@ public class NearbyView {
 				}
 				head = friend.head;
 				distance = friend.distance;
-			} else if (thisController.status == Status.group) {
+			} else if (thisController.status == LBSStatus.group) {
 				holder.age.setVisibility(View.GONE);
 				holder.time.setVisibility(View.GONE);
 				holder.buttomLine.setVisibility(View.GONE);
@@ -959,10 +959,10 @@ public class NearbyView {
 		screenCancel = (TextView) screenDialogView.findViewById(R.id.cancel);
 		titleTwo = (TextView) screenDialogView.findViewById(R.id.titleTwo);
 
-		if (thisController.status == Status.group) {
+		if (thisController.status == LBSStatus.group) {
 			timeLayout.setVisibility(View.GONE);
 			titleTwo.setVisibility(View.GONE);
-		} else if (thisController.status == Status.account) {
+		} else if (thisController.status == LBSStatus.account) {
 			titleTwo.setText("最近登录");
 		}
 
@@ -974,10 +974,10 @@ public class NearbyView {
 		if (screenPopDialog.isShowing()) {
 			screenPopDialog.dismiss();
 		} else {
-			if (thisController.status == Status.group) {
+			if (thisController.status == LBSStatus.group) {
 				timeLayout.setVisibility(View.GONE);
 				titleTwo.setVisibility(View.GONE);
-			} else if (thisController.status == Status.account) {
+			} else if (thisController.status == LBSStatus.account) {
 				timeLayout.setVisibility(View.VISIBLE);
 				titleTwo.setVisibility(View.VISIBLE);
 			}

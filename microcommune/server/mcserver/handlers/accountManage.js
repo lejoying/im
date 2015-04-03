@@ -797,10 +797,10 @@ accountManage.modify = function (data, response) {
     function modifyLbsAccount(accountData) {
         var sex;
         var location;
-        if (accountData.longitude != null && accountData.latitude != null) {
+        if (accountData.longitude != null && accountData.longitude != "" && accountData.latitude != null && accountData.latitude != "") {
             location = JSON.stringify([parseFloat(accountData.longitude), parseFloat(accountData.latitude)]);
         } else {
-            location = null;
+            location = "";
         }
         if (accountData.sex == null || accountData.sex == "" || accountData.sex == "男" || accountData.sex == "male") {
             sex = "male";

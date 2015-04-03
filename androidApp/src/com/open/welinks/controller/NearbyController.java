@@ -58,7 +58,6 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
@@ -82,13 +81,11 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.model.LBSHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
-import com.open.welinks.utils.Base64Coder;
 import com.open.welinks.view.NearbyView;
 import com.open.welinks.view.NearbyView.SendShare;
 
@@ -143,9 +140,9 @@ public class NearbyController {
 
 	public boolean isFirstPosition = true;
 
-	public Status status;
+	public LBSStatus status;
 
-	public enum Status {
+	public enum LBSStatus {
 		account, group, newest, hottest
 	}
 
@@ -160,20 +157,21 @@ public class NearbyController {
 		thisView.viewManage.nearbyView = thisView;
 		type = thisActivity.getIntent().getStringExtra("type");
 		if ("account".equals(type)) {
-			status = Status.account;
+			status = LBSStatus.account;
 			mTableId = Constant.ACCOUNTTABLEID;
 		} else if ("group".equals(type)) {
-			status = Status.group;
+			status = LBSStatus.group;
 			mTableId = Constant.GROUPTABLEID;
 		} else if ("newest".equals(type)) {
-			status = Status.newest;
+			status = LBSStatus.newest;
 			mTableId = Constant.SHARETABLEID;
 		} else if ("hottest".equals(type)) {
-			status = Status.hottest;
+			status = LBSStatus.hottest;
 			mTableId = Constant.SHARETABLEID;
+		} else if (type == null) {
+			log.e(":::::::::::::::::::::::::fuck");
 		}
 		// thisView.threeChoicesView.setButtonTwoText("关注");
-
 		if (data.localStatus.localData.currentSearchRadius != 0) {
 			searchRadius = data.localStatus.localData.currentSearchRadius;
 		}
@@ -379,7 +377,7 @@ public class NearbyController {
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (view.equals(thisView.backView)) {
-					if (status == Status.account || status == Status.group) {
+					if (status == LBSStatus.account || status == LBSStatus.group) {
 						thisActivity.finish();
 					} else {
 						Intent intent = new Intent(thisActivity, MainActivity.class);
@@ -590,10 +588,10 @@ public class NearbyController {
 			@Override
 			public void onButtonCilck(int position) {
 				if (position == 3) {
-					if (status == Status.newest) {
-						status = Status.hottest;
-					} else if (status == Status.group) {
-						status = Status.account;
+					if (status == LBSStatus.newest) {
+						status = LBSStatus.hottest;
+					} else if (status == LBSStatus.group) {
+						status = LBSStatus.account;
 						mTableId = Constant.ACCOUNTTABLEID;
 					}
 					nowpage = 0;
@@ -604,10 +602,10 @@ public class NearbyController {
 					searchNearbyLBS(true);
 				} else if (position == 2) {
 				} else if (position == 1) {
-					if (status == Status.hottest) {
-						status = Status.newest;
-					} else if (status == Status.account) {
-						status = Status.group;
+					if (status == LBSStatus.hottest) {
+						status = LBSStatus.newest;
+					} else if (status == LBSStatus.account) {
+						status = LBSStatus.group;
 						mTableId = Constant.GROUPTABLEID;
 					}
 					nowpage = 0;
@@ -617,6 +615,7 @@ public class NearbyController {
 					thisView.progressView.setTranslationX(thisView.currentPosition);
 					searchNearbyLBS(true);
 				}
+				log.e(status + "::::::::::::");
 			}
 		};
 		mCloudSearchListener = new OnCloudSearchListener() {
@@ -728,7 +727,7 @@ public class NearbyController {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if (status == Status.newest || status == Status.hottest) {
+				if (status == LBSStatus.newest || status == LBSStatus.hottest) {
 					ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 					data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
@@ -736,11 +735,11 @@ public class NearbyController {
 					intent.putExtra("sid", shareMessage.sid);
 					intent.putExtra("gsid", shareMessage.gsid);
 					thisActivity.startActivityForResult(intent, RESULTCODESHAREDETAIL);
-				} else if (status == Status.group) {
+				} else if (status == LBSStatus.group) {
 					Group group = (Group) thisController.mInfomations.get(position);
 					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_GROUP, String.valueOf(group.gid));
 					thisView.businessCardPopView.showUserCardDialogView();
-				} else if (status == Status.account) {
+				} else if (status == LBSStatus.account) {
 					Friend friend = (Friend) thisController.mInfomations.get(position);
 					thisView.businessCardPopView.cardView.setSmallBusinessCardContent(thisView.businessCardPopView.cardView.TYPE_POINT, friend.phone);
 					thisView.businessCardPopView.cardView.setMenu(false);
@@ -844,19 +843,27 @@ public class NearbyController {
 		params.addBodyParameter("limit", String.valueOf(20));
 		params.addBodyParameter("page", String.valueOf(nowpage));
 		params.addBodyParameter("time", String.valueOf(now));
-		if (status == Status.newest) {
+		log.e(status + ":::::");
+		if (thisController.status == LBSStatus.newest) {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_SHARE_SEARCH;
-		} else if (status == Status.hottest) {
+			log.e(API.LBS_SHARE_SEARCH + "::::::::::::::");
+		} else if (thisController.status == LBSStatus.hottest) {
 			params.addBodyParameter("sortby", "totalScore");
 			api = API.LBS_SHARE_SEARCH;
-		} else if (status == Status.account) {
+			log.e(API.LBS_SHARE_SEARCH + "::::::::::::::");
+		} else if (thisController.status == LBSStatus.account) {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_ACCOUNT_SEARCH;
-		} else if (status == Status.group) {
+			log.e(API.LBS_ACCOUNT_SEARCH + "::::::::::::::");
+		} else if (thisController.status == LBSStatus.group) {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_GROUP_SEARCH;
+			log.e(API.LBS_GROUP_SEARCH + "::::::::::::::");
 			return;
+		} else {
+			log.e(API.LBS_SHARE_SEARCH + ":::::::::::::fuck::::::::::::::" + status + ":::::");
+			log.e(LBSStatus.group + ":::::" + LBSStatus.account + ":::::" + LBSStatus.newest + ":::::" + LBSStatus.hottest);
 		}
 		httpUtils.send(HttpMethod.POST, api, params, httpClient.new ResponseHandler<String>() {
 			class Response {
@@ -1085,7 +1092,7 @@ public class NearbyController {
 	public void onActivityResult(int requestCode, int resultCode2, Intent data2) {
 		if (requestCode == RESULTCODESHAREDETAIL && resultCode2 == Activity.RESULT_OK && data2 != null) {
 			String deletedGsid = data2.getStringExtra("key");
-			if (status == Status.newest || status == Status.hottest) {
+			if (status == LBSStatus.newest || status == LBSStatus.hottest) {
 				for (int i = 0; i < mInfomations.size(); i++) {
 					ShareMessage message = (ShareMessage) mInfomations.get(i);
 					if (message.gsid.equals(deletedGsid)) {
@@ -1186,7 +1193,7 @@ public class NearbyController {
 	public boolean isExit = false;
 
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (status == Status.account || status == Status.group) {
+		if (status == LBSStatus.account || status == LBSStatus.group) {
 			thisActivity.finish();
 		} else {
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
