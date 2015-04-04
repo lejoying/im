@@ -326,9 +326,9 @@ shareManage.getusershares = function (data, response) {
     }
     function getUserShares() {
         var query = [
-            "MATCH (group:Group)-->(shares:Shares)-->(share:Share)",
+            "MATCH (shares:Shares)-->(share:Share)",
             "WHERE  share.phone={phone}",
-            "RETURN group,share,shares",
+            "RETURN share,shares",
             "ORDER BY share.time DESC",
             "SKIP {start}",
             "LIMIT {pagesize}"
@@ -352,7 +352,6 @@ shareManage.getusershares = function (data, response) {
                     var shares = [];
                     var sharesMap = {};
                     for (var index in results) {
-                        var groupData = results[index].group.data;
                         var shareData = results[index].share.data;
                         var sharesData = results[index].shares.data;
                         var share = {
@@ -364,11 +363,16 @@ shareManage.getusershares = function (data, response) {
                             time: shareData.time,
                             phone: shareData.phone,
                             sid: sharesData.sid,
-                            gid: groupData.gid,
+                            gid: sharesData.gid || "-1",
                             totalScore: shareData.totalScore || 0,
                             scores: shareData.scores ? JSON.parse(shareData.scores) : {},
                             status: "sent"
                         };
+                        if (sharesData.sid == 5359) {
+                            share.shareFor = 2;
+                        } else {
+                            share.shareFor = 1;
+                        }
                         shares.push(shareData.gsid);
                         sharesMap[shareData.gsid] = share;
                     }

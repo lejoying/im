@@ -762,8 +762,23 @@ accountManage.modify = function (data, response) {
                         console.error(err);
                         return;
                     } else {
+                        var userData = {
+                            phone: accountData.phone,
+                            nickName: accountData.nickName,
+                            mainBusiness: accountData.mainBusiness,
+                            head: accountData.head,
+                            sex: accountData.sex,
+                            age: accountData.age,
+                            byPhone: accountData.byPhone,
+                            createTime: accountData.createTime,
+                            userBackground: accountData.userBackground,
+                            lastLoginTime: accountData.lastlogintime,
+                            longitude: accountData.longitude,
+                            latitude: accountData.latitude
+                        };
                         response.write(JSON.stringify({
-                            "提示信息": "修改用户信息成功"
+                            "提示信息": "修改用户信息成功",
+                            "account": userData
                         }));
                         response.end();
                         modifyLbsAccount(accountData);
