@@ -264,6 +264,7 @@ public class ResponseHandlers {
 
 					data.userInformation.updateTime = System.currentTimeMillis();
 					data.userInformation.isModified = true;
+					log.e("***prepareGetUserInfomation***");
 					// viewManage.postNotifyView("MeSubView");
 				}
 			} else {
@@ -362,7 +363,6 @@ public class ResponseHandlers {
 				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}
 		};
-
 	};
 	public ResponseHandler<String> account_modifylocation = httpClient.new ResponseHandler<String>() {
 		class Response {
@@ -608,7 +608,7 @@ public class ResponseHandlers {
 					}
 					currentUser.commonUsedLocations.clear();
 					currentUser.commonUsedLocations.addAll(serverUser.commonUsedLocations);
-					log.e(responseInfo.result);
+					// log.e(responseInfo.result);
 					if (viewManage.nearbyView != null) {
 						viewManage.nearbyView.showAddressDialog();
 						log.e("----刷新数据" + serverUser.commonUsedLocations.size());
@@ -855,6 +855,7 @@ public class ResponseHandlers {
 				data.relationship.updateTime = System.currentTimeMillis();
 				data.relationship.isModified = true;
 				DataHandler.clearInvalidFriendMessages();
+				log.e("***prepareGetIntimateFriends***");
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
 			}
@@ -1679,6 +1680,7 @@ public class ResponseHandlers {
 					}
 					data.relationship.updateTime = System.currentTimeMillis();
 					DataHandler.clearInvalidGroupMessages();
+					log.e("***prepareGetUserCurrentAllGroup***");
 				} else {
 					log.e(ViewManage.getErrorLineNumber() + response.失败原因);
 				}
