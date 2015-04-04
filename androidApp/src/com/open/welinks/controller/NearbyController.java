@@ -143,7 +143,9 @@ public class NearbyController {
 		this.thisActivity = thisActivity;
 
 		// TODO
-		getContacts();
+		if (isLogin(false)) {
+			getContacts();
+		}
 	}
 
 	public void onCreate(boolean isNearbyActivity) {
@@ -737,20 +739,22 @@ public class NearbyController {
 	}
 
 	public void modifyLocation() {
-		data = Parser.getInstance().check();
-		HttpUtils httpUtils = new HttpUtils();
-		RequestParams params = new RequestParams();
-		User currentUser = data.userInformation.currentUser;
-		params.addBodyParameter("phone", currentUser.phone);
-		params.addBodyParameter("accessKey", currentUser.accessKey);
-		Account account = new Account();
-		account.longitude = currentUser.longitude;
-		account.latitude = currentUser.latitude;
-		account.address = currentUser.address;
-		String data = gson.toJson(account);
-		params.addBodyParameter("account", data);
-		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, responseHandlers.account_modifylocation);
+		if (isLogin(false)) {
+			data = Parser.getInstance().check();
+			HttpUtils httpUtils = new HttpUtils();
+			RequestParams params = new RequestParams();
+			User currentUser = data.userInformation.currentUser;
+			params.addBodyParameter("phone", currentUser.phone);
+			params.addBodyParameter("accessKey", currentUser.accessKey);
+			Account account = new Account();
+			account.longitude = currentUser.longitude;
+			account.latitude = currentUser.latitude;
+			account.address = currentUser.address;
+			String data = gson.toJson(account);
+			params.addBodyParameter("account", data);
+			ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+			httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, responseHandlers.account_modifylocation);
+		}
 	}
 
 	public boolean isTouchDown = false;
