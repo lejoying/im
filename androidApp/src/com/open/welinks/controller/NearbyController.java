@@ -871,7 +871,6 @@ public class NearbyController {
 					}
 					if (response.resultPoints.size() > 0) {
 						nowpage++;
-					} else {
 					}
 					for (Point point : response.resultPoints) {
 						if (point.data.gsid != null) {
