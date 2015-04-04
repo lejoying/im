@@ -454,6 +454,7 @@ shareManage.sendboardshare = function (data, response) {
             content: message.content,
             totalScore: 0,
             scores: "{}",
+            location: location || "[]",
             time: new Date().getTime()
         };
         var params = {
@@ -501,7 +502,7 @@ shareManage.sendboardshare = function (data, response) {
             try {
                 ajax.ajax({
                     type: "POST",
-                    url: serverSetting.LBS_CREATE,
+                    url: serverSetting.LBS_SHAERE_CREATE,
                     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                     data: {
                         location: location,
@@ -1288,7 +1289,7 @@ shareManage.score = function (data, response) {
                         try {
                             ajax.ajax({
                                 type: "POST",
-                                url: serverSetting.LBS_UPDATA,
+                                url: serverSetting.LBS_SHAERE_UPDATE,
                                 data: {
                                     primaryKey: share.gsid,
                                     location: location,
@@ -1312,7 +1313,7 @@ shareManage.score = function (data, response) {
                         try {
                             ajax.ajax({
                                 type: "POST",
-                                url: serverSetting.LBS_DELETE,
+                                url: serverSetting.LBS_SHAERE_DELETE,
                                 data: {
                                     primaryKey: share.gsid,
                                     location: location

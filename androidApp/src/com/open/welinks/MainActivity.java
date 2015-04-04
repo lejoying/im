@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
 
 		// Context context = instance.instance.context;
 		instance = this;
-		// initImageLoader(getApplicationContext());
+		initImageLoader(getApplicationContext());
 		// BaseDataUtils.initBaseData(this);
 		// Constant.init();
 		// startPushService();

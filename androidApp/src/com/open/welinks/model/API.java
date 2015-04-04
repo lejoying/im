@@ -2,8 +2,10 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/ 192.168.1.14 192.168.0.103
-	public static String API_LBS_DOMAIN = "http://182.92.107.229/";
+	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/ 192.168.1.14 192.168.0.102
+	public static String API_LBS_ACCOUNT_DOMAIN = "http://123.57.58.84/";// 123.57.58.84
+	public static String API_LBS_SHARE_DOMAIN = "http://182.92.107.229/";// 182.92.107.229
+	public static String API_LBS_GROUP_DOMAIN = "http:// /";//
 	/**
 	 * http://images2.we-links.com/
 	 */
@@ -234,7 +236,9 @@ public class API {
 	/**
 	 * http://www.we-links.com/api2/lbs/search
 	 */
-	public static String LBS_SEARCH = API_LBS_DOMAIN + "api2/lbs/search";
+	public static String LBS_ACCOUNT_SEARCH = API_LBS_ACCOUNT_DOMAIN + "api2/lbs/search";
+	public static String LBS_SHARE_SEARCH = API_LBS_SHARE_DOMAIN + "api2/lbs/search";
+	public static String LBS_GROUP_SEARCH = API_LBS_GROUP_DOMAIN + "api2/lbs/search";
 	// image
 
 	/**
