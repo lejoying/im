@@ -28,9 +28,9 @@
             android:id="@+id/rl_chatMessagesList"
             android:layout_width="110dp"
             android:layout_height="32dp"
-            android:translationY="2dp"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/backview_background" >
+            android:background="@drawable/backview_background"
+            android:translationY="2dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,8 +48,8 @@
             android:layout_width="110dp"
             android:layout_height="32dp"
             android:layout_centerHorizontal="true"
-            android:translationY="2dp"
-            android:background="@drawable/backview_background" >
+            android:background="@drawable/backview_background"
+            android:translationY="2dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -67,8 +67,8 @@
             android:layout_width="110dp"
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
-            android:translationY="2dp"
-            android:background="@drawable/backview_background" >
+            android:background="@drawable/backview_background"
+            android:translationY="2dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -121,7 +121,6 @@
                 android:layout_below="@+id/iv_notMessage"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
-                
                 android:layout_marginTop="-30dp"
                 android:text="暂时没有新消息"
                 android:textColor="#0099cd" />
@@ -134,7 +133,7 @@
         android:layout_height="match_parent"
         android:padding="10dp"
         android:translationY="88dp"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <ImageView
             android:id="@+id/appIconToName"
@@ -152,92 +151,105 @@
             android:translationY="87dp" />
 
         <com.open.lib.TouchView
-            android:id="@+id/businesscard"
+            android:id="@+id/businesscard0"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_vertical"
+            android:layout_height="148dp"
             android:translationY="88dp" >
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="89dp"
+                android:layout_height="148dp"
                 android:background="@color/card_color_on_background"
-                android:contentDescription="white_line"
                 android:visibility="invisible" />
 
-            <ImageView
-                android:id="@+id/iv_headImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/face_man" />
+            <com.open.lib.TouchView
+                android:id="@+id/businesscard"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical"
+                android:visibility="visible" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="89dp"
+                    android:background="@color/card_color_on_background"
+                    android:contentDescription="white_line"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/iv_headImage"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/face_man" />
+
+                <com.open.lib.TouchView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="80dp" >
+
+                    <com.open.lib.TouchTextView
+                        android:id="@+id/tv_userNickname"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="30dp"
+                        android:singleLine="true"
+                        android:text="樱桃小丸子"
+                        android:textColor="@color/text_color_on_background"
+                        android:textSize="16sp" />
+
+                    <com.open.lib.TouchTextView
+                        android:id="@+id/tv_userMainBusiness"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="25dp"
+                        android:lines="2"
+                        android:paddingRight="10dp"
+                        android:text="爱哭就哭，爱笑就笑，小丸子一样的人生。"
+                        android:textColor="@color/text_color_on_background" />
+
+                    <com.open.lib.TouchImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="20dp"
+                        android:src="@drawable/into" />
+                </com.open.lib.TouchView>
+            </com.open.lib.TouchView>
+
+            <com.open.lib.TouchImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/dashed_line"
+                android:translationY="90dp" />
 
             <com.open.lib.TouchView
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="80dp" >
-
-                <com.open.lib.TouchTextView
-                    android:id="@+id/tv_userNickname"
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:layout_marginRight="30dp"
-                    android:singleLine="true"
-                    android:text="樱桃小丸子"
-                    android:textColor="@color/text_color_on_background"
-                    android:textSize="16sp" />
-
-                <com.open.lib.TouchTextView
-                    android:id="@+id/tv_userMainBusiness"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginTop="25dp"
-                    android:lines="2"
-                    android:paddingRight="10dp"
-                    android:text="爱哭就哭，爱笑就笑，小丸子一样的人生。"
-                    android:textColor="@color/text_color_on_background" />
-
-                <com.open.lib.TouchImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="20dp"
-                    android:src="@drawable/into" />
-            </com.open.lib.TouchView>
-        </com.open.lib.TouchView>
-
-        <com.open.lib.TouchImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/dashed_line"
-            android:translationY="178dp" />
-
-        <com.open.lib.TouchView
-            android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:gravity="center_vertical"
-            android:translationY="179dp"
-            android:visibility="visible" >
-
-            <ImageView
-                android:layout_width="match_parent"
                 android:layout_height="57dp"
-                android:background="@color/card_color_on_background"
-                android:visibility="invisible" />
+                android:gravity="center_vertical"
+                android:translationY="91dp"
+                android:visibility="visible" >
 
-            <com.open.lib.TouchTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:text="积分(0)"
-                android:textColor="@color/text_color_on_background"
-                android:textSize="18sp" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="57dp"
+                    android:background="@color/card_color_on_background"
+                    android:visibility="invisible" />
+
+                <com.open.lib.TouchTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:text="积分(0)"
+                    android:textColor="@color/text_color_on_background"
+                    android:textSize="18sp" />
+            </com.open.lib.TouchView>
         </com.open.lib.TouchView>
 
         <ImageView

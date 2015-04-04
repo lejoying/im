@@ -2,7 +2,6 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,7 +22,6 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
-import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.customView.Alert;
 import com.open.welinks.customView.Alert.AlertInputDialog;
@@ -63,6 +61,7 @@ public class LoginController {
 	public OnTouchListener onTouchListener;
 
 	public Handler handler = new Handler();
+
 	public String url_userauth = "http://www.we-links.com/api2/account/auth";
 
 	public Gson gson = new Gson();
@@ -210,6 +209,7 @@ public class LoginController {
 						}
 					} else if (thisView.status == Status.verifyPhoneForRegister) {
 						if (view.equals(thisView.rightTopTextButton)) {
+							handler.removeCallbacks(remainRegisterRunnable);
 							hideSoftInput();
 							backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
 						} else if (view.equals(thisView.mainButton)) {
@@ -226,10 +226,18 @@ public class LoginController {
 								showSoftInput(thisView.input1);
 								return;
 							} else if (code.equals("")) {
-								loginFail(thisActivity.getString(R.string.alert_text_codenotnull));
+								// loginFail(thisActivity.getString(R.string.alert_text_codenotnull));
+								// showSoftInput(thisView.input2);
+								if (remainRegister != 0) {
+									return;
+								}
 								showSoftInput(thisView.input2);
+								requestUserVerifyCode(phone);
+								requestUserVerifyCodeCallBack();
 								return;
 							} else {
+								handler.removeCallbacks(remainRegisterRunnable);
+								remainRegister = 0;
 								hideSoftInput();
 								requestUserAuthWithVerifyCode(phone, code);
 							}
@@ -481,6 +489,8 @@ public class LoginController {
 				backAnimation(Status.loginUsePassword, thisView.card, thisView.card);
 
 			} else if (thisView.status == Status.verifyPhoneForRegister) {
+				remainRegister = 0;
+				handler.removeCallbacks(remainRegisterRunnable);
 				backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
 
 			} else if (thisView.status == Status.verifyPhoneForResetPassword) {
@@ -778,7 +788,7 @@ public class LoginController {
 		growProgressBar(30, 30);
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("phone", phone);
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		Account account = new Account();
 		account.password = msSha1.getDigestOfString(passWord.getBytes());
@@ -821,9 +831,10 @@ public class LoginController {
 
 	public void loginSuccessful(final String phone) {
 		thisView.progressBar.incrementProgressBy(60);
-		Intent intent = new Intent(thisActivity, NearbyActivity.class);
-		intent.putExtra("type", "newest");
-		thisActivity.startActivity(intent);
+		// Intent intent = new Intent(thisActivity, NearbyActivity.class);
+		// intent.putExtra("type", "newest");
+		// thisActivity.startActivity(intent);
+		thisActivity.setResult(Activity.RESULT_OK);
 		thisActivity.finish();
 	}
 

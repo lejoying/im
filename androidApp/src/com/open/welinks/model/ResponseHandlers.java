@@ -190,26 +190,26 @@ public class ResponseHandlers {
 				User friend = response.accounts.get(0);
 				if (friend != null) {
 					parser.check();
-					User user = data.userInformation.currentUser;
-					user.userBackground = friend.userBackground;
-					user.sex = friend.sex;
-					user.id = friend.id;
-					user.phone = friend.phone;
-					user.nickName = friend.nickName;
-					user.createTime = friend.createTime;
-					user.lastLoginTime = friend.lastLoginTime;
-					user.mainBusiness = friend.mainBusiness;
-					user.blackList = friend.blackList;
-					user.head = friend.head;
-					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
+					User currentUser = data.userInformation.currentUser;
+					currentUser.userBackground = friend.userBackground;
+					currentUser.sex = friend.sex;
+					currentUser.id = friend.id;
+					currentUser.phone = friend.phone;
+					currentUser.nickName = friend.nickName;
+					currentUser.createTime = friend.createTime;
+					currentUser.lastLoginTime = friend.lastLoginTime;
+					currentUser.mainBusiness = friend.mainBusiness;
+					currentUser.blackList = friend.blackList;
+					currentUser.head = friend.head;
+					if (currentUser.circlesOrderString != null && friend.circlesOrderString != null) {
 
-						if (!user.circlesOrderString.equals(friend.circlesOrderString)) {
-							user.circlesOrderString = friend.circlesOrderString;
+						if (!currentUser.circlesOrderString.equals(friend.circlesOrderString)) {
+							currentUser.circlesOrderString = friend.circlesOrderString;
 							try {
 								if (data.relationship.circles == null) {
 									data.relationship.circles = new ArrayList<String>();
 								}
-								data.relationship.circles = gson.fromJson(user.circlesOrderString, new TypeToken<List<String>>() {
+								data.relationship.circles = gson.fromJson(currentUser.circlesOrderString, new TypeToken<List<String>>() {
 								}.getType());
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
@@ -221,10 +221,10 @@ public class ResponseHandlers {
 							}
 						}
 					} else {
-						if (user.circlesOrderString == null && friend.circlesOrderString != null) {
-							user.circlesOrderString = friend.circlesOrderString;
+						if (currentUser.circlesOrderString == null && friend.circlesOrderString != null) {
+							currentUser.circlesOrderString = friend.circlesOrderString;
 							try {
-								data.relationship.circles = gson.fromJson(user.circlesOrderString, new TypeToken<List<String>>() {
+								data.relationship.circles = gson.fromJson(currentUser.circlesOrderString, new TypeToken<List<String>>() {
 								}.getType());
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
@@ -236,11 +236,11 @@ public class ResponseHandlers {
 							}
 						}
 					}
-					if (user.groupsSequenceString != null && friend.groupsSequenceString != null) {
-						if (!user.groupsSequenceString.equals(friend.groupsSequenceString)) {
-							user.groupsSequenceString = friend.groupsSequenceString;
+					if (currentUser.groupsSequenceString != null && friend.groupsSequenceString != null) {
+						if (!currentUser.groupsSequenceString.equals(friend.groupsSequenceString)) {
+							currentUser.groupsSequenceString = friend.groupsSequenceString;
 							try {
-								data.relationship.groups = gson.fromJson(user.groupsSequenceString, new TypeToken<List<String>>() {
+								data.relationship.groups = gson.fromJson(currentUser.groupsSequenceString, new TypeToken<List<String>>() {
 								}.getType());
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
@@ -249,10 +249,10 @@ public class ResponseHandlers {
 							// viewManage.postNotifyView("GroupListActivity");
 						}
 					} else {
-						if (user.groupsSequenceString == null && friend.groupsSequenceString != null) {
-							user.groupsSequenceString = friend.groupsSequenceString;
+						if (currentUser.groupsSequenceString == null && friend.groupsSequenceString != null) {
+							currentUser.groupsSequenceString = friend.groupsSequenceString;
 							try {
-								data.relationship.groups = gson.fromJson(user.groupsSequenceString, new TypeToken<List<String>>() {
+								data.relationship.groups = gson.fromJson(currentUser.groupsSequenceString, new TypeToken<List<String>>() {
 								}.getType());
 							} catch (JsonSyntaxException e) {
 								e.printStackTrace();
@@ -260,6 +260,17 @@ public class ResponseHandlers {
 							// viewManage.postNotifyView("ShareSubView");
 							// viewManage.postNotifyView("GroupListActivity");
 						}
+					}
+
+					if (currentUser.commonUsedLocations == null) {
+						currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
+					}
+					currentUser.commonUsedLocations.clear();
+					currentUser.commonUsedLocations.addAll(friend.commonUsedLocations);
+					// log.e(responseInfo.result);
+					if (viewManage.nearbyView != null) {
+						viewManage.nearbyView.showAddressDialog();
+						log.e("----刷新数据" + friend.commonUsedLocations.size());
 					}
 
 					data.userInformation.updateTime = System.currentTimeMillis();
@@ -436,13 +447,6 @@ public class ResponseHandlers {
 					@Override
 					public void run() {
 						viewManage.loginView.input2.setText(response.c);
-						new Handler().postDelayed(new Runnable() {
-
-							@Override
-							public void run() {
-								viewManage.loginView.mainButton.performClick();
-							}
-						}, 1000);
 					}
 				}, 3000);
 			} else {
@@ -1615,68 +1619,60 @@ public class ResponseHandlers {
 					data.relationship.groupCircles = response.relationship.groupCircles;
 					data.relationship.groupCirclesMap = response.relationship.groupCirclesMap;
 
-					// if (response.relationship.groupCircles != null && response.relationship.groupCirclesMap != null) {
-					// for (String str : response.relationship.groupCircles) {
-					// log.e(str + ":::::::::::::");
-					// }
-					// } else {
-					// log.e("null:::::::::::::");
-					// }
-
 					data.relationship.isModified = true;
 
-					// init current share
-					String gid = "";
-					if (response.relationship.groups.size() != 0) {
-						gid = response.relationship.groups.get(0);
+					boolean checkGidisTrue = false;
+					if ("".equals(data.localStatus.localData.currentSelectedGroup)) {
+						checkGidisTrue = true;
 					} else {
-						gid = "";
-						data.localStatus.localData.currentSelectedGroup = gid;
-					}
-					if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
-						if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
-							data.localStatus.localData.currentSelectedGroup = gid;
-							if (response.relationship.groups.size() != 0) {
-								gid = response.relationship.groups.get(0);
-							}
+						if (!data.relationship.groups.contains(data.localStatus.localData.currentSelectedGroup)) {
+							checkGidisTrue = true;
 						}
-					} else {
-						data.localStatus.localData.currentSelectedGroup = gid;
 					}
-					// Set the option group dialog content
-					// log.e(tag, ViewManage.getErrorLineNumber() + data.relationship.groups.toString());
-
-					if (!"".equals(data.localStatus.localData.currentSelectedGroup)) {
-						Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-						if (group != null) {
-							boolean flag = false;
-							if (group.currentBoard != null && !"".equals(group.currentBoard)) {
-								if (group.boards == null) {
-									group.boards = new ArrayList<String>();
-								}
-								if (group.boards.contains(group.currentBoard)) {
-									if (gid.equals("")) {
-										if (viewManage.shareSubView != null) {
-										}
-									}
+					String circleId = data.localStatus.localData.currentGroupCircle;
+					if (circleId != null || !"".equals(circleId)) {
+						if (data.relationship.groupCircles.contains(circleId)) {
+							GroupCircle groupCircle = data.relationship.groupCirclesMap.get(circleId);
+							if (groupCircle.groups.size() > 0) {
+								if (groupCircle.groups.contains(data.localStatus.localData.currentSelectedGroup)) {
+									checkGidisTrue = false;
 								} else {
-									flag = true;
+									checkGidisTrue = true;
 								}
 							} else {
-								flag = true;
+								checkGidisTrue = true;
 							}
-							if (flag) {
-								if (group.boards.size() > 0) {
-									group.currentBoard = group.boards.get(0);
-								} else {
-									log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
+						} else {
+							checkGidisTrue = true;
+						}
+					} else {
+						checkGidisTrue = true;
+					}
+					if (checkGidisTrue) {
+						String cid = "";
+						String gid = "";
+						A: for (int i = 0; i < data.relationship.groupCircles.size(); i++) {
+							String key = data.relationship.groupCircles.get(i);
+							GroupCircle groupCircle = data.relationship.groupCirclesMap.get(key);
+							for (int j = 0; j < groupCircle.groups.size(); j++) {
+								String id = groupCircle.groups.get(j);
+								if (data.relationship.groups.contains(id)) {
+									cid = key;
+									gid = id;
+									break A;
 								}
 							}
-							DataHandler.getGroupBoards(data.localStatus.localData.currentSelectedGroup);
-						} else {
-							log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
 						}
-						log.e(ViewManage.getErrorLineNumber() + "board:" + group.currentBoard);
+						data.localStatus.localData.currentGroupCircle = cid;
+						data.localStatus.localData.currentSelectedGroup = gid;
+					}
+					Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+					if (group != null && (group.currentBoard == null || group.currentBoard.equals(""))) {
+						group.currentBoard = group.boards.get(0);
+					} else if (group != null) {
+						if (!group.boards.contains(group.currentBoard)) {
+							group.currentBoard = group.boards.get(0);
+						}
 					}
 					data.relationship.updateTime = System.currentTimeMillis();
 					DataHandler.clearInvalidGroupMessages();

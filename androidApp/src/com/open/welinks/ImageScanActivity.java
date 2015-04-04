@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -26,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -33,6 +35,7 @@ import com.open.welinks.R;
 import com.open.welinks.customView.ImageDetailFragment;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.utils.BaseDataUtils;
 import com.open.welinks.utils.StreamParser;
 
 public class ImageScanActivity extends FragmentActivity {
@@ -99,7 +102,8 @@ public class ImageScanActivity extends FragmentActivity {
 		imageNumberView = (TextView) findViewById(R.id.backTitleView);
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 		backImageView = (ImageView) findViewById(R.id.backImageView);
-		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true).displayer(new FadeInBitmapDisplayer(300)).build();
+		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true)
+				.displayer(new FadeInBitmapDisplayer(300)).build();
 
 		imageNumberView.setText("浏览  (" + (currentPosition + 1) + "/" + imagesBrowseList.size() + ")");
 		backView.setBackgroundResource(R.drawable.selector_back_transparent);
@@ -107,22 +111,29 @@ public class ImageScanActivity extends FragmentActivity {
 		backMaxView.setBackgroundColor(Color.TRANSPARENT);
 		backImageView.setColorFilter(Color.WHITE);
 		imageNumberView.setTextColor(Color.WHITE);
-		deleteButtonView = new ImageView(this);
-		int padding = (int) (10 * displaymetrics.density);
-
 		RelativeLayout.LayoutParams layoutParams = (LayoutParams) rightContainer.getLayoutParams();
 		layoutParams.rightMargin = 0;
-
-		deleteButtonView.setBackgroundResource(R.drawable.backview_background);
-		rightContainer.addView(deleteButtonView);
 
 		menuOptionsView.setVisibility(View.GONE);
 
 		if (currentType == IMAGEBROWSE_COMMON) {
-			deleteButtonView.setImageResource(R.drawable.share_to_group_icon);
+			deleteButtonView = new ImageView(this);
+			deleteButtonView.setImageResource(R.drawable.chat_more);
+			deleteButtonView.setColorFilter(Color.parseColor("#ffffff"));
+			RelativeLayout view = (RelativeLayout) backView.getParent();
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) BaseDataUtils.dpToPx(25.5f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			params.rightMargin = (int) (15 * displaymetrics.density + 0.5f);
+			int padding = (int) (5 * displaymetrics.density + 0.5f);
+			deleteButtonView.setPadding(2 * padding, padding, 2 * padding, padding);
+			view.addView(deleteButtonView, params);
 		} else if (currentType == IMAGEBROWSE_OPTION) {
+			deleteButtonView = new ImageView(this);
+			int padding = (int) (10 * displaymetrics.density);
+			deleteButtonView.setBackgroundResource(R.drawable.backview_background);
 			deleteButtonView.setImageResource(R.drawable.image_delete);
 			deleteButtonView.setPadding(padding, padding, padding, padding);
+			rightContainer.addView(deleteButtonView);
 		}
 
 		mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), imagesBrowseList.size());
