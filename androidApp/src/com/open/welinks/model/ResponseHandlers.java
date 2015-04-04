@@ -1308,6 +1308,11 @@ public class ResponseHandlers {
 					currentGroup.relation = group.relation;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
+				data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.remove(response.tempGid);
+				data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.add(String.valueOf(group.gid));
+
+				DataHandler.moveGroupsToCircle(data.relationship.groupCircles.get(0), "[\"" + group.gid + "\"]");
+
 				data.relationship.isModified = true;
 				viewManage.postNotifyView("ShareSubView");
 			} else {

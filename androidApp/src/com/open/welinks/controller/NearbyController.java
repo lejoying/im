@@ -119,7 +119,7 @@ public class NearbyController {
 	public String mTableId;
 	public ArrayList<Object> mInfomations;
 
-	public double latitude, longitude;
+	public double latitude = 0, longitude = 0;
 	public int searchRadius = 20000;
 	public int tempSearchRadius = 20000;
 	public long searchTime = 0;
@@ -141,7 +141,6 @@ public class NearbyController {
 	public NearbyController(Activity thisActivity) {
 		thisController = this;
 		this.thisActivity = thisActivity;
-
 		// TODO
 		if (isLogin(false)) {
 			getContacts();
@@ -449,9 +448,12 @@ public class NearbyController {
 					tempSearchTime = searchTime;
 					thisView.changeScreenPopupWindow();
 				} else if (view.equals(thisView.screenConfirm)) {
+					thisView.currentPosition = 0;
+					thisView.nextPosition = 0;
+					thisView.progressView.setTranslationX(thisView.currentPosition);
 					searchRadius = tempSearchRadius;
 					searchTime = tempSearchTime;
-					searchNearbyLBS(false);
+					searchNearbyLBS(true);
 					thisView.changeScreenPopupWindow();
 					thisView.changeAmapCircle(longitude, latitude);
 				} else if (view.equals(thisView.scopeOne)) {

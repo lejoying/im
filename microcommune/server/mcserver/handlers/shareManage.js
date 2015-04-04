@@ -287,7 +287,7 @@ shareManage.delete = function (data, response) {
                 try {
                     ajax.ajax({
                         type: "POST",
-                        url: serverSetting.LBS_DELETE,
+                        url: serverSetting.LBS_SHAERE_DELETE,
                         data: {
                             primaryKey: gsid,
                             location: location

@@ -1786,7 +1786,6 @@ groupManage.modifygroupcircle = function (data, response) {
                     groupCirclesOrderString = newGroupCirclesOrderString;
                     accountData.groupCirclesOrderString = JSON.stringify(newGroupCirclesOrderString);
                 }
-                console.log(rid + name);
                 if (dataRid != undefined && dataRid != null && dataRid != "" && name != undefined && name != null && name != "") {
                     newGroupCirclesOrderString = [];
                     for (var index in groupCirclesOrderString) {

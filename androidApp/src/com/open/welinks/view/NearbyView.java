@@ -855,6 +855,10 @@ public class NearbyView {
 		mapView.onResume();
 		if (thisController.mLocationManagerProxy != null && thisController.mAMapLocationListener != null)
 			thisController.mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 1000, thisController.mAMapLocationListener);
+		// if (thisController.latitude != 0 && thisController.longitude != 0) {
+		// thisController.nowpage = 0;
+		// thisController.searchNearbyLBS(false);
+		// }
 	}
 
 	public void onPause() {
@@ -963,6 +967,7 @@ public class NearbyView {
 		if (thisController.status == LBSStatus.group) {
 			timeLayout.setVisibility(View.GONE);
 			titleTwo.setVisibility(View.GONE);
+			titleTwo.setText("最近登录");
 		} else if (thisController.status == LBSStatus.account) {
 			titleTwo.setText("最近登录");
 		}

@@ -1,6 +1,7 @@
 package com.open.welinks;
 
 import java.util.Date;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,12 +13,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -180,6 +183,8 @@ public class CreateGroupStartActivity extends Activity {
 		data.relationship.isModified = true;
 
 		viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
+
+		data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.add(key);
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.GROUP_CREATE, params, responseHandlers.group_create);
