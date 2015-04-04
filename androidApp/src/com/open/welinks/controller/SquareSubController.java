@@ -3,6 +3,7 @@ package com.open.welinks.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.MailTo;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -16,6 +17,7 @@ import com.open.welinks.NearbyReleationActivity;
 import com.open.welinks.R;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.ShareListActivity;
+import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
@@ -87,9 +89,9 @@ public class SquareSubController {
 							intent.putExtra("type", "newest");
 							thisActivity.startActivity(intent);
 						} else if (id == R.drawable.sidebar_icon_days_normal) {
-							// Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-							// intent.putExtra("type", "hottest");
-							// thisController.thisActivity.startActivity(intent);
+							Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
+							intent.putExtra("key", "91");
+							thisActivity.startActivity(intent);
 						} else if (id == R.drawable.sidebar_icon_group_normal) {
 							Intent intent = new Intent(thisActivity, NearbyReleationActivity.class);
 							intent.putExtra("type", "group");

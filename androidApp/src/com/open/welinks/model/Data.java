@@ -247,9 +247,7 @@ public class Data {
 			public String currentBoard = "";
 
 			public List<String> boards;
-			
-			
-			
+
 			public List<String> members = new ArrayList<String>();
 			public List<String> labels = new ArrayList<String>();
 		}
@@ -321,6 +319,8 @@ public class Data {
 			public int totalScore;
 
 			public String getStatus;
+
+			public int shareFor = 1; // 1 group | 2 square
 
 			public double distance;
 			public double[] location;

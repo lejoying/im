@@ -205,8 +205,12 @@ public class NearbyController {
 	public String address, title;
 
 	public boolean isLogin(boolean flag) {
+		if (data.userInformation == null) {
+			String userInformationStr = parser.getFromRootForder("userInformation.js");
+			data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+		}
 		User currentUser = data.userInformation.currentUser;
-		if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
+		if (currentUser != null && !"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
 			return true;
 		} else {
 			// .setLeftButtonText("").setRightButtonText("")
