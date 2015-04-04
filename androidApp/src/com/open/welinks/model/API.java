@@ -2,10 +2,10 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://192.168.0.102/";// http://www.we-links.com/ 192.168.1.14 192.168.0.102
+	public static String API_DOMAIN = "http://www.we-links.com/";// http://www.we-links.com/ 192.168.1.14 192.168.0.102
 	public static String API_LBS_ACCOUNT_DOMAIN = "http://123.57.58.84/";// 123.57.58.84
 	public static String API_LBS_SHARE_DOMAIN = "http://182.92.107.229/";// 182.92.107.229
-	public static String API_LBS_GROUP_DOMAIN = "http://192.168.0.102/";// 123.57.56.119
+	public static String API_LBS_GROUP_DOMAIN = "http://123.57.56.119/";// 123.57.56.119
 	/**
 	 * http://images2.we-links.com/
 	 */
