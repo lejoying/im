@@ -441,7 +441,7 @@ public class ShareMessageDetailController {
 			final User currentUser = data.userInformation.currentUser;
 			// if (currentUser.phone.equals(shareMessage.phone)) {
 			Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
-				
+
 				@Override
 				public void onClick(AlertInputDialog dialog) {
 					RequestParams params = new RequestParams();
@@ -797,6 +797,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void onResume() {
+		data.tempData.selectedImageList = null;
 		thisView.sharePopupWindow.dismiss();
 		thisView.businessCardPopView.dismissUserCardDialogView();
 	}

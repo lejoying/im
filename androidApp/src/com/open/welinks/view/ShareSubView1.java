@@ -192,12 +192,15 @@ public class ShareSubView1 {
 		releaseChannelContainer = releaseChannelView.findViewById(R.id.releaseChannelContainer);
 
 		mImageFile = taskManageHolder.fileHandler.sdcardHeadImageFolder;
-		if (!mImageFile.exists())
+		if (!mImageFile.exists()) {
 			mImageFile.mkdirs();
+		}
 
-		thisController.getUserCurrentAllGroup();
+		// thisController.getUserCurrentAllGroup();
 
-		// showShareMessages();
+		showShareMessages();
+
+		getCurrentGroupShareMessages();
 
 		initReleaseShareDialogView();
 

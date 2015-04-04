@@ -737,15 +737,16 @@ public class ShareSubController1 {
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack);
 	}
 
-	public void getUserCurrentAllGroup() {
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		User currentUser = data.userInformation.currentUser;
-		params.addBodyParameter("phone", currentUser.phone);
-		params.addBodyParameter("accessKey", currentUser.accessKey);
-
-		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
-	}
+	//
+	// public void getUserCurrentAllGroup() {
+	// RequestParams params = new RequestParams();
+	// HttpUtils httpUtils = new HttpUtils();
+	// User currentUser = data.userInformation.currentUser;
+	// params.addBodyParameter("phone", currentUser.phone);
+	// params.addBodyParameter("accessKey", currentUser.accessKey);
+	//
+	// httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
+	// }
 
 	public void onScroll() {
 		if (onTouchDownView != null) {

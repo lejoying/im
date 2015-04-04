@@ -610,6 +610,7 @@ accountManage.modify = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var accountStr = data.account;
+    console.log(data);
     var oldPassWord = null;//data.oldpassword;
     var arr = [phone, accessKey, accountStr];
     var account = {};

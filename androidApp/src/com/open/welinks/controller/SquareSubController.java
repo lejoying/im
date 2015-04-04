@@ -3,30 +3,42 @@ package com.open.welinks.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.MailTo;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.welinks.ClassificationRecommendationActivity;
 import com.open.welinks.MainActivity1;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.NearbyReleationActivity;
 import com.open.welinks.R;
-import com.open.welinks.NearbyActivity;
 import com.open.welinks.ShareListActivity;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.customListener.MyOnClickListener;
+import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.SquareSubView;
 
 public class SquareSubController {
 
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public String tag = "SquareSubController";
 	public MyLog log = new MyLog(tag, true);
@@ -40,6 +52,8 @@ public class SquareSubController {
 	public MyOnClickListener mOnClickListener;
 	public OnTouchListener mOnTouchListener;
 
+	public OnDownloadListener downloadListener;
+
 	public Gson gson = new Gson();
 
 	public SquareSubController(MainController mainController) {
@@ -52,6 +66,61 @@ public class SquareSubController {
 	public boolean isTouchDown = false;
 
 	public void initializeListeners() {
+		downloadListener = new OnDownloadListener() {
+
+			@Override
+			public void onLoading(DownloadFile instance, int precent, int status) {
+			}
+
+			@Override
+			public void onSuccess(final DownloadFile instance, int status) {
+				DisplayImageOptions options = thisView.options;
+				boolean flag = true;
+				if (instance.view.getTag() != null) {
+					try {
+						String tag = (String) instance.view.getTag();
+						if ("head".equals(tag)) {
+							options = taskManageHolder.viewManage.options40;
+						} else if ("conver".equals(tag)) {
+							flag = false;
+						}
+					} catch (Exception e) {
+					}
+				}
+				if (flag) {
+					taskManageHolder.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+							Log.e(tag, "---------------failed");
+							RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+							instance.view.setLayoutParams(params);
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+							if (instance.view.getTag() != null) {
+								// fileHandlers.bitmaps.put(imageUri, loadedImage);
+							}
+						}
+					});
+				} else {
+					taskManageHolder.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view);
+				}
+			}
+
+			@Override
+			public void onFailure(DownloadFile instance, int status) {
+				if (instance.view.getTag() != null) {
+					if ("image".equals(instance.view.getTag().toString())) {
+						Log.e(tag, "---------------failure:" + instance.view.getTag().toString());
+					}
+				}
+			}
+		};
 		this.mOnTouchListener = new OnTouchListener() {
 
 			@Override
@@ -115,11 +184,7 @@ public class SquareSubController {
 	}
 
 	public void setTitle(AMapLocation mAmapLocation) {
-		// if (mAmapLocation.getProvince() != null) {
-		// thisView.titleNameView.setText(mAmapLocation.getProvince() + mAmapLocation.getCity());
-		// } else {
 		thisView.titleNameView.setText("广场");
-		// }
 	}
 
 	public void bindEvent() {
@@ -152,7 +217,7 @@ public class SquareSubController {
 	}
 
 	public void onScroll() {
-		log.e("onScroll");
+		// log.e("onScroll");
 		if (onTouchDownView != null) {
 		}
 		// isTouchDown = false;
@@ -161,6 +226,5 @@ public class SquareSubController {
 	}
 
 	public void onDestroy() {
-
 	}
 }

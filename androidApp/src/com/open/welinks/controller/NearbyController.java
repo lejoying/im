@@ -31,10 +31,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.amap.api.cloud.model.CloudItem;
-import com.amap.api.cloud.search.CloudSearch;
-import com.amap.api.cloud.search.CloudSearch.Query;
-import com.amap.api.cloud.search.CloudSearch.SearchBound;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
@@ -72,11 +68,11 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -218,13 +214,15 @@ public class NearbyController {
 					@Override
 					public void onClick(AlertInputDialog dialog) {
 						Intent intent = new Intent(thisActivity, LoginActivity.class);
-						thisActivity.startActivity(intent);
+						thisActivity.startActivityForResult(intent, 200);
 					}
 				}).show();
 			}
 			return false;
 		}
 	}
+
+	boolean isAddNewAddress = false;
 
 	public void initializeListeners() {
 
@@ -268,6 +266,7 @@ public class NearbyController {
 				// thisView.nextPosition = 0;
 				nowpage = 0;
 				searchNearbyLBS(true);
+				thisView.nearbyListView.setSelection(0);
 
 				// TODO update user location
 			}
@@ -333,7 +332,7 @@ public class NearbyController {
 						score.remainNumber = 0;
 						shareMessage.scores.put(score.phone, score);
 						data.boards.isModified = true;
-						thisView.notifyData();
+						thisView.notifyData(false);
 						if (isLogin(false)) {
 							thisView.modifyPraiseusersToMessage(true, shareMessage.gsid, shareMessage.location);
 						}
@@ -363,12 +362,12 @@ public class NearbyController {
 									score.remainNumber = 0;
 									shareMessage.scores.put(score.phone, score);
 									data.boards.isModified = true;
-									thisView.notifyData();
+									thisView.notifyData(false);
 									if (isLogin(false)) {
 										thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
 									}
 									thisController.mInfomations.remove(position);
-									thisView.notifyData();
+									thisView.notifyData(false);
 								}
 							}).show();
 						} else {
@@ -379,7 +378,7 @@ public class NearbyController {
 							score.remainNumber = 0;
 							shareMessage.scores.put(score.phone, score);
 							data.boards.isModified = true;
-							thisView.notifyData();
+							thisView.notifyData(false);
 							if (isLogin(false)) {
 								thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
 							}
@@ -419,6 +418,7 @@ public class NearbyController {
 					thisView.nearbyListView.setLayoutParams(params);
 				} else if (view.equals(thisView.sortView) && isLogin(true)) {
 					thisView.changePopupWindow(false);
+					thisView.showAddressDialog();
 					// getCommentLocations();
 				} else if (view.equals(thisView.searChView)) {
 					Toast.makeText(thisActivity, "搜索", Toast.LENGTH_SHORT).show();
@@ -507,7 +507,10 @@ public class NearbyController {
 							}
 							data.userInformation.currentUser.commonUsedLocations.add(location);
 							thisView.dialogAdapter.notifyDataSetChanged();
+							thisView.groupCircleList.setSelection(data.userInformation.currentUser.commonUsedLocations.size() - 1);
 							data.userInformation.isModified = true;
+							isAddNewAddress = true;
+							thisView.img_btn_set_start.startAnimation(animationNearLeft);
 							modifyUserCommonUsedLocations();
 						}
 
@@ -629,6 +632,7 @@ public class NearbyController {
 					thisView.nextPosition = 0;
 					// thisView.openLooper.start();
 					thisView.progressView.setTranslationX(thisView.currentPosition);
+					thisView.nearbyListView.setSelection(0);
 					searchNearbyLBS(true);
 				} else if (position == 2) {
 				} else if (position == 1) {
@@ -643,6 +647,7 @@ public class NearbyController {
 					thisView.nextPosition = 0;
 					// thisView.openLooper.start();
 					thisView.progressView.setTranslationX(thisView.currentPosition);
+					thisView.nearbyListView.setSelection(0);
 					searchNearbyLBS(true);
 				}
 			}
@@ -890,7 +895,7 @@ public class NearbyController {
 						}
 						isRun = false;
 					}
-					thisView.notifyData();
+					thisView.notifyData(false);
 				}
 			}
 
@@ -1063,19 +1068,21 @@ public class NearbyController {
 		});
 	}
 
-	public void onActivityResult(int requestCode, int resultCode2, Intent data2) {
-		if (requestCode == RESULTCODESHAREDETAIL && resultCode2 == Activity.RESULT_OK && data2 != null) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+		if (requestCode == RESULTCODESHAREDETAIL && resultCode == Activity.RESULT_OK && data2 != null) {
 			String deletedGsid = data2.getStringExtra("key");
 			if (status == LBSStatus.newest || status == LBSStatus.hottest) {
 				for (int i = 0; i < mInfomations.size(); i++) {
 					ShareMessage message = (ShareMessage) mInfomations.get(i);
 					if (message.gsid.equals(deletedGsid)) {
 						mInfomations.remove(i);
-						thisView.notifyData();
+						thisView.notifyData(false);
 						break;
 					}
 				}
 			}
+		} else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+			taskManageHolder.dataHandler.preparingData();
 		}
 	}
 
@@ -1146,6 +1153,16 @@ public class NearbyController {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				thisView.img_btn_set_start.setVisibility(View.INVISIBLE);
+				if (isAddNewAddress) {
+					isAddNewAddress = false;
+					new Handler().postDelayed(new Runnable() {
+
+						@Override
+						public void run() {
+							thisView.changePopupWindow(false);
+						}
+					}, 200);
+				}
 			}
 		});
 

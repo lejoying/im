@@ -295,6 +295,7 @@ public class ShareMessageDetailView {
 		}
 
 		public void setContent(ShareMessage shareMessage, Comment comment) {
+			imageList.clear();
 			this.shareMessage = shareMessage;
 			this.comment = comment;
 			String phone = null, nickName = null, head = null;

@@ -477,8 +477,13 @@ public class NearbyView {
 					if (score != null) {
 						if (score.positive > 0) {
 							holder.num_picker_increment.setImageResource(R.drawable.num_picker_increment_on);
+							holder.num_picker_decrement.setImageResource(R.drawable.selector_num_picker_decrement);
 						} else if (score.negative > 0) {
+							holder.num_picker_increment.setImageResource(R.drawable.selector_num_picker_increment);
 							holder.num_picker_decrement.setImageResource(R.drawable.num_picker_decrement_on);
+						}
+						if (score.positive > 0 && score.negative > 0) {
+							log.e(gson.toJson(message.scores));
 						}
 					} else {
 						holder.num_picker_increment.setImageResource(R.drawable.selector_num_picker_increment);
@@ -651,7 +656,7 @@ public class NearbyView {
 				ShareMessage message = (ShareMessage) thisController.mInfomations.get(i);
 				list21.add(message.gsid);
 			}
-			log.e("----------:" + gson.toJson(list21));
+			log.e("数据错误----------:" + gson.toJson(list21));
 		}
 	}
 
@@ -717,7 +722,7 @@ public class NearbyView {
 		}
 		if (!isRunning) {
 			this.openLooper1.stop();
-			notifyData();
+			notifyData(false);
 			log.e("Stop.....................");
 		}
 	}
@@ -841,12 +846,15 @@ public class NearbyView {
 		}
 	}
 
-	public void notifyData() {
+	public void notifyData(boolean flag) {
 		if (nearbyRelationAdapter != null) {
 			nearbyRelationAdapter.notifyDataSetChanged();
 		}
 		if (nearbyShareAdapter != null) {
 			nearbyShareAdapter.notifyDataSetChanged();
+			if (flag) {
+				nearbyListView.setSelection(0);
+			}
 		}
 	}
 

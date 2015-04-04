@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
@@ -25,10 +27,12 @@ import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.SquareSubController;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
+import com.open.welinks.oss.DownloadFile;
 
 public class SquareSubView {
 
@@ -64,7 +68,10 @@ public class SquareSubView {
 		taskManageHolder.viewManage.squareSubView = this;
 	}
 
+	public DisplayImageOptions options;
+
 	public void initViews() {
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		this.squareView = mainView.squareView;
 		this.displayMetrics = mainView.displayMetrics;
 		this.mInflater = mainView.mInflater;
@@ -233,7 +240,7 @@ public class SquareSubView {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						// downloadConver(group.cover, path);
+						downloadConver(selectBody.coverView, group.cover, path);
 					}
 
 					@Override
@@ -242,11 +249,19 @@ public class SquareSubView {
 				});
 			} else {
 				if (group.cover != null) {
-					// downloadConver(group.cover, path);
+					downloadConver(selectBody.coverView, group.cover, path);
 				} else {
 					taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
 				}
 			}
 		}
+	}
+
+	public void downloadConver(ImageView coverView, String converName, String path) {
+		String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + converName;
+		DownloadFile downloadFile = new DownloadFile(url, path);
+		downloadFile.view = coverView;
+		downloadFile.setDownloadFileListener(thisController.downloadListener);
+		taskManageHolder.downloadFileList.addDownloadFile(downloadFile);
 	}
 }

@@ -53,7 +53,7 @@ public class MeSubView {
 		userNickNameView = (TextView) mainView.meView.findViewById(R.id.tv_userNickname);
 		userBusinessView = (TextView) mainView.meView.findViewById(R.id.tv_userMainBusiness);
 
-		myBusiness = mainView.meView.findViewById(R.id.businesscard);
+		myBusiness = mainView.meView.findViewById(R.id.businesscard0);
 		mySetting = mainView.meView.findViewById(R.id.mySetting);
 
 		dynamicListView = (TouchView) mainView.meView.findViewById(R.id.dynamicList);

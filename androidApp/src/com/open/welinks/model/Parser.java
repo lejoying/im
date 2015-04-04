@@ -161,6 +161,7 @@ public class Parser {
 
 	public String getFromUserForder(String phone, String fileName) {
 		String result = null;
+		//TODO bug
 		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
