@@ -128,6 +128,8 @@ public class NearbyController {
 
 	public boolean isFirstPosition = true, isNearbyActivity = false;
 
+	public long lastModifyLocationTime;
+
 	public LBSStatus status;
 
 	public enum LBSStatus {
@@ -678,7 +680,11 @@ public class NearbyController {
 					currentUser.address = amapLocation.getAddress();
 					currentUser.latitude = amapLocation.getLatitude() + "";
 					currentUser.longitude = amapLocation.getLongitude() + "";
-					modifyLocation();
+					long now = System.currentTimeMillis();
+					if (now - lastModifyLocationTime > 60000) {
+						modifyLocation();
+						lastModifyLocationTime = now;
+					}
 					if (isFirstPosition) {
 						isFirstPosition = false;
 						address = amapLocation.getAddress();

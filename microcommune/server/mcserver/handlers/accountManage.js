@@ -604,13 +604,11 @@ accountManage.get = function (data, response) {
 /***************************************
  *     URL：/api2/account/modify
  ***************************************/
-//TODO Lbs data
 accountManage.modify = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
     var accountStr = data.account;
-    console.log(data);
     var oldPassWord = null;//data.oldpassword;
     var arr = [phone, accessKey, accountStr];
     var account = {};
@@ -797,14 +795,16 @@ accountManage.modify = function (data, response) {
                                 eid: eid
                             })
                         });
-                        client.rpush(phone, event, function (err, reply) {
-                            if (err) {
-                                console.error("保存Event失败");
-                            } else {
-                                console.log("保存Event成功");
-                            }
-                        });
-                        push.inform(phone, phone, accessKey, "*", event);
+                        if (account.longitude == undefined || account.longitude == null || account.longitude == "") {
+                            client.rpush(phone, event, function (err, reply) {
+                                if (err) {
+                                    console.error("保存Event失败");
+                                } else {
+                                    console.log("保存Event成功");
+                                }
+                            });
+                            push.inform(phone, phone, accessKey, "*", event);
+                        }
                     }
                 });
             }
