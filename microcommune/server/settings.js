@@ -24,10 +24,13 @@ serverSetting.LBS.DATA_SEARCH = "http://yuntuapi.amap.com/datamanage/data/list";
 
 serverSetting.LBS_SHAERE = "http://10.252.45.120/";//182.92.107.229  10.252.45.120
 serverSetting.LBS_ACCOUNT = "http://10.165.121.75/";//123.57.58.84  10.165.121.75
+serverSetting.LBS_GROUP = "http://10.173.14.222/";//123.57.56.119  10.173.14.222
 serverSetting.LBS_SHAERE_CREATE = serverSetting.LBS_SHAERE + "api2/lbs/create";
-serverSetting.LBS_SHAERE_UPDATE = serverSetting.LBS_SHAERE + "api2/lbs/updateshare";
+serverSetting.LBS_SHAERE_UPDATE = serverSetting.LBS_SHAERE + "api2/lbs/update";
 serverSetting.LBS_SHAERE_DELETE = serverSetting.LBS_SHAERE + "api2/lbs/deleteshare";
 serverSetting.LBS_ACCOUNT_MODIFY = serverSetting.LBS_ACCOUNT + "api2/lbs/modifyaccount";
+serverSetting.LBS_GROUP_CREATE = serverSetting.LBS_GROUP + "api2/lbs/create";
+serverSetting.LBS_GROUP_UPDATE = serverSetting.LBS_GROUP + "api2/lbs/update";
 var zookeeper = {};
 zookeeper.mcServer = {
     ip: "115.28.51.197",
