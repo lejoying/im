@@ -111,7 +111,7 @@ public class ShareDetailView {
 			this.shareMessageDetailListBody.height = this.shareMessageDetailListBody.height + body.itemHeight;
 			this.shareMessageDetailListBody.containerView.addView(body.cardView, layoutParams);
 		}
-//		this.showComments();
+		// this.showComments();
 		this.isFinish = true;
 		log.e(this.shareMessageDetailListBody.containerHeight + "------------------------" + shareMessageDetailListBody.height);
 	}

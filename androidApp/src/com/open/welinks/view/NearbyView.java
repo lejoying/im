@@ -862,7 +862,8 @@ public class NearbyView {
 	}
 
 	public void onDestroy() {
-		viewManage.nearbyView = null;
+		if (thisController.isNearbyActivity)
+			viewManage.nearbyView = null;
 		data.localStatus.localData.currentSearchRadius = thisController.searchRadius;
 		data.localStatus.localData.currentSearchTime = thisController.searchTime;
 		data.localStatus.localData.isModified = true;

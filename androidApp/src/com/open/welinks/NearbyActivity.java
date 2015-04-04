@@ -79,7 +79,7 @@ public class NearbyActivity extends Activity {
 			data.localStatus.localData = data.localStatus.new LocalData();
 		}
 
-		thisController.onCreate();
+		thisController.onCreate(true);
 		thisView.initView();
 		thisView.mapView.onCreate(savedInstanceState);
 		thisController.initializeListeners();
