@@ -124,7 +124,7 @@ groupManage.create = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 var group = results.pop().group.data;
-//                createGroupLocation(group);
+                createGroupLocation(group);
                 createShares(group.gid);
             } else {
                 response.write(JSON.stringify({
@@ -317,37 +317,37 @@ groupManage.create = function (data, response) {
 
     function createGroupLocation(group) {
         var location = JSON.parse(group.location)
-        location = location.longitude + "," + location.latitude
-        try {
-            ajax.ajax({
-                type: "POST",
-                url: serverSetting.LBS.DATA_CREATE,
-                data: {
-                    key: serverSetting.LBS.KEY,
-                    tableid: serverSetting.LBS.GROUPTABLEID,
-                    loctype: 1,
-                    data: JSON.stringify({
-                        _name: group.name,
-                        _location: location,
-                        _address: data.address,
-                        gid: group.gid,
-                        icon: group.icon,
-                        gtype: group.gtype,
-                        description: group.description
-                    })
-                }, success: function (info) {
-                    var info = JSON.parse(info);
-                    if (info.status == 1) {
-                        console.log("success--" + info._id)
-                    } else {
+        location = JSON.stringify([location.longitude , location.latitude]);
 
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS_GROUP_CREATE,
+            data: {
+                location: location,
+                primaryKey: group.gid,
+                data: JSON.stringify({
+                    gid: group.gid,
+                    head: group.icon || "",
+                    nickName: encodeURI(group.name || ""),
+                    mainBusiness: encodeURI(group.description || ""),
+                    cover: group.cover || "",
+                    permission: group.permission || "",
+                    time: group.createTime || new Date().getTime()
+                })
+            }, success: function (info) {
+                try {
+                    if (info.提示信息 == "创建成功") {
+                        console.log("success--")
+                    } else {
+                        console.log("error--create")
                     }
+                } catch (e) {
+                    console.log(e);
+                    return;
                 }
-            });
-        } catch (e) {
-            console.log(e);
-            return;
-        }
+            }
+        });
+
     }
 }
 function setGroupLBSLocation(phone, accessKey, location, group) {
@@ -839,7 +839,6 @@ groupManage.getallmembers = function (data, response) {
  *     URL：/api2/group/modify
  ***************************************/
 
-//TODO LBS data
 groupManage.modify = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -878,7 +877,6 @@ groupManage.modify = function (data, response) {
             return;
         }
         checkGroupNode(parseInt(gid));
-//        checkGroupLocation(gid);
     }
 
     function checkGroupNode(gid) {
@@ -982,6 +980,7 @@ groupManage.modify = function (data, response) {
                     groupData.location = JSON.stringify(currentLocation);
                     isUpdateLbsData = true;
                 }
+                groupData.lastModifyTime = time;
                 groupNode.save(function (error) {
                 });
                 var group = {
@@ -1007,6 +1006,7 @@ groupManage.modify = function (data, response) {
                 } else {
                     group.boards = [];
                 }
+                modifyGroupLbs(groupData);
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息成功",
                     group: group
@@ -1048,62 +1048,33 @@ groupManage.modify = function (data, response) {
         });
     }
 
-    function checkGroupLocation(gid) {
-        ajax.ajax({
-            type: "GET",
-            url: serverSetting.LBS.DATA_SEARCH,
-            data: {
-                tableid: serverSetting.LBS.GROUPTABLEID,
-                filter: "gid:" + gid,
-                key: serverSetting.LBS.KEY
-            },
-            success: function (info) {
-                var info = JSON.parse(info);
-                if (info.status == 1) {
-                    var id = info.datas[0]._id;
-                    modifyGroupLocation(id);
-                } else {
-                    response.write(JSON.stringify({
-                        "提示信息": "查找群组位置信息失败",
-                        "失败原因": "数据异常"
-                    }));
-                    response.end();
-                }
-            }
-        });
-    }
-
-    function modifyGroupLocation(id) {
-        var location = JSON.parse(data.location);
+    function modifyGroupLbs(group) {
+        var location = JSON.parse(group.location);
+        location = JSON.stringify([location.longitude , location.latitude]);
         ajax.ajax({
             type: "POST",
-            url: serverSetting.LBS.DATA_UPDATA,
+            url: serverSetting.LBS_GROUP_UPDATE,
             data: {
-                key: serverSetting.LBS.KEY,
-                tableid: serverSetting.LBS.GROUPTABLEID,
-                loctype: 2,
+                location: location,
+                primaryKey: group.gid,
                 data: JSON.stringify({
-                    _id: id,
-                    _name: name,
-                    _location: location.longitude + "," + location.latitude,
-                    _address: address,
-                    icon: icon,
-                    description: description
+                    head: group.icon || "",
+                    nickName: encodeURI(group.name || ""),
+                    mainBusiness: encodeURI(group.description || ""),
+                    cover: group.cover || "",
+                    permission: group.permission || "",
+                    time: group.lastModifyTime || new Date().getTime()
                 })
             }, success: function (info) {
-                var info = JSON.parse(info);
-                if (info.status == 1) {
-                    response.write(JSON.stringify({
-                        "提示信息": "修改用户位置信息成功"
-                    }));
-                    response.end();
-                } else {
-                    console.log(info.info);
-                    response.write(JSON.stringify({
-                        "提示信息": "修改用户位置信息失败",
-                        "失败原因": "数据异常"
-                    }));
-                    response.end();
+                try {
+                    if (info.提示信息 == "修改成功") {
+                        console.log("success--")
+                    } else {
+                        console.log("error--create")
+                    }
+                } catch (e) {
+                    console.log(e);
+                    return;
                 }
             }
         });

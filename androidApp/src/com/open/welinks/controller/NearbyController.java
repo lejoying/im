@@ -399,16 +399,11 @@ public class NearbyController {
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
 				} else if (view.equals(thisView.backView)) {
-					log.e("backView");
 					if (status == LBSStatus.account || status == LBSStatus.group) {
-						log.e("account");
 						thisActivity.finish();
 					} else if (isLogin(true)) {
-						log.e("isLogin");
 						Intent intent = new Intent(thisActivity, MainActivity.class);
 						thisActivity.startActivity(intent);
-					} else {
-						log.e("else");
 					}
 				} else if (view.equals(thisView.positionView)) {
 					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
@@ -838,7 +833,6 @@ public class NearbyController {
 		} else if (thisController.status == LBSStatus.group) {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_GROUP_SEARCH;
-			return;
 		}
 		httpUtils.send(HttpMethod.POST, api, params, httpClient.new ResponseHandler<String>() {
 			class Response {
@@ -987,11 +981,11 @@ public class NearbyController {
 		group.gid = Integer.valueOf(point.data.gid);
 		group.description = point.data.mainBusiness;
 		group.cover = point.data.cover;
-		group.createTime = String.valueOf(point.data.time);
 		group.distance = (int) point.distance;
 		double[] location = point.location;
 		group.longitude = String.valueOf(location[0]);
 		group.latitude = String.valueOf(location[1]);
+		// group.createTime = String.valueOf(point.data.time);
 		if (!data.relationship.groupsMap.containsKey(String.valueOf(group.gid))) {
 			data.relationship.groupsMap.put(String.valueOf(group.gid), group);
 		}

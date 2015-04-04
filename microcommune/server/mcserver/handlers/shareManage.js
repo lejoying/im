@@ -1294,12 +1294,12 @@ shareManage.score = function (data, response) {
                             ajax.ajax({
                                 type: "POST",
                                 url: serverSetting.LBS_SHAERE_UPDATE,
-                                data: {
+                                data: JSON.stringify({
                                     primaryKey: share.gsid,
                                     location: location,
                                     totalScore: share.totalScore,
                                     scores: JSON.stringify(share.scores)
-                                }, success: function (info) {
+                                }), success: function (info) {
                                     var info = JSON.parse(info);
                                     if (info["提示信息"] == "修改成功") {
                                         console.log("success--")
@@ -1318,10 +1318,10 @@ shareManage.score = function (data, response) {
                             ajax.ajax({
                                 type: "POST",
                                 url: serverSetting.LBS_SHAERE_DELETE,
-                                data: {
+                                data: JSON.stringify({
                                     primaryKey: share.gsid,
                                     location: location
-                                }, success: function (info) {
+                                }), success: function (info) {
                                     var info = JSON.parse(info);
                                     if (info.提示信息 == "删除成功") {
                                         console.log("success--")
