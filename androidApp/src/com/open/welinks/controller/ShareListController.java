@@ -68,7 +68,7 @@ public class ShareListController {
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public int nowpage = 0;
-	public int pagesize = 5;
+	public int pagesize = 20;
 
 	public List<String> shares;
 	public Map<String, ShareMessage> sharesMap;
