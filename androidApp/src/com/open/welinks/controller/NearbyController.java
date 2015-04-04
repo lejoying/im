@@ -100,10 +100,6 @@ public class NearbyController {
 	public Activity thisActivity;
 
 	public LocationManagerProxy mLocationManagerProxy;
-	public SearchBound bound;
-	public Query mQuery;
-	public CloudSearch mCloudSearch;
-	public ArrayList<CloudItem> mCloudItems;
 	public String type;
 
 	public OnClickListener mOnClickListener;
@@ -134,7 +130,7 @@ public class NearbyController {
 
 	public int RESULTCODESHARERELEASE = 0x1, RESULTCODESHAREDETAIL = 0x2;
 
-	public boolean isFirstPosition = true;
+	public boolean isFirstPosition = true, isNearbyActivity = false;
 
 	public LBSStatus status;
 
@@ -152,8 +148,10 @@ public class NearbyController {
 		}
 	}
 
-	public void onCreate() {
-		thisView.viewManage.nearbyView = thisView;
+	public void onCreate(boolean isNearbyActivity) {
+		if (isNearbyActivity)
+			thisView.viewManage.nearbyView = thisView;
+		this.isNearbyActivity = isNearbyActivity;
 		type = thisActivity.getIntent().getStringExtra("type");
 		if ("account".equals(type)) {
 			status = LBSStatus.account;
@@ -167,8 +165,6 @@ public class NearbyController {
 		} else if ("hottest".equals(type)) {
 			status = LBSStatus.hottest;
 			mTableId = Constant.SHARETABLEID;
-		} else if (type == null) {
-			log.e(":::::::::::::::::::::::::fuck");
 		}
 		// thisView.threeChoicesView.setButtonTwoText("关注");
 		if (data.localStatus.localData.currentSearchRadius != 0) {
@@ -406,12 +402,17 @@ public class NearbyController {
 						thisView.businessCardPopView.cardView.setMenu(false);
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
-				} else if (view.equals(thisView.backView) && isLogin(true)) {
+				} else if (view.equals(thisView.backView)) {
+					log.e("backView");
 					if (status == LBSStatus.account || status == LBSStatus.group) {
+						log.e("account");
 						thisActivity.finish();
-					} else {
+					} else if (isLogin(true)) {
+						log.e("isLogin");
 						Intent intent = new Intent(thisActivity, MainActivity.class);
 						thisActivity.startActivity(intent);
+					} else {
+						log.e("else");
 					}
 				} else if (view.equals(thisView.positionView)) {
 					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
@@ -647,7 +648,6 @@ public class NearbyController {
 					thisView.progressView.setTranslationX(thisView.currentPosition);
 					searchNearbyLBS(true);
 				}
-				log.e(status + "::::::::::::");
 			}
 		};
 
@@ -830,27 +830,19 @@ public class NearbyController {
 		params.addBodyParameter("limit", String.valueOf(20));
 		params.addBodyParameter("page", String.valueOf(nowpage));
 		params.addBodyParameter("time", String.valueOf(now));
-		log.e(status + ":::::");
 		if (thisController.status == LBSStatus.newest) {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_SHARE_SEARCH;
-			log.e(API.LBS_SHARE_SEARCH + "::::::::::::::");
 		} else if (thisController.status == LBSStatus.hottest) {
 			params.addBodyParameter("sortby", "totalScore");
 			api = API.LBS_SHARE_SEARCH;
-			log.e(API.LBS_SHARE_SEARCH + "::::::::::::::");
 		} else if (thisController.status == LBSStatus.account) {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_ACCOUNT_SEARCH;
-			log.e(API.LBS_ACCOUNT_SEARCH + "::::::::::::::");
 		} else if (thisController.status == LBSStatus.group) {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_GROUP_SEARCH;
-			log.e(API.LBS_GROUP_SEARCH + "::::::::::::::");
 			return;
-		} else {
-			log.e(API.LBS_SHARE_SEARCH + ":::::::::::::fuck::::::::::::::" + status + ":::::");
-			log.e(LBSStatus.group + ":::::" + LBSStatus.account + ":::::" + LBSStatus.newest + ":::::" + LBSStatus.hottest);
 		}
 		httpUtils.send(HttpMethod.POST, api, params, httpClient.new ResponseHandler<String>() {
 			class Response {
@@ -1094,7 +1086,6 @@ public class NearbyController {
 	public void initData() {
 
 		mInfomations = new ArrayList<Object>();
-		mCloudSearch = new CloudSearch(thisActivity);
 
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
 		mLocationManagerProxy.setGpsEnable(true);
@@ -1163,7 +1154,6 @@ public class NearbyController {
 		});
 
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 1000, mAMapLocationListener);
-
 		// TODO
 		getCommentLocations();
 	}

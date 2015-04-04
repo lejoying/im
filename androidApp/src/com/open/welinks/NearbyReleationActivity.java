@@ -3,7 +3,6 @@ package com.open.welinks;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.model.Parser;
@@ -30,10 +29,12 @@ public class NearbyReleationActivity extends Activity {
 		thisView.thisController = thisController;
 		thisController.thisView = thisView;
 
-		thisController.onCreate();
+		thisController.onCreate(false);
 		thisView.initView();
 		thisView.mapView.onCreate(savedInstanceState);
+		thisController.initializeListeners();
 		thisController.initData();
+		thisController.bindEvent();
 		thisView.fillData();
 	}
 
@@ -55,10 +56,10 @@ public class NearbyReleationActivity extends Activity {
 		super.onPause();
 	}
 
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		return thisController.onKeyUp(keyCode, event);
-	}
+	// @Override
+	// public boolean onKeyUp(int keyCode, KeyEvent event) {
+	// return thisController.onKeyUp(keyCode, event);
+	// }
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
