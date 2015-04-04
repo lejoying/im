@@ -1012,18 +1012,18 @@ public class NearbyView {
 	public ListController listController;
 
 	public void showAddressDialog() {
-		if (dialogAdapter == null) {
-			dialogAdapter = new AddressDialogAdapter();
-			groupCircleList.setAdapter(dialogAdapter);
-			listController = new ListController(groupCircleList, dialogAdapter);
-			groupCircleList.setDropListener(listController);
-			groupCircleList.setRemoveListener(listController);
-			groupCircleList.setFloatViewManager(listController);
-			groupCircleList.setOnTouchListener(listController);
-			groupCircleList.setOnItemClickListener(listController);
-		} else {
-			dialogAdapter.notifyDataSetChanged();
-		}
+		// if (dialogAdapter == null) {
+		dialogAdapter = new AddressDialogAdapter();
+		groupCircleList.setAdapter(dialogAdapter);
+		listController = new ListController(groupCircleList, dialogAdapter);
+		groupCircleList.setDropListener(listController);
+		groupCircleList.setRemoveListener(listController);
+		groupCircleList.setFloatViewManager(listController);
+		groupCircleList.setOnTouchListener(listController);
+		groupCircleList.setOnItemClickListener(listController);
+		// } else {
+		// dialogAdapter.notifyDataSetChanged();
+		// }
 	}
 
 	public Data data = Data.getInstance();
@@ -1034,8 +1034,9 @@ public class NearbyView {
 
 		public AddressDialogAdapter() {
 			parser.check();
-			if (data.userInformation.currentUser.commonUsedLocations == null)
+			if (data.userInformation.currentUser.commonUsedLocations == null) {
 				data.userInformation.currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
+			}
 			addressList = data.userInformation.currentUser.commonUsedLocations;
 		}
 

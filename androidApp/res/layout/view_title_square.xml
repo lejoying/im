@@ -47,7 +47,7 @@
                 android:singleLine="true"
                 android:text="广场"
                 android:textColor="@color/icon_color"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/botton"

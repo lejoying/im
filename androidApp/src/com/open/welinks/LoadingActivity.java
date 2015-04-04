@@ -19,6 +19,7 @@ public class LoadingActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
+		thisActivity.setContentView(R.layout.activity_login);
 	}
 
 	@Override

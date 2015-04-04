@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.rebound.SimpleSpringListener;
@@ -137,10 +136,10 @@ public class MainController {
 
 		data = thisController.parser.check();
 		thisView.userTopbarNameView.setText("广场");
-		int length = data.userInformation.currentUser.nickName.length();
-		int left = (int) (thisView.textSize * length);
-		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) thisView.botton.getLayoutParams();
-		params.leftMargin = left;
+		// int length = data.userInformation.currentUser.nickName.length();
+		// int left = (int) (thisView.textSize * length);
+		// RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) thisView.botton.getLayoutParams();
+		// params.leftMargin = left;
 	}
 
 	public void onPause() {
@@ -488,6 +487,7 @@ public class MainController {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				friendsSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
+				squareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				squareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
@@ -512,6 +512,7 @@ public class MainController {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK) {
+			thisActivity.finish();
 			NearbyActivity.instance.exitApplication();
 		} else if (requestCode == R.id.tag_second) {
 			messagesSubController.onActivityResult(requestCode, resultCode, data);

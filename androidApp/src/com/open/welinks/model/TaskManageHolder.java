@@ -28,6 +28,8 @@ public class TaskManageHolder {
 
 	public LBSHandler lbsHandler;
 
+	public DataHandler dataHandler;
+
 	public static TaskManageHolder taskManageHolder;
 
 	public static TaskManageHolder getInstance() {
@@ -59,6 +61,7 @@ public class TaskManageHolder {
 			this.lbsHandler = LBSHandler.getInstance();
 			this.uploadMultipartList = UploadMultipartList.getInstance();
 			this.downloadFileList = DownloadFileList.getInstance();
+			this.dataHandler = DataHandler.getInstance();
 		}
 	}
 }

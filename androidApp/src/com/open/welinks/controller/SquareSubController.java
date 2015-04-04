@@ -10,8 +10,12 @@ import android.view.View.OnTouchListener;
 import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
+import com.open.welinks.ClassificationRecommendationActivity;
+import com.open.welinks.MainActivity1;
+import com.open.welinks.NearbyReleationActivity;
 import com.open.welinks.R;
 import com.open.welinks.NearbyActivity;
+import com.open.welinks.ShareListActivity;
 import com.open.welinks.customListener.MyOnClickListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
@@ -60,13 +64,6 @@ public class SquareSubController {
 						onTouchDownView = view;
 						isTouchDown = true;
 						log.e("mOnTouchListener onTouch");
-						if (thisView.dialogSpring.getCurrentValue() == 1d) {
-							thisView.targetView = view;
-							thisView.dialogSpring.addListener(thisView.dialogSpringListener);
-							thisView.dialogSpringListener.id = 0;
-							thisView.dialogSpring.setCurrentValue(1);
-							thisView.dialogSpring.setEndValue(0.9);
-						}
 					}
 				}
 				return false;
@@ -84,12 +81,30 @@ public class SquareSubController {
 				} else if (view.getTag(R.id.tag_class) != null) {
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("SelectBody")) {
-
 						int id = (Integer) view.getTag(R.id.tag_first);
-						if (onTouchDownView != null) {
-							thisView.dialogSpring.setCurrentValue(0.9);
-							thisView.dialogSpringListener.id = id;
-							thisView.dialogSpring.setEndValue(1);
+						if (id == R.drawable.sidebar_icon_discover_normal) {
+							Intent intent = new Intent(thisActivity, MainActivity1.class);
+							intent.putExtra("type", "newest");
+							thisActivity.startActivity(intent);
+						} else if (id == R.drawable.sidebar_icon_days_normal) {
+							// Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
+							// intent.putExtra("type", "hottest");
+							// thisController.thisActivity.startActivity(intent);
+						} else if (id == R.drawable.sidebar_icon_group_normal) {
+							Intent intent = new Intent(thisActivity, NearbyReleationActivity.class);
+							intent.putExtra("type", "group");
+							thisActivity.startActivity(intent);
+						} else if (id == R.drawable.sidebar_icon_category_normal) {
+							Intent intent = new Intent(thisActivity, ClassificationRecommendationActivity.class);
+							thisActivity.startActivity(intent);
+						} else if (id == R.drawable.sidebar_icon_test_normal) {
+							Intent intent = new Intent(thisActivity, NearbyReleationActivity.class);
+							intent.putExtra("type", "account");
+							thisActivity.startActivity(intent);
+						} else if (id == R.drawable.sidebar_icon_beauty_normal) {
+							Intent intent = new Intent(thisActivity, ShareListActivity.class);
+							intent.putExtra("key", data.userInformation.currentUser.phone);
+							thisActivity.startActivity(intent);
 						}
 					}
 				}
@@ -135,10 +150,8 @@ public class SquareSubController {
 	}
 
 	public void onScroll() {
+		log.e("onScroll");
 		if (onTouchDownView != null) {
-			thisView.dialogSpringListener.id = 0;
-			thisView.dialogSpring.setCurrentValue(0.9);
-			thisView.dialogSpring.setEndValue(1);
 		}
 		// isTouchDown = false;
 		onTouchDownView = null;

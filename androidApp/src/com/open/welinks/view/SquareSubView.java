@@ -3,7 +3,6 @@ package com.open.welinks.view;
 import java.io.File;
 import java.util.ArrayList;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -15,11 +14,6 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.rebound.BaseSpringSystem;
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -29,11 +23,7 @@ import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-import com.open.welinks.ClassificationRecommendationActivity;
-import com.open.welinks.MainActivity1;
-import com.open.welinks.NearbyReleationActivity;
 import com.open.welinks.R;
-import com.open.welinks.ShareListActivity;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -88,8 +78,6 @@ public class SquareSubView {
 		this.locationListBody.initialize(this.displayMetrics, this.squareMessageView);
 
 		thisController.bindEvent();
-		dialogSpring.setCurrentValue(1);
-		dialogSpring.setEndValue(1);
 		showLocationList();
 	}
 
@@ -259,57 +247,6 @@ public class SquareSubView {
 					taskManageHolder.imageLoader.displayImage("drawable://" + R.drawable.tempicon, selectBody.coverView);
 				}
 			}
-		}
-	}
-
-	public View targetView;
-	public BaseSpringSystem mSpringSystem = SpringSystem.create();
-	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(320, 9);
-	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
-	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
-
-	public class DialogShowSpringListener extends SimpleSpringListener {
-		@Override
-		public void onSpringUpdate(Spring spring) {
-			float mappedValue = (float) spring.getCurrentValue();
-			if (targetView != null) {
-				targetView.setScaleX(mappedValue);
-				targetView.setScaleY(mappedValue);
-			}
-		}
-
-		public int id;
-
-		@Override
-		public void onSpringAtRest(Spring spring) {
-			// if (spring.getCurrentValue() == 1) {
-			// thisController.isTouchDown = false;
-			// }
-			if (id == R.drawable.sidebar_icon_discover_normal) {
-				Intent intent = new Intent(thisController.thisActivity, MainActivity1.class);
-				intent.putExtra("type", "newest");
-				thisController.thisActivity.startActivity(intent);
-			} else if (id == R.drawable.sidebar_icon_days_normal) {
-				// Intent intent = new Intent(thisController.thisActivity, NearbyActivity.class);
-				// intent.putExtra("type", "hottest");
-				// thisController.thisActivity.startActivity(intent);
-			} else if (id == R.drawable.sidebar_icon_group_normal) {
-				Intent intent = new Intent(thisController.thisActivity, NearbyReleationActivity.class);
-				intent.putExtra("type", "group");
-				thisController.thisActivity.startActivity(intent);
-			} else if (id == R.drawable.sidebar_icon_category_normal) {
-				Intent intent = new Intent(thisController.thisActivity, ClassificationRecommendationActivity.class);
-				thisController.thisActivity.startActivity(intent);
-			} else if (id == R.drawable.sidebar_icon_test_normal) {
-				Intent intent = new Intent(thisController.thisActivity, NearbyReleationActivity.class);
-				intent.putExtra("type", "account");
-				thisController.thisActivity.startActivity(intent);
-			} else if (id == R.drawable.sidebar_icon_beauty_normal) {
-				Intent intent = new Intent(thisController.thisActivity, ShareListActivity.class);
-				intent.putExtra("key", data.userInformation.currentUser.phone);
-				thisController.thisActivity.startActivity(intent);
-			}
-			id = 0;
 		}
 	}
 }

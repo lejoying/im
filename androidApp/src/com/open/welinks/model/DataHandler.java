@@ -26,8 +26,10 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.SubData.ShareContentItem;
@@ -50,6 +52,65 @@ public class DataHandler {
 			instance = new DataHandler();
 		}
 		return instance;
+	}
+
+	public void preparingData() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				if (data.userInformation == null) {
+					String userInformationStr = parser.getFromRootForder("userInformation.js");
+					data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+				}
+				try {
+					User currentUser = data.userInformation.currentUser;
+					if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
+
+						instance.parser.check();
+
+						long currentTime = System.currentTimeMillis();
+
+						UserInformation userInformation = data.userInformation;
+						if (currentTime - userInformation.updateTime > userInformation.minUpdateSpace) {
+							prepareGetUserInfomation();
+						}
+
+						Relationship relationship = data.relationship;
+						if (currentTime - relationship.updateTime > relationship.minUpdateSpace) {
+							prepareGetIntimateFriends();
+							prepareGetUserCurrentAllGroup();
+						}
+					}
+				} catch (Exception e) {
+				}
+			}
+		}).start();
+	}
+
+	public static void prepareGetFirstGroup(String gid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User user = data.userInformation.currentUser;
+		params.addBodyParameter("phone", user.phone);
+		params.addBodyParameter("accessKey", user.accessKey);
+		params.addBodyParameter("gid", gid);
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, responseHandlers.getGroupInfomationCallBack_1);
+	}
+
+	public static void prepareGetIntimateFriends() {
+		Log.e(tag, "getIntimateFriends");
+		data = parser.check();
+		RequestParams params = new RequestParams();
+		User user = data.userInformation.currentUser;
+		params.addBodyParameter("phone", user.phone);
+		params.addBodyParameter("accessKey", user.accessKey);
+
+		HttpUtils http = new HttpUtils();
+
+		http.send(HttpMethod.POST, API.RELATION_GETINTIMATEFRIENDS, params, responseHandlers.getIntimateFriends_1);
 	}
 
 	public static void getIntimateFriends() {
@@ -124,6 +185,28 @@ public class DataHandler {
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, responseHandlers.getUserInfomation);
 	}
 
+	public static void prepareGetUserInfomation() {
+		parser.check();
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User user = data.userInformation.currentUser;
+		params.addBodyParameter("phone", user.phone);
+		params.addBodyParameter("accessKey", user.accessKey);
+		params.addBodyParameter("target", "[\"" + user.phone + "\"]");
+
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, responseHandlers.getUserInfomation_1);
+	}
+
+	public static void prepareGetUserCurrentAllGroup() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack_1);
+	}
+
 	public static void getUserCurrentAllGroup() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -145,6 +228,19 @@ public class DataHandler {
 		params.addBodyParameter("time", time + "");
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, responseHandlers.group_getGroupBoards);
+	}
+
+	public static void prepareGetGroupBoards(String gid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		long time = System.currentTimeMillis();
+		params.addBodyParameter("time", time + "");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, responseHandlers.group_getGroupBoards_1);
 	}
 
 	public static void moveGroupsToCircle(String rid, String groups) {
@@ -238,7 +334,7 @@ public class DataHandler {
 			// data.relationship.groupsMap.clear();
 			// data.relationship.squares.clear();
 
-			data.messages  = data.new Messages();
+			data.messages = data.new Messages();
 			// data.messages.isModified = false;
 			// data.messages.friendMessageMap.clear();
 			// data.messages.groupMessageMap.clear();

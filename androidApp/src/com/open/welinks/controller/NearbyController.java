@@ -3,7 +3,6 @@ package com.open.welinks.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,19 +32,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.cloud.model.CloudItem;
-import com.amap.api.cloud.model.CloudItemDetail;
-import com.amap.api.cloud.search.CloudResult;
 import com.amap.api.cloud.search.CloudSearch;
-import com.amap.api.cloud.search.CloudSearch.OnCloudSearchListener;
 import com.amap.api.cloud.search.CloudSearch.Query;
 import com.amap.api.cloud.search.CloudSearch.SearchBound;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnCameraChangeListener;
-import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.LocationSource.OnLocationChangedListener;
@@ -67,9 +61,9 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.welinks.LoginActivity;
 import com.open.welinks.MainActivity;
 import com.open.welinks.R;
-import com.open.welinks.ShareDetailActivity;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -80,6 +74,7 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -116,7 +111,6 @@ public class NearbyController {
 	public String type;
 
 	public OnClickListener mOnClickListener;
-	public OnCloudSearchListener mCloudSearchListener;
 	public AMapLocationListener mAMapLocationListener;
 	public OnItemClickListener mOnItemClickListener;
 	public OnDownloadListener downloadListener;
@@ -155,6 +149,7 @@ public class NearbyController {
 		thisController = this;
 		this.thisActivity = thisActivity;
 
+		// TODO
 		getContacts();
 	}
 
@@ -214,6 +209,25 @@ public class NearbyController {
 
 	public String address, title;
 
+	public boolean isLogin(boolean flag) {
+		User currentUser = data.userInformation.currentUser;
+		if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
+			return true;
+		} else {
+			// .setLeftButtonText("").setRightButtonText("")
+			if (flag) {
+				Alert.createDialog(thisActivity).setOnTouch(true).setTitle("此操作需要登录,去登录？").setOnConfirmClickListener(new AlertInputDialog.OnDialogClickListener() {
+					@Override
+					public void onClick(AlertInputDialog dialog) {
+						Intent intent = new Intent(thisActivity, LoginActivity.class);
+						thisActivity.startActivity(intent);
+					}
+				}).show();
+			}
+			return false;
+		}
+	}
+
 	public void initializeListeners() {
 
 		mOnGeocodeSearchListener = new OnGeocodeSearchListener() {
@@ -260,6 +274,8 @@ public class NearbyController {
 				} else {
 					searchNearbyHttp(true);
 				}
+
+				// TODO update user location
 			}
 
 			@Override
@@ -344,7 +360,9 @@ public class NearbyController {
 						shareMessage.scores.put(score.phone, score);
 						data.boards.isModified = true;
 						thisView.notifyData();
-						thisView.modifyPraiseusersToMessage(true, shareMessage.gsid, shareMessage.location);
+						if (isLogin(false)) {
+							thisView.modifyPraiseusersToMessage(true, shareMessage.gsid, shareMessage.location);
+						}
 					} else if ("DecrementView".equals(type)) {
 						final ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 						if (shareMessage.scores == null) {
@@ -372,7 +390,9 @@ public class NearbyController {
 									shareMessage.scores.put(score.phone, score);
 									data.boards.isModified = true;
 									thisView.notifyData();
-									thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
+									if (isLogin(false)) {
+										thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
+									}
 									thisController.mInfomations.remove(position);
 									thisView.notifyData();
 								}
@@ -386,7 +406,9 @@ public class NearbyController {
 							shareMessage.scores.put(score.phone, score);
 							data.boards.isModified = true;
 							thisView.notifyData();
-							thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
+							if (isLogin(false)) {
+								thisView.modifyPraiseusersToMessage(false, shareMessage.gsid, shareMessage.location);
+							}
 						}
 					}
 				} else if (view.getTag(R.id.tag_first) != null) {
@@ -405,7 +427,7 @@ public class NearbyController {
 						thisView.businessCardPopView.cardView.setMenu(false);
 						thisView.businessCardPopView.showUserCardDialogView();
 					}
-				} else if (view.equals(thisView.backView)) {
+				} else if (view.equals(thisView.backView) && isLogin(true)) {
 					if (status == Status.account || status == Status.group) {
 						thisActivity.finish();
 					} else {
@@ -421,8 +443,9 @@ public class NearbyController {
 						params.topMargin = (int) (84 * thisView.metrics.density);
 					}
 					thisView.nearbyListView.setLayoutParams(params);
-				} else if (view.equals(thisView.sortView)) {
+				} else if (view.equals(thisView.sortView) && isLogin(true)) {
 					thisView.changePopupWindow(false);
+					// getCommentLocations();
 				} else if (view.equals(thisView.searChView)) {
 					Toast.makeText(thisActivity, "搜索", Toast.LENGTH_SHORT).show();
 				} else if (view.equals(thisView.locationView)) {
@@ -480,18 +503,19 @@ public class NearbyController {
 					thisView.img_btn_set_start.startAnimation(animationNearRight);
 				} else if (view.equals(thisView.releationMenuImage)) {
 
-				} else if (view.equals(thisView.img_btn_set_start)) {
+				} else if (view.equals(thisView.img_btn_set_start) && isLogin(true)) {
 					Alert.createInputDialog(thisActivity).setTitle("请输入地址备注信息").setInputText(title).setInputHint("请输入地址备注").setDescription("当前位置：" + address).setOnConfirmClickListener(new OnDialogClickListener() {
 
 						@Override
 						public void onClick(AlertInputDialog dialog) {
-							com.open.welinks.model.Data.UserInformation.User.Location location = data.userInformation.currentUser.new Location();
+							Data.UserInformation.User.Location location = data.userInformation.currentUser.new Location();
 							location.address = address;
 							location.latitude = latitude;
 							location.longitude = longitude;
 							location.remark = dialog.getInputText().trim();
-							if (data.userInformation.currentUser.commonUsedLocations == null)
+							if (data.userInformation.currentUser.commonUsedLocations == null) {
 								data.userInformation.currentUser.commonUsedLocations = new ArrayList<Data.UserInformation.User.Location>();
+							}
 							data.userInformation.currentUser.commonUsedLocations.add(location);
 							thisView.dialogAdapter.notifyDataSetChanged();
 							data.userInformation.isModified = true;
@@ -499,7 +523,7 @@ public class NearbyController {
 						}
 
 					}).show();
-				} else if (view.equals(thisView.shareMenuImage)) {
+				} else if (view.equals(thisView.shareMenuImage) && isLogin(true)) {
 					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("mode", "NearbyView");
 					intent.putExtra("gtype", "share");
@@ -640,53 +664,7 @@ public class NearbyController {
 				}
 			}
 		};
-		mCloudSearchListener = new OnCloudSearchListener() {
 
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void onCloudSearched(CloudResult result, int rCode) {
-				if (rCode == 0) {
-					if (result != null && result.getQuery() != null) {
-						if (result.getQuery().equals(mQuery)) {
-							mCloudItems = result.getClouds();
-							LatLng point = new LatLng(latitude, longitude);
-							if (nowpage == 0) {
-								mInfomations.clear();
-							}
-							if (mCloudItems.size() > 0) {
-								nowpage++;
-							} else {
-							}
-							long now = System.currentTimeMillis();
-							for (CloudItem item : mCloudItems) {
-								Map<String, Object> map = new HashMap<String, Object>();
-								LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
-								map.put("location", item.getLatLonPoint().toString());
-								map.put("name", item.getTitle());
-								map.put("address", item.getSnippet());
-								map.put("distance", item.getDistance() == -1 ? (int) AMapUtils.calculateLineDistance(point, point2) : item.getDistance());
-								Iterator iter = item.getCustomfield().entrySet().iterator();
-								while (iter.hasNext()) {
-									Map.Entry entry = (Map.Entry) iter.next();
-									map.put(entry.getKey().toString(), entry.getValue());
-								}
-								long time = Long.valueOf((String) map.get("time"));
-								if (searchTime == times[times.length - 1] || (now - time) < searchTime) {
-									// mInfomations.add(processingData(map));
-								}
-							}
-							thisView.notifyData();
-						}
-					}
-				} else {
-					log.e(rCode + "::::::::::::::" + result);
-				}
-			}
-
-			@Override
-			public void onCloudItemDetailSearched(CloudItemDetail detail, int rCode) {
-			}
-		};
 		mAMapLocationListener = new AMapLocationListener() {
 
 			@Override
@@ -777,7 +755,7 @@ public class NearbyController {
 		public String longitude;
 		public String latitude;
 		public String address;
-		public String commonusedlocation;
+		public String commonUsedLocation;
 	}
 
 	public void modifyLocation() {
@@ -802,7 +780,6 @@ public class NearbyController {
 
 	public void bindEvent() {
 		thisView.threeChoicesView.setOnItemClickListener(mOnItemClickListener);
-		mCloudSearch.setOnCloudSearchListener(mCloudSearchListener);
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.nearbyListView.setOnScrollListener(mOnScrollListener);
 		thisView.positionView.setOnClickListener(this.mOnClickListener);
@@ -1285,7 +1262,6 @@ public class NearbyController {
 				tempGroup.description = (String) infomation.get("description");
 				data.tempData.tempGroup = tempGroup;
 			}
-
 		}
 		return isTemp;
 	}
@@ -1308,7 +1284,7 @@ public class NearbyController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		String commonusedlocation = gson.toJson(currentUser.commonUsedLocations);
 		Account account = new Account();
-		account.commonusedlocation = commonusedlocation;
+		account.commonUsedLocation = commonusedlocation;
 		String data = gson.toJson(account);
 		params.addBodyParameter("account", data);
 
@@ -1339,7 +1315,7 @@ public class NearbyController {
 	}
 
 	public void initData() {
-		initializeListeners();
+
 		mInfomations = new ArrayList<Object>();
 		mCloudSearch = new CloudSearch(thisActivity);
 
@@ -1409,9 +1385,24 @@ public class NearbyController {
 				thisView.img_btn_set_start.setVisibility(View.INVISIBLE);
 			}
 		});
-		bindEvent();
+
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
-		getUserCommonUsedLocations();
+
+		// TODO
+		getCommentLocations();
+	}
+
+	Parser parser = Parser.getInstance();
+
+	public void getCommentLocations() {
+		if (data.userInformation == null) {
+			String userInformationStr = parser.getFromRootForder("userInformation.js");
+			data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+		}
+		User currentUser = data.userInformation.currentUser;
+		if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
+			getUserCommonUsedLocations();
+		}
 	}
 
 	class PoiData {

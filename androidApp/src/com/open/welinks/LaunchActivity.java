@@ -11,9 +11,10 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.UserInformation;
-import com.open.welinks.model.Constant;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.BaseDataUtils;
@@ -44,33 +45,31 @@ public class LaunchActivity extends Activity {
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);
 
-		// parser.check();
-
 		BaseDataUtils.initBaseData(this);
 
 		Constant.init();
 
-		getLocalInformation();
-
-		if (data.userInformation == null) {
-			String userInformationStr = parser.getFromRootForder("userInformation.js");
-			data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
-		}
+		// getLocalInformation();
 		try {
-			if (!"".equals(data.userInformation.currentUser.phone) && !"".equals(data.userInformation.currentUser.accessKey)) {
-				startActivity(new Intent(LaunchActivity.this, LoadingActivity.class));
-				LaunchActivity.this.finish();
-				return;
+			if (data.userInformation == null) {
+				String userInformationStr = parser.getFromRootForder("userInformation.js");
+				data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+			}
+			User currentUser = data.userInformation.currentUser;
+			if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
+				Intent intent = new Intent(LaunchActivity.this, NearbyActivity.class);
+				intent.putExtra("type", "newest");
+				startActivity(intent);
+				finish();
 			} else {
-				startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
-				LaunchActivity.this.finish();
-				return;
+				Intent intent = new Intent(LaunchActivity.this, LoadingActivity.class);
+				startActivity(intent);
+				finish();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
-			LaunchActivity.this.finish();
-			return;
+			Intent intent = new Intent(LaunchActivity.this, LoadingActivity.class);
+			startActivity(intent);
+			finish();
 		}
 	}
 

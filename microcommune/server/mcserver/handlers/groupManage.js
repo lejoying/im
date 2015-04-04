@@ -1144,7 +1144,11 @@ groupManage.get = function (data, response) {
             try {
                 gid = parseInt(gid);
                 if (isNaN(gid)) {
-                    throw "gid不是数值";
+                    response.write(JSON.stringify({
+                        "提示信息": "获取群组信息失败",
+                        "失败原因": "数据格式不正确"
+                    }));
+                    response.end();
                 } else {
                     gid = gid;
                     getGroupNode(gid);

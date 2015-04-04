@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.open.welinks.R;
 import com.open.welinks.utils.BaseDataUtils;
-import com.open.welinks.view.ViewManage;
 
 public class Alert {
 
@@ -293,6 +292,11 @@ public class Alert {
 
 		public AlertInputDialog setRightButtonText(String text) {
 			((Button) (dialog.cancelView)).setText(text);
+			return this;
+		}
+
+		public AlertInputDialog setOnTouch(boolean flag) {
+			dialog.setCanceledOnTouchOutside(flag);
 			return this;
 		}
 

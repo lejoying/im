@@ -127,6 +127,8 @@ public class Data {
 
 	public class UserInformation {
 		public boolean isModified = false;
+		public long updateTime = 0;
+		public long minUpdateSpace = 1000 * 60;
 
 		public User currentUser;
 
@@ -179,6 +181,8 @@ public class Data {
 
 	public class Relationship {
 		public boolean isModified = false;
+		public long updateTime = 0;
+		public long minUpdateSpace = 1000 * 60;
 
 		public List<String> friends = new ArrayList<String>();
 		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
@@ -243,6 +247,9 @@ public class Data {
 			public String currentBoard = "";
 
 			public List<String> boards;
+			
+			
+			
 			public List<String> members = new ArrayList<String>();
 			public List<String> labels = new ArrayList<String>();
 		}

@@ -10,6 +10,9 @@ import android.view.KeyEvent;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.LocalStatus.LocalData;
+import com.open.welinks.model.Data.UserInformation;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
@@ -43,14 +46,6 @@ public class NearbyActivity extends Activity {
 
 		instance = this;
 
-		parser.initialize(this);
-		parser.check();
-
-		startPushService();
-
-		UpdateManager manager = new UpdateManager(this);
-		manager.checkUpdate();
-
 		thisActivity = this;
 		thisView = new NearbyView(thisActivity);
 		thisController = new NearbyController(thisActivity);
@@ -58,28 +53,73 @@ public class NearbyActivity extends Activity {
 		thisView.thisController = thisController;
 		thisController.thisView = thisView;
 
-		connectionChangeReceiver = new ConnectionChangeReceiver();
-		IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
-		thisActivity.registerReceiver(connectionChangeReceiver, filter);
+		if (data.userInformation == null) {
+			String userInformationStr = parser.getFromRootForder("userInformation.js");
+			data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+		}
+		try {
+			User currentUser = data.userInformation.currentUser;
+			if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
+
+				if (data.localStatus.localData == null) {
+					String localDataStr = parser.getFromUserForder(currentUser.phone, "localData.js");
+					if (localDataStr == null || "".equals(localDataStr)) {
+						data.localStatus.localData = data.localStatus.new LocalData();
+					} else {
+						data.localStatus.localData = parser.gson.fromJson(localDataStr, LocalData.class);
+					}
+					if (data.localStatus.localData == null) {
+						data.localStatus.localData = data.localStatus.new LocalData();
+					}
+				}
+			} else {
+				data.localStatus.localData = data.localStatus.new LocalData();
+			}
+		} catch (Exception e) {
+			data.localStatus.localData = data.localStatus.new LocalData();
+		}
 
 		thisController.onCreate();
 		thisView.initView();
 		thisView.mapView.onCreate(savedInstanceState);
+		thisController.initializeListeners();
 		thisController.initData();
+		thisController.bindEvent();
 		thisView.fillData();
+
+		taskManageHolder.dataHandler.preparingData();
+
+		startPushService();
+
+		UpdateManager manager = new UpdateManager(this);
+		manager.checkUpdate();
+
+		connectionChangeReceiver = new ConnectionChangeReceiver();
+		IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
+		thisActivity.registerReceiver(connectionChangeReceiver, filter);
 	}
 
 	public void startPushService() {
-		Intent service = new Intent(this, PushService.class);
-		PushService.isRunning = false;
-		Log.e(tag, "* startPushService *check data");
+		try {
+			if (data.userInformation == null) {
+				String userInformationStr = parser.getFromRootForder("userInformation.js");
+				data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+			}
+			User currentUser = data.userInformation.currentUser;
+			if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
+				Intent service = new Intent(this, PushService.class);
+				PushService.isRunning = false;
+				Log.e(tag, "* startPushService *check data");
 
-		data = parser.check();
+				data = parser.check();
 
-		service.putExtra("phone", data.userInformation.currentUser.phone);
-		service.putExtra("accessKey", data.userInformation.currentUser.accessKey);
-		service.putExtra("operation", true);
-		startService(service);
+				service.putExtra("phone", currentUser.phone);
+				service.putExtra("accessKey", currentUser.accessKey);
+				service.putExtra("operation", true);
+				startService(service);
+			}
+		} catch (Exception e) {
+		}
 	}
 
 	public void exitApplication() {
@@ -94,8 +134,8 @@ public class NearbyActivity extends Activity {
 			connectionChangeReceiver = null;
 		}
 		DataHandler.clearData();
-		thisActivity.finish();
-		thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
+		// thisActivity.finish();
+		// thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 	}
 
 	@Override

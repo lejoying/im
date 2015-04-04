@@ -38,7 +38,6 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
-import com.open.welinks.view.LoginView.Status;
 import com.open.welinks.view.ShareSubView1.SharesMessageBody;
 import com.open.welinks.view.ViewManage;
 
@@ -168,8 +167,104 @@ public class ResponseHandlers {
 							viewManage.postNotifyView("GroupListActivity");
 						}
 					}
+					data.userInformation.updateTime = System.currentTimeMillis();
 					data.userInformation.isModified = true;
 					viewManage.postNotifyView("MeSubView");
+				}
+			} else {
+				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
+			}
+		};
+	};
+	public ResponseHandler<String> getUserInfomation_1 = httpClient.new ResponseHandler<String>() {
+
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public List<User> accounts;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if ("获取用户信息成功".equals(response.提示信息)) {
+				User friend = response.accounts.get(0);
+				if (friend != null) {
+					parser.check();
+					User user = data.userInformation.currentUser;
+					user.userBackground = friend.userBackground;
+					user.sex = friend.sex;
+					user.id = friend.id;
+					user.phone = friend.phone;
+					user.nickName = friend.nickName;
+					user.createTime = friend.createTime;
+					user.lastLoginTime = friend.lastLoginTime;
+					user.mainBusiness = friend.mainBusiness;
+					user.blackList = friend.blackList;
+					user.head = friend.head;
+					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
+
+						if (!user.circlesOrderString.equals(friend.circlesOrderString)) {
+							user.circlesOrderString = friend.circlesOrderString;
+							try {
+								if (data.relationship.circles == null) {
+									data.relationship.circles = new ArrayList<String>();
+								}
+								data.relationship.circles = gson.fromJson(user.circlesOrderString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							if (data.localStatus.debugMode.equals("NONE")) {
+								// viewManage.postNotifyView("UserIntimateView");
+								log.e(tag, ViewManage.getErrorLineNumber() + "刷新好友分组");
+								// viewManage.mainView.friendsSubView.showCircles();
+							}
+						}
+					} else {
+						if (user.circlesOrderString == null && friend.circlesOrderString != null) {
+							user.circlesOrderString = friend.circlesOrderString;
+							try {
+								data.relationship.circles = gson.fromJson(user.circlesOrderString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							if (data.localStatus.debugMode.equals("NONE")) {
+								// viewManage.postNotifyView("UserIntimateView");
+								log.e(tag, ViewManage.getErrorLineNumber() + "刷新好友分组");
+								// viewManage.mainView.friendsSubView.showCircles();
+							}
+						}
+					}
+					if (user.groupsSequenceString != null && friend.groupsSequenceString != null) {
+						if (!user.groupsSequenceString.equals(friend.groupsSequenceString)) {
+							user.groupsSequenceString = friend.groupsSequenceString;
+							try {
+								data.relationship.groups = gson.fromJson(user.groupsSequenceString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							// viewManage.postNotifyView("ShareSubView");
+							// viewManage.postNotifyView("GroupListActivity");
+						}
+					} else {
+						if (user.groupsSequenceString == null && friend.groupsSequenceString != null) {
+							user.groupsSequenceString = friend.groupsSequenceString;
+							try {
+								data.relationship.groups = gson.fromJson(user.groupsSequenceString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							// viewManage.postNotifyView("ShareSubView");
+							// viewManage.postNotifyView("GroupListActivity");
+						}
+					}
+
+					data.userInformation.updateTime = System.currentTimeMillis();
+					data.userInformation.isModified = true;
+					// viewManage.postNotifyView("MeSubView");
 				}
 			} else {
 				log.e(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -513,8 +608,10 @@ public class ResponseHandlers {
 					}
 					currentUser.commonUsedLocations.clear();
 					currentUser.commonUsedLocations.addAll(serverUser.commonUsedLocations);
+					log.e(responseInfo.result);
 					if (viewManage.nearbyView != null) {
 						viewManage.nearbyView.showAddressDialog();
+						log.e("----刷新数据" + serverUser.commonUsedLocations.size());
 					}
 				}
 			} else {
@@ -666,6 +763,97 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("CirclesManageView");
 				}
 				DataHandler.getMessages(data.userInformation.currentUser.flag);
+				DataHandler.clearInvalidFriendMessages();
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
+			}
+		}
+	};
+	public ResponseHandler<String> getIntimateFriends_1 = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Relationship relationship;
+
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取密友圈成功")) {
+				log.e(tag, ViewManage.getErrorLineNumber() + "获取密友圈成功");
+				List<String> circles = response.relationship.circles;
+				String defaultCircleName = null;
+				if (data.relationship.circlesMap != null) {
+					Circle circle = data.relationship.circlesMap.get("8888888");
+					if (circle != null) {
+						defaultCircleName = circle.name;
+					}
+				}
+				data.relationship.circles = circles;
+				Map<String, Circle> circlesMap = response.relationship.circlesMap;
+				data.relationship.circlesMap = circlesMap;
+				Map<String, Friend> friendsMap = response.relationship.friendsMap;
+				Iterator<Entry<String, Friend>> iterator = friendsMap.entrySet().iterator();
+				List<String> singleDeleteFriendList = new ArrayList<String>();
+				if (data.relationship.friendsMap != null && data.relationship.friendsMap.size() != 0) {
+					while (iterator.hasNext()) {
+						Map.Entry<String, Friend> entry = iterator.next();
+						String key = entry.getKey();
+						Friend friend = entry.getValue();
+						if (data.relationship.friendsMap.get(key) != null) {
+							Friend oldFriend = data.relationship.friendsMap.get(key);
+							oldFriend.phone = friend.phone;
+							oldFriend.head = friend.head;
+							oldFriend.nickName = friend.nickName;
+							oldFriend.mainBusiness = friend.mainBusiness;
+							oldFriend.sex = friend.sex;
+							oldFriend.age = Integer.valueOf(friend.age);
+							oldFriend.createTime = friend.createTime;
+							oldFriend.lastLoginTime = friend.lastLoginTime;
+							oldFriend.userBackground = friend.userBackground;
+							oldFriend.id = friend.id;
+							oldFriend.friendStatus = friend.friendStatus;
+							if ("delete".equals(friend.friendStatus)) {
+								singleDeleteFriendList.add(friend.phone);
+							}
+						} else {
+							data.relationship.friendsMap.put(key, friend);
+						}
+					}
+				} else {
+					data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+				}
+
+				Set<String> set = new LinkedHashSet<String>();
+				set.clear();
+				set.addAll(singleDeleteFriendList);
+				singleDeleteFriendList.clear();
+				singleDeleteFriendList.addAll(set);
+				if (data.relationship.friends == null) {
+					data.relationship.friends = new ArrayList<String>();
+				} else {
+					data.relationship.friends.clear();
+				}
+				for (int i = 0; i < circles.size(); i++) {
+					Circle circle = circlesMap.get(circles.get(i));
+					if (circle.rid == Constant.DEFAULTCIRCLEID) {
+						if (defaultCircleName != null) {
+							circle.name = defaultCircleName;
+						}
+					}
+					data.relationship.friends.addAll(circle.friends);
+				}
+
+				set.clear();
+				set.addAll(data.relationship.friends);
+				data.relationship.friends.clear();
+				data.relationship.friends.addAll(set);
+
+				data.relationship.friends.removeAll(singleDeleteFriendList);
+
+				data.relationship.updateTime = System.currentTimeMillis();
+				data.relationship.isModified = true;
 				DataHandler.clearInvalidFriendMessages();
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
@@ -1165,6 +1353,36 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> group_getGroupBoards_1 = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String gid;
+			public List<String> boards;
+			public Map<String, Board> boardsMap;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取版块成功")) {
+				data = parser.check();
+				Group group = data.relationship.groupsMap.get(response.gid);
+				for (Board board : response.boardsMap.values()) {
+					data.boards.boardsMap.put(board.sid, board);
+				}
+				data.boards.isModified = true;
+				if (group != null) {
+					group.boards = response.boards;
+					if ((group.currentBoard == null || "".equals(group.currentBoard)) && group.boards.size() > 0) {
+						group.currentBoard = group.boards.get(0);
+					}
+				}
+			} else {
+				log.d(ViewManage.getErrorLineNumber() + response.失败原因);
+
+			}
+		};
+	};
 	public ResponseHandler<String> getGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
@@ -1315,6 +1533,151 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("ShareSubView");
 					viewManage.squareSubView.setConver();
 					viewManage.postNotifyView("GroupListActivity");
+					DataHandler.clearInvalidGroupMessages();
+				} else {
+					log.e(ViewManage.getErrorLineNumber() + response.失败原因);
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+		};
+	};
+	public ResponseHandler<String> getGroupMembersCallBack_1 = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Relationship relationship;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取群组成员成功")) {
+					parser.check();
+					data.relationship.groups = response.relationship.groups;
+					Map<String, Group> groupsMap = response.relationship.groupsMap;
+					for (Entry<String, Group> entity : groupsMap.entrySet()) {
+						String key = entity.getKey();
+						Group currentGroup = entity.getValue();
+						if (data.relationship.groupsMap.containsKey(key)) {
+							Group group = data.relationship.groupsMap.get(key);
+							group.icon = currentGroup.icon;
+							group.name = currentGroup.name;
+							group.distance = currentGroup.distance;
+							group.longitude = currentGroup.longitude;
+							group.latitude = currentGroup.latitude;
+							group.description = currentGroup.description;
+							group.background = currentGroup.background;
+							group.cover = currentGroup.cover;
+							group.permission = currentGroup.permission;
+							group.members = currentGroup.members;
+							group.boards = currentGroup.boards;
+							group.labels = currentGroup.labels;
+							group.relation = currentGroup.relation;
+							// for (String str : group.labels) {
+							// log.e(str + "::::::::::::::::::::::::标签");
+							// }
+						} else {
+							data.relationship.groupsMap.put(key, currentGroup);
+						}
+					}
+
+					Map<String, Friend> friendsMap = response.relationship.friendsMap;
+					Iterator<Entry<String, Friend>> iterator = friendsMap.entrySet().iterator();
+					if (data.relationship.friendsMap != null && data.relationship.friendsMap.size() != 0) {
+						while (iterator.hasNext()) {
+							Map.Entry<String, Friend> entry = iterator.next();
+							String key = entry.getKey();
+							Friend friend = entry.getValue();
+							if (data.relationship.friendsMap.get(key) != null) {
+								Friend oldFriend = data.relationship.friendsMap.get(key);
+								oldFriend.phone = friend.phone;
+								oldFriend.head = friend.head;
+								oldFriend.nickName = friend.nickName;
+								oldFriend.mainBusiness = friend.mainBusiness;
+								oldFriend.sex = friend.sex;
+								oldFriend.age = Integer.valueOf(friend.age);
+								oldFriend.createTime = friend.createTime;
+								oldFriend.lastLoginTime = friend.lastLoginTime;
+								oldFriend.userBackground = friend.userBackground;
+								oldFriend.id = friend.id;
+								// oldFriend.friendStatus = friend.friendStatus;
+							} else {
+								data.relationship.friendsMap.put(key, friend);
+							}
+						}
+					} else {
+						data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+					}
+
+					data.relationship.groupCircles = response.relationship.groupCircles;
+					data.relationship.groupCirclesMap = response.relationship.groupCirclesMap;
+
+					// if (response.relationship.groupCircles != null && response.relationship.groupCirclesMap != null) {
+					// for (String str : response.relationship.groupCircles) {
+					// log.e(str + ":::::::::::::");
+					// }
+					// } else {
+					// log.e("null:::::::::::::");
+					// }
+
+					data.relationship.isModified = true;
+
+					// init current share
+					String gid = "";
+					if (response.relationship.groups.size() != 0) {
+						gid = response.relationship.groups.get(0);
+					} else {
+						gid = "";
+						data.localStatus.localData.currentSelectedGroup = gid;
+					}
+					if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
+						if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+							data.localStatus.localData.currentSelectedGroup = gid;
+							if (response.relationship.groups.size() != 0) {
+								gid = response.relationship.groups.get(0);
+							}
+						}
+					} else {
+						data.localStatus.localData.currentSelectedGroup = gid;
+					}
+					// Set the option group dialog content
+					// log.e(tag, ViewManage.getErrorLineNumber() + data.relationship.groups.toString());
+
+					if (!"".equals(data.localStatus.localData.currentSelectedGroup)) {
+						Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+						if (group != null) {
+							boolean flag = false;
+							if (group.currentBoard != null && !"".equals(group.currentBoard)) {
+								if (group.boards == null) {
+									group.boards = new ArrayList<String>();
+								}
+								if (group.boards.contains(group.currentBoard)) {
+									if (gid.equals("")) {
+										if (viewManage.shareSubView != null) {
+										}
+									}
+								} else {
+									flag = true;
+								}
+							} else {
+								flag = true;
+							}
+							if (flag) {
+								if (group.boards.size() > 0) {
+									group.currentBoard = group.boards.get(0);
+								} else {
+									log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
+								}
+							}
+							DataHandler.getGroupBoards(data.localStatus.localData.currentSelectedGroup);
+						} else {
+							log.e(ViewManage.getErrorLineNumber() + "异常数据" + ViewManage.getErrorLineNumber());
+						}
+						log.e(ViewManage.getErrorLineNumber() + "board:" + group.currentBoard);
+					}
+					data.relationship.updateTime = System.currentTimeMillis();
 					DataHandler.clearInvalidGroupMessages();
 				} else {
 					log.e(ViewManage.getErrorLineNumber() + response.失败原因);
@@ -1490,6 +1853,48 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("GroupListActivity");
 				}
 
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------获取群组信息成功");
+			} else {
+				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
+			}
+		};
+	};
+	public RequestCallBack<String> getGroupInfomationCallBack_1 = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Group group;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取群组信息成功")) {
+				Group group = response.group;
+				parser.check();
+				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
+				if (currentGroup != null) {
+					currentGroup.icon = group.icon;
+					currentGroup.name = group.name;
+					currentGroup.longitude = group.longitude;
+					currentGroup.latitude = group.latitude;
+					currentGroup.description = group.description;
+					currentGroup.createTime = group.createTime;
+					currentGroup.background = group.background;
+					currentGroup.boards.clear();
+					currentGroup.boards.addAll(group.boards);
+					currentGroup.labels.clear();
+					currentGroup.labels.addAll(group.labels);
+					currentGroup.relation = group.relation;
+					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
+					if (flag) {
+						boolean flag2 = group.cover.equals(currentGroup.cover);
+						if (!flag2) {
+							currentGroup.cover = group.cover;
+						}
+					}
+					currentGroup.permission = group.permission;
+					data.relationship.isModified = true;
+				}
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------获取群组信息成功");
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
