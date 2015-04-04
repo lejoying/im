@@ -145,6 +145,7 @@ accountManage.verifyphone = function (data, response) {
                 if (accountData.status == "active") {
                     responseFailMessage(response, "手机号验证失败", "手机号已被注册");
                 } else {
+                    isReg = true;
                     sendSMSMessage(accountData, checkCodeTime(accountNode, accountData), "手机号验证", response);
                 }
             }
