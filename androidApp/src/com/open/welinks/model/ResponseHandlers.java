@@ -1312,8 +1312,20 @@ public class ResponseHandlers {
 					currentGroup.relation = group.relation;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
-				data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.remove(response.tempGid);
-				data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.add(String.valueOf(group.gid));
+				GroupCircle currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
+				if (currentGroupCircle.groups.contains(response.tempGid)) {
+					currentGroupCircle.groups.remove(response.tempGid);
+					currentGroupCircle.groups.add(String.valueOf(group.gid));
+				} else {
+					for (String groupCircleGid : data.relationship.groupCircles) {
+						GroupCircle groupCircle = data.relationship.groupCirclesMap.get(groupCircleGid);
+						if (groupCircle.groups.contains(response.tempGid)) {
+							groupCircle.groups.remove(response.tempGid);
+							groupCircle.groups.add(String.valueOf(group.gid));
+							break;
+						}
+					}
+				}
 
 				DataHandler.moveGroupsToCircle(data.relationship.groupCircles.get(0), "[\"" + group.gid + "\"]");
 
