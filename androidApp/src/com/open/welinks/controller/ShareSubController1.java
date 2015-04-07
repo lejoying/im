@@ -34,12 +34,12 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
-import com.open.welinks.R;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.CreateGroupStartActivity;
 import com.open.welinks.FindMoreActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.GroupListActivity;
+import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.MyOnClickListener;
@@ -60,9 +60,9 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
+import com.open.welinks.view.ShareSubView1;
 import com.open.welinks.view.ShareSubView1.GroupDialogItem;
 import com.open.welinks.view.ShareSubView1.SharesMessageBody;
-import com.open.welinks.view.ShareSubView1;
 import com.open.welinks.view.ViewManage;
 
 public class ShareSubController1 {
@@ -870,6 +870,12 @@ public class ShareSubController1 {
 					}
 				}
 			}
+		} else if (requestCode == 510 && resultCode == Activity.RESULT_OK) {
+			// TODO
+			nowpage = 0;
+			thisView.currentGroup.currentBoard = thisView.currentGroup.boards.get(0);
+			thisView.showShareMessages();
+			thisView.getCurrentGroupShareMessages();
 		}
 	}
 

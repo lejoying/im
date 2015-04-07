@@ -62,7 +62,7 @@ public class ShareDetailView {
 	public LayoutInflater mInflater;
 
 	public void initView() {
-		this.displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		this.displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		this.mInflater = this.thisActivity.getLayoutInflater();
 		this.displayMetrics = new DisplayMetrics();
 		this.thisActivity.getWindowManager().getDefaultDisplay().getMetrics(this.displayMetrics);

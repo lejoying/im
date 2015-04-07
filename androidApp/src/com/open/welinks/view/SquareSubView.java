@@ -71,7 +71,7 @@ public class SquareSubView {
 	public DisplayImageOptions options;
 
 	public void initViews() {
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		this.squareView = mainView.squareView;
 		this.displayMetrics = mainView.displayMetrics;
 		this.mInflater = mainView.mInflater;

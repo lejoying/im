@@ -184,7 +184,7 @@ public class ShareSubView1 {
 		textSize = displayMetrics.scaledDensity * 18 + 0.5f;
 		botton = (ImageView) shareView.findViewById(R.id.botton);
 
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		// myScrollImageBody = new MyScrollImageBody();
 		// myScrollImageBody.initialize(groupMembersListContentView);
 

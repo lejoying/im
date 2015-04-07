@@ -723,7 +723,7 @@ public class FileHandler {
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 						if (imageView.getTag(R.id.tag_first) != null) {
 							if (params == null) {
-								float screenWidth = data.baseData.screenWidth;
+								float screenWidth = data.baseData.screenWidth - 20 * data.baseData.density;
 								int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
 								LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
 								imageView.setLayoutParams(params);

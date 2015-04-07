@@ -139,7 +139,7 @@ public class ShareReleaseImageTextView {
 		mConfirmButtonViewParams.leftMargin = widthItem * 4;
 		mConfirmButtonViewParams.width = widthItem;
 
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).considerExifParams(true).displayer(new RoundedBitmapDisplayer(0)).build();
+		options = new DisplayImageOptions.Builder().cacheOnDisk(false).showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).considerExifParams(true).displayer(new RoundedBitmapDisplayer(0)).build();
 		myScrollImageBody = new MyScrollImageBody();
 		myScrollImageBody.initialize(mImagesContentView);
 

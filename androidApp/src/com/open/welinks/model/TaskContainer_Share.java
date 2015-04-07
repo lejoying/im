@@ -188,6 +188,9 @@ public class TaskContainer_Share {
 			shareMessage.gsid = currentUser.phone + "_" + time;
 			shareMessage.type = "imagetext";
 			shareMessage.sid = sid;
+			if (latitude != 0 && longitude != 0) {
+				shareMessage.location = new double[] { longitude, latitude };
+			}
 			shareMessage.gid = gid;
 			shareMessage.phone = currentUser.phone;
 			shareMessage.nickName = currentUser.nickName;

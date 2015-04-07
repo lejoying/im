@@ -318,7 +318,7 @@ groupManage.create = function (data, response) {
 
     function createGroupLocation(group) {
         var location = JSON.parse(group.location)
-        location = JSON.stringify([location.longitude , location.latitude]);
+        location = JSON.stringify([location.longitude, location.latitude]);
 
         ajax.ajax({
             type: "POST",
@@ -1051,7 +1051,7 @@ groupManage.modify = function (data, response) {
 
     function modifyGroupLbs(group) {
         var location = JSON.parse(group.location);
-        location = JSON.stringify([location.longitude , location.latitude]);
+        location = JSON.stringify([location.longitude, location.latitude]);
         ajax.ajax({
             type: "POST",
             url: serverSetting.LBS_GROUP_UPDATE,
@@ -1239,7 +1239,11 @@ var ajax = require('../../mcserver/lib/ajax.js');
 groupManage.getgroupmembers = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+
+    var startTime = new Date().getTime();
+
     getAccountGroups();
+
 
     var friendsMap = {};
     var groups = [];
@@ -1257,6 +1261,7 @@ groupManage.getgroupmembers = function (data, response) {
             phone: phone
         };
         db.query(query, params, function (error, results) {
+            console.log("第一次查询query 得到数据：" + ((new Date().getTime()) - startTime));
             if (error) {
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群组成员失败",
@@ -1390,6 +1395,7 @@ groupManage.getgroupmembers = function (data, response) {
     }
 
     function getGroupsMembers(groupIDs) {
+        console.log("第二次查询query ：" + ((new Date().getTime()) - startTime));
         var query = [
             'MATCH (group:Group)-[r:HAS_MEMBER]->(account:Account)',
             'WHERE group.gid IN {groupIDs}',
@@ -1399,6 +1405,7 @@ groupManage.getgroupmembers = function (data, response) {
             groupIDs: groupIDs
         };
         db.query(query, params, function (error, results) {
+            console.log("第二次查询query 得到数据：" + ((new Date().getTime()) - startTime));
             if (error) {
                 response.write(JSON.stringify({
                     "提示信息": "获取群组失败",
@@ -1502,6 +1509,7 @@ groupManage.getgroupmembers = function (data, response) {
     }
 
     function getLabels(groups) {
+        console.log("第三次查询query：" + ((new Date().getTime()) - startTime));
         var query = [
             "MATCH(group:Group)-[r:HAS_LABEL]->(label:Label)",
             "WHERE group.gid IN {groupIDs}",
@@ -1511,6 +1519,7 @@ groupManage.getgroupmembers = function (data, response) {
             groupIDs: groups
         };
         db.query(query, params, function (error, results) {
+            console.log("第三次查询query  得到数据：" + ((new Date().getTime()) - startTime));
             if (error) {
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群组标签失败",
@@ -1539,6 +1548,7 @@ groupManage.getgroupmembers = function (data, response) {
                         groupCirclesMap: groupCirclesMap
                     }
                 }), response);
+                console.log("返回数据：" + ((new Date().getTime()) - startTime));
             }
         });
     }

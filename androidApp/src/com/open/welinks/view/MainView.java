@@ -2,19 +2,26 @@ package com.open.welinks.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.PagerBody;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.MainController;
 import com.open.welinks.customView.ControlProgress;
@@ -149,6 +156,27 @@ public class MainView {
 		main_container.addView(messages_friends_me_View);
 		mainPagerBody.addChildView(messages_friends_me_View);
 		mainPagerBody.setTitleView(title_messages_friends_me, 1);
+
+		TextView textView = new TextView(thisActivity);
+		textView.setText("广场");
+		textView.setGravity(Gravity.CENTER_VERTICAL);
+		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		int padding = (int) (20 * displayMetrics.density);
+		textView.setPadding(padding, 0, padding, 0);
+		LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, (int) (48 * displayMetrics.density));
+		textView.setTextColor(Color.parseColor("#0099cd"));
+		main_container.addView(textView, layoutParams);
+		// TODO temp
+		textView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(thisActivity, NearbyActivity.class);
+				intent.putExtra("type", "newest");
+				thisActivity.startActivity(intent);
+				thisActivity.finish();
+			}
+		});
 
 		friendsMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimatefriends);
 		messagesMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesList);

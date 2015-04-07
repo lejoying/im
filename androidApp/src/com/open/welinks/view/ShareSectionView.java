@@ -153,7 +153,7 @@ public class ShareSectionView {
 		shareMessageListBody = new ListBody1();
 		shareMessageListBody.initialize(displayMetrics, shareMessageView);
 
-		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 

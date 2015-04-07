@@ -95,6 +95,8 @@ public class ShareSectionController {
 	public int nowpage = 0;
 	public int pagesize = 10;
 
+	public int activity_result = Activity.RESULT_CANCELED;
+
 	public ShareSectionController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -107,6 +109,9 @@ public class ShareSectionController {
 			thisView.currentGroup = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		} else if (data.relationship.groupsMap.containsKey(key)) {
 			thisView.currentGroup = data.relationship.groupsMap.get(key);
+			if (thisView.currentGroup != null && thisView.currentGroup.boards != null && thisView.currentGroup.boards.size() > 0) {
+				thisView.currentBoard = data.boards.boardsMap.get(thisView.currentGroup.boards.get(0));
+			}
 			getGroup(key);
 		} else {
 			getGroup(key);
@@ -169,6 +174,7 @@ public class ShareSectionController {
 				data.relationship.isModified = true;
 
 				if (!sequenceListString.equals(oldSequece)) {
+					activity_result = Activity.RESULT_OK;
 					modifyBoardsSequence(sequenceListString);
 					log.e("版块顺序发生改动");
 				} else {
@@ -708,14 +714,15 @@ public class ShareSectionController {
 	}
 
 	public void finish() {
+		thisActivity.setResult(activity_result);
 		thisView.dismissGroupBoardsDialog();
 		taskManageHolder.viewManage.shareSectionView = null;
-		if (thisView.currentGroup != null && thisView.currentBoard != null)
-			thisView.currentGroup.currentBoard = thisView.currentBoard.sid;
-		if (taskManageHolder.viewManage.shareSubView != null) {
-			taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
-			taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
-		}
+		// if (thisView.currentGroup != null && thisView.currentBoard != null)
+		// thisView.currentGroup.currentBoard = thisView.currentBoard.sid;
+		// if (taskManageHolder.viewManage.shareSubView != null) {
+		// taskManageHolder.viewManage.shareSubView.thisController.nowpage = 0;
+		// taskManageHolder.viewManage.shareSubView.getCurrentGroupShareMessages();
+		// }
 	}
 
 	public void addCommentToMessage(String gid, String sid, String gsid, String content) {

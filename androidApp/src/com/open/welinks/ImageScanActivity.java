@@ -102,7 +102,7 @@ public class ImageScanActivity extends FragmentActivity {
 		imageNumberView = (TextView) findViewById(R.id.backTitleView);
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 		backImageView = (ImageView) findViewById(R.id.backImageView);
-		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true)
+		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(false).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true)
 				.displayer(new FadeInBitmapDisplayer(300)).build();
 
 		imageNumberView.setText("浏览  (" + (currentPosition + 1) + "/" + imagesBrowseList.size() + ")");

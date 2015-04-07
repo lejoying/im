@@ -841,14 +841,15 @@ accountManage.modify = function (data, response) {
                 })
             }, success: function (info) {
                 try {
-                    var info = JSON.parse(info);
-                    if (info.提示信息 == "创建用户成功") {
-                        console.log("success--")
-                    } else {
-                        console.log("modify error--")
-                    }
+                    console.log(info);
+                    //var info = JSON.parse(info);
+                    //if (info.提示信息 == "创建用户成功") {
+                    //    console.log("success--")
+                    //} else {
+                    //    console.log("modify error--")
+                    //}
                 } catch (e) {
-                    console.log(e);
+                    console.log(e+"---serverSetting.LBS_ACCOUNT_MODIFY");
                 }
             }
         });

@@ -67,7 +67,7 @@ public class ImagesDirectoryView {
 	public ImagesDirectoryView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
 	}
 
 	public void initViews() {
