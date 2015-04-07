@@ -178,13 +178,19 @@ public class CreateGroupStartActivity extends Activity {
 		group.longitude = longitude;
 		group.description = "";
 		group.members.add(user.phone);
+		group.relation = "join";
 		data.relationship.groups.add(key);
 		data.relationship.groupsMap.put(key, group);
 		data.relationship.isModified = true;
 
 		viewManage.mainView1.shareSubView.setGroupsDialogContent(null);
 
-		data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.add(key);
+		String currentGroupCircle = data.localStatus.localData.currentGroupCircle;
+		if (!"".equals(currentGroupCircle) && data.relationship.groupCirclesMap.get(currentGroupCircle) != null) {
+			data.relationship.groupCirclesMap.get(currentGroupCircle).groups.add(key);
+		} else {
+			data.relationship.groupCirclesMap.get(data.localStatus.localData.currentGroupCircle).groups.add(key);
+		}
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.GROUP_CREATE, params, responseHandlers.group_create);

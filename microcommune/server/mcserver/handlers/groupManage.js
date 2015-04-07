@@ -105,12 +105,13 @@ groupManage.create = function (data, response) {
             'MATCH (account:Account)',
             'WHERE account.phone={phone}',
             'CREATE account-[r:HAS_GROUP]->(group:Group{group})',
-            'SET group.gid=ID(group)',
+            'SET group.gid=ID(group),r.relation={relation}',
             'RETURN group,r'
         ].join('\n');
         var params = {
             phone: phone,
-            group: group
+            group: group,
+            relation: "join"
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -1463,7 +1464,7 @@ groupManage.getgroupmembers = function (data, response) {
                             background: groupData.background,
                             cover: groupData.cover || "",
                             permission: groupData.permission || "",
-                            relation: rData.relation,
+                            relation: rData.relation || "join",
                             labels: []
                         };
                         //console.log(groupData.name + "---" + rData.relation);

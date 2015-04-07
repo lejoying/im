@@ -38,6 +38,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.Data.UserInformation.User.Location;
 import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -72,6 +73,7 @@ public class GroupListController {
 	public Map<String, Group> groupsMap;
 	public Map<String, Friend> friendsMap;
 	public Map<String, GroupCircle> groupCirclesMap;
+	public List<Location> commonUsedLocations;
 
 	public Status status;
 	public String gid;
@@ -118,7 +120,7 @@ public class GroupListController {
 			this.friends = friends.toArray(this.friends);
 		} else {
 			if (status == Status.square) {
-				groups = data.relationship.squares;
+				commonUsedLocations = data.userInformation.currentUser.commonUsedLocations;
 			} else if (status == Status.list_group) {
 				if (data.relationship != null && data.relationship.groupCirclesMap != null && data.relationship.groupCircles != null) {
 					if (taskManageHolder.viewManage.shareSubView != null) {
@@ -254,10 +256,15 @@ public class GroupListController {
 								intent.putExtra("key", friendsMap.get(friends[position]).phone);
 								intent.putExtra("type", "message");
 								intent.putExtra("sendType", "point");
+							} else if (status == Status.square) {
+								intent.putExtra("key", position + "");
+								intent.putExtra("type", "location");
 							} else {
 								intent.putExtra("key", String.valueOf(groupsMap.get(groups.get(position)).gid));
-								if (status == Status.share_group || status == Status.square) {
+								if (status == Status.share_group) {
 									intent.putExtra("type", "share");
+								} else if (status == Status.square) {
+
 								} else if (status == Status.message_group || status == Status.card_group) {
 									intent.putExtra("type", "message");
 									intent.putExtra("sendType", "group");
@@ -405,7 +412,7 @@ public class GroupListController {
 		} else if (status == Status.message_group) {
 			title += "分享给群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.square) {
-			title += "分享到社区：【" + groupsMap.get(groups.get(position)).name + "】?";
+			title += "分享到：【" + commonUsedLocations.get(position).remark + "】?";
 		} else if (status == Status.share_group) {
 			title += "分享到群组：【" + groupsMap.get(groups.get(position)).name + "】?";
 		} else if (status == Status.card_friend) {

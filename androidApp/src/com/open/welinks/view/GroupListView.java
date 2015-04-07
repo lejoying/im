@@ -26,6 +26,7 @@ import com.open.welinks.controller.GroupListController.Status;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.UserInformation.User.Location;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -144,10 +145,10 @@ public class GroupListView {
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			if (thisController.status == Status.friend) {
 				this.threeChoicesView.setButtonOneText("全部好友");
-				this.threeChoicesView.setButtonThreeText("群组");
+				this.threeChoicesView.setButtonThreeText("聊天室");
 			} else if (thisController.status == Status.square) {
-				this.threeChoicesView.setButtonOneText("社区");
-				this.threeChoicesView.setButtonThreeText("群组");
+				this.threeChoicesView.setButtonOneText("常用地址");
+				this.threeChoicesView.setButtonThreeText("群空间");
 			}
 			this.rightContainer.addView(this.threeChoicesView, layoutParams);
 		}
@@ -229,10 +230,10 @@ public class GroupListView {
 		public void notifyDataSetChanged() {
 			if (thisController.status == Status.friend) {
 				thisController.friendsMap = data.relationship.friendsMap;
+			} else if (thisController.status == Status.square) {
+				thisController.commonUsedLocations = data.userInformation.currentUser.commonUsedLocations;
 			} else {
-				if (thisController.status == Status.square) {
-					thisController.groups = data.relationship.squares;
-				} else if (thisController.status == Status.list_group) {
+				if (thisController.status == Status.list_group) {
 					thisController.groups = thisController.currentGroupCircle.groups;
 				} else {
 					thisController.groups = data.relationship.groups;
@@ -247,6 +248,8 @@ public class GroupListView {
 			int size = 0;
 			if (thisController.status == Status.friend || thisController.status == Status.card_friend) {
 				size = thisController.friends.length;
+			} else if (thisController.status == Status.square) {
+				size = thisController.commonUsedLocations.size();
 			} else {
 				size = thisController.groups.size();
 			}
@@ -258,6 +261,8 @@ public class GroupListView {
 			Object item = null;
 			if (thisController.status == Status.friend || thisController.status == Status.card_friend) {
 				item = thisController.friends[position];
+			} else if (thisController.status == Status.square) {
+				item = thisController.commonUsedLocations.get(position);
 			} else {
 				item = thisController.groups.get(position);
 			}
@@ -279,12 +284,14 @@ public class GroupListView {
 				holder.checkBoxView = (ImageView) convertView.findViewById(R.id.checkBox);
 				holder.nameView = (TextView) convertView.findViewById(R.id.title);
 				holder.descriptionView = (TextView) convertView.findViewById(R.id.description);
+				holder.textLayout = (LinearLayout) convertView.findViewById(R.id.textLayout);
 				((RelativeLayout.LayoutParams) holder.checkBoxView.getLayoutParams()).rightMargin = BaseDataUtils.dpToPxint(25);
 				convertView.setTag(holder);
 			} else {
 				holder = (GroupHolder) convertView.getTag();
 			}
 			if (thisController.status == Status.friend || thisController.status == Status.card_friend) {
+				holder.headView.setVisibility(View.VISIBLE);
 				Friend friend = thisController.friendsMap.get(thisController.friends[position]);
 				taskManageHolder.fileHandler.getHeadImage(friend.head, holder.headView, taskManageHolder.viewManage.options50);
 				if (friend.alias != null && !friend.alias.equals("")) {
@@ -293,7 +300,15 @@ public class GroupListView {
 					holder.nameView.setText(friend.nickName);
 				}
 				holder.descriptionView.setText(friend.mainBusiness);
+				((RelativeLayout.LayoutParams) (holder.textLayout.getLayoutParams())).addRule(RelativeLayout.CENTER_VERTICAL);
+			} else if (thisController.status == Status.square) {
+				Location location = (Location) getItem(position);
+				holder.headView.setVisibility(View.GONE);
+				holder.nameView.setText(location.remark);
+				holder.descriptionView.setText(location.address);
+				((RelativeLayout.LayoutParams) (holder.textLayout.getLayoutParams())).addRule(RelativeLayout.CENTER_IN_PARENT);
 			} else {
+				holder.headView.setVisibility(View.VISIBLE);
 				String gid = thisController.groups.get(position);
 				Group group = thisController.groupsMap.get(gid);
 				if (group != null) {
@@ -315,6 +330,7 @@ public class GroupListView {
 						holder.checkBoxView.setVisibility(View.GONE);
 					}
 				}
+				((RelativeLayout.LayoutParams) (holder.textLayout.getLayoutParams())).addRule(RelativeLayout.CENTER_VERTICAL);
 			}
 			return convertView;
 		}
@@ -323,6 +339,7 @@ public class GroupListView {
 	public class GroupHolder {
 		public ImageView headView, checkBoxView;
 		public TextView nameView, descriptionView;
+		public LinearLayout textLayout;
 	}
 
 	public class GroupCircleDialogAdapter extends BaseAdapter {

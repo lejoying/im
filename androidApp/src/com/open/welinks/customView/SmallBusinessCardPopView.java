@@ -36,6 +36,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfoActivity;
@@ -61,6 +62,7 @@ public class SmallBusinessCardPopView {
 	public Data data = Data.getInstance();
 	public Parser parser = Parser.getInstance();
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	public SmallBusinessCardPopView instance;
 	public Activity thisActivity;
@@ -331,7 +333,6 @@ public class SmallBusinessCardPopView {
 			}
 		}
 
-		public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 		boolean isGetData = false;
 
 		private void setContent(boolean isChat, String sex, String age, String fileName, String nickName, String relation, String type, String key, String longitude, String latitude, String lastLoginTime) {
@@ -362,6 +363,7 @@ public class SmallBusinessCardPopView {
 				lastLoginTimeView.setText("");
 			}
 			if (type.equals(TYPE_POINT)) {
+				getNewestLocation(key);
 				this.setting.setVisibility(View.GONE);
 				this.optionTwoView2.setVisibility(View.GONE);
 				if (user.phone.equals(key)) {
@@ -387,10 +389,8 @@ public class SmallBusinessCardPopView {
 				if (data.relationship.groups.contains(key)) {
 					Group group = data.relationship.groupsMap.get(key);
 					if (group != null && group.relation != null && group.relation.equals("follow")) {
-						log.e(group.relation + ":::::::::");
 						goInfomationView.setText("加入群组");
 					} else {
-						log.e(group.relation + ":::::::::");
 						goInfomationView.setText("聊天室");
 					}
 				} else {
@@ -510,17 +510,19 @@ public class SmallBusinessCardPopView {
 							intent.putExtra("type", type);
 							thisActivity.startActivity(intent);
 						} else if (type.equals(TYPE_GROUP)) {
-							Group group = data.relationship.groupsMap.get(key);
-							if (group == null || group.relation == null || "".equals(group.relation)) {
-								followGroup(key);
-							} else if ("follow".equals(group.relation)) {
-								group.relation = "join";
-								getGroupMembers(key);
+							if (data.relationship.groups.contains(key)) {
+								Group group = data.relationship.groupsMap.get(key);
+								log.e(group.relation + "::::::::::::");
+								if (group == null || group.relation == null || "".equals(group.relation) || "join".equals(group.relation)) {
+									Intent intent = new Intent(thisActivity, ChatActivity.class);
+									intent.putExtra("id", key);
+									intent.putExtra("type", type);
+									thisActivity.startActivityForResult(intent, R.id.tag_second);
+								} else {
+									followGroup(key);
+								}
 							} else {
-								Intent intent = new Intent(thisActivity, ChatActivity.class);
-								intent.putExtra("id", key);
-								intent.putExtra("type", type);
-								thisActivity.startActivityForResult(intent, R.id.tag_second);
+								followGroup(key);
 							}
 						} else if (type.equals(TYPE_BOARD)) {
 							Intent intent = new Intent(thisActivity, ChatActivity.class);
@@ -715,6 +717,46 @@ public class SmallBusinessCardPopView {
 		});
 	}
 
+	public void getNewestLocation(final String phone) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", phone);
+		httpUtils.send(HttpMethod.POST, API.LBS_ACCOUNT_GETNEWEST, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public String 失败原因;
+				public double[] location;
+				public long time;
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取用户信息成功")) {
+					if (cardView.key.equals(phone)) {
+						User user = data.userInformation.currentUser;
+						cardView.distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, String.valueOf(response.location[0]), String.valueOf(response.location[1])) + "km");
+						cardView.lastLoginTimeView.setText(DateUtil.getTime(response.time));
+						if (phone.equals(user.phone)) {
+							user.lastLoginTime = String.valueOf(response.time);
+							user.longitude = String.valueOf(response.location[0]);
+							user.latitude = String.valueOf(response.location[1]);
+						} else {
+							Friend friend = data.relationship.friendsMap.get(phone);
+							if (friend != null) {
+								friend.lastLoginTime = String.valueOf(response.time);
+								friend.longitude = String.valueOf(response.location[0]);
+								friend.latitude = String.valueOf(response.location[1]);
+							}
+						}
+					}
+				} else {
+					log.e(response.失败原因 + "::::::::::::::::::::");
+				}
+			}
+		});
+	}
+
 	public void followGroup(String gid) {
 		Group group = data.relationship.groupsMap.get(gid);
 		if (group == null) {
@@ -722,8 +764,20 @@ public class SmallBusinessCardPopView {
 			data.relationship.groupsMap.put(gid, group);
 		}
 		group.relation = "follow";
-		data.relationship.groups.add(gid);
-		data.relationship.groupCirclesMap.get(Constant.DEFAULTGROUPCIRCLE).groups.add(gid);
+		if (!data.relationship.groups.contains(gid)) {
+			data.relationship.groups.add(gid);
+		}
+
+		String currentGroupCircle = data.localStatus.localData.currentGroupCircle;
+		if (!"".equals(currentGroupCircle) && data.relationship.groupCirclesMap.get(currentGroupCircle) != null) {
+			if (!data.relationship.groupCirclesMap.get(currentGroupCircle).groups.contains(gid)) {
+				data.relationship.groupCirclesMap.get(currentGroupCircle).groups.add(gid);
+			}
+		} else {
+			if (!data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.contains(gid)) {
+				data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0)).groups.add(gid);
+			}
+		}
 		data.relationship.isModified = true;
 		this.cardView.goInfomationView.setText("加入群组");
 		RequestParams params = new RequestParams();

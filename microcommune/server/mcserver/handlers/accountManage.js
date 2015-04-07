@@ -698,7 +698,7 @@ accountManage.modify = function (data, response) {
             } else {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
-                accountData.lastlogintime = time;
+//                accountData.lastlogintime = time;
                 if (account.nickName != undefined && account.nickName != null && account.nickName != "") {
                     accountData.nickName = account.nickName;
                 }
@@ -743,12 +743,12 @@ accountManage.modify = function (data, response) {
                 if (account.head != undefined && account.head != null && account.head != "") {
                     accountData.head = account.head;
                 }
-                if (account.longitude != undefined && account.longitude != null && account.longitude != "") {
-                    accountData.longitude = account.longitude;
-                }
-                if (account.latitude != undefined && account.latitude != null && account.latitude != "") {
-                    accountData.latitude = account.latitude;
-                }
+//                if (account.longitude != undefined && account.longitude != null && account.longitude != "") {
+//                    accountData.longitude = account.longitude;
+//                }
+//                if (account.latitude != undefined && account.latitude != null && account.latitude != "") {
+//                    accountData.latitude = account.latitude;
+//                }
                 if (account.commonUsedLocation != undefined && account.commonUsedLocation != null && account.commonUsedLocation != "") {
                     accountData.commonUsedLocation = account.commonUsedLocation;
                 }

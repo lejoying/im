@@ -239,6 +239,7 @@ public class API {
 	public static String LBS_ACCOUNT_SEARCH = API_LBS_ACCOUNT_DOMAIN + "api2/lbs/search";
 	public static String LBS_SHARE_SEARCH = API_LBS_SHARE_DOMAIN + "api2/lbs/search";
 	public static String LBS_GROUP_SEARCH = API_LBS_GROUP_DOMAIN + "api2/lbs/search";
+	public static String LBS_ACCOUNT_GETNEWEST = API_LBS_ACCOUNT_DOMAIN + "api2/lbs/getnewest";
 	// image
 
 	/**

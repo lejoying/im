@@ -2,7 +2,7 @@ root.globaldata = {};
 
 var serverSetting = {};
 globaldata.serverSetting = serverSetting;
-serverSetting.environment = "server";//local or server
+serverSetting.environment = "local";//local or server
 //serverSetting.debug = true;
 serverSetting.EARTH_RADIUS = 6378137.0;
 var LBS = {};
@@ -24,7 +24,7 @@ serverSetting.LBS.DATA_SEARCH = "http://yuntuapi.amap.com/datamanage/data/list";
 
 serverSetting.LBS_SHAERE = "http://10.252.45.120/";//182.92.107.229  10.252.45.120
 serverSetting.LBS_ACCOUNT = "http://10.165.121.75/";//123.57.58.84  10.165.121.75
-serverSetting.LBS_GROUP = "http://10.173.14.222/";//123.57.56.119  10.173.14.222
+serverSetting.LBS_GROUP = "http://123.57.56.119/";//123.57.56.119  10.173.14.222
 serverSetting.LBS_SHAERE_CREATE = serverSetting.LBS_SHAERE + "api2/lbs/create";
 serverSetting.LBS_SHAERE_UPDATE = serverSetting.LBS_SHAERE + "api2/lbs/update";
 serverSetting.LBS_SHAERE_DELETE = serverSetting.LBS_SHAERE + "api2/lbs/deleteshare";

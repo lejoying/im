@@ -1289,7 +1289,7 @@ public class ResponseHandlers {
 					currentGroup.cover = group.cover;
 					currentGroup.permission = group.permission;
 					currentGroup.boards = group.boards;
-					currentGroup.relation = group.relation;
+					currentGroup.relation = "join";
 				} else {
 					data.relationship.groups.add(key);
 					currentGroup = null;
@@ -1309,25 +1309,28 @@ public class ResponseHandlers {
 					currentGroup.cover = group.cover;
 					currentGroup.permission = group.permission;
 					currentGroup.boards = group.boards;
-					currentGroup.relation = group.relation;
+					currentGroup.relation = "join";
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
-				GroupCircle currentGroupCircle = data.relationship.groupCirclesMap.get(data.relationship.groupCircles.get(0));
-				if (currentGroupCircle.groups.contains(response.tempGid)) {
+				String rid = "";
+				GroupCircle currentGroupCircle = data.relationship.groupCirclesMap.get(data.localStatus.localData.currentGroupCircle);
+				if (currentGroupCircle != null && currentGroupCircle.groups.contains(response.tempGid)) {
 					currentGroupCircle.groups.remove(response.tempGid);
 					currentGroupCircle.groups.add(String.valueOf(group.gid));
+					rid = String.valueOf(currentGroupCircle.rid);
 				} else {
 					for (String groupCircleGid : data.relationship.groupCircles) {
 						GroupCircle groupCircle = data.relationship.groupCirclesMap.get(groupCircleGid);
 						if (groupCircle.groups.contains(response.tempGid)) {
 							groupCircle.groups.remove(response.tempGid);
 							groupCircle.groups.add(String.valueOf(group.gid));
+							rid = String.valueOf(groupCircle.rid);
 							break;
 						}
 					}
 				}
 
-				DataHandler.moveGroupsToCircle(data.relationship.groupCircles.get(0), "[\"" + group.gid + "\"]");
+				DataHandler.moveGroupsToCircle(rid, "[\"" + group.gid + "\"]");
 
 				data.relationship.isModified = true;
 				viewManage.postNotifyView("ShareSubView");
@@ -1804,8 +1807,17 @@ public class ResponseHandlers {
 				group.latitude = response.group.latitude;
 				group.longitude = response.group.longitude;
 				group.name = response.group.name;
-
-				DataHandler.moveGroupsToCircle(Constant.DEFAULTGROUPCIRCLE, "[\"" + group.gid + "\"]");
+				group.relation = "follow";
+				String rid = "";
+				for (GroupCircle groupCircle : data.relationship.groupCirclesMap.values()) {
+					if (groupCircle.groups.contains(String.valueOf(group.gid))) {
+						rid = String.valueOf(groupCircle.rid);
+						break;
+					}
+				}
+				if (!"".equals(rid)) {
+					DataHandler.moveGroupsToCircle(rid, "[\"" + group.gid + "\"]");
+				}
 			} else {
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------" + response.失败原因);
 			}
@@ -1851,7 +1863,6 @@ public class ResponseHandlers {
 					currentGroup.background = group.background;
 					currentGroup.boards = group.boards;
 					currentGroup.labels = group.labels;
-					currentGroup.relation = group.relation;
 					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
 					if (flag) {
 						boolean flag2 = group.cover.equals(currentGroup.cover);
@@ -1899,7 +1910,6 @@ public class ResponseHandlers {
 					currentGroup.boards.addAll(group.boards);
 					currentGroup.labels.clear();
 					currentGroup.labels.addAll(group.labels);
-					currentGroup.relation = group.relation;
 					boolean flag = data.localStatus.localData.currentSelectedGroup.equals(group.gid + "");
 					if (flag) {
 						boolean flag2 = group.cover.equals(currentGroup.cover);
@@ -1946,7 +1956,6 @@ public class ResponseHandlers {
 					currentGroup.permission = group.permission;
 					currentGroup.members = members;
 					currentGroup.boards = group.boards;
-					currentGroup.relation = group.relation;
 				} else {
 					data.relationship.groups.add(key0);
 					data.relationship.groupsMap.put(key0, group);
@@ -2211,7 +2220,9 @@ public class ResponseHandlers {
 					}
 				} else {
 					if (data.localStatus.localData.currentSelectedGroup.equals(gid)) {
-						viewManage.mainView1.shareSubView.showShareMessages();
+						if (viewManage.mainView1 != null && viewManage.mainView1.shareSubView != null) {
+							viewManage.mainView1.shareSubView.showShareMessages();
+						}
 					}
 				}
 				log.e(tag, ViewManage.getErrorLineNumber() + "---------------------发送成功");

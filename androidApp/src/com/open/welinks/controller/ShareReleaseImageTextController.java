@@ -39,7 +39,6 @@ import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.customView.ControlProgress;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.UserInformation.User;

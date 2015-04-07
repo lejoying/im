@@ -35,6 +35,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -46,6 +47,7 @@ import com.open.welinks.customView.ShareView.onWeChatClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.Score;
@@ -53,12 +55,14 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.Data.UserInformation.User.Location;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack2;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
+import com.open.welinks.model.TaskContainer_Share.PostTask;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
@@ -522,24 +526,115 @@ public class ShareMessageDetailController {
 					sendToChat(key, result.getStringExtra("sendType"));
 				} else if ("share".equals(type)) {
 					shareToGroup(key);
+				} else if ("location".equals(type)) {
+					shareToSquare(key);
 				}
 			}
 		}
 
 	}
 
-	public void shareToGroup(String key) {
-		parser.check();
-		if (data.boards == null) {
-			data.boards = data.new Boards();
-		}
-		if (data.boards.boardsMap.get(key) == null) {
-			Board board = data.boards.new Board();
-			data.boards.boardsMap.put(key, board);
-		}
-		long time = new Date().getTime();
-		Board board = data.boards.boardsMap.get(key);
+	public void shareToSquare(String key) {
+		try {
+			int position = Integer.valueOf(key);
+			Location location = data.userInformation.currentUser.commonUsedLocations.get(position);
+			if (location != null) {
+				long time = new Date().getTime();
 
+				SendShareMessage sendShareMessage = subData.new SendShareMessage();
+				sendShareMessage.type = "imagetext";
+				sendShareMessage.content = shareMessage.content;
+
+				HttpUtils httpUtils = new HttpUtils();
+				RequestParams params = new RequestParams();
+				params.addBodyParameter("phone", currentUser.phone);
+				params.addBodyParameter("accessKey", currentUser.accessKey);
+				params.addBodyParameter("nickName", currentUser.nickName);
+				params.addBodyParameter("head", currentUser.head);
+				params.addBodyParameter("gid", Constant.SQUARE_SID);
+				params.addBodyParameter("ogsid", currentUser.phone + "_" + time);
+				params.addBodyParameter("sid", Constant.SQUARE_SID);
+				params.addBodyParameter("location", "[" + location.longitude + "," + location.latitude + "]");
+				params.addBodyParameter("address", location.address);
+				params.addBodyParameter("message", gson.toJson(sendShareMessage));
+
+				httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
+			}
+		} catch (Exception e) {
+			log.e("position is not a num");
+		}
+	}
+
+	public void shareToGroup(final String key) {
+		parser.check();
+		Board board = null;
+		if (data.boards == null || data.relationship.groupsMap.get(key) == null) {
+			log.e("data.boards == null || data.relationship.groupsMap.get(key) == null");
+			return;
+		}
+		if (data.relationship.groups.contains(key) && data.relationship.groupsMap.containsKey(key)) {
+			Group group = data.relationship.groupsMap.get(key);
+			if (group.boards.size() > 0) {
+				board = data.boards.boardsMap.get(group.boards.get(0));
+			} else {
+				log.e("group.boards.size() == 0");
+				return;
+			}
+		} else {
+			log.e("!data.relationship.groups.contains(key) && !data.relationship.groupsMap.containsKey(key)");
+			return;
+		}
+		if (board == null) {
+			RequestParams params = new RequestParams();
+			HttpUtils httpUtils = new HttpUtils();
+			User currentUser = data.userInformation.currentUser;
+			params.addBodyParameter("phone", currentUser.phone);
+			params.addBodyParameter("accessKey", currentUser.accessKey);
+			params.addBodyParameter("gid", key);
+			httpUtils.send(HttpMethod.POST, API.SHARE_GETGROUPBOARDS, params, httpClient.new ResponseHandler<String>() {
+				class Response {
+					public String 提示信息;
+					public String 失败原因;
+					public String gid;
+					public List<String> boards;
+					public Map<String, Board> boardsMap;
+				}
+
+				@Override
+				public void onSuccess(ResponseInfo<String> responseInfo) {
+					Response response = gson.fromJson(responseInfo.result, Response.class);
+					if (response.提示信息.equals("获取版块成功")) {
+						data = parser.check();
+						Group group = data.relationship.groupsMap.get(response.gid);
+						for (Board board : response.boardsMap.values()) {
+							data.boards.boardsMap.put(board.sid, board);
+						}
+						data.boards.isModified = true;
+						if (group != null) {
+							group.boards = response.boards;
+							if ((group.currentBoard == null || "".equals(group.currentBoard)) && group.boards.size() > 0) {
+								group.currentBoard = group.boards.get(0);
+							}
+						}
+						Board board = data.boards.boardsMap.get(response.boards.get(0));
+						if (board != null) {
+							dealShareMessage(key, board);
+						} else {
+							log.e("board == null:::::::::::" + key);
+						}
+					} else {
+						log.e("board == null");
+					}
+				}
+			});
+		} else {
+			dealShareMessage(key, board);
+		}
+
+	}
+
+	public void dealShareMessage(String key, Board board) {
+		long time = new Date().getTime();
 		ShareMessage shareMessage = data.boards.new ShareMessage();
 		shareMessage.content = this.shareMessage.content;
 		shareMessage.type = this.shareMessage.type;
@@ -553,16 +648,23 @@ public class ShareMessageDetailController {
 		shareMessage.time = time;
 		shareMessage.status = "sending";
 
+		if (board.shareMessagesOrder == null)
+			board.shareMessagesOrder = new ArrayList<String>();
+		if (data.boards.shareMessagesMap == null)
+			data.boards.shareMessagesMap = new HashMap<String, ShareMessage>();
+
 		board.shareMessagesOrder.add(0, shareMessage.gsid);
 		data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 		data.boards.isModified = true;
 
-		taskManageHolder.viewManage.mainView1.shareSubView.showShareMessages();
+		if (taskManageHolder.viewManage.mainView1 != null && taskManageHolder.viewManage.mainView1.shareSubView != null) {
+			taskManageHolder.viewManage.mainView1.shareSubView.showShareMessages();
+		}
 
-		sendShareToServer(key, shareMessage.content, shareMessage.gsid);
+		sendShareToServer(key, shareMessage.content, shareMessage.gsid, board.sid);
 	}
 
-	public void sendShareToServer(String key, String content, String gsid) {
+	public void sendShareToServer(String key, String content, String gsid, String sid) {
 		SendShareMessage sendShareMessage = subData.new SendShareMessage();
 		sendShareMessage.type = "imagetext";
 		sendShareMessage.content = content;
@@ -576,8 +678,6 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("gid", key);
 		params.addBodyParameter("ogsid", gsid);
 		params.addBodyParameter("sid", sid);
-		// params.addBodyParameter("location", currentUser.longitude + "," + currentUser.latitude);
-		// params.addBodyParameter("address", currentUser.address);
 		params.addBodyParameter("message", gson.toJson(sendShareMessage));
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
