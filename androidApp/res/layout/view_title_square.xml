@@ -34,7 +34,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:background="@drawable/backview_background"
-            android:translationX="20dp" >
+            android:translationX="20dp"
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/shareTopMenuSquareName"
@@ -54,11 +55,11 @@
                 android:layout_width="7dp"
                 android:layout_height="7dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="30dp"
                 android:layout_marginLeft="35dp"
-                android:visibility="gone"
+                android:layout_marginTop="30dp"
                 android:src="@drawable/subscript_triangle"
-                android:tint="@color/icon_color" />
+                android:tint="@color/icon_color"
+                android:visibility="gone" />
         </RelativeLayout>
     </RelativeLayout>
 

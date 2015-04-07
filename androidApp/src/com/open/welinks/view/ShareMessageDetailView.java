@@ -115,7 +115,7 @@ public class ShareMessageDetailView {
 
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
-		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenDensity = displayMetrics.density;
@@ -347,7 +347,7 @@ public class ShareMessageDetailView {
 				if (shareMessage.type != "imagetext") {
 				}
 				String content = this.shareMessage.content;
-
+				// log.e(content);
 				List<ShareContentItem> shareContentItems = gson.fromJson(content, new TypeToken<ArrayList<ShareContentItem>>() {
 				}.getType());
 				if (shareContentItems == null) {

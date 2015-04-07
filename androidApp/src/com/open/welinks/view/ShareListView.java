@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -87,7 +88,7 @@ public class ShareListView {
 		listView.setAdapter(shareListAdapter);
 	}
 
-	DisplayImageOptions options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+	DisplayImageOptions options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 
 	public class ShareListAdapter extends BaseAdapter {
 
@@ -185,8 +186,13 @@ public class ShareListView {
 				ShareMessage message = thisController.sharesMap.get(gsid);
 				holder.imageContainer.removeAllViews();
 				if (message != null) {
-					List<ShareContentItem> shareContentItems = gson.fromJson(message.content, new TypeToken<ArrayList<ShareContentItem>>() {
-					}.getType());
+					List<ShareContentItem> shareContentItems = null;
+					try {
+						shareContentItems = gson.fromJson(message.content, new TypeToken<ArrayList<ShareContentItem>>() {
+						}.getType());
+					} catch (JsonSyntaxException e) {
+						e.printStackTrace();
+					}
 					if (shareContentItems == null) {
 						holder.imageContainer.removeAllViews();
 						holder.imageCountView.setVisibility(View.GONE);
@@ -367,7 +373,14 @@ public class ShareListView {
 					}
 				}
 			}
-			container.addView(layout);
+			if (layout.getParent() != null) {
+				layout.getParent().recomputeViewAttributes(layout);
+			}
+			try {
+				container.addView(layout);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		public class ShareHolder {

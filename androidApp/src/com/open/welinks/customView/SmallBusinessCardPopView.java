@@ -478,7 +478,8 @@ public class SmallBusinessCardPopView {
 			userHeadView.getLayoutParams().height = height;
 			userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 			userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
-			smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
+			smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10))
+					.build();
 		}
 
 		public void bindEvent() {
@@ -542,7 +543,7 @@ public class SmallBusinessCardPopView {
 							if (type.equals(TYPE_GROUP)) {
 								Intent intent = new Intent(thisActivity, ShareSectionActivity.class);
 								intent.putExtra("key", key);
-								thisActivity.startActivity(intent);
+								thisActivity.startActivityForResult(intent, 510);
 							} else if (type.equals(TYPE_POINT)) {
 								Intent intent = new Intent(thisActivity, ChatActivity.class);
 								intent.putExtra("id", key);

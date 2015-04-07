@@ -851,6 +851,7 @@ public class NearbyController {
 			params.addBodyParameter("sortby", "time");
 			api = API.LBS_GROUP_SEARCH;
 		}
+
 		httpUtils.send(HttpMethod.POST, api, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
@@ -879,7 +880,7 @@ public class NearbyController {
 						nowpage++;
 					}
 					for (Point point : response.resultPoints) {
-						if (point.data.gsid != null) {
+						if (point.data.gsid != null && (thisController.status == LBSStatus.newest ||thisController.status == LBSStatus.hottest)) {
 							processingShareData(point);
 						} else if (point.data.sex != null) {
 							processingAccountData(point);
@@ -1006,39 +1007,6 @@ public class NearbyController {
 			data.relationship.groupsMap.put(String.valueOf(group.gid), group);
 		}
 		mInfomations.add(group);
-	}
-
-	public boolean judgeTempRelation(Map<String, Object> infomation) {
-		boolean isTemp = true;
-		if (infomation.get("gid") == null) {
-			for (String circles : data.relationship.circles) {
-				if (data.relationship.circlesMap.get(circles).friends.contains(infomation.get("phone"))) {
-					isTemp = false;
-					break;
-				}
-			}
-			if (isTemp) {
-				Friend tempFriend = data.relationship.new Friend();
-				tempFriend.phone = (String) infomation.get("phone");
-				tempFriend.head = (String) infomation.get("head");
-				tempFriend.nickName = (String) infomation.get("name");
-				tempFriend.mainBusiness = (String) infomation.get("mainBusiness");
-				data.tempData.tempFriend = tempFriend;
-			}
-		} else {
-			if (data.relationship.groups.contains(infomation.get("gid"))) {
-				isTemp = false;
-			}
-			if (isTemp) {
-				Group tempGroup = data.relationship.new Group();
-				tempGroup.gid = Integer.valueOf((String) infomation.get("gid"));
-				tempGroup.icon = (String) infomation.get("icon");
-				tempGroup.name = (String) infomation.get("name");
-				tempGroup.description = (String) infomation.get("description");
-				data.tempData.tempGroup = tempGroup;
-			}
-		}
-		return isTemp;
 	}
 
 	public void getUserCommonUsedLocations() {

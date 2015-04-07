@@ -59,8 +59,8 @@ public class ShareSectionActivity extends Activity {
 
 	@Override
 	public void finish() {
-		super.finish();
 		thisController.finish();
+		super.finish();
 	}
 
 	@Override

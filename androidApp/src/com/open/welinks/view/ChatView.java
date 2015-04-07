@@ -155,7 +155,7 @@ public class ChatView {
 		titleImage.setLayoutParams(rightParams);
 		rightContainer.addView(titleImage);
 
-		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head)
+		locationOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).showImageOnLoading(R.drawable.chat_location_searching).showImageForEmptyUri(R.drawable.chat_location_searching).showImageOnFail(R.drawable.default_user_head)
 				.displayer(new RoundedBitmapDisplayer((int) BaseDataUtils.dpToPx(30))).build();
 
 		mChatMenuAdapter = new ChatMenuAdapter();

@@ -237,6 +237,7 @@ shareManage.addcomment = function (data, response) {
  ***************************************/
 shareManage.delete = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var sid = data.sid;
     var gsid = data.gsid;
     var location = data.location;
