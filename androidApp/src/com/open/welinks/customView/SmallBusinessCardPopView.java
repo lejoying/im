@@ -478,8 +478,7 @@ public class SmallBusinessCardPopView {
 			userHeadView.getLayoutParams().height = height;
 			userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 			userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
-			smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10))
-					.build();
+			smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
 		}
 
 		public void bindEvent() {
@@ -511,19 +510,16 @@ public class SmallBusinessCardPopView {
 							intent.putExtra("type", type);
 							thisActivity.startActivity(intent);
 						} else if (type.equals(TYPE_GROUP)) {
-							if (data.relationship.groups.contains(key)) {
-								Group group = data.relationship.groupsMap.get(key);
-								log.e(group.relation + "::::::::::::");
-								if (group == null || group.relation == null || "".equals(group.relation) || "join".equals(group.relation)) {
-									Intent intent = new Intent(thisActivity, ChatActivity.class);
-									intent.putExtra("id", key);
-									intent.putExtra("type", type);
-									thisActivity.startActivityForResult(intent, R.id.tag_second);
-								} else {
-									followGroup(key);
-								}
-							} else {
+							Group group = data.relationship.groupsMap.get(key);
+							if (group == null || group.relation == null || "".equals(group.relation)) {
 								followGroup(key);
+							} else if ("follow".equals(group.relation)) {
+								joinGroup(key);
+							} else {
+								Intent intent = new Intent(thisActivity, ChatActivity.class);
+								intent.putExtra("id", key);
+								intent.putExtra("type", type);
+								thisActivity.startActivityForResult(intent, R.id.tag_second);
 							}
 						} else if (type.equals(TYPE_BOARD)) {
 							Intent intent = new Intent(thisActivity, ChatActivity.class);
