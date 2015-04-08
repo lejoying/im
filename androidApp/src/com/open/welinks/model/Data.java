@@ -80,7 +80,7 @@ public class Data {
 
 		public String debugMode = "NONE";// NONE
 
-		public String sendBug = "NONE";// "NONE"
+		public String sendBug = "true";// "NONE"
 
 		public LocalData localData;
 
