@@ -35,7 +35,6 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.ImageScanActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -47,7 +46,6 @@ import com.open.welinks.customView.ShareView.onWeChatClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.TaskContainer_Share;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Boards.Comment;
 import com.open.welinks.model.Data.Boards.Score;
@@ -62,7 +60,6 @@ import com.open.welinks.model.ResponseHandlers.Share_scoreCallBack2;
 import com.open.welinks.model.SubData;
 import com.open.welinks.model.SubData.MessageShareContent;
 import com.open.welinks.model.SubData.SendShareMessage;
-import com.open.welinks.model.TaskContainer_Share.PostTask;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
@@ -443,36 +440,41 @@ public class ShareMessageDetailController {
 			log.e("此分享==null   异常");
 		} else {
 			final User currentUser = data.userInformation.currentUser;
-			// if (currentUser.phone.equals(shareMessage.phone)) {
-			Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
+			if (currentUser.phone.equals(shareMessage.phone)) {
+				Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
 
-				@Override
-				public void onClick(AlertInputDialog dialog) {
-					RequestParams params = new RequestParams();
-					HttpUtils httpUtils = new HttpUtils();
-					params.addBodyParameter("phone", currentUser.phone);
-					params.addBodyParameter("accessKey", currentUser.accessKey);
-					params.addBodyParameter("sid", sid);
-					params.addBodyParameter("gsid", gsid);
-					if (shareMessage.location != null && shareMessage.location.length >= 2) {
-						params.addBodyParameter("location", "[" + shareMessage.location[0] + "," + shareMessage.location[1] + "]");
+					@Override
+					public void onClick(AlertInputDialog dialog) {
+						RequestParams params = new RequestParams();
+						HttpUtils httpUtils = new HttpUtils();
+						params.addBodyParameter("phone", currentUser.phone);
+						params.addBodyParameter("accessKey", currentUser.accessKey);
+						params.addBodyParameter("sid", sid);
+						params.addBodyParameter("gsid", gsid);
+						if (shareMessage.location != null && shareMessage.location.length >= 2) {
+							params.addBodyParameter("location", "[" + shareMessage.location[0] + "," + shareMessage.location[1] + "]");
+						}
+						data = parser.check();
+						Board board = data.boards.boardsMap.get(sid);
+						if (board != null && board.shareMessagesOrder != null) {
+							board.shareMessagesOrder.remove(gsid);
+						}
+						// share.shareMessagesMap.remove(gsid);
+						data.boards.isModified = true;
+						taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
+						httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
+						Intent intent = new Intent();
+						intent.putExtra("key", gsid);
+						thisActivity.setResult(Activity.RESULT_OK, intent);
+						thisActivity.finish();
 					}
-					data = parser.check();
-					Board board = data.boards.boardsMap.get(sid);
-					if (board != null && board.shareMessagesOrder != null) {
-						board.shareMessagesOrder.remove(gsid);
-					}
-					// share.shareMessagesMap.remove(gsid);
-					data.boards.isModified = true;
-					taskManageHolder.viewManage.postNotifyView("ShareSubViewMessage");
-					httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
-					Intent intent = new Intent();
-					intent.putExtra("key", gsid);
-					thisActivity.setResult(Activity.RESULT_OK, intent);
-					thisActivity.finish();
+				}).show();
+			} else {
+				Toast.makeText(thisActivity, "您不是管理员,不能删除他人帖子.", Toast.LENGTH_SHORT).show();
+				if (thisView.menuOptionsView.getVisibility() == View.VISIBLE) {
+					thisView.menuOptionsView.setVisibility(View.GONE);
 				}
-			}).show();
-			// }
+			}
 		}
 	}
 

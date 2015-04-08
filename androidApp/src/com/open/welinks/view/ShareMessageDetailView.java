@@ -424,6 +424,10 @@ public class ShareMessageDetailView {
 				shareView.gsid = thisController.gsid;
 				shareView.content = thisController.textContent;
 			} else if (type == 2) {
+				this.decrementView.setVisibility(View.GONE);
+				this.incrementView.setVisibility(View.GONE);
+				this.scoreView.setVisibility(View.GONE);
+				// this.commentControlView.setVisibility(View.GONE);
 				this.scoreView.setText("0");
 				TextView textView = new TextView(thisActivity);
 				textView.setTextColor(Color.parseColor("#99000000"));
