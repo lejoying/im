@@ -205,7 +205,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void run() {
 				linkViewController();
-				thisController.onResume();
+				if (thisController != null)
+					thisController.onResume();
 			}
 		}).start();
 	}
@@ -222,7 +223,8 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		thisController.onDestroy();
+		if (thisController != null)
+			thisController.onDestroy();
 		super.onDestroy();
 	}
 
@@ -236,7 +238,8 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void finish() {
-		thisController.finish();
+		if (thisController != null)
+			thisController.finish();
 		// parser.saveDataToLocal();
 		super.finish();
 	}

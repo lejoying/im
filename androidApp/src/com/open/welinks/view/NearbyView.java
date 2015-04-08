@@ -54,8 +54,11 @@ import com.open.lib.OpenLooper.LoopCallback;
 import com.open.welinks.R;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.LBSStatus;
+import com.open.welinks.customView.Alert;
+import com.open.welinks.customView.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
+import com.open.welinks.customView.Alert.AlertInputDialog;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
@@ -246,18 +249,16 @@ public class NearbyView {
 			textView.setPadding(padding2 * 2, padding2, padding2 * 2, padding2);
 			backMaxView.addView(textView, textViewParams);
 
-			// this.shareMenuImage = new ImageView(thisActivity);
-			// this.shareMenuImage.setImageResource(R.drawable.button_modifygroupname);
-			// this.shareMenuImage.setColorFilter(Color.parseColor("#0099cd"));
-			// this.shareMenuImage.setAlpha(0.875f);
+			this.shareMenuImage = new ImageView(thisActivity);
+			this.shareMenuImage.setImageResource(R.drawable.button_modifygroupname);
+			this.shareMenuImage.setColorFilter(Color.parseColor("#0099cd"));
+			this.shareMenuImage.setAlpha(0.875f);
 			// int moreWidth = (int) (48 * this.metrics.density);
 			// RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(10, 10);
-			// int padding = (int) (5 * this.metrics.density);
-			// this.shareMenuImage.setPadding(padding, padding, padding, padding);
-			// this.shareMenuImage.setBackgroundResource(R.drawable.backview_background);
-			// this.rightContainer.addView(this.shareMenuImage);
-			// shareMenuImage.getLayoutParams().width = 10;
-			// shareMenuImage.getLayoutParams().height = 10;
+			int padding = (int) (5 * this.metrics.density);
+			this.shareMenuImage.setPadding(padding, padding, padding, padding);
+			this.shareMenuImage.setBackgroundResource(R.drawable.backview_background);
+			this.rightContainer.addView(this.shareMenuImage);
 			this.threeChoicesView.setButtonOneText("最新");
 			this.threeChoicesView.setButtonThreeText("最热");
 		}
@@ -1141,9 +1142,22 @@ public class NearbyView {
 
 		@Override
 		public void remove(final int which) {
-			data.userInformation.currentUser.commonUsedLocations.remove(which);
-			adapter.notifyDataSetChanged();
-			thisController.modifyUserCommonUsedLocations();
+			Location location = data.userInformation.currentUser.commonUsedLocations.get(which);
+			Alert.createDialog(thisActivity).setTitle("是否删除常用地址【" + location.remark + "】?").setOnConfirmClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					data.userInformation.currentUser.commonUsedLocations.remove(which);
+					adapter.notifyDataSetChanged();
+					thisController.modifyUserCommonUsedLocations();
+				}
+			}).setOnCancelClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					adapter.notifyDataSetChanged();
+				}
+			}).show();
 		}
 
 		@Override

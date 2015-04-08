@@ -90,6 +90,10 @@ public class BusinessCardController {
 
 	public void checkCardTypeAndRelation(String type, String key) {
 		parser.check();
+		if (data == null || data.userInformation == null || data.userInformation.currentUser == null || data.relationship == null) {
+			log.e("data数据异常");
+			thisActivity.finish();
+		}
 		if ("point".equals(type)) {
 			if (key.equals(data.userInformation.currentUser.phone)) {
 				thisView.status = Status.SELF;
