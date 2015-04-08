@@ -277,6 +277,8 @@ public class ShareMessageDetailView {
 
 		public User currentUser;
 
+		public String textContent;
+
 		public void initViews() {
 			this.cardView = mInflater.inflate(R.layout.share_detail_item, null);
 			this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
@@ -367,6 +369,7 @@ public class ShareMessageDetailView {
 					String type1 = shareContentItem.type;
 					if (type1.equals("text")) {
 						thisController.textContent = shareContentItem.detail;
+						textContent = shareContentItem.detail;
 						continue;
 					}
 					String imageFileName = shareContentItem.detail;
@@ -424,6 +427,10 @@ public class ShareMessageDetailView {
 				shareView.gsid = thisController.gsid;
 				shareView.content = thisController.textContent;
 			} else if (type == 2) {
+				this.decrementView.setVisibility(View.GONE);
+				this.incrementView.setVisibility(View.GONE);
+				this.scoreView.setVisibility(View.GONE);
+				// this.commentControlView.setVisibility(View.GONE);
 				this.scoreView.setText("0");
 				TextView textView = new TextView(thisActivity);
 				textView.setTextColor(Color.parseColor("#99000000"));

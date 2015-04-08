@@ -1,6 +1,8 @@
 package com.open.welinks.customView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -15,9 +17,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.sina.weibo.SinaWeibo.ShareParams;
 
+import com.open.lib.MyLog;
 import com.open.welinks.GroupListActivity;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
+import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.WeChatShareUtils;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
@@ -26,6 +36,9 @@ import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
 public class ShareView extends FrameLayout {
+
+	public String tag = "ShareView";
+	public MyLog log = new MyLog(tag, true);
 	private Context context;
 	private Activity activity;
 	// private LinearLayout layout_one, layout_two, layout_three;
@@ -39,6 +52,8 @@ public class ShareView extends FrameLayout {
 	public int RESULT_SHAREVIEW = 0x99;
 
 	public List<String> firstPath = new ArrayList<String>();
+
+	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
 	private enum Status {
 		square_group, friend_group, wechat_friend, wechat_circle, sina_weibo, qq_qzone
@@ -68,7 +83,18 @@ public class ShareView extends FrameLayout {
 	}
 
 	public class onWeChatClickListener {
+
+		// public ShareMessage shareMessage;
+		public String sid;
+		public String gsid;
+		public String phone;
+		public ArrayList<String> images;
+		public String content;
+
 		public void onWeChatClick() {
+		}
+
+		public void onWeiboClick() {
 		}
 	}
 
@@ -115,7 +141,8 @@ public class ShareView extends FrameLayout {
 					mWeChatClickListener.onWeChatClick();
 					shareToWechat(Status.wechat_circle);
 				} else if (view.equals(sina_weibo)) {
-
+					mWeChatClickListener.onWeiboClick();
+					showShare();
 				} else if (view.equals(qq_qzone)) {
 					shareToQQzone();
 				}
@@ -130,6 +157,53 @@ public class ShareView extends FrameLayout {
 		wechat_circle.setOnClickListener(mOnClickListener);
 		sina_weibo.setOnClickListener(mOnClickListener);
 		qq_qzone.setOnClickListener(mOnClickListener);
+	}
+
+	public void showShare() {
+		ShareSDK.initSDK(NearbyActivity.instance);
+		String url = "http://www.we-links.com/share/share.html?phone=" + this.mWeChatClickListener.phone + "&sid=" + this.mWeChatClickListener.sid + "&gsid=" + this.mWeChatClickListener.gsid;
+		ShareParams sp = new ShareParams();
+		String content = this.mWeChatClickListener.content;
+		if (content.length() > 100) {
+			content = content.substring(0, 100);
+		}
+		content += url;
+		sp.setText(content);
+		String key = null;
+		if (this.mWeChatClickListener.images.size() > 0) {
+			key = this.mWeChatClickListener.images.get(0);
+			sp.setImagePath((new File(taskManageHolder.fileHandler.sdcardImageFolder, key).getAbsolutePath()));
+		}
+		// log.e("image:" + key);
+
+		// String[] images = new String[this.mWeChatClickListener.images.size()];
+		// for (int i = 0; i < this.mWeChatClickListener.images.size(); i++) {
+		// String key = this.mWeChatClickListener.images.get(i);
+		// images[i] = (new File(taskManageHolder.fileHandler.sdcardImageFolder, key).getAbsolutePath());
+		// }
+		// this.mWeChatClickListener.images.toArray(images);
+		// sp.setImageArray(images);
+
+		Platform weibo = ShareSDK.getPlatform(SinaWeibo.NAME);
+		weibo.setPlatformActionListener(new PlatformActionListener() {
+
+			@Override
+			public void onError(Platform arg0, int arg1, Throwable arg2) {
+				log.e("weibo onError");
+			}
+
+			@Override
+			public void onComplete(Platform arg0, int arg1, HashMap<String, Object> arg2) {
+				log.e("weibo onComplete");
+			}
+
+			@Override
+			public void onCancel(Platform arg0, int arg1) {
+				log.e("weibo onCancel");
+			}
+		}); // 设置分享事件回调
+		// 执行图文分享
+		weibo.share(sp);
 	}
 
 	private void shareToQQzone() {
