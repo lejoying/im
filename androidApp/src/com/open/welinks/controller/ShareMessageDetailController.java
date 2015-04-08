@@ -162,7 +162,7 @@ public class ShareMessageDetailController {
 				if (thisView.imageView != null) {
 					WeChatBitmap = thisView.imageView.getDrawingCache();
 				}
-				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, sid, thisController.gsid);
+				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, thisController.sid, thisController.gsid);
 			}
 
 			@Override
