@@ -814,7 +814,10 @@ accountManage.modify = function (data, response) {
     function modifyLbsAccount(accountData) {
         var sex;
         var location;
-        if (accountData.longitude != null && accountData.longitude != "" && accountData.latitude != null && accountData.latitude != "") {
+
+        if (account.longitude != undefined && account.longitude != null && account.longitude != "" && account.latitude != undefined && account.latitude != null && account.latitude != "") {
+            location = JSON.stringify([parseFloat(account.longitude), parseFloat(account.latitude)]);
+        } else if (accountData.longitude != null && accountData.longitude != "" && accountData.latitude != null && accountData.latitude != "") {
             location = JSON.stringify([parseFloat(accountData.longitude), parseFloat(accountData.latitude)]);
         } else {
             location = "";
@@ -837,7 +840,7 @@ accountManage.modify = function (data, response) {
                     mainBusiness: encodeURI(accountData.mainBusiness || ""),
                     sex: sex,
                     age: accountData.age || 18,
-                    time: accountData.lastlogintime
+                    time: time
                 })
             }, success: function (info) {
                 try {
@@ -849,7 +852,7 @@ accountManage.modify = function (data, response) {
                     //    console.log("modify error--")
                     //}
                 } catch (e) {
-                    console.log(e+"---serverSetting.LBS_ACCOUNT_MODIFY");
+                    console.log(e + "---serverSetting.LBS_ACCOUNT_MODIFY");
                 }
             }
         });
