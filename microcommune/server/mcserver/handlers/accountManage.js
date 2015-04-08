@@ -117,7 +117,8 @@ accountManage.verifyphone = function (data, response) {
                 byScan: "checked",
                 byScanNearBy: "allowed",
                 sex: time / 2 == 0 ? "男" : "女",
-                userBackground: "userBackground.jpg"
+                userBackground: "userBackground.jpg",
+                createTime: new Date().getTime()
             };
             checkPhone(phone);
         }
@@ -726,6 +727,7 @@ accountManage.modify = function (data, response) {
                     if (accountData.status == "init") {
                         accountData.ID = ++accountID;
                         accountData.status = "active";
+                        accountData.createTime = new Date().getTime();
                         IDclient.set("ID", accountID, function (err, reply) {
                             if (err != null) {
                                 response.write(JSON.stringify({
