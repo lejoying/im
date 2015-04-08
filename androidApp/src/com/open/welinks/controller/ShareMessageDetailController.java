@@ -164,6 +164,21 @@ public class ShareMessageDetailController {
 				}
 				thisView.shareView.setWeChatContent(WeChatBitmap, textContent, shareMessage.phone, sid, thisController.gsid);
 			}
+
+			@Override
+			public void onWeiboClick() {
+				if (thisView.shareView != null) {
+					this.sid = thisController.sid;
+					this.gsid = thisController.gsid;
+					this.phone = thisController.shareMessage.phone;
+					if (thisView.body != null) {
+						this.images = thisView.body.imageList;
+						this.content = thisView.body.textContent;
+					}
+				} else {
+					Toast.makeText(thisActivity, "不能分享空帖子.", Toast.LENGTH_SHORT).show();
+				}
+			}
 		};
 	}
 
