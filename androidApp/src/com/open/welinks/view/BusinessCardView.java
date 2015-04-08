@@ -18,6 +18,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.BusinessCardController;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -142,7 +143,7 @@ public class BusinessCardView {
 			businessCard.id = user.id;
 			businessCard.icon = user.head;
 			businessCard.sex = user.sex;
-			businessCard.distance = "0";
+			businessCard.distance = Constant.DEFAULMINDISTANCESTRING;
 			businessCard.nickname = user.nickName;
 			businessCard.mainBusiness = user.mainBusiness;
 			businessCard.sex = user.sex;
