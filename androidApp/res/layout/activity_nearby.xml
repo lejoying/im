@@ -206,4 +206,79 @@
         android:scrollbars="none" >
     </ListView>
 
+    <RelativeLayout
+        android:id="@+id/menuOptions"
+        android:layout_width="146dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="48dp"
+        android:background="#999999"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@+id/optionLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/icon_color" />
+
+        <RelativeLayout
+            android:id="@+id/optionOne"
+            android:layout_width="146dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="1dp"
+            android:background="#eeeeee" >
+
+            <ImageView
+                android:id="@+id/optionOneImage"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30dp"
+                android:src="@drawable/confirm_stick"
+                android:tint="@color/icon_color" />
+
+            <TextView
+                android:id="@+id/optionOneText"
+                android:layout_width="116dp"
+                android:layout_height="47dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="分享"
+                android:textColor="@color/icon_color" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="48dp"
+            android:background="@color/icon_color" />
+
+        <RelativeLayout
+            android:id="@+id/optionTwo"
+            android:layout_width="146dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="49dp"
+            android:background="#eeeeee"
+            android:visibility="visible" >
+
+            <ImageView
+                android:id="@+id/optionTwoImage"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30dp"
+                android:src="@drawable/delete_message"
+                android:tint="@color/icon_color" />
+
+            <TextView
+                android:id="@+id/optionTwoText"
+                android:layout_width="116dp"
+                android:layout_height="47dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="删除"
+                android:textColor="@color/icon_color" />
+        </RelativeLayout>
+    </RelativeLayout>
+
 </RelativeLayout>

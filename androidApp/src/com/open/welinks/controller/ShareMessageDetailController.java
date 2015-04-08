@@ -421,6 +421,9 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("gsid", gsid);
 		params.addBodyParameter("option", option + "");
+		if (shareMessage.location != null && shareMessage.location.length >= 2) {
+			params.addBodyParameter("location", "[" + shareMessage.location[0] + "," + shareMessage.location[1] + "]");
+		}
 		Share_scoreCallBack2 callBack = responseHandlers.new Share_scoreCallBack2();
 		callBack.option = option;
 		httpUtils.send(HttpMethod.POST, API.SHARE_SCORE, params, callBack);

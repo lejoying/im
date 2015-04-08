@@ -56,18 +56,19 @@ public class LBSHandler {
 	}
 
 	public String pointDistance(String longitude, String latitude, String longitude2, String latitude2) {
-		String distance = GetLongDistance(checkNumber(longitude), checkNumber(latitude), checkNumber(longitude2), checkNumber(latitude2)) + "";
-		// LatLng latLng1 = new LatLng(checkNumber(longitude), checkNumber(latitude));
-		// LatLng latLng2 = new LatLng(checkNumber(longitude2), checkNumber(latitude2));
-		// String distance0 = AMapUtils.calculateLineDistance(latLng1, latLng2) + "";
-		// Log.e(tag, "distance0:      " + distance0);
-		// Log.e(tag, "distance:      " + distance);
-		if (distance.indexOf(".") != -1) {
-			if (distance.substring(distance.indexOf(".") + 1).length() > 2) {
-				distance = distance.substring(0, distance.indexOf(".") + 3);
+		double distance = GetLongDistance(checkNumber(longitude), checkNumber(latitude), checkNumber(longitude2), checkNumber(latitude2));
+		String distanceStr = "";
+		if (distance <= Constant.DEFAULMINDISTANCE) {
+			return Constant.DEFAULMINDISTANCESTRING;
+		}
+		distanceStr = String.valueOf(distance);
+		if (distanceStr.indexOf(".") != -1) {
+			if (distanceStr.substring(distanceStr.indexOf(".") + 1).length() > 2) {
+				distanceStr = distanceStr.substring(0, distanceStr.indexOf(".") + 3);
 			}
 		}
-		return distance;
+		distanceStr += "km";
+		return distanceStr;
 	}
 
 	String formatNumber(float num) {

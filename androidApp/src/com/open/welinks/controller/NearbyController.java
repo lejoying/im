@@ -55,9 +55,13 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
+import com.open.welinks.ClassificationRecommendationActivity;
+import com.open.welinks.CreateGroupStartActivity;
+import com.open.welinks.DynamicListActivity;
 import com.open.welinks.LoginActivity;
 import com.open.welinks.MainActivity;
 import com.open.welinks.R;
+import com.open.welinks.SearchFriendActivity;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.customListener.OnDownloadListener;
@@ -275,6 +279,7 @@ public class NearbyController {
 
 			@Override
 			public void onCameraChange(CameraPosition cameraPosition) {
+				thisView.changeMenuOptions(true);
 				LatLng mLatLng = cameraPosition.target;
 				thisView.changeAmapCircle(mLatLng.longitude, mLatLng.latitude);
 				next();
@@ -409,6 +414,8 @@ public class NearbyController {
 						Intent intent = new Intent(thisActivity, MainActivity.class);
 						thisActivity.startActivity(intent);
 					}
+				} else if (view.equals(thisView.releationMenuImage)) {
+					thisView.changeMenuOptions(false);
 				} else if (view.equals(thisView.positionView)) {
 					MarginLayoutParams params = (MarginLayoutParams) thisView.nearbyListView.getLayoutParams();
 					int topMarigin = params.topMargin;
@@ -418,9 +425,11 @@ public class NearbyController {
 						params.topMargin = (int) (84 * thisView.metrics.density);
 					}
 					thisView.nearbyListView.setLayoutParams(params);
+					thisView.changeMenuOptions(true);
 				} else if (view.equals(thisView.sortView) && isLogin(true)) {
 					thisView.changePopupWindow(false);
 					thisView.showAddressDialog();
+					thisView.changeMenuOptions(true);
 					// getCommentLocations();
 				} else if (view.equals(thisView.searChView)) {
 					Toast.makeText(thisActivity, "搜索", Toast.LENGTH_SHORT).show();
@@ -436,6 +445,7 @@ public class NearbyController {
 						thisView.changeAmapCircle(longitude, latitude);
 						thisView.changeScreenText();
 					}
+					thisView.changeMenuOptions(true);
 				} else if (view.equals(thisView.ico_map_pin2)) {
 					if (thisView.img_btn_set_start.getVisibility() == View.VISIBLE) {
 						thisView.img_btn_set_start.startAnimation(animationNearLeft);
@@ -449,6 +459,7 @@ public class NearbyController {
 					tempSearchRadius = searchRadius;
 					tempSearchTime = searchTime;
 					thisView.changeScreenPopupWindow();
+					thisView.changeMenuOptions(true);
 				} else if (view.equals(thisView.screenConfirm)) {
 					thisView.currentPosition = 0;
 					thisView.nextPosition = 0;
@@ -492,8 +503,6 @@ public class NearbyController {
 					thisView.changePopupWindow(false);
 					thisView.img_btn_set_start.setVisibility(View.VISIBLE);
 					thisView.img_btn_set_start.startAnimation(animationNearRight);
-				} else if (view.equals(thisView.releationMenuImage)) {
-
 				} else if (view.equals(thisView.img_btn_set_start) && isLogin(true)) {
 					Alert.createInputDialog(thisActivity).setTitle("请输入地址备注信息").setInputText(title).setInputHint("请输入地址备注").setDescription("当前位置：" + address).setOnConfirmClickListener(new OnDialogClickListener() {
 
@@ -529,6 +538,24 @@ public class NearbyController {
 					intent.putExtra("sid", Constant.SQUARE_SID);
 					intent.putExtra("source", 2);
 					thisActivity.startActivityForResult(intent, RESULTCODESHARERELEASE);
+				} else if (view.equals(thisView.optionOne)) {
+					if (status == LBSStatus.account) {
+						Intent intent = new Intent(thisActivity, SearchFriendActivity.class);
+						thisActivity.startActivity(intent);
+					} else if (status == LBSStatus.group) {
+						Intent intent = new Intent(thisActivity, CreateGroupStartActivity.class);
+						thisActivity.startActivity(intent);
+					}
+				} else if (view.equals(thisView.optionTwo)) {
+					if (status == LBSStatus.account) {
+						Intent intent = new Intent(thisActivity, DynamicListActivity.class);
+						intent.putExtra("type", 1);
+						thisActivity.startActivity(intent);
+
+					} else if (status == LBSStatus.group) {
+						Intent intent = new Intent(thisActivity, ClassificationRecommendationActivity.class);
+						thisActivity.startActivity(intent);
+					}
 				}
 			}
 		};
@@ -537,7 +564,7 @@ public class NearbyController {
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
 				if (view.equals(thisView.nearbyListView)) {
-
+					thisView.changeMenuOptions(true);
 					int id = event.getAction();
 					if (id == MotionEvent.ACTION_DOWN) {
 						thisView.status.state = thisView.status.Down;
@@ -622,6 +649,7 @@ public class NearbyController {
 		mOnItemClickListener = thisView.threeChoicesView.new OnItemClickListener() {
 			@Override
 			public void onButtonCilck(int position) {
+				thisView.changeMenuOptions(true);
 				if (position == 3) {
 					if (status == LBSStatus.newest) {
 						status = LBSStatus.hottest;
@@ -634,6 +662,7 @@ public class NearbyController {
 					thisView.nextPosition = 0;
 					// thisView.openLooper.start();
 					thisView.progressView.setTranslationX(thisView.currentPosition);
+					mInfomations.clear();
 					thisView.nearbyListView.setSelection(0);
 					searchNearbyLBS(true);
 				} else if (position == 2) {
@@ -649,6 +678,7 @@ public class NearbyController {
 					thisView.nextPosition = 0;
 					// thisView.openLooper.start();
 					thisView.progressView.setTranslationX(thisView.currentPosition);
+					mInfomations.clear();
 					thisView.nearbyListView.setSelection(0);
 					searchNearbyLBS(true);
 				}
@@ -774,8 +804,8 @@ public class NearbyController {
 
 	public void bindEvent() {
 		thisView.threeChoicesView.setOnItemClickListener(mOnItemClickListener);
-		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.nearbyListView.setOnScrollListener(mOnScrollListener);
+		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.positionView.setOnClickListener(this.mOnClickListener);
 		thisView.sortView.setOnClickListener(this.mOnClickListener);
 		thisView.searChView.setOnClickListener(this.mOnClickListener);
@@ -796,15 +826,19 @@ public class NearbyController {
 		thisView.timeTwo.setOnClickListener(this.mOnClickListener);
 		thisView.timeThree.setOnClickListener(this.mOnClickListener);
 		thisView.timeFour.setOnClickListener(this.mOnClickListener);
+		thisView.rightContainer.setOnClickListener(this.mOnClickListener);
 		thisView.nearbyListView.setOnItemClickListener(mListOnItemClickListener);
 		thisView.nearbyListView.setOnTouchListener(mOnTouchListener);
 		if (thisView.shareMenuImage != null)
 			thisView.shareMenuImage.setOnClickListener(this.mOnClickListener);
 		if (thisView.releationMenuImage != null)
 			thisView.releationMenuImage.setOnClickListener(this.mOnClickListener);
-		if (thisView.singleButton != null) {
+		if (thisView.singleButton != null)
 			thisView.singleButton.setOnClickListener(mOnClickListener);
-		}
+		if (thisView.optionOne != null)
+			thisView.optionOne.setOnClickListener(this.mOnClickListener);
+		if (thisView.optionTwo != null)
+			thisView.optionTwo.setOnClickListener(this.mOnClickListener);
 		mGeocodeSearch.setOnGeocodeSearchListener(mOnGeocodeSearchListener);
 		thisView.mAMap.setOnCameraChangeListener(mOnCameraChangeListener);
 	}
@@ -880,11 +914,11 @@ public class NearbyController {
 						nowpage++;
 					}
 					for (Point point : response.resultPoints) {
-						if (point.data.gsid != null && (thisController.status == LBSStatus.newest ||thisController.status == LBSStatus.hottest)) {
+						if (point.data.gsid != null && (thisController.status == LBSStatus.newest || thisController.status == LBSStatus.hottest)) {
 							processingShareData(point);
-						} else if (point.data.sex != null) {
+						} else if (point.data.sex != null && thisController.status == LBSStatus.account) {
 							processingAccountData(point);
-						} else if (point.data.gid != null) {
+						} else if (point.data.gid != null && thisController.status == LBSStatus.group) {
 							processingGroupData(point);
 						}
 					}

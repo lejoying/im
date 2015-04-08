@@ -353,7 +353,7 @@ public class BusinessCardView {
 			shareTxView.setText(thisActivity.getString(R.string.business_my_share));
 		}
 		ageView.setText(businessCard.age);
-		distanceView.setText(businessCard.distance + "km");
+		distanceView.setText(businessCard.distance);
 		nickNameView.setText(businessCard.nickname);
 		idView.setText(String.valueOf(businessCard.id));
 		businessView.setText(businessCard.mainBusiness);

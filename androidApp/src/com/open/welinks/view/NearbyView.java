@@ -57,6 +57,7 @@ import com.open.welinks.controller.NearbyController.LBSStatus;
 import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.customView.ThreeChoicesView;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Score;
 import com.open.welinks.model.Data.Boards.ShareMessage;
@@ -134,6 +135,10 @@ public class NearbyView {
 	public ImageView ico_map_pin_shadow2;
 	public TextView img_btn_set_start;
 
+	public View menuOptions, optionOne, optionTwo;
+	public TextView optionOneText, optionTwoText;
+	public ImageView optionOneImage, optionTwoImage;
+
 	public View progressView;
 
 	public void initView() {
@@ -177,6 +182,14 @@ public class NearbyView {
 		this.ico_map_pin_shadow2 = (ImageView) thisActivity.findViewById(R.id.ico_map_pin_shadow2);
 		this.img_btn_set_start = (TextView) thisActivity.findViewById(R.id.img_btn_set_start);
 
+		this.menuOptions = thisActivity.findViewById(R.id.menuOptions);
+		this.optionOne = thisActivity.findViewById(R.id.optionOne);
+		this.optionTwo = thisActivity.findViewById(R.id.optionTwo);
+		this.optionOneImage = (ImageView) thisActivity.findViewById(R.id.optionOneImage);
+		this.optionTwoImage = (ImageView) thisActivity.findViewById(R.id.optionTwoImage);
+		this.optionOneText = (TextView) thisActivity.findViewById(R.id.optionOneText);
+		this.optionTwoText = (TextView) thisActivity.findViewById(R.id.optionTwoText);
+
 		int width = (int) (this.metrics.density * 48);
 
 		RelativeLayout.LayoutParams centerContainerParams = (LayoutParams) this.centerContainer.getLayoutParams();
@@ -210,15 +223,15 @@ public class NearbyView {
 			backImageViewParams.height = width;
 
 			this.releationMenuImage = new ImageView(thisActivity);
-			this.releationMenuImage.setImageResource(R.drawable.chat_add_on);
+			this.releationMenuImage.setImageResource(R.drawable.chat_add_off);
 			this.releationMenuImage.setColorFilter(Color.parseColor("#0099cd"));
 			this.releationMenuImage.setAlpha(0.875f);
-			// int moreWidth = (int) (53 * this.metrics.density);
-			// RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
-			// int padding = (int) (5 * this.metrics.density);
-			// this.releationMenuImage.setPadding(padding, padding, padding, padding);
-			// this.releationMenuImage.setBackgroundResource(R.drawable.backview_background);
-			// this.rightContainer.addView(this.releationMenuImage, menuImageParams);
+			int moreWidth = (int) (29 * this.metrics.density);
+			RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, moreWidth);
+			int padding = (int) (5 * this.metrics.density);
+			this.releationMenuImage.setBackgroundResource(R.drawable.backview_background);
+			this.rightContainer.addView(this.releationMenuImage, menuImageParams);
+			this.rightContainer.setPadding(padding, padding, 3 * padding, padding);
 			this.threeChoicesView.setButtonOneText("附近的群");
 			this.threeChoicesView.setButtonThreeText("附近的人");
 		} else {
@@ -233,16 +246,18 @@ public class NearbyView {
 			textView.setPadding(padding2 * 2, padding2, padding2 * 2, padding2);
 			backMaxView.addView(textView, textViewParams);
 
-			this.shareMenuImage = new ImageView(thisActivity);
-			this.shareMenuImage.setImageResource(R.drawable.button_modifygroupname);
-			this.shareMenuImage.setColorFilter(Color.parseColor("#0099cd"));
-			this.shareMenuImage.setAlpha(0.875f);
-			int moreWidth = (int) (53 * this.metrics.density);
-			RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(moreWidth, width);
-			int padding = (int) (5 * this.metrics.density);
-			this.shareMenuImage.setPadding(padding, padding, padding, padding);
-			this.shareMenuImage.setBackgroundResource(R.drawable.backview_background);
-			this.rightContainer.addView(this.shareMenuImage, menuImageParams);
+			// this.shareMenuImage = new ImageView(thisActivity);
+			// this.shareMenuImage.setImageResource(R.drawable.button_modifygroupname);
+			// this.shareMenuImage.setColorFilter(Color.parseColor("#0099cd"));
+			// this.shareMenuImage.setAlpha(0.875f);
+			// int moreWidth = (int) (48 * this.metrics.density);
+			// RelativeLayout.LayoutParams menuImageParams = new RelativeLayout.LayoutParams(10, 10);
+			// int padding = (int) (5 * this.metrics.density);
+			// this.shareMenuImage.setPadding(padding, padding, padding, padding);
+			// this.shareMenuImage.setBackgroundResource(R.drawable.backview_background);
+			// this.rightContainer.addView(this.shareMenuImage);
+			// shareMenuImage.getLayoutParams().width = 10;
+			// shareMenuImage.getLayoutParams().height = 10;
 			this.threeChoicesView.setButtonOneText("最新");
 			this.threeChoicesView.setButtonThreeText("最热");
 		}
@@ -463,6 +478,8 @@ public class NearbyView {
 						distance += ".00";
 					}
 					holder.distanceView.setText(distance + "km");
+				} else if (message.distance <= Constant.DEFAULMINDISTANCE) {
+					holder.distanceView.setText(Constant.DEFAULMINDISTANCESTRING);
 				} else {
 					holder.distanceView.setText((int) message.distance + "m");
 				}
@@ -833,6 +850,8 @@ public class NearbyView {
 					distanceStr += ".00";
 				}
 				holder.distance.setText(distanceStr + "km");
+			} else if (distance <= Constant.DEFAULMINDISTANCE) {
+				holder.distance.setText(Constant.DEFAULMINDISTANCESTRING);
 			} else {
 				holder.distance.setText(distance + "m");
 			}
@@ -1174,5 +1193,29 @@ public class NearbyView {
 			ampCircle.setVisible(true);
 		}
 
+	}
+
+	public void changeMenuOptions(boolean setGone) {
+		if (setGone) {
+			menuOptions.setVisibility(View.GONE);
+		} else {
+			if (menuOptions.getVisibility() == View.VISIBLE) {
+				menuOptions.setVisibility(View.GONE);
+			} else {
+				if (thisController.status == LBSStatus.account) {
+					// optionLine
+					optionOneText.setText("精确查找");
+					optionTwoText.setText("动态列表");
+					optionOneImage.setImageResource(R.drawable.search_bar_icon_normal);
+					optionTwoImage.setImageResource(R.drawable.group);
+				} else if (thisController.status == LBSStatus.group) {
+					optionOneText.setText("新建群组");
+					optionTwoText.setText("分类推荐");
+					optionOneImage.setImageResource(R.drawable.chat_add_off);
+					optionTwoImage.setImageResource(R.drawable.sidebar_icon_category_normal);
+				}
+				menuOptions.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 }

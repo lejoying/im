@@ -356,7 +356,7 @@ public class SmallBusinessCardPopView {
 				userAgeView.setBackgroundResource(R.drawable.personalinfo_female);
 				listTitle.setText("你要对她做什么？");
 			}
-			distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, longitude, latitude) + "km");
+			distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, longitude, latitude));
 			if (lastLoginTime != null && !"".equals(lastLoginTime)) {
 				lastLoginTimeView.setText(DateUtil.getTime(Long.valueOf(lastLoginTime)));
 			} else {
@@ -732,7 +732,7 @@ public class SmallBusinessCardPopView {
 				if (response.提示信息.equals("获取用户信息成功")) {
 					if (cardView.key.equals(phone)) {
 						User user = data.userInformation.currentUser;
-						cardView.distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, String.valueOf(response.location[0]), String.valueOf(response.location[1])) + "km");
+						cardView.distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, String.valueOf(response.location[0]), String.valueOf(response.location[1])));
 						cardView.lastLoginTimeView.setText(DateUtil.getTime(response.time));
 						if (phone.equals(user.phone)) {
 							user.lastLoginTime = String.valueOf(response.time);
