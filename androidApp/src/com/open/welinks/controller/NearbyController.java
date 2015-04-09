@@ -143,7 +143,6 @@ public class NearbyController {
 	public NearbyController(Activity thisActivity) {
 		thisController = this;
 		this.thisActivity = thisActivity;
-		// TODO
 		if (isLogin(false)) {
 			getContacts();
 		}
@@ -549,7 +548,7 @@ public class NearbyController {
 				} else if (view.equals(thisView.optionTwo)) {
 					if (status == LBSStatus.account) {
 						Intent intent = new Intent(thisActivity, DynamicListActivity.class);
-						intent.putExtra("type", 1);
+						intent.putExtra("type", 3);
 						thisActivity.startActivity(intent);
 
 					} else if (status == LBSStatus.group) {

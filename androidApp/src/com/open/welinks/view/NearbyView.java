@@ -883,10 +883,7 @@ public class NearbyView {
 		mapView.onResume();
 		if (thisController.mLocationManagerProxy != null && thisController.mAMapLocationListener != null)
 			thisController.mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 1000, thisController.mAMapLocationListener);
-		// if (thisController.latitude != 0 && thisController.longitude != 0) {
-		// thisController.nowpage = 0;
-		// thisController.searchNearbyLBS(false);
-		// }
+		changeMenuOptions(true);
 	}
 
 	public void onPause() {
@@ -1211,24 +1208,27 @@ public class NearbyView {
 
 	public void changeMenuOptions(boolean setGone) {
 		if (setGone) {
-			menuOptions.setVisibility(View.GONE);
-		} else {
-			if (menuOptions.getVisibility() == View.VISIBLE) {
+			if (menuOptions != null)
 				menuOptions.setVisibility(View.GONE);
-			} else {
-				if (thisController.status == LBSStatus.account) {
-					// optionLine
-					optionOneText.setText("精确查找");
-					optionTwoText.setText("动态列表");
-					optionOneImage.setImageResource(R.drawable.search_bar_icon_normal);
-					optionTwoImage.setImageResource(R.drawable.group);
-				} else if (thisController.status == LBSStatus.group) {
-					optionOneText.setText("新建群组");
-					optionTwoText.setText("分类推荐");
-					optionOneImage.setImageResource(R.drawable.chat_add_off);
-					optionTwoImage.setImageResource(R.drawable.sidebar_icon_category_normal);
+		} else {
+			if (menuOptions != null) {
+				if (menuOptions.getVisibility() == View.VISIBLE) {
+					menuOptions.setVisibility(View.GONE);
+				} else {
+					if (thisController.status == LBSStatus.account) {
+						// optionLine
+						optionOneText.setText("精确查找");
+						optionTwoText.setText("动态列表");
+						optionOneImage.setImageResource(R.drawable.search_bar_icon_normal);
+						optionTwoImage.setImageResource(R.drawable.group);
+					} else if (thisController.status == LBSStatus.group) {
+						optionOneText.setText("新建群组");
+						optionTwoText.setText("分类推荐");
+						optionOneImage.setImageResource(R.drawable.chat_add_off);
+						optionTwoImage.setImageResource(R.drawable.sidebar_icon_category_normal);
+					}
+					menuOptions.setVisibility(View.VISIBLE);
 				}
-				menuOptions.setVisibility(View.VISIBLE);
 			}
 		}
 	}

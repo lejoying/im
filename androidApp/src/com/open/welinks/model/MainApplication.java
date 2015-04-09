@@ -7,6 +7,8 @@ import com.open.welinks.service.ExceptionService;
 
 public class MainApplication extends Application {
 
+	public Data data = Data.getInstance();
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
