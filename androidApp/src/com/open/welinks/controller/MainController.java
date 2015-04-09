@@ -350,6 +350,7 @@ public class MainController {
 			Log.d(tag, "Activity on touch down");
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
+			log.e(thisView.activityStatus.state + "---ACTION_DOWN");
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
 				thisView.messagesSubView.messageListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
@@ -375,6 +376,7 @@ public class MainController {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 
+			log.e(thisView.activityStatus.state + "---ACTION_UP");
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
 				messagesSubController.onSingleTapUp(event);
 				thisView.messagesSubView.messageListBody.onTouchUp(event);
@@ -382,11 +384,12 @@ public class MainController {
 				friendsSubController.onSingleTapUp(event);
 				thisView.friendsSubView.friendListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
-				thisView.squareSubView.locationListBody.onTouchUp(event);
 				squareSubController.onSingleTapUp(event);
+				thisView.squareSubView.locationListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onSingleTapUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
+
 			}
 		}
 		mGesture.onTouchEvent(event);

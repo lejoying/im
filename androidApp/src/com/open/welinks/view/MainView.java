@@ -18,6 +18,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.PagerBody;
@@ -30,6 +31,7 @@ import com.open.welinks.model.Data;
 public class MainView {
 
 	public String tag = "MainView";
+	public MyLog log = new MyLog(tag, true);
 
 	public Data data = Data.getInstance();
 
@@ -236,27 +238,31 @@ public class MainView {
 		this.thisView.messagesSubView.initViews();
 		this.thisView.friendsSubView.initViews();
 		this.thisView.meSubView.initViews();
+	}
 
+	public void recordPage() {
 		String currentFunctionPage = data.localStatus.localData.currentFunctionPage;
 		if (currentFunctionPage != null && !"".equals(currentFunctionPage)) {
 			if ("share".equals(currentFunctionPage)) {
 				thisView.mainPagerBody.active();
 				thisView.messages_friends_me_PagerBody.inActive();
 				thisView.mainPagerBody.flipTo(0);
-			} else if ("square".equals(currentFunctionPage)) {
-				thisView.mainPagerBody.active();
-				thisView.messages_friends_me_PagerBody.inActive();
-				thisView.mainPagerBody.flipTo(1);
+				Log.e("AAA", "share");
 			} else {
-				thisView.mainPagerBody.active();
-				thisView.messages_friends_me_PagerBody.inActive();
-				thisView.mainPagerBody.flipTo(2);
+				Log.e("AAA", "Me");
+				thisView.mainPagerBody.inActive();
+				thisView.messages_friends_me_PagerBody.active();
+				thisView.mainPagerBody.flipTo(1);
 				if ("message".equals(currentFunctionPage)) {
-					thisView.messages_friends_me_PagerBody.flipTo(0);
+					thisView.messagesMenuView.performClick();
+					thisView.messagesSubView.messageListBody.active();
 				} else if ("friend".equals(currentFunctionPage)) {
-					thisView.messages_friends_me_PagerBody.flipTo(1);
+					thisView.friendsMenuView.performClick();
+					// thisView.messages_friends_me_PagerBody.flipTo(1);
+					thisView.friendsSubView.friendListBody.active();
 				} else if ("me".equals(currentFunctionPage)) {
-					thisView.messages_friends_me_PagerBody.flipTo(2);
+					thisView.meMenuView.performClick();
+					// thisView.messages_friends_me_PagerBody.flipTo(2);
 				}
 			}
 		}
@@ -298,16 +304,16 @@ public class MainView {
 				// shareMenuImageView.setImageResource(R.drawable.group);
 				// messages_friends_me_menuImageView.setImageResource(R.drawable.me);
 				// }
-				else if (variable == 1) {
-					squareMenuImageView.setImageResource(R.drawable.square);
-					shareMenuImageView.setImageResource(R.drawable.group);
-					messages_friends_me_menuImageView.setImageResource(R.drawable.me1);
-					if (lastOnFlipingIndex == 1) {
-						Log.d(tag, "bodyTag onFliping:" + variable + "  lastOnFlipingIndex: " + lastOnFlipingIndex);
-						switchTo2();
-					}
-					lastOnFlipingIndex = -1;
-				}
+				// else if (variable == 1) {
+				// squareMenuImageView.setImageResource(R.drawable.square);
+				// shareMenuImageView.setImageResource(R.drawable.group);
+				// messages_friends_me_menuImageView.setImageResource(R.drawable.me1);
+				// if (lastOnFlipingIndex == 1) {
+				// Log.d(tag, "bodyTag onFliping:" + variable + "  lastOnFlipingIndex: " + lastOnFlipingIndex);
+				// switchTo2();
+				// }
+				// lastOnFlipingIndex = -1;
+				// }
 
 			}
 		}
@@ -322,20 +328,23 @@ public class MainView {
 				thisView.messagesSubView.messageListBody.active();
 				thisView.friendsSubView.friendListBody.inActive();
 				thisView.squareSubView.locationListBody.inActive();
-
+				data.localStatus.localData.currentFunctionPage = "message";
+				log.e("-message-111");
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 
 				thisView.messagesSubView.messageListBody.inActive();
 				thisView.friendsSubView.friendListBody.active();
 				thisView.squareSubView.locationListBody.inActive();
-
+				data.localStatus.localData.currentFunctionPage = "friend";
+				log.e("-friend-111");
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
 
 				thisView.messagesSubView.messageListBody.inActive();
 				thisView.friendsSubView.friendListBody.inActive();
 				thisView.squareSubView.locationListBody.inActive();
-
+				data.localStatus.localData.currentFunctionPage = "me";
+				log.e("-me-111");
 			}
 			squareMenuImageView.setImageResource(R.drawable.square);
 			shareMenuImageView.setImageResource(R.drawable.group);
@@ -344,6 +353,7 @@ public class MainView {
 
 		@Override
 		public void onFixed(String bodyTag, float variable) {
+			log.e(bodyTag + "---" + variable);
 			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
@@ -353,6 +363,7 @@ public class MainView {
 					thisView.friendsSubView.friendListBody.inActive();
 					thisView.squareSubView.locationListBody.inActive();
 					data.localStatus.localData.currentFunctionPage = "message";
+					log.e("-message-");
 				} else if (variable == 1) {
 					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
 					thisView.activityStatus.subState = thisView.activityStatus.FRIENDS;
@@ -361,6 +372,7 @@ public class MainView {
 					thisView.friendsSubView.friendListBody.active();
 					thisView.squareSubView.locationListBody.inActive();
 					data.localStatus.localData.currentFunctionPage = "friend";
+					log.e("-friend-");
 				} else if (variable == 2) {
 					thisView.activityStatus.state = thisView.activityStatus.ME;
 					thisView.activityStatus.subState = thisView.activityStatus.ME;
@@ -369,11 +381,13 @@ public class MainView {
 					thisView.friendsSubView.friendListBody.inActive();
 					thisView.squareSubView.locationListBody.inActive();
 					data.localStatus.localData.currentFunctionPage = "me";
+					log.e("-me-");
 				}
 			} else if (bodyTag.equals("mainPagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.SHARE;
-
+					
+					thisView.squareSubView.locationListBody.active();
 					thisView.messagesSubView.messageListBody.inActive();
 					thisView.friendsSubView.friendListBody.inActive();
 					thisView.squareSubView.locationListBody.inActive();
@@ -382,6 +396,7 @@ public class MainView {
 					shareMenuImageView.setImageResource(R.drawable.group);
 					messages_friends_me_menuImageView.setImageResource(R.drawable.me);
 					data.localStatus.localData.currentFunctionPage = "share";
+					log.e("-share-");
 				} else if (variable == 1) {
 					switchTo2();
 				}
