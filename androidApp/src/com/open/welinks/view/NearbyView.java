@@ -665,6 +665,10 @@ public class NearbyView {
 				}
 			}
 		}
+		if (layout.getParent() != null) {
+			((ViewGroup) layout.getParent()).removeView(layout);
+			// layout.getParent().recomputeViewAttributes(layout);
+		}
 		try {
 			container.addView(layout);
 		} catch (Exception e) {

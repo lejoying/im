@@ -374,7 +374,8 @@ public class ShareListView {
 				}
 			}
 			if (layout.getParent() != null) {
-				layout.getParent().recomputeViewAttributes(layout);
+				((ViewGroup) layout.getParent()).removeView(layout);
+				// layout.getParent().recomputeViewAttributes(layout);
 			}
 			try {
 				container.addView(layout);

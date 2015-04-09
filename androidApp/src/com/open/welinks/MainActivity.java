@@ -123,6 +123,7 @@ public class MainActivity extends Activity {
 		thisView.initViews();
 		thisController.oncreate();
 		thisController.bindEvent();
+		thisView.recordPage();
 
 		this.islinked = true;
 	}
