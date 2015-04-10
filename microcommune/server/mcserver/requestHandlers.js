@@ -245,6 +245,10 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.follow(data, response);
         });
+    } else if (operation == "removegroupfromcircle") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.removegroupfromcircle(data, response);
+        });
     }
 
 

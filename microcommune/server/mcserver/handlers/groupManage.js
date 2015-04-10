@@ -1772,6 +1772,7 @@ groupManage.modifygroupcircle = function (data, response) {
                     "提示信息": "修改群组分组失败",
                     "失败原因": "数据异常"
                 }), response);
+                response.end();
                 console.error(error);
             } else if (results.length > 0) {
                 var pop = results.pop();
@@ -1813,11 +1814,13 @@ groupManage.modifygroupcircle = function (data, response) {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改群组分组成功"
                 }), response);
+                response.end();
             } else {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改群组分组失败",
                     "失败原因": "用户不存在"
                 }), response);
+                response.end();
             }
         });
     }
@@ -2037,7 +2040,69 @@ groupManage.movegroupstocircle = function (data, response) {
     }
 }
 
-
+groupManage.removegroupfromcircle = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var rid = data.rid;
+    var gid = data.gid;
+    if (verifyEmpty.verifyEmpty(data, [phone, rid, gid], response)) {
+        removegroup();
+    }
+    function removegroup() {
+        var query = [
+            "MATCH (account:Account{phone:{phone}})",
+            "RETURN account"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组分组失败",
+                    "失败原因": "数据异常"
+                }), response);
+                response.end();
+                console.error(error);
+            } else if (results.length > 0) {
+                var pop = results.pop();
+                var accountNode = pop.account;
+                var accountData = accountNode.data;
+                var groupCirclesOrderString = JSON.parse(accountData.groupCirclesOrderString);
+                var newGroupCircle = [];
+                for (var index in groupCirclesOrderString) {
+                    var groupCircle = groupCirclesOrderString[index];
+                    if (groupCircle.rid == rid) {
+                        var oldGroupCircle = groupCircle.groups;
+                        for (var index1 in oldGroupCircle) {
+                            var group = oldGroupCircle[index1];
+                            if (group != gid) {
+                                newGroupCircle.push(group);
+                            }
+                        }
+                        groupCirclesOrderString[index].groups = newGroupCircle;
+                    }
+                }
+                accountData.groupCirclesOrderString = JSON.stringify(groupCirclesOrderString);
+                accountNode.save(function (err, node) {
+                    if (err) {
+                        console.info(err);
+                    }
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组分组成功"
+                }), response);
+                response.end();
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组分组失败",
+                    "失败原因": "用户不存在"
+                }), response);
+                response.end();
+            }
+        });
+    }
+}
 groupManage.follow = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;

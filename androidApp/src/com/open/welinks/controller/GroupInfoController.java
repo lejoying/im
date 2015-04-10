@@ -43,6 +43,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Relationship.GroupCircle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -419,11 +420,13 @@ public class GroupInfoController {
 
 	public void resetShareGroup() {
 		parser.check();
-		String gid = data.localStatus.localData.currentSelectedGroup;
+		String gid = String.valueOf(currentGroup.gid);
 		data.relationship.groups.remove(gid);
 		data.localStatus.localData.currentSelectedGroup = "";
 		if (viewManage.shareSubView != null) {
 			viewManage.shareSubView.setGroupsDialogContent(null);
+		} else {
+			return;
 		}
 		if (data.relationship.groups.size() != 0) {
 			data.localStatus.localData.currentSelectedGroup = data.relationship.groups.get(0);
@@ -441,11 +444,20 @@ public class GroupInfoController {
 		}
 		viewManage.shareSubView.shareMessageListBody.y = 0;
 		data.relationship.isModified = true;
-		viewManage.shareSubView.showShareMessages();
 		List<String> subtractMembers = new ArrayList<String>();
 		subtractMembers.add(data.userInformation.currentUser.phone);
 		String subtractMembersStr = gson.toJson(subtractMembers);
+		String groupCircleId = "";
+		for (GroupCircle circle : data.relationship.groupCirclesMap.values()) {
+			if (circle.groups.remove(gid)) {
+				groupCircleId = String.valueOf(circle.rid);
+				break;
+			}
+		}
+		viewManage.shareSubView.setGroupsDialogContent(data.relationship.groupCirclesMap.get(groupCircleId));
+		viewManage.shareSubView.showShareMessages();
 		modifyGroupMembers(API.GROUP_REMOVEMEMBERS, subtractMembersStr, responseHandlers.removeMembersCallBack);
+		removeGroupFromCircle(groupCircleId, gid);
 	}
 
 	public void modifyGroupMembers(String url, String membersContentString, RequestCallBack<String> callBack) {
@@ -458,6 +470,19 @@ public class GroupInfoController {
 		params.addBodyParameter("members", membersContentString);
 
 		httpUtils.send(HttpMethod.POST, url, params, callBack);
+	}
+
+	public void removeGroupFromCircle(String rid, String gid) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", gid);
+		params.addBodyParameter("rid", rid);
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_REMOVEGROUPFROMCIRCLE, params, responseHandlers.group_removegroupfromcircle);
+
 	}
 
 	public void bindEvent() {

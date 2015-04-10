@@ -99,6 +99,7 @@ public class API {
 	 * http://www.we-links.com/api2/group/follow 关注群组
 	 */
 	public static String GROUP_FOLLOW = API_DOMAIN + "api2/group/follow";
+	public static String GROUP_REMOVEGROUPFROMCIRCLE = API_DOMAIN + "api2/group/removegroupfromcircle";
 
 	// label
 	/**
