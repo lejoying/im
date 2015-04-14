@@ -1012,15 +1012,21 @@ public class NearbyController {
 		friend.phone = point.data.phone;
 		friend.age = point.data.age;
 		double[] location = point.location;
-		friend.longitude = String.valueOf(location[0]);
-		friend.latitude = String.valueOf(location[1]);
-		friend.lastLoginTime = String.valueOf(point.data.time);
+		friend.longitude = location[0] + "";
+		friend.latitude = location[1] + "";
+		friend.lastLoginTime = point.data.time + "";
 		friend.distance = (int) point.distance;
 
+		User currentUser = data.userInformation.currentUser;
+		if (friend.phone.equals(currentUser.phone)) {
+			currentUser.lastLoginTime = point.data.time + "";
+			currentUser.longitude = location[0] + "";
+			currentUser.latitude = location[1] + "";
+			data.userInformation.isModified = true;
+		}
 		if (!data.relationship.friendsMap.containsKey(friend.phone)) {
 			data.relationship.friendsMap.put(friend.phone, friend);
 		}
-
 		mInfomations.add(friend);
 	}
 

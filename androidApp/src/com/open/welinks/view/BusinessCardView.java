@@ -175,7 +175,7 @@ public class BusinessCardView {
 				nickName = friend.alias + "(" + friend.nickName + ")";
 			}
 			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
+			businessCard.distance = taskManageHolder.lbsHandler.pointDistance1(user.longitude, user.latitude, friend.longitude, friend.latitude);
 			businessCard.nickname = nickName;
 			businessCard.mainBusiness = friend.mainBusiness;
 			businessCard.lable = thisActivity.getString(R.string.business_not_label);
@@ -208,7 +208,7 @@ public class BusinessCardView {
 				businessCard.sex = friend.sex;
 				businessCard.age = friend.age + "";
 				User user = thisController.data.userInformation.currentUser;
-				businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, friend.longitude, friend.latitude);
+				businessCard.distance = taskManageHolder.lbsHandler.pointDistance1(user.longitude, user.latitude, friend.longitude, friend.latitude);
 				businessCard.nickname = friend.nickName;
 				businessCard.mainBusiness = friend.mainBusiness;
 				businessCard.lable = thisActivity.getString(R.string.business_not_label);
@@ -238,7 +238,7 @@ public class BusinessCardView {
 				description = group.description;
 			}
 			User user = thisController.data.userInformation.currentUser;
-			businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, group.longitude, group.latitude);
+			businessCard.distance = taskManageHolder.lbsHandler.pointDistance1(user.longitude, user.latitude, group.longitude, group.latitude);
 			businessCard.mainBusiness = description;
 			businessCard.lable = thisActivity.getString(R.string.business_not_label);
 			businessCard.creattime = group.createTime;
@@ -264,7 +264,7 @@ public class BusinessCardView {
 				businessCard.nickname = data.tempData.tempGroup.name;
 				businessCard.mainBusiness = data.tempData.tempGroup.description;
 				User user = thisController.data.userInformation.currentUser;
-				businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
+				businessCard.distance = taskManageHolder.lbsHandler.pointDistance1(user.longitude, user.latitude, data.tempData.tempGroup.longitude, data.tempData.tempGroup.latitude);
 				businessCard.lable = thisActivity.getString(R.string.business_not_label);
 				businessCard.creattime = data.tempData.tempGroup.createTime;
 				businessCard.button_one = thisActivity.getString(R.string.business_add_to_room);
@@ -291,7 +291,7 @@ public class BusinessCardView {
 				businessCard.nickname = square.name;
 				businessCard.mainBusiness = square.description;
 				User user = thisController.data.userInformation.currentUser;
-				businessCard.distance = taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, square.longitude, square.latitude);
+				businessCard.distance = taskManageHolder.lbsHandler.pointDistance1(user.longitude, user.latitude, square.longitude, square.latitude);
 				businessCard.lable = thisActivity.getString(R.string.business_not_label);
 				businessCard.creattime = square.createTime;
 				businessCard.button_one = thisActivity.getString(R.string.business_go_community);

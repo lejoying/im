@@ -36,21 +36,19 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.GroupInfoActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareSectionActivity;
 import com.open.welinks.model.API;
-import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Boards.Board;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.view.ViewManage;
@@ -356,14 +354,13 @@ public class SmallBusinessCardPopView {
 				userAgeView.setBackgroundResource(R.drawable.personalinfo_female);
 				listTitle.setText("你要对她做什么？");
 			}
-			distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, longitude, latitude));
+			distanceView.setText(taskManageHolder.lbsHandler.pointDistance1(user.longitude, user.latitude, longitude, latitude));
 			if (lastLoginTime != null && !"".equals(lastLoginTime)) {
 				lastLoginTimeView.setText(DateUtil.getTime(Long.valueOf(lastLoginTime)));
 			} else {
 				lastLoginTimeView.setText("");
 			}
 			if (type.equals(TYPE_POINT)) {
-				getNewestLocation(key);
 				this.setting.setVisibility(View.GONE);
 				this.optionTwoView2.setVisibility(View.GONE);
 				if (user.phone.equals(key)) {
@@ -377,7 +374,8 @@ public class SmallBusinessCardPopView {
 				vLineView.setVisibility(View.VISIBLE);
 				userAgeView.setVisibility(View.VISIBLE);
 				if (!isGetData) {
-					scanUserCard(key);
+					getNewestLocation(key);
+					// scanUserCard(key);
 				}
 			} else if (type.equals(TYPE_GROUP)) {
 				this.setting.setVisibility(View.VISIBLE);
@@ -478,7 +476,8 @@ public class SmallBusinessCardPopView {
 			userHeadView.getLayoutParams().height = height;
 			userCardPopWindow = new PopupWindow(userCardMainView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 			userCardPopWindow.setBackgroundDrawable(new BitmapDrawable());
-			smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10)).build();
+			smallBusinessCardOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).displayer(new RoundedBitmapDisplayer(10))
+					.build();
 		}
 
 		public void bindEvent() {
@@ -732,20 +731,23 @@ public class SmallBusinessCardPopView {
 				if (response.提示信息.equals("获取用户信息成功")) {
 					if (cardView.key.equals(phone)) {
 						User user = data.userInformation.currentUser;
-						cardView.distanceView.setText(taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, String.valueOf(response.location[0]), String.valueOf(response.location[1])));
+						String distance = taskManageHolder.lbsHandler.pointDistance1(user.longitude, user.latitude, String.valueOf(response.location[0]), String.valueOf(response.location[1]));
+						log.e(distance);
+						cardView.distanceView.setText(distance);
 						cardView.lastLoginTimeView.setText(DateUtil.getTime(response.time));
 						if (phone.equals(user.phone)) {
-							user.lastLoginTime = String.valueOf(response.time);
-							user.longitude = String.valueOf(response.location[0]);
-							user.latitude = String.valueOf(response.location[1]);
-						} else {
-							Friend friend = data.relationship.friendsMap.get(phone);
-							if (friend != null) {
-								friend.lastLoginTime = String.valueOf(response.time);
-								friend.longitude = String.valueOf(response.location[0]);
-								friend.latitude = String.valueOf(response.location[1]);
-							}
+							user.lastLoginTime = response.time + "";
+							user.longitude = response.location[0] + "";
+							user.latitude = response.location[1] + "";
+							data.userInformation.isModified = true;
 						}
+						Friend friend = data.relationship.friendsMap.get(phone);
+						if (friend != null) {
+							friend.lastLoginTime = response.time + "";
+							friend.longitude = response.location[0] + "";
+							friend.latitude = response.location[1] + "";
+						}
+						// log.e("---:" + taskManageHolder.lbsHandler.pointDistance(user.longitude, user.latitude, String.valueOf(response.location[0]), String.valueOf(response.location[1])));
 					}
 				} else {
 					log.e(response.失败原因 + "::::::::::::::::::::");
