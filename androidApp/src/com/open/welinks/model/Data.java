@@ -11,6 +11,7 @@ import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.TempData.ImageBean;
+import com.open.welinks.model.SubData.LocationCircle;
 
 public class Data {
 
@@ -98,6 +99,8 @@ public class Data {
 			public String currentFunctionPage = "";
 			public int currentSearchRadius = 0;
 			public long currentSearchTime = 0;
+
+			public ArrayList<LocationCircle> lifeLocationCircles = new ArrayList<SubData.LocationCircle>();
 
 			public Map<String, String> notSentMessagesMap = new HashMap<String, String>();
 			public Map<String, ShareDraft> notSendShareMessagesMap = new HashMap<String, ShareDraft>();

@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -81,6 +82,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.SubData;
+import com.open.welinks.model.SubData.LocationCircle;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.view.NearbyView;
@@ -238,7 +240,14 @@ public class NearbyController {
 				if (rCode == 0) {
 					if (result != null && result.getRegeocodeAddress() != null && result.getRegeocodeAddress().getFormatAddress() != null) {
 						address = result.getRegeocodeAddress().getFormatAddress();
-						thisView.addressView.setText(address);
+						if (isLifeLocationCircle && lifeLocationCircle != null) {
+							thisView.addressView.setText(lifeLocationCircle.remark);
+							thisView.addressView.setGravity(Gravity.CENTER);
+							isLifeLocationCircle = false;
+						} else {
+							thisView.addressView.setText(address);
+							thisView.addressView.setGravity(Gravity.CENTER_VERTICAL);
+						}
 						isChangeAddress = false;
 						thisView.ico_map_pin.startAnimation(animationTop);
 						thisView.ico_map_pin_shadow2.startAnimation(animationShadowTop);
@@ -411,7 +420,7 @@ public class NearbyController {
 						thisActivity.finish();
 					} else if (isLogin(true)) {
 						Intent intent = new Intent(thisActivity, MainActivity.class);
-						thisActivity.startActivity(intent);
+						thisActivity.startActivityForResult(intent, 300);
 					}
 				} else if (view.equals(thisView.releationMenuImage)) {
 					thisView.changeMenuOptions(false);
@@ -781,6 +790,7 @@ public class NearbyController {
 
 	public void modifyLocation() {
 		if (isLogin(false)) {
+			getDefaultLocations();
 			data = Parser.getInstance().check();
 			HttpUtils httpUtils = new HttpUtils();
 			RequestParams params = new RequestParams();
@@ -796,6 +806,54 @@ public class NearbyController {
 			ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 			httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, responseHandlers.account_modifylocation);
 		}
+	}
+
+	private void getDefaultLocations() {
+		String result = parser.getFromAssets("locations.js");
+		ArrayList<LocationCircle> locationCircles = gson.fromJson(result, new TypeToken<ArrayList<LocationCircle>>() {
+		}.getType());
+		parser.check();
+		if (data.localStatus.localData.lifeLocationCircles == null) {
+			data.localStatus.localData.lifeLocationCircles = new ArrayList<LocationCircle>();
+		}
+		data.localStatus.localData.lifeLocationCircles.clear();
+		data.localStatus.localData.lifeLocationCircles.addAll(locationCircles);
+		checkMinLocation();
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		httpUtils.send(HttpMethod.GET, "http://www.we-links.com/locations.json", params, httpClient.new ResponseHandler<String>() {
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				ArrayList<LocationCircle> locationCircles = gson.fromJson(responseInfo.result, new TypeToken<ArrayList<LocationCircle>>() {
+				}.getType());
+				data.localStatus.localData.lifeLocationCircles.clear();
+				data.localStatus.localData.lifeLocationCircles.addAll(locationCircles);
+				checkMinLocation();
+			}
+		});
+		data.localStatus.localData.isModified = true;
+	}
+
+	public LocationCircle lifeLocationCircle;
+
+	private void checkMinLocation() {
+		int targetIndex = 0;
+		double targetDistance = -1;
+		User currentUser = data.userInformation.currentUser;
+		ArrayList<LocationCircle> lifeLocationCircles = data.localStatus.localData.lifeLocationCircles;
+		for (int i = 0; i < lifeLocationCircles.size(); i++) {
+			LocationCircle locationCircle = lifeLocationCircles.get(i);
+			double distance = taskManageHolder.lbsHandler.pointDistance2(currentUser.longitude, currentUser.latitude, locationCircle.longitude, locationCircle.latitude);
+			if (targetDistance == -1) {
+				targetIndex = i;
+				targetDistance = distance;
+			} else if (targetDistance > distance) {
+				targetDistance = distance;
+				targetIndex = i;
+			}
+		}
+		lifeLocationCircle = lifeLocationCircles.get(targetIndex);
+		log.e("处理结束:" + lifeLocationCircle.remark);
 	}
 
 	public boolean isTouchDown = false;
@@ -1080,6 +1138,8 @@ public class NearbyController {
 		});
 	}
 
+	boolean isLifeLocationCircle = false;
+
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == RESULTCODESHAREDETAIL && resultCode == Activity.RESULT_OK && data2 != null) {
 			String deletedGsid = data2.getStringExtra("key");
@@ -1095,6 +1155,13 @@ public class NearbyController {
 			}
 		} else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
 			taskManageHolder.dataHandler.preparingData();
+		} else if (requestCode == 300 && resultCode == Activity.RESULT_OK && data2 != null) {
+			// TODO
+			isLifeLocationCircle = true;
+			double longitude = data2.getExtras().getDouble("longitude");
+			double latitude = data2.getExtras().getDouble("latitude");
+			LatLng mLatLng = new LatLng(latitude, longitude);
+			thisView.mAMap.animateCamera(CameraUpdateFactory.changeLatLng(mLatLng), 500, null);
 		}
 	}
 

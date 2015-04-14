@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,6 +22,7 @@ import com.open.lib.TouchTextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
+import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.API;
@@ -113,14 +114,18 @@ public class SquareSubView {
 		selectBody = new SelectBody(locationListBody);
 		selectBody.initialize(0);
 		float w0 = width * 2 + 10 * this.displayMetrics.density, h0 = height * 2;
-		FrameLayout.LayoutParams params0 = (LayoutParams) selectBody.iconView.getLayoutParams();
+		LinearLayout.LayoutParams params0 = (android.widget.LinearLayout.LayoutParams) selectBody.iconView.getLayoutParams();
 		params0.height = (int) h0 / 4;
 		params0.width = (int) params0.height;// params0.
 		// selectBody.iconView.setX(x);
-		selectBody.setContent(iconList.get(0), "中关村生活圈");
+		if (NearbyActivity.instance.thisController.lifeLocationCircle != null) {
+			selectBody.setContent(-1, NearbyActivity.instance.thisController.lifeLocationCircle.remark);
+		} else {
+			selectBody.setContent(-1, "中关村生活圈");
+		}
 		selectBody.iconView.setImageResource(R.drawable.ic_main_more);
 		selectBody.iconView.setAlpha(0.875f);
-		selectBody.nameView.setGravity(Gravity.CENTER);
+		// selectBody.nameView.setGravity(Gravity.CENTER);
 		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams((int) w0, (int) h0);
 		this.locationListBody.containerView.addView(selectBody.cardView, layoutParams0);
 		this.locationListBody.height += h0 + 10 * this.displayMetrics.density;
@@ -209,15 +214,13 @@ public class SquareSubView {
 				this.cardView.setOnTouchListener(thisController.mOnTouchListener);
 				this.cardView.setOnClickListener(thisController.mOnClickListener);
 			} else if (type == 0) {
-				this.cardView = (TouchView) mInflater.inflate(R.layout.view_location_item, null);
+				this.cardView = (TouchView) mInflater.inflate(R.layout.view_location_imageview, null);
 				this.iconView = (TouchImageView) this.cardView.findViewById(R.id.icon);
 				this.nameView = (TouchTextView) this.cardView.findViewById(R.id.name);
 
-				// this.cardView = (TouchView) mInflater.inflate(R.layout.view_location_imageview, null);
-				// this.coverView = (TouchTextView) this.cardView.findViewById(R.id.cover);
-				// this.coverView.setText("群组分享");
-				// this.coverView.setBackgroundResource(R.drawable.button_de485e_background);
-				// setConver();
+				this.cardView.setOnTouchListener(thisController.mOnTouchListener);
+				this.cardView.setOnClickListener(thisController.mOnClickListener);
+				this.cardView.setBackgroundColor(Color.parseColor("#0099cd"));
 			}
 			return this.cardView;
 		}

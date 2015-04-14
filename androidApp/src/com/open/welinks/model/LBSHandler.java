@@ -29,6 +29,11 @@ public class LBSHandler {
 		return lbsHandlers;
 	}
 
+	public double pointDistance2(String longitude, String latitude, double longitude2, double latitude2) {
+		double distance = GetLongDistance1(checkNumber(longitude), checkNumber(latitude), longitude2, latitude2);
+		return distance;
+	}
+
 	public String pointDistance1(String longitude, String latitude, String longitude2, String latitude2) {
 		double distance = GetLongDistance1(checkNumber(longitude), checkNumber(latitude), checkNumber(longitude2), checkNumber(latitude2));
 		String distanceStr = "";

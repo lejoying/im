@@ -176,6 +176,12 @@ public class SquareSubController {
 							Intent intent = new Intent(thisActivity, ShareListActivity.class);
 							intent.putExtra("key", data.userInformation.currentUser.phone);
 							thisActivity.startActivity(intent);
+						} else if (id == -1) {
+							Intent intent = new Intent();
+							intent.putExtra("longitude", NearbyActivity.instance.thisController.lifeLocationCircle.longitude);
+							intent.putExtra("latitude", NearbyActivity.instance.thisController.lifeLocationCircle.latitude);
+							thisActivity.setResult(Activity.RESULT_OK, intent);
+							thisActivity.finish();
 						}
 					}
 				}
@@ -208,6 +214,8 @@ public class SquareSubController {
 				} else if (id == R.drawable.sidebar_icon_test_normal) {
 					onTouchDownView.performClick();
 				} else if (id == R.drawable.sidebar_icon_beauty_normal) {
+					onTouchDownView.performClick();
+				} else if (id == -1) {
 					onTouchDownView.performClick();
 				}
 			}

@@ -64,4 +64,11 @@ public class SubData {
 		public void onSuccess(float redio) {
 		}
 	}
+
+	public static class LocationCircle {
+		public String address;
+		public String remark;
+		public double longitude;
+		public double latitude;
+	}
 }
