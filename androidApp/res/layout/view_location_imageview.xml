@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="80dp" >
 
-    <com.open.lib.TouchImageView
+    <com.open.lib.TouchTextView
         android:id="@+id/cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
