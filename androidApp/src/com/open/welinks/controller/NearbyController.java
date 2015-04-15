@@ -809,7 +809,7 @@ public class NearbyController {
 	}
 
 	private void getDefaultLocations() {
-		String result = parser.getFromAssets("locations.js");
+		String result = parser.getFromAssets(thisActivity, "locations.js");
 		ArrayList<LocationCircle> locationCircles = gson.fromJson(result, new TypeToken<ArrayList<LocationCircle>>() {
 		}.getType());
 		parser.check();

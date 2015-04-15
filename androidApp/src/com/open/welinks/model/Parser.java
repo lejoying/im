@@ -86,6 +86,24 @@ public class Parser {
 		return data;
 	}
 
+	public String getFromAssets(Context context, String fileName) {
+		String result = null;
+		try {
+			InputStreamReader inputReader = new InputStreamReader(context.getResources().getAssets().open(fileName));
+			BufferedReader bufReader = new BufferedReader(inputReader);
+			String line = "";
+			result = "";
+			while ((line = bufReader.readLine()) != null) {
+				result += line;
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = null;
+		}
+		return result;
+	}
+
 	public String getFromAssets(String fileName) {
 		String result = null;
 		try {
@@ -161,7 +179,7 @@ public class Parser {
 
 	public String getFromUserForder(String phone, String fileName) {
 		String result = null;
-		//TODO bug
+		// TODO bug
 		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
