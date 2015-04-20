@@ -141,8 +141,8 @@ public class MainView1 {
 		mainPagerBody.initialize(displayMetrics, myBodyCallback);
 
 		main_container.addView(shareView);
-		mainPagerBody.addChildView(shareView);
-		mainPagerBody.setTitleView(title_share, 0);
+		// mainPagerBody.addChildView(shareView);
+		// mainPagerBody.setTitleView(title_share, 0);
 		//
 		// main_container.addView(squareView);
 		// mainPagerBody.addChildView(squareView);

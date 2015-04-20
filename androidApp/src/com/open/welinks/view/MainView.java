@@ -97,7 +97,7 @@ public class MainView {
 	public float textSize;
 
 	public class ActivityStatus {
-		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
+		public float SHARE = 0, MESSAGES = 1.0f, FRIENDS = 1.1f, ME = 1.2f;
 		public float subState = MESSAGES;
 		public float state = SHARE;
 	}
@@ -242,12 +242,14 @@ public class MainView {
 
 	public void recordPage() {
 		String currentFunctionPage = data.localStatus.localData.currentFunctionPage;
+
 		if (currentFunctionPage != null && !"".equals(currentFunctionPage)) {
 			if ("share".equals(currentFunctionPage)) {
 				thisView.mainPagerBody.active();
 				thisView.messages_friends_me_PagerBody.inActive();
 				thisView.mainPagerBody.flipTo(0);
 				Log.e("AAA", "share");
+				thisView.activityStatus.state = thisView.activityStatus.SHARE;
 			} else {
 				Log.e("AAA", "Me");
 				thisView.mainPagerBody.inActive();
@@ -256,12 +258,15 @@ public class MainView {
 				if ("message".equals(currentFunctionPage)) {
 					thisView.messagesMenuView.performClick();
 					thisView.messagesSubView.messageListBody.active();
+					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
 				} else if ("friend".equals(currentFunctionPage)) {
 					thisView.friendsMenuView.performClick();
 					// thisView.messages_friends_me_PagerBody.flipTo(1);
 					thisView.friendsSubView.friendListBody.active();
+					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
 				} else if ("me".equals(currentFunctionPage)) {
 					thisView.meMenuView.performClick();
+					thisView.activityStatus.state = thisView.activityStatus.ME;
 					// thisView.messages_friends_me_PagerBody.flipTo(2);
 				}
 			}
@@ -386,7 +391,7 @@ public class MainView {
 			} else if (bodyTag.equals("mainPagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.SHARE;
-					
+
 					thisView.squareSubView.locationListBody.active();
 					thisView.messagesSubView.messageListBody.inActive();
 					thisView.friendsSubView.friendListBody.inActive();

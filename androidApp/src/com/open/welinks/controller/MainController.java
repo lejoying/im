@@ -357,7 +357,6 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.squareSubView.locationListBody.onTouchDown(event);
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 			}
 
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
@@ -370,7 +369,6 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.squareSubView.locationListBody.onTouchMove(event);
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
@@ -388,8 +386,6 @@ public class MainController {
 				thisView.squareSubView.locationListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onSingleTapUp(event);
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-
 			}
 		}
 		mGesture.onTouchEvent(event);
@@ -429,11 +425,6 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				listBody = thisView.friendsSubView.friendListBody;
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
-				// listBody = thisView.shareSubView.shareMessageListBody;
-				// if (thisView.shareSubView.isShowGroupDialog) {
-				// listBody = thisView.shareSubView.groupListBody;
-				// }
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				listBody = thisView.squareSubView.locationListBody;
 			}
 			if (listBody != null) {
@@ -490,8 +481,6 @@ public class MainController {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				friendsSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
-				squareSubController.onScroll();
-			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				squareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onScroll();
