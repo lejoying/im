@@ -444,8 +444,9 @@ public class NearbyController {
 				} else if (view.equals(thisView.locationView)) {
 					String userLatitude = data.userInformation.currentUser.latitude;
 					String userLongitude = data.userInformation.currentUser.longitude;
-					if (!"".equals(userLatitude) && !"".equals(userLongitude)) {
+					if (userLatitude != null && !"".equals(userLatitude) && userLongitude != null && !"".equals(userLongitude)) {
 						address = data.userInformation.currentUser.address;
+						// TODO Double.valueOf NullPointerException
 						longitude = Double.valueOf(userLongitude);
 						latitude = Double.valueOf(userLatitude);
 						LatLng mLatLng = new LatLng(latitude, longitude);

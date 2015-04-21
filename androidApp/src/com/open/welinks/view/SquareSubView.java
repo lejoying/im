@@ -77,7 +77,6 @@ public class SquareSubView {
 		this.squareMessageView.setBackgroundColor(Color.parseColor("#F1F2F5"));
 
 		this.titleNameView = (TextView) squareView.findViewById(R.id.shareTopMenuSquareName);
-
 		this.locationListBody = new ListBody1();
 		this.locationListBody.initialize(this.displayMetrics, this.squareMessageView);
 
@@ -129,10 +128,11 @@ public class SquareSubView {
 		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams((int) w0, (int) h0);
 		this.locationListBody.containerView.addView(selectBody.cardView, layoutParams0);
 		this.locationListBody.height += h0 + 10 * this.displayMetrics.density;
-		selectBody.y = 0 * displayMetrics.density;
+		selectBody.y = 10 * displayMetrics.density;
 		selectBody.cardView.setX(10 * displayMetrics.density);
-		selectBody.cardView.setY(10 * this.displayMetrics.density);
-
+		selectBody.cardView.setY(selectBody.y);
+		this.locationListBody.listItemsSequence.add("item:" + -1);
+		this.locationListBody.listItemBodiesMap.put("item:" + -1, selectBody);
 		this.locationListBody.height += 10 * this.displayMetrics.density;
 
 		for (int i = 0; i < list.size(); i++) {
@@ -141,6 +141,8 @@ public class SquareSubView {
 			body.initialize(1);
 			body.setContent(iconList.get(i), name);
 
+			this.locationListBody.listItemsSequence.add("item:" + i);
+			this.locationListBody.listItemBodiesMap.put("item:" + i, body);
 			float w = 0, h = 0;
 			if (i == 0) {
 				w = width;
@@ -191,6 +193,7 @@ public class SquareSubView {
 			this.locationListBody.containerView.addView(body.cardView, layoutParams);
 		}
 		this.locationListBody.height += 4 * height + 20 * this.displayMetrics.density;
+		this.locationListBody.containerHeight = (int) (this.displayMetrics.heightPixels - ViewManage.getStatusBarHeight(thisController.mainController.thisActivity) - displayMetrics.density * 48);
 	}
 
 	public class SelectBody extends MyListItemBody {
@@ -220,8 +223,9 @@ public class SquareSubView {
 
 				this.cardView.setOnTouchListener(thisController.mOnTouchListener);
 				this.cardView.setOnClickListener(thisController.mOnClickListener);
-				this.cardView.setBackgroundColor(Color.parseColor("#0099cd"));
+				this.cardView.setBackgroundResource(R.drawable.button_0099cd_background);
 			}
+			super.initialize(this.cardView);
 			return this.cardView;
 		}
 

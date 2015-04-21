@@ -10,8 +10,6 @@ import java.util.Map.Entry;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -63,7 +61,6 @@ import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.InputMethodManagerUtils;
 import com.open.welinks.view.ShareMessageDetailView;
 import com.open.welinks.view.ShareMessageDetailView.ShareBody;
 import com.open.welinks.view.ViewManage;
@@ -351,8 +348,6 @@ public class ShareMessageDetailController {
 					thisView.scoreState();
 					modifyPraiseusersToMessage(true, shareMessage.gsid);
 				} else if ("CommentControlView".equals(tag_class)) {
-					isShow = true;
-					log.e("true");
 					Alert.createInputCommentDialog(thisActivity).setOnConfirmClickListener(new com.open.welinks.customView.Alert.AlertInputCommentDialog.OnDialogClickListener() {
 
 						@Override
@@ -385,16 +380,6 @@ public class ShareMessageDetailController {
 								addCommentToMessage(comment.contentType, commentContent);
 							}
 						}
-					}).setOnCancelListener(new OnCancelListener() {
-
-						@Override
-						public void onCancel(DialogInterface dialog) {
-							InputMethodManagerUtils inputMethodManagerUtils = new InputMethodManagerUtils(thisActivity);
-							if (isShow) {
-								inputMethodManagerUtils.toggleSoftInput();
-								isShow = false;
-							}
-						}
 					}).show().requestFocus();
 				} else if ("TimeView".equals(tag_class)) {
 					TextView textView = (TextView) view;
@@ -422,8 +407,6 @@ public class ShareMessageDetailController {
 			}
 		};
 	}
-
-	public boolean isShow = false;
 
 	public void modifyPraiseusersToMessage(boolean option, String gsid) {
 		RequestParams params = new RequestParams();
@@ -523,14 +506,11 @@ public class ShareMessageDetailController {
 	}
 
 	public void onBackPressed() {
-		this.isShow = false;
-		// log.e("false");
 		if (thisView.sharePopupWindow.isShowing()) {
 			thisView.sharePopupWindow.dismiss();
 		} else {
 			thisActivity.finish();
 		}
-
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent result) {

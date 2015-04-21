@@ -2,17 +2,17 @@ package com.open.welinks.customView;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -359,13 +359,14 @@ public class Alert {
 
 	public static AlertInputCommentDialog createInputCommentDialog(Context context) {
 		AlertInputCommentDialog dialog = new AlertInputCommentDialog(context);
-		dialog.showInput();
 		return dialog;
 	}
 
 	public static class AlertInputCommentDialog {
 
 		CommonDialog dialog;
+
+		public int isShow = 1;
 
 		public AlertInputCommentDialog(Context context) {
 			this.context = context;
@@ -382,12 +383,21 @@ public class Alert {
 			return this;
 		}
 
-		public AlertInputCommentDialog setOnCancelListener(OnCancelListener listener) {
-			dialog.setOnCancelListener(listener);
-			return this;
-		}
-
 		public AlertInputCommentDialog show() {
+			dialog.setOnDismissListener(new OnDismissListener() {
+
+				@Override
+				public void onDismiss(DialogInterface dialog0) {
+					if (isShow == 1) {
+						@SuppressWarnings("static-access")
+						InputMethodManager m = (InputMethodManager) dialog.getContext().getSystemService(dialog.getContext().INPUT_METHOD_SERVICE);
+						m.toggleSoftInput(InputMethodManager.RESULT_UNCHANGED_HIDDEN, 0);
+						// InputMethodManagerUtils inputMethodManagerUtils = new InputMethodManagerUtils(dialog.getContext());
+						// InputMethodManager m = (InputMethodManager) dialog.getContext().getSystemService(dialog.getContext().INPUT_METHOD_SERVICE);
+						// m.hideSoftInputFromWindow(dialog.input.getWindowToken(), 0);
+					}
+				}
+			});
 			dialog.show();
 			return this;
 		}
@@ -412,14 +422,6 @@ public class Alert {
 			return this;
 		}
 
-		void hideInput() {
-			dialog.input.setVisibility(View.GONE);
-		}
-
-		void showInput() {
-			dialog.input.setVisibility(View.VISIBLE);
-		}
-
 		public interface OnDialogClickListener {
 			public void onClick(AlertInputCommentDialog dialog);
 		}
@@ -429,9 +431,6 @@ public class Alert {
 			@SuppressWarnings("static-access")
 			InputMethodManager m = (InputMethodManager) dialog.getContext().getSystemService(dialog.getContext().INPUT_METHOD_SERVICE);
 			m.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-			// m.showSoftInput(dialog.input, InputMethodManager.SHOW_FORCED);
-			// InputMethodManagerUtils inputMethodManagerUtils = new InputMethodManagerUtils(context);
-			// inputMethodManagerUtils.show(dialog.input);
 			return this;
 		}
 
@@ -440,8 +439,16 @@ public class Alert {
 		class CommonDialog extends Dialog {
 
 			AlertInputCommentDialog.OnDialogClickListener confirmListener, cancelListener;
-			EditText input;
+			public EditText input;
 			View confirmView;
+
+			@Override
+			public boolean onKeyUp(int keyCode, KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					isShow = 0;
+				}
+				return super.onKeyUp(keyCode, event);
+			}
 
 			public CommonDialog(Context context) {
 				super(context, R.style.AlertInputDialog);
@@ -455,14 +462,7 @@ public class Alert {
 				int height = BaseDataUtils.dpToPxint(45);// (int) (45 * viewManage.displayMetrics.density);
 				LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) input.getLayoutParams();
 				params.height = height;
-				input.setOnFocusChangeListener(new OnFocusChangeListener() {
 
-					@Override
-					public void onFocusChange(View v, boolean hasFocus) {
-						Log.e("Alert", "-------------:" + hasFocus);
-
-					}
-				});
 				input.addTextChangedListener(new TextWatcher() {
 
 					@Override
@@ -488,7 +488,6 @@ public class Alert {
 					public void afterTextChanged(Editable s) {
 					}
 				});
-				// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
 
 				confirmView.setOnClickListener(new View.OnClickListener() {
 					@Override

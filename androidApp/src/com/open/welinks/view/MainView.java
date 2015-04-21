@@ -248,10 +248,10 @@ public class MainView {
 				thisView.mainPagerBody.active();
 				thisView.messages_friends_me_PagerBody.inActive();
 				thisView.mainPagerBody.flipTo(0);
-				Log.e("AAA", "share");
+				// Log.e("AAA", "share");
 				thisView.activityStatus.state = thisView.activityStatus.SHARE;
 			} else {
-				Log.e("AAA", "Me");
+				// Log.e("AAA", "Me");
 				thisView.mainPagerBody.inActive();
 				thisView.messages_friends_me_PagerBody.active();
 				thisView.mainPagerBody.flipTo(1);

@@ -375,7 +375,7 @@ public class SmallBusinessCardPopView {
 				userAgeView.setVisibility(View.VISIBLE);
 				if (!isGetData) {
 					getNewestLocation(key);
-					// scanUserCard(key);
+					scanUserCard(key);
 				}
 			} else if (type.equals(TYPE_GROUP)) {
 				this.setting.setVisibility(View.VISIBLE);
@@ -892,10 +892,7 @@ public class SmallBusinessCardPopView {
 							}
 							friend0.nickName = friend.nickName;
 							friend0.head = friend.head;
-							friend0.longitude = friend.longitude;
-							friend0.latitude = friend.latitude;
-							friend0.userBackground = friend.userBackground;
-							friend0.lastLoginTime = friend.lastLoginTime;
+							// friend0.userBackground = friend.userBackground;
 						} else {
 							data.relationship.friendsMap.put(friend.phone, friend);
 						}

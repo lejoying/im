@@ -161,9 +161,13 @@ public class ShareListView {
 					nickName = thisController.currentUser.nickName;
 					business = thisController.currentUser.mainBusiness;
 				} else {
-					head = thisController.friend.head;
-					nickName = thisController.friend.nickName;
-					business = thisController.friend.mainBusiness;
+					if (thisController.friend != null) {
+						head = thisController.friend.head;
+						nickName = thisController.friend.nickName;
+						business = thisController.friend.mainBusiness;
+					} else {
+						thisController.scanUserCard();
+					}
 				}
 				File file = new File(taskManageHolder.fileHandler.sdcardHeadImageFolder, head);
 				if (file.exists()) {

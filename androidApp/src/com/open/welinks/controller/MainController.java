@@ -344,19 +344,19 @@ public class MainController {
 	public TouchStatus touchStatus = new TouchStatus();
 
 	public boolean onTouchEvent(MotionEvent event) {
-
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			Log.d(tag, "Activity on touch down");
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
-			log.e(thisView.activityStatus.state + "---ACTION_DOWN");
+			// log.e(thisView.activityStatus.state + "---ACTION_DOWN");
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
 				thisView.messagesSubView.messageListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				thisView.friendsSubView.friendListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.squareSubView.locationListBody.onTouchDown(event);
+				// log.e(thisView.activityStatus.state + "-----onTouchDown");
 			}
 
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
@@ -369,12 +369,13 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.squareSubView.locationListBody.onTouchMove(event);
+				// log.e(thisView.activityStatus.state + "-----onTouchMove");
 			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 
-			log.e(thisView.activityStatus.state + "---ACTION_UP");
+			// log.e(thisView.activityStatus.state + "---ACTION_UP");
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
 				messagesSubController.onSingleTapUp(event);
 				thisView.messagesSubView.messageListBody.onTouchUp(event);
@@ -384,6 +385,7 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				squareSubController.onSingleTapUp(event);
 				thisView.squareSubView.locationListBody.onTouchUp(event);
+				// log.e(thisView.activityStatus.state + "-----onTouchUp");
 			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onSingleTapUp(event);
 			}

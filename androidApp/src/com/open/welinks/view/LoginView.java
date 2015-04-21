@@ -201,6 +201,7 @@ public class LoginView {
 			} else {
 				rightBottomTextButton.setText("发送验证码");
 			}
+			// TODO nullpointexception
 			if (data.userInformation.localConfig.line1Number != null && data.userInformation.localConfig.line1Number != "") {
 				input1.setText(data.userInformation.localConfig.line1Number);
 			} else {

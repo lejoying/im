@@ -179,7 +179,7 @@ public class Parser {
 
 	public String getFromUserForder(String phone, String fileName) {
 		String result = null;
-		// TODO bug
+		// TODO samsung: single NullPointExeption taskManageHolder or fileHandler
 		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File userForder = new File(sdFile, "welinks/" + phone);
 
@@ -198,6 +198,9 @@ public class Parser {
 
 	public String getFromRootForder(String fileName) {
 		String result = null;
+		// TODO huawei and xiaomi : single NullPointExeption taskManageHolder or fileHandler
+		// NullPointerException: Attempt to invoke virtual method 'java.io.File com.open.welinks.model.FileHandler.getSdCardFile()
+		// ' on a null object reference
 		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
 		File rootForder = new File(sdFile, "welinks/");
 

@@ -384,6 +384,9 @@ public class ShareSectionView {
 						}
 					}
 					// log.e(n.length + "--");
+					if (textContent.length() < subPosition) {
+						subPosition = textContent.length();
+					}
 					String endContent = textContent.substring(subPosition);
 					// if (textContent.indexOf("1、") == 0) {
 					// log.e(textContent.substring(0, subPosition));

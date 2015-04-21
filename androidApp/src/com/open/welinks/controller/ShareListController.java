@@ -185,6 +185,8 @@ public class ShareListController {
 		thisView.listView.setOnItemClickListener(mOnItemClickListener);
 	}
 
+	HttpClient httpClient = new HttpClient();
+
 	public void getUserShares() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -193,7 +195,6 @@ public class ShareListController {
 		params.addBodyParameter("target", key);
 		params.addBodyParameter("nowpage", nowpage + "");
 		params.addBodyParameter("pagesize", pagesize + "");
-		HttpClient httpClient = new HttpClient();
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETUSERSHARES, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
@@ -248,6 +249,45 @@ public class ShareListController {
 					e.printStackTrace();
 				}
 			}
+		});
+	}
+
+	public void scanUserCard() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User currentUser = data.userInformation.currentUser;
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("target", "[\"" + key + "\"]");
+
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {
+			class Response {
+				public String 提示信息;
+				public List<Friend> accounts;
+			}
+
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("获取用户信息成功".equals(response.提示信息)) {
+					Friend friend = response.accounts.get(0);
+					if (friend != null) {
+						parser.check();
+						Friend currentFriend = data.relationship.friendsMap.get(friend.phone);
+						if (currentFriend != null) {
+							currentFriend.sex = friend.sex;
+							currentFriend.mainBusiness = friend.mainBusiness;
+							currentFriend.nickName = friend.nickName;
+							currentFriend.head = friend.head;
+						} else {
+							currentFriend = friend;
+							data.relationship.friendsMap.put(friend.phone, currentFriend);
+						}
+						thisController.friend = currentFriend;
+						data.relationship.isModified = true;
+						thisView.shareListAdapter.notifyDataSetChanged();
+					}
+				}
+			};
 		});
 	}
 
