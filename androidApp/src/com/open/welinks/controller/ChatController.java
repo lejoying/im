@@ -1354,6 +1354,35 @@ public class ChatController {
 		taskManageHolder.viewManage.chatView = null;
 
 		taskManageHolder.viewManage.postNotifyView("MessagesSubView");
+		// TODO Chat records in order to correctly judge
+		// if ("point".equals(type)) {
+		// checkMessagSort(1, key);
+		// } else if ("group".equals(type)) {
+		// checkMessagSort(1, key);
+		// }
+	}
+
+	public void checkMessagSort(int type, String key) {
+		ArrayList<Message> messages = null;
+		if (type == 1) {
+			messages = data.messages.friendMessageMap.get(key);
+		} else if (type == 2) {
+			messages = data.messages.friendMessageMap.get(key);
+		} else {
+			return;
+		}
+
+		for (int i = 0; i < messages.size() - 1; i++) {
+			for (int j = 0; j < messages.size() - 1; j++) {
+				long _time_1 = Long.valueOf(messages.get(j).time);
+				long _time_2 = Long.valueOf(messages.get(j + 1).time);
+				if (_time_1 > _time_2) {
+					messages.set(j, messages.get(j + 1));
+					messages.set(j + 1, messages.get(j));
+				}
+			}
+		}
+
 	}
 
 	public void onPause() {

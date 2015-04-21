@@ -1,4 +1,4 @@
-package com.open.welinks.service;
+package com.open.welinks.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 
 import com.open.lib.MyLog;
 import com.open.welinks.model.DataHandler;
+import com.open.welinks.service.PushService;
 
 public class ConnectionChangeReceiver extends BroadcastReceiver {
 

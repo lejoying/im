@@ -17,7 +17,7 @@ import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.model.UpdateManager;
-import com.open.welinks.service.ConnectionChangeReceiver;
+import com.open.welinks.receiver.ConnectionChangeReceiver;
 import com.open.welinks.service.PushService;
 import com.open.welinks.view.NearbyView;
 

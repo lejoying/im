@@ -28,16 +28,21 @@ public class ExceptionService extends Service {
 		return null;
 	}
 
-	public void sendContent(String time, String info, String bug) {
-		// log.e(content);
-		sendMessageToServer(time, info, bug);
+	public void sendContent(final String time, final String info, final String bug) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				sendMessageToServer(time, info, bug);
+			}
+		}).start();
 	}
 
 	public MyGson gson = new MyGson();
 	HttpClient httpClient = new HttpClient();
 	ExceptionHandler handler = ExceptionHandler.getInstance();
 
-	public void sendMessageToServer(String time, String info, String bug) {
+	void sendMessageToServer(String time, String info, String bug) {
 
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
