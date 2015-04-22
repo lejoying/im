@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 
 import com.open.lib.MyLog;
@@ -30,7 +31,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 	private SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
 	private ExceptionHandler() {
-
 	}
 
 	public static synchronized ExceptionHandler getInstance() {
@@ -53,8 +53,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 	public void uncaughtException(Thread arg0, Throwable arg1) {
 		log.e("程序挂掉了 ");
 		// 1.获取当前程序的版本号. 版本的id
-		String versioninfo = getVersionInfo();
-
+		String versioninfo = "versionName:  " + getVersionInfo();
+		versioninfo += "\n";
+		versioninfo += "versionCode:  " + getVersionCode(context);
+		versioninfo += "\n";
 		// 2.获取手机的硬件信息.
 		String mobileInfo = getMobileInfo();
 
@@ -65,7 +67,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 		try {
 			log.e(errorinfo);
 			if (!"NONE".equals(data.localStatus.sendBug)) {
-				service.sendContent("Data：\n" + dataFormat.format(new Date()), "版本信息：\n" + versioninfo + "\n手机信息：\n" + mobileInfo, "bug内容：\n" + errorinfo);
+				service.sendContent("phone info : \n" + mobileInfo + "\n版本信息:\n" + versioninfo, "Data:\n" + dataFormat.format(new Date()), "bug内容：\n" + errorinfo);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,7 +101,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 		StringBuffer sb = new StringBuffer();
 		// 通过反射获取系统的硬件信息
 		try {
-
 			Field[] fields = Build.class.getDeclaredFields();
 			for (Field field : fields) {
 				// 暴力反射 ,获取私有的信息
@@ -113,6 +114,16 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 			e.printStackTrace();
 		}
 		return sb.toString();
+	}
+
+	private int getVersionCode(Context context) {
+		int versionCode = 0;
+		try {
+			versionCode = context.getPackageManager().getPackageInfo("com.open.welinks", 0).versionCode;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return versionCode;
 	}
 
 	private String getVersionInfo() {

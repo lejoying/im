@@ -1,6 +1,6 @@
 package com.open.welinks.model;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.open.lib.MyLog;
@@ -44,7 +44,7 @@ public class TaskManageHolder {
 
 	public boolean isInitialized = false;
 
-	public void initialize(Activity context) {
+	public void initialize(Context context) {
 		if (this.isInitialized == false) {
 			this.isInitialized = true;
 			this.taskManager = TaskManager.getInstance();
@@ -57,7 +57,7 @@ public class TaskManageHolder {
 			this.audioHandler = AudioHandler.getInstance();
 			this.imageLoader = ImageLoader.getInstance();
 			this.viewManage = ViewManage.getInstance();
-			this.viewManage.initialize(context);
+			// this.viewManage.initialize(context);
 			this.lbsHandler = LBSHandler.getInstance();
 			this.uploadMultipartList = UploadMultipartList.getInstance();
 			this.downloadFileList = DownloadFileList.getInstance();

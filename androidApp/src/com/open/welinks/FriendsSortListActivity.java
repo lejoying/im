@@ -201,8 +201,8 @@ public class FriendsSortListActivity extends Activity {
 		mConfirmView.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
 		mConfirmView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		mConfirmView.setText("完成");
-		mConfirmView.setTextColor(Color.WHITE);
-		mConfirmView.setBackgroundResource(R.drawable.textview_bg);
+		mConfirmView.setTextColor(Color.parseColor("#0099cd"));
+		mConfirmView.setBackgroundResource(R.drawable.button_3dp_0099cd_background);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);

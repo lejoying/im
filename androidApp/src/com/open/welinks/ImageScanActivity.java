@@ -82,7 +82,12 @@ public class ImageScanActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		currentPosition = Integer.valueOf(getIntent().getStringExtra("position"));
+		try {
+			currentPosition = Integer.valueOf(getIntent().getStringExtra("position"));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			currentPosition = 0;
+		}
 		currentType = getIntent().getIntExtra("type", IMAGEBROWSE_COMMON);
 		if (data.tempData.selectedImageList != null) {
 			imagesBrowseList = data.tempData.selectedImageList;

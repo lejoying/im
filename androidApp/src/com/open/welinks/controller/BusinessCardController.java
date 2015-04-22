@@ -95,6 +95,7 @@ public class BusinessCardController {
 			thisActivity.finish();
 		}
 		if ("point".equals(type)) {
+			// TODO null point exception
 			if (key.equals(data.userInformation.currentUser.phone)) {
 				thisView.status = Status.SELF;
 			} else if (data.relationship.friends != null) {

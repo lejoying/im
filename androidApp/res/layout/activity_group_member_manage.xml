@@ -41,12 +41,16 @@
         <TextView
             android:id="@+id/confirmButton"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/squaredetail_comment_notselected"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_3dp_0099cd_background"
             android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="完成"
             android:textColor="@color/icon_color"
             android:visibility="gone" />

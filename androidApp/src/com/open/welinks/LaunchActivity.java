@@ -36,14 +36,14 @@ public class LaunchActivity extends Activity {
 		Log.d(tag, "hello world!");
 
 		taskManageHolder = TaskManageHolder.getInstance();
-		taskManageHolder.initialize(this);
-
+		taskManageHolder.initialize(getApplicationContext());
+		// taskManageHolder.viewManage.initialize(this);
 		initImageLoader(getApplicationContext());
 
 		data = Data.getInstance();
 
 		Parser parser = Parser.getInstance();
-		parser.initialize(context);
+		parser.initialize(getApplicationContext());
 
 		BaseDataUtils.initBaseData(this);
 
@@ -75,7 +75,8 @@ public class LaunchActivity extends Activity {
 
 	public static void initImageLoader(Context context) {
 		if (!ImageLoader.getInstance().isInited()) {
-			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024)
+					.tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
 			ImageLoader.getInstance().init(config);
 		}
 	}

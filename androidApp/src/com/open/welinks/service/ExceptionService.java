@@ -49,6 +49,7 @@ public class ExceptionService extends Service {
 		params.addBodyParameter("time", time);
 		params.addBodyParameter("info", info);
 		params.addBodyParameter("bug", bug);
+		params.addBodyParameter("_time", System.currentTimeMillis() + "");
 
 		httpUtils.send(HttpMethod.POST, API.BUG_SEND, params, httpClient.new ResponseHandler<String>() {
 			@Override

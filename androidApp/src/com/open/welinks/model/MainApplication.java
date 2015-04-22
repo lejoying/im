@@ -18,5 +18,7 @@ public class MainApplication extends Application {
 		ExceptionHandler handler = ExceptionHandler.getInstance();
 		handler.init(getApplicationContext(), service);
 		Thread.setDefaultUncaughtExceptionHandler(handler);
+		// CrashHandler crashHandler = CrashHandler.getInstance();
+		// crashHandler.init(getApplicationContext());
 	}
 }
