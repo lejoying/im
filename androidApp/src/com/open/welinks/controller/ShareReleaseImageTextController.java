@@ -3,7 +3,6 @@ package com.open.welinks.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -104,6 +103,7 @@ public class ShareReleaseImageTextController {
 	public ShareMessage shareMessage;
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
+		data = parser.check();
 		this.currentUser = data.userInformation.currentUser;
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;

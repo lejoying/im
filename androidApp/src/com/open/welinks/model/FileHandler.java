@@ -34,7 +34,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
-import com.open.welinks.MainActivity;
 import com.open.welinks.R;
 import com.open.welinks.customListener.OnDownloadListener;
 import com.open.welinks.customListener.ThumbleListener;
@@ -147,8 +146,9 @@ public class FileHandler {
 						myFileUploadQueue.offerE(myFile);
 					}
 				} catch (Exception e) {
-					StackTraceElement ste = new Throwable().getStackTrace()[0];
-					log.e("Exception@" + ste.getLineNumber() + "," + ExceptionHandler.printStackTrace(MainActivity.instance.thisController.context, e));
+					log.e(e.toString());
+					// StackTraceElement ste = new Throwable().getStackTrace()[0];
+					// log.e("Exception@" + ste.getLineNumber() + "," + ExceptionHandler.printStackTrace(MainActivity.instance.thisController.context, e));
 				}
 			}
 		}

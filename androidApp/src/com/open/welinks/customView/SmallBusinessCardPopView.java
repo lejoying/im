@@ -789,6 +789,7 @@ public class SmallBusinessCardPopView {
 	}
 
 	public void joinGroup(String gid) {
+		data = parser.check();
 		Group group = data.relationship.groupsMap.get(gid);
 		group.members.add(data.userInformation.currentUser.phone);
 		group.relation = "join";

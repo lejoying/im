@@ -115,6 +115,7 @@ public class ShareMessageDetailView {
 
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
+		// TODO Bitmaps in RGB_565 consume 2 times less memory than in ARGB_8888.
 		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(false).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
