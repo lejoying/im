@@ -65,12 +65,11 @@ public class ResponseEventHandler {
 				} else if ("group".equals(sendType)) {
 					isNotify = data.relationship.groups.contains(messageGson.gid);
 				}
-
 				if (isNotify) {
-					if (NotificationUtils.isLeave(viewManage.mainView.context)) {
-						NotificationUtils.showMessageNotification(viewManage.mainView.context, messageGson);
+					if (NotificationUtils.isLeave(viewManage.nearbyView.thisActivity.getApplicationContext())) {
+						NotificationUtils.showMessageNotification(viewManage.nearbyView.thisActivity.getApplicationContext(), messageGson);
 					} else {
-						NotificationUtils.commonVibrate(viewManage.mainView.context);
+						NotificationUtils.commonVibrate(viewManage.nearbyView.thisActivity.getApplicationContext());
 					}
 				}
 				DataHandler.getMessages(data.userInformation.currentUser.flag);
@@ -732,6 +731,8 @@ public class ResponseEventHandler {
 				data.relationship.groupsMap.get(message.gid).notReadMessagesCount++;
 			}
 		}
-		viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
+		if(viewManage!=null&&viewManage.mainView!=null&&viewManage.mainView.messagesSubView!=null){
+			viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
+		}
 	}
 }

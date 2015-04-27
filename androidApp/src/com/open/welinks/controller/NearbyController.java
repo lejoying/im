@@ -323,6 +323,9 @@ public class NearbyController {
 			@Override
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_class) != null) {
+					if (!isLogin(true)) {
+						return;
+					}
 					String type = (String) view.getTag(R.id.tag_class);
 					final int position = (Integer) view.getTag(R.id.tag_first);
 					// + thisView.nearbyListView.getFirstVisiblePosition();
@@ -760,6 +763,9 @@ public class NearbyController {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				if (!isLogin(true)) {
+					return;
+				}
 				if (status == LBSStatus.newest || status == LBSStatus.hottest) {
 					ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 					data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);

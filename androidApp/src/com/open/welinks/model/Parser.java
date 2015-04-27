@@ -298,11 +298,11 @@ public class Parser {
 					if (messageOrder != null) {
 						try {
 							data.messages.isModified = true;
-							List<String> list = checkMessagesOrder(messageOrder);
-							if (list.size() == messageOrder.size()) {
-								messageOrder.clear();
-								messageOrder.addAll(list);
-							}
+							// messageOrder.addAll(messageOrder);
+							// List<String> list = checkMessagesOrder(messageOrder);
+							// if (list.size() == messageOrder.size()) {
+							// messageOrder.clear();
+							// }
 						} catch (Exception e) {
 							e.printStackTrace();
 							Log.e(tag, e.toString() + "----");

@@ -2,7 +2,7 @@ package com.open.welinks.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Notification;
@@ -14,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Vibrator;
-
 import com.open.lib.MyLog;
 import com.open.welinks.LaunchActivity;
 import com.open.welinks.MainActivity;
@@ -89,24 +88,15 @@ public final class NotificationUtils {
 		vibrate(context, VIBRATE_COMMON, false);
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressLint("NewApi")
 	public static void showNotification(Context context, int notificationId, int icon, Uri sound, String tickerText, String contentTitle, String contentText, int notificationDefaults, int flags, Intent intent) {
-		Notification notification = new Notification();
-		notification.icon = icon;
-		if (isNotice) {
-			notification.sound = sound;
-		}
-		notification.tickerText = tickerText;
-		notification.defaults = notificationDefaults;
-		notification.flags = flags;
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		Notification notification = new Notification.Builder(context).setAutoCancel(true).setContentTitle(contentTitle).setContentText(contentText).setSound(sound).setTicker(tickerText).setContentIntent(contentIntent).setSmallIcon(icon).setDefaults(notificationDefaults).setWhen(System.currentTimeMillis()).build();
 		getNotificationManager(context).notify(notificationId, notification);
 	}
 
 	public static void cancelNotification(Context context, int notification) {
 		getNotificationManager(context).cancel(notification);
-
 		showMessages.clear();
 		friendCount = 0;
 		messageCount = 0;
@@ -200,7 +190,7 @@ public final class NotificationUtils {
 			}
 		}
 		Intent intent = new Intent(context, MainActivity.class);
-
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 		if (friendCount == 1 && messageCount == 1) {
 			if (message.sendType.equals("point")) {
 				showFragment = "chatFriend";

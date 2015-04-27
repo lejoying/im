@@ -387,11 +387,11 @@ public class ResponseHandlers {
 			if (response.提示信息.equals("修改用户信息成功")) {
 				log.e(ViewManage.getErrorLineNumber() + "修改用户信息成功");
 				data = parser.check();
-				User user = data.userInformation.currentUser;
-				user.latitude = response.account.latitude;
-				user.longitude = response.account.longitude;
-				user.lastLoginTime = response.account.lastLoginTime;
-				data.userInformation.isModified = true;
+				// User user = data.userInformation.currentUser;
+				// user.latitude = response.account.latitude;
+				// user.longitude = response.account.longitude;
+				// user.lastLoginTime = response.account.lastLoginTime;
+				// data.userInformation.isModified = true;
 				// viewManage.mainView.thisController.chackLBSAccount();
 			} else {
 				log.e(ViewManage.getErrorLineNumber() + "修改用户信息失败---" + response.失败原因);
@@ -1248,7 +1248,9 @@ public class ResponseHandlers {
 					}
 					data.event.isModified = true;
 					data.messages.isModified = true;
-					viewManage.messagesSubView.showMessagesSequence();
+					if (viewManage.messagesSubView != null) {
+						viewManage.messagesSubView.showMessagesSequence();
+					}
 				} else {
 					log.e(tag, ViewManage.getErrorLineNumber() + response.提示信息 + "---------------------" + response.失败原因);
 				}
