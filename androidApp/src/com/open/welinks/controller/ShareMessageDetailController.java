@@ -127,7 +127,7 @@ public class ShareMessageDetailController {
 
 		if (sid == null || "".equals(sid)) {
 			log.e(ViewManage.getErrorLineNumber() + "少传参数了");
-			Toast.makeText(thisActivity, "参数缺失，分享不存在", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(thisActivity, "参数缺失，分享不存在", Toast.LENGTH_SHORT).show();
 			thisActivity.finish();
 			return;
 			// throw new IllegalArgumentException(ViewManage.getErrorLineNumber() + "少传参数了");
@@ -173,7 +173,7 @@ public class ShareMessageDetailController {
 						this.content = thisView.body.textContent;
 					}
 				} else {
-					Toast.makeText(thisActivity, "不能分享空帖子.", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(thisActivity, "不能分享空帖子.", Toast.LENGTH_SHORT).show();
 				}
 			}
 		};
@@ -845,7 +845,7 @@ public class ShareMessageDetailController {
 				} else {
 					taskManageHolder.fileHandler.handler.post(new Runnable() {
 						public void run() {
-							Toast.makeText(thisActivity, response.失败原因 + gsid, Toast.LENGTH_SHORT).show();
+							// Toast.makeText(thisActivity, response.失败原因 + gsid, Toast.LENGTH_SHORT).show();
 							Log.e(tag, ViewManage.getErrorLineNumber() + response.失败原因);
 						}
 					});

@@ -201,7 +201,8 @@ public class Parser {
 		// TODO huawei and xiaomi : single NullPointExeption taskManageHolder or fileHandler
 		// NullPointerException: Attempt to invoke virtual method 'java.io.File com.open.welinks.model.FileHandler.getSdCardFile()
 		// ' on a null object reference
-		File sdFile = taskManageHolder.fileHandler.getSdCardFile();
+		FileHandler fileHandler = taskManageHolder.fileHandler;
+		File sdFile = fileHandler.getSdCardFile();
 		File rootForder = new File(sdFile, "welinks/");
 
 		result = getFromSD(rootForder, fileName);
