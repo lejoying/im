@@ -883,6 +883,7 @@ public class NearbyView {
 	}
 
 	public void onResume() {
+		thisController.data = thisController.parser.check();
 		businessCardPopView.dismissUserCardDialogView();
 		mapView.onResume();
 		if (thisController.mLocationManagerProxy != null && thisController.mAMapLocationListener != null)

@@ -28,6 +28,12 @@ public class ShareDetailActivity extends Activity {
 		linkViewController();
 	}
 
+	@Override
+	protected void onResume() {
+		thisController.onResume();
+		super.onResume();
+	}
+
 	public void linkViewController() {
 		this.thisActivity = this;
 		this.context = this;

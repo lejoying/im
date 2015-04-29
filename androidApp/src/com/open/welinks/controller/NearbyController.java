@@ -91,6 +91,7 @@ import com.open.welinks.view.NearbyView.SendShare;
 public class NearbyController {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 	public SubData subData = SubData.getInstance();
 	public TaskManageHolder taskManageHolder = TaskManageHolder.getInstance();
 
@@ -1256,8 +1257,6 @@ public class NearbyController {
 		// TODO
 		getCommentLocations();
 	}
-
-	Parser parser = Parser.getInstance();
 
 	public void getCommentLocations() {
 		if (data.userInformation == null) {

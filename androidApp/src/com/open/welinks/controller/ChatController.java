@@ -1301,6 +1301,7 @@ public class ChatController {
 	}
 
 	public void onResume() {
+		data = parser.check();
 		taskManageHolder.viewManage.chatView = thisView;
 		thisView.locationMapView.onResume();
 

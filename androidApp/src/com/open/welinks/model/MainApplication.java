@@ -7,7 +7,8 @@ import com.open.welinks.service.ExceptionService;
 
 public class MainApplication extends Application {
 
-	public Data data = Data.getInstance();
+	public static Data data;
+	public Parser parser;
 
 	@Override
 	public void onCreate() {
@@ -21,4 +22,11 @@ public class MainApplication extends Application {
 		// CrashHandler crashHandler = CrashHandler.getInstance();
 		// crashHandler.init(getApplicationContext());
 	}
+
+	@Override
+	public void onLowMemory() {
+		data = parser.parse();
+		super.onLowMemory();
+	}
+
 }

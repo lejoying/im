@@ -38,6 +38,12 @@ public class BusinessCardActivity extends Activity {
 	}
 
 	@Override
+	protected void onResume() {
+		thisController.onResume();
+		super.onResume();
+	}
+
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		thisController.onWindowFocusChanged(hasFocus);

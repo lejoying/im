@@ -43,9 +43,10 @@ public class NearbyActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		taskManageHolder.viewManage.initialize(this);
-		
+
+		if (taskManageHolder.viewManage != null)
+			taskManageHolder.viewManage.initialize(this);
+
 		instance = this;
 
 		thisActivity = this;

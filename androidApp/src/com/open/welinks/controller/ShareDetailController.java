@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.view.ShareDetailView;
 
@@ -18,6 +19,7 @@ public class ShareDetailController {
 	public MyLog log = new MyLog(tag, true);
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public Context context;
 	public ShareDetailView thisView;
@@ -141,5 +143,9 @@ public class ShareDetailController {
 
 			return false;
 		}
+	}
+
+	public void onResume() {
+		data = parser.check();
 	}
 }

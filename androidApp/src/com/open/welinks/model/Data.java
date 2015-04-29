@@ -15,13 +15,11 @@ import com.open.welinks.model.SubData.LocationCircle;
 
 public class Data {
 
-	public static Data data;
-
 	public static Data getInstance() {
-		if (data == null) {
-			data = new Data();
+		if (MainApplication.data == null) {
+			MainApplication.data = new Data();
 		}
-		return data;
+		return MainApplication.data;
 	}
 
 	public TempData tempData = new TempData();

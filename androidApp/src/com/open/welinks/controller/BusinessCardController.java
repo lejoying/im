@@ -500,4 +500,8 @@ public class BusinessCardController {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.RELATION_MODIFYALIAS, params, responseHandlers.relation_modifyAlias);
 	}
+
+	public void onResume() {
+		data = parser.check();
+	}
 }
