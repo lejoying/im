@@ -45,11 +45,11 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Board;
-import com.open.welinks.model.Data.Boards.Comment;
-import com.open.welinks.model.Data.Boards.Score;
-import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.Comment;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Score;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Data.UserInformation.User.Location;
 import com.open.welinks.model.Parser;
@@ -302,12 +302,12 @@ public class ShareMessageDetailController {
 				String tag_class = (String) view.getTag(R.id.tag_class);
 				if ("DecrementView".equals(tag_class)) {// -
 					if (shareMessage.scores == null) {
-						shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+						shareMessage.scores = new HashMap<String, Data.Score>();
 					}
 					User currentUser = data.userInformation.currentUser;
 					Score score = shareMessage.scores.get(currentUser.phone);
 					if (score == null) {
-						score = data.boards.new Score();
+						score = data.new Score();
 					} else {
 						thisView.scoreState();
 						if (score.remainNumber == 0) {
@@ -326,11 +326,11 @@ public class ShareMessageDetailController {
 					modifyPraiseusersToMessage(false, shareMessage.gsid);
 				} else if ("IncrementView".equals(tag_class)) {// +
 					if (shareMessage.scores == null) {
-						shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+						shareMessage.scores = new HashMap<String, Data.Score>();
 					}
 					Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
 					if (score == null) {
-						score = data.boards.new Score();
+						score = data.new Score();
 					} else {
 						thisView.scoreState();
 						if (score.remainNumber == 0) {
@@ -361,7 +361,7 @@ public class ShareMessageDetailController {
 								}
 								parser.check();
 								User currentUser = data.userInformation.currentUser;
-								Comment comment = data.boards.new Comment();
+								Comment comment = data.new Comment();
 								comment.phone = currentUser.phone;
 								comment.nickName = currentUser.nickName;
 								comment.head = currentUser.head;
@@ -635,7 +635,7 @@ public class ShareMessageDetailController {
 
 	public void dealShareMessage(String key, Board board) {
 		long time = new Date().getTime();
-		ShareMessage shareMessage = data.boards.new ShareMessage();
+		ShareMessage shareMessage = data.new ShareMessage();
 		shareMessage.content = this.shareMessage.content;
 		shareMessage.type = this.shareMessage.type;
 		shareMessage.nickName = currentUser.nickName;

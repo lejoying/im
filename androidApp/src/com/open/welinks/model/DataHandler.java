@@ -22,13 +22,13 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.customListener.OnUploadLoadingListListener;
 import com.open.welinks.customListener.OnUploadLoadingListener;
 import com.open.welinks.model.Data.Boards.Board;
-import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.LocalStatus.LocalData.ShareDraft;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.SendShareMessage;
@@ -40,7 +40,7 @@ import com.open.welinks.view.ViewManage;
 
 public class DataHandler {
 
-	public static String tag = "DataUtil";
+	public static String tag = "DataHandler";
 	public static Data data = Data.getInstance();
 	public static Parser parser = Parser.getInstance();
 	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -68,7 +68,7 @@ public class DataHandler {
 					User currentUser = data.userInformation.currentUser;
 					if (!"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
 
-						instance.parser.check();
+						data = instance.parser.check();
 
 						long currentTime = System.currentTimeMillis();
 
@@ -324,7 +324,7 @@ public class DataHandler {
 			data.userInformation.currentUser.accessKey = "";
 			data.userInformation.currentUser.flag = "none";
 
-			data.relationship = data.new Relationship();
+			data.relationship = null;
 			// data.relationship.isModified = false;
 			// data.relationship.circles.clear();
 			// data.relationship.friends.clear();
@@ -334,8 +334,8 @@ public class DataHandler {
 			// data.relationship.groupsMap.clear();
 			// data.relationship.squares.clear();
 
-			data.messages = data.new Messages();
-			// data.messages.isModified = false;
+			data.messages = null;
+			data.messages.isModified = false;
 			// data.messages.friendMessageMap.clear();
 			// data.messages.groupMessageMap.clear();
 			// data.messages.messagesOrder.clear();
@@ -455,7 +455,7 @@ public class DataHandler {
 							data.boards.boardsMap.put(entity.sid, board);
 						}
 						Board board = data.boards.boardsMap.get(entity.sid);
-						ShareMessage shareMessage = data.boards.new ShareMessage();
+						ShareMessage shareMessage = data.new ShareMessage();
 						shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 						shareMessage.gsid = entity.gsid;
 						shareMessage.sid = entity.sid;

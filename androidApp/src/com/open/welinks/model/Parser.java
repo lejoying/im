@@ -238,7 +238,7 @@ public class Parser {
 				throw e;
 			}
 			try {
-				if (data.localStatus.localData == null) {
+				if (phone != "none" && data.localStatus.localData == null) {
 					String localDataStr = getFromUserForder(phone, "localData.js");
 					if (localDataStr == null || "".equals(localDataStr)) {
 						data.localStatus.localData = data.localStatus.new LocalData();
@@ -255,7 +255,7 @@ public class Parser {
 				data.localStatus.localData = data.localStatus.new LocalData();
 			}
 			try {
-				if (data.relationship == null) {
+				if (phone != "none" && data.relationship == null) {
 					log.e(tag, "**data.relationship is null");
 					String relationshipStr = getFromUserForder(phone, "relationship.js");
 					// log.e(phone + "------------------");
@@ -271,7 +271,7 @@ public class Parser {
 				deleteFile(phone, "relationship.js");
 			}
 			try {
-				if (data.event == null) {
+				if (phone != "none" && data.event == null) {
 					String eventContent = getFromUserForder(phone, "event.js");
 					data.event = gson.fromJson(eventContent, Event.class);
 					data.event.userEvents = checkKeyValue(data.event.userEvents, data.event.userEventsMap);
@@ -282,7 +282,7 @@ public class Parser {
 				deleteFile(phone, "event.js");
 			}
 			try {
-				if (data.messages == null) {
+				if (phone != "none" && data.messages == null) {
 					String messageContent = getFromUserForder(phone, "message.js");
 					data.messages = gson.fromJson(messageContent, Messages.class);
 
@@ -314,12 +314,11 @@ public class Parser {
 				Log.e(tag, e.toString() + "XXXXXXXXXXXXXXXXXXX" + e);
 			}
 			try {
-				if (data.boards == null) {
+				if (phone != "none" && data.boards == null) {
 					String boardsContent = getFromUserForder(phone, "boards.js");
 					if (boardsContent != null && !"".equals(boardsContent)) {
 						data.boards = gson.fromJson(boardsContent, Boards.class);
 					} else {
-
 					}
 				}
 			} catch (Exception e) {

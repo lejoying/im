@@ -30,7 +30,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ShareListController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
 import com.open.welinks.oss.DownloadFile;

@@ -73,10 +73,10 @@ import com.open.welinks.customView.ThreeChoicesView.OnItemClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Boards.Score;
-import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Score;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
@@ -333,11 +333,11 @@ public class NearbyController {
 					if ("IncrementView".equals(type)) {
 						ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 						if (shareMessage.scores == null) {
-							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+							shareMessage.scores = new HashMap<String, Data.Score>();
 						}
 						Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
 						if (score == null) {
-							score = data.boards.new Score();
+							score = data.new Score();
 						} else {
 							if (score.remainNumber == 0) {
 								Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
@@ -358,11 +358,11 @@ public class NearbyController {
 					} else if ("DecrementView".equals(type)) {
 						final ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
 						if (shareMessage.scores == null) {
-							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+							shareMessage.scores = new HashMap<String, Data.Score>();
 						}
 						Score score1 = shareMessage.scores.get(data.userInformation.currentUser.phone);
 						if (score1 == null) {
-							score1 = data.boards.new Score();
+							score1 = data.new Score();
 						} else {
 							if (score1.remainNumber == 0) {
 								Toast.makeText(thisActivity, "对不起,你只能评分一次", Toast.LENGTH_SHORT).show();
@@ -1049,7 +1049,7 @@ public class NearbyController {
 	}
 
 	public void processingShareData(Point point) {
-		ShareMessage message = data.boards.new ShareMessage();
+		ShareMessage message = data.new ShareMessage();
 
 		message.content = point.data.content;
 		message.head = point.data.head;
@@ -1066,7 +1066,7 @@ public class NearbyController {
 		}.getType());
 		message.status = "sent";
 		mInfomations.add(message);
-		data.boards.shareMessagesMap.put(message.sid, message);
+		// data.boards.shareMessagesMap.put(message.sid, message);
 	}
 
 	public void processingAccountData(Point point) {

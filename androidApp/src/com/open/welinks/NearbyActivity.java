@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import com.google.gson.Gson;
 import com.open.lib.MyLog;
 import com.open.welinks.controller.NearbyController;
 import com.open.welinks.model.Data;
@@ -152,6 +153,8 @@ public class NearbyActivity extends Activity {
 		thisView.onResume();
 		super.onResume();
 	}
+
+	public Gson gson = new Gson();
 
 	@Override
 	protected void onPause() {

@@ -13,7 +13,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.MyLog;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.model.Data.Boards.Board;
-import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.SubData.SendShareMessage;
 import com.open.welinks.model.SubData.ShareContentItem;
@@ -183,7 +183,7 @@ public class TaskContainer_Share {
 				data.boards.boardsMap.put(sid, board);
 			}
 			Board board = data.boards.boardsMap.get(sid);
-			shareMessage = data.boards.new ShareMessage();
+			shareMessage = data.new ShareMessage();
 			// shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
 			shareMessage.gsid = currentUser.phone + "_" + time;
 			shareMessage.type = "imagetext";

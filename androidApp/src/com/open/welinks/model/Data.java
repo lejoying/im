@@ -7,7 +7,6 @@ import java.util.Map;
 
 import android.util.DisplayMetrics;
 
-import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.TempData.ImageBean;
@@ -301,56 +300,56 @@ public class Data {
 			public long updateTime = 0;
 			public List<String> shareMessagesOrder = new ArrayList<String>();
 		}
+	}
 
-		public class ShareMessage {
-			public int MAXTYPE_COUNT = 3;
-			public int MESSAGE_TYPE_IMAGETEXT = 0x01;
-			public int MESSAGE_TYPE_VOICETEXT = 0x02;
-			public int MESSAGE_TYPE_VOTE = 0x03;
+	public class ShareMessage {
+		public int MAXTYPE_COUNT = 3;
+		public int MESSAGE_TYPE_IMAGETEXT = 0x01;
+		public int MESSAGE_TYPE_VOICETEXT = 0x02;
+		public int MESSAGE_TYPE_VOTE = 0x03;
 
-			public int mType;// MESSAGE_TYPE
-			public String gid;// only sharelist In the use of
-			public String gsid;
-			public String sid;
-			public String type;// imagetext voicetext vote
-			public String phone;
-			public String nickName;
-			public String head;
-			public long time;
-			public int totalScore;
+		public int mType;// MESSAGE_TYPE
+		public String gid;// only sharelist In the use of
+		public String gsid;
+		public String sid;
+		public String type;// imagetext voicetext vote
+		public String phone;
+		public String nickName;
+		public String head;
+		public long time;
+		public int totalScore;
 
-			public String getStatus;
+		public String getStatus;
 
-			public int shareFor = 1; // 1 group | 2 square
+		public int shareFor = 1; // 1 group | 2 square
 
-			public double distance;
-			public double[] location;
-			// public ArrayList<String> praiseusers = new ArrayList<String>();
-			public HashMap<String, Score> scores = new HashMap<String, Score>();
-			public List<Comment> comments = new ArrayList<Comment>();
-			public String content;
-			public String status;// sending sent failed
-		}
+		public double distance;
+		public double[] location;
+		// public ArrayList<String> praiseusers = new ArrayList<String>();
+		public HashMap<String, Score> scores = new HashMap<String, Score>();
+		public List<Comment> comments = new ArrayList<Comment>();
+		public String content;
+		public String status;// sending sent failed
+	}
 
-		public class Comment {
-			public String phone;
-			public String nickName;
-			public String head;
-			public String phoneTo;
-			public String nickNameTo;
-			public String headTo;
-			public String contentType;// "text"
-			public String content;
-			public long time;
-		}
+	public class Comment {
+		public String phone;
+		public String nickName;
+		public String head;
+		public String phoneTo;
+		public String nickNameTo;
+		public String headTo;
+		public String contentType;// "text"
+		public String content;
+		public long time;
+	}
 
-		public class Score {
-			public String phone;
-			public long time;
-			public int positive;
-			public int negative;
-			public int remainNumber = 1;
-		}
+	public class Score {
+		public String phone;
+		public long time;
+		public int positive;
+		public int negative;
+		public int remainNumber = 1;
 	}
 
 	public class Event {

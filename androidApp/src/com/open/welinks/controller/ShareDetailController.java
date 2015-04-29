@@ -9,8 +9,8 @@ import android.view.MotionEvent;
 
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.Data.Boards.ShareMessage;
 import com.open.welinks.view.ShareDetailView;
 
 public class ShareDetailController {

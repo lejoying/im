@@ -48,11 +48,11 @@ import com.open.welinks.customView.SmallBusinessCardPopView;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Boards.Board;
-import com.open.welinks.model.Data.Boards.Comment;
-import com.open.welinks.model.Data.Boards.Score;
-import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.Comment;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Score;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.SubData.ShareContentItem;
 import com.open.welinks.model.TaskManageHolder;
@@ -767,7 +767,7 @@ public class ShareSectionView {
 					}
 				}
 				if (shareMessage.scores == null) {
-					shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+					shareMessage.scores = new HashMap<String, Data.Score>();
 				}
 				this.sharePraiseNumberView.setText(shareMessage.totalScore + "");
 				Typeface face = Typeface.createFromAsset(thisController.thisActivity.getAssets(), "fonts/avenirroman.ttf");

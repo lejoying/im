@@ -49,10 +49,10 @@ import com.open.welinks.customView.Alert.AlertInputCommentDialog;
 import com.open.welinks.customView.Alert.AlertInputCommentDialog.OnDialogClickListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Boards.Comment;
-import com.open.welinks.model.Data.Boards.Score;
-import com.open.welinks.model.Data.Boards.ShareMessage;
+import com.open.welinks.model.Data.Comment;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Score;
+import com.open.welinks.model.Data.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.DataHandler;
 import com.open.welinks.model.Parser;
@@ -476,11 +476,11 @@ public class ShareSubController1 {
 						int num = Integer.valueOf(number);
 						num--;
 						if (shareMessage.scores == null) {
-							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+							shareMessage.scores = new HashMap<String, Data.Score>();
 						}
 						Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
 						if (score == null) {
-							score = data.boards.new Score();
+							score = data.new Score();
 						} else {
 							if (score.negative > 0) {
 								view.setAlpha(1f);
@@ -528,11 +528,11 @@ public class ShareSubController1 {
 						int num = Integer.valueOf(number);
 						num++;
 						if (shareMessage.scores == null) {
-							shareMessage.scores = new HashMap<String, Data.Boards.Score>();
+							shareMessage.scores = new HashMap<String, Data.Score>();
 						}
 						Score score = shareMessage.scores.get(data.userInformation.currentUser.phone);
 						if (score == null) {
-							score = data.boards.new Score();
+							score = data.new Score();
 						} else {
 							if (score.positive > 0) {
 								view.setAlpha(1f);
@@ -592,7 +592,7 @@ public class ShareSubController1 {
 									// SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + shareMessage.gsid);
 									parser.check();
 									User currentUser = data.userInformation.currentUser;
-									Comment comment = data.boards.new Comment();
+									Comment comment = data.new Comment();
 									comment.phone = currentUser.phone;
 									comment.nickName = currentUser.nickName;
 									comment.head = currentUser.head;
