@@ -10,9 +10,16 @@ public class MainApplication extends Application {
 	public static Data data;
 	public Parser parser;
 
+	public TaskManageHolder taskManageHolder;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		taskManageHolder = TaskManageHolder.getInstance();
+		taskManageHolder.isInitialized = false;
+		taskManageHolder.initialize(this);
+
 		ExceptionService service = new ExceptionService();
 		Intent intent = new Intent(getApplicationContext(), ExceptionService.class);
 		startService(intent);
@@ -21,6 +28,7 @@ public class MainApplication extends Application {
 		Thread.setDefaultUncaughtExceptionHandler(handler);
 		// CrashHandler crashHandler = CrashHandler.getInstance();
 		// crashHandler.init(getApplicationContext());
+
 	}
 
 	@Override

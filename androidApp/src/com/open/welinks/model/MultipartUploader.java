@@ -18,6 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.http.Header;
 import org.apache.http.entity.ByteArrayEntity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -316,6 +317,15 @@ public class MultipartUploader {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Header[] headers = responseInfo.getAllHeaders();
+			for (int i = 0; i < headers.length; i++) {
+				String key = headers[i].getName();
+				if (key.equals("ETag")) {
+					part.eTag = headers[i].getValue();
+					part.eTag = part.eTag.substring(1, part.eTag.length() - 1);
+					break;
+				}
+			}
 			myFile.partSuccessCount++;
 			part.status = part.PART_SUCCESS;
 			// uploadPrecent = (int) ((((double) partSuccessCount / (double) partCount)) * 100);
@@ -354,7 +364,7 @@ public class MultipartUploader {
 		HttpUtils httpUtils = new HttpUtils();
 
 		String url = OSS_HOST_URL + myFile.Oss_Directory + myFile.fileName + "?uploadId=" + myFile.uploadId;
-
+		params.addHeader("User-Agent", "Android");
 		params.addQueryStringParameter("OSSAccessKeyId", OSSACCESSKEYID);
 		params.addQueryStringParameter("Expires", expires + "");
 		params.addQueryStringParameter("Signature", signature);
@@ -380,8 +390,11 @@ public class MultipartUploader {
 
 		@Override
 		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
+			// log.e(ExceptionHandler.printStackTrace(NearbyActivity.instance, error));
 			myFile.status.state = myFile.status.Exception;
 			log.e("Exception@8" + msg + ",," + error.getExceptionCode());
+			// Log.e(msg, error.getExceptionCode() + "--" + error.getStackTrace().toString(), error.getCause());
+			log.e(myFile.path + "---" + myFile.fileName);
 			String url = OSS_HOST_URL + myFile.Oss_Directory + myFile.fileName + "?uploadId=" + myFile.uploadId;
 			log.e(url);
 			log.e(writeXml(myFile.parts));

@@ -35,8 +35,9 @@ public class LaunchActivity extends Activity {
 		context = this;
 		Log.d(tag, "hello world!");
 
-		taskManageHolder = TaskManageHolder.getInstance();
-		taskManageHolder.initialize(getApplicationContext());
+		// taskManageHolder = TaskManageHolder.getInstance();
+		// taskManageHolder.initialize(getApplicationContext());
+		
 		// taskManageHolder.viewManage.initialize(this);
 		initImageLoader(getApplicationContext());
 
