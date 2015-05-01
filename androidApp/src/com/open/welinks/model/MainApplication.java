@@ -20,6 +20,9 @@ public class MainApplication extends Application {
 		taskManageHolder.isInitialized = false;
 		taskManageHolder.initialize(this);
 
+		Parser parser = Parser.getInstance();
+		parser.initialize(this);
+
 		ExceptionService service = new ExceptionService();
 		Intent intent = new Intent(getApplicationContext(), ExceptionService.class);
 		startService(intent);

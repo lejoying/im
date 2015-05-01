@@ -135,21 +135,31 @@ public class ShareMessageDetailController {
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
 			this.gsid = gsid;
-			if (data.boards.boardsMap.containsKey(sid)) {
-				board = data.boards.boardsMap.get(sid);
-				shareMessage = data.boards.shareMessagesMap.get(gsid);
-				getShareMessageDetail();
-			} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
-				board = data.boards.new Board();
-				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
-				getShareMessageDetail();
+			if (data.boards != null) {
+				if (data.boards.shareMessagesMap.containsKey(sid)) {
+					board = data.boards.boardsMap.get(sid);
+					shareMessage = data.boards.shareMessagesMap.get(gsid);
+					getShareMessageDetail();
+					log.e("--1");
+				} else if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
+					board = data.boards.new Board();
+					shareMessage = data.tempData.tempShareMessageMap.get(gsid);
+					getShareMessageDetail();
+					log.e("--2");
+				} else {
+					board = data.boards.new Board();
+					// getShareFromServer(gid, gsid);
+					shareMessage = data.tempData.tempShareMessageMap.get(gsid);
+					getShareMessageDetail();
+					log.e("--3");
+				}
 			} else {
-				board = data.boards.new Board();
-				// getShareFromServer(gid, gsid);
-				shareMessage = data.tempData.tempShareMessageMap.get(gsid);
-				getShareMessageDetail();
+				if (data.tempData.tempShareMessageMap.containsKey(gsid)) {
+					shareMessage = data.tempData.tempShareMessageMap.get(gsid);
+				}
 			}
 		}
+		log.e("-------------------------" + shareMessage);
 	}
 
 	public void initShareListener() {
@@ -812,32 +822,45 @@ public class ShareMessageDetailController {
 				final Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群分享成功")) {
 					boolean flag = false;
-					ShareMessage shareMessage = null;
+					ShareMessage shareMessage = thisController.shareMessage;
 					ShareMessage serverMessage = response.share;
 					try {
-						flag = data.boards.shareMessagesMap.containsKey(serverMessage.gsid);
-						shareMessage = data.boards.shareMessagesMap.get(serverMessage.gsid);
-						if (shareMessage != null) {
-							shareMessage.content = serverMessage.content;
-							shareMessage.comments.clear();
-							shareMessage.comments.addAll(serverMessage.comments);
-							shareMessage.totalScore = serverMessage.totalScore;
-							shareMessage.scores = serverMessage.scores;
+						parser.check();
+						if (data.boards != null) {
+							flag = data.boards.shareMessagesMap.containsKey(serverMessage.gsid);
+							shareMessage = data.boards.shareMessagesMap.get(serverMessage.gsid);
+							if (shareMessage != null) {
+								shareMessage.content = serverMessage.content;
+								shareMessage.comments.clear();
+								shareMessage.comments.addAll(serverMessage.comments);
+								shareMessage.totalScore = serverMessage.totalScore;
+								shareMessage.scores = serverMessage.scores;
+							} else {
+								shareMessage = serverMessage;
+								data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+							}
+							data.boards.isModified = true;
 						} else {
 							shareMessage = serverMessage;
-							data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+							data.tempData.tempShareMessageMap.put(shareMessage.gsid, shareMessage);
 						}
-						data.boards.isModified = true;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					if (thisController.shareMessage == null) {
 						flag = false;
+						thisController.shareMessage = shareMessage;
+					} else {
+						thisController.shareMessage.totalScore = shareMessage.totalScore;
+						thisController.shareMessage.scores = shareMessage.scores;
+						thisController.shareMessage.comments = shareMessage.comments;
 					}
-					thisController.shareMessage = shareMessage;
+					final boolean flag2 = flag;
 					taskManageHolder.fileHandler.handler.post(new Runnable() {
 						public void run() {
-							thisView.showShareMessageDetails();
+							if (flag2 == false) {
+								thisView.showShareMessageDetails();
+							}
 							thisView.showShareComments();
 							thisView.scoreState();
 						}

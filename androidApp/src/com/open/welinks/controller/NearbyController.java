@@ -210,7 +210,7 @@ public class NearbyController {
 	public boolean isLogin(boolean flag) {
 		if (data.userInformation == null) {
 			String userInformationStr = parser.getFromRootForder("userInformation.js");
-			data.userInformation = parser.gson.fromJson(userInformationStr, UserInformation.class);
+			data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
 		}
 		User currentUser = data.userInformation.currentUser;
 		if (currentUser != null && !"".equals(currentUser.phone) && !"".equals(currentUser.accessKey)) {
@@ -350,7 +350,7 @@ public class NearbyController {
 						score.positive = 1;
 						score.remainNumber = 0;
 						shareMessage.scores.put(score.phone, score);
-						data.boards.isModified = true;
+						// data.boards.isModified = true;
 						thisView.notifyData(false);
 						if (isLogin(false)) {
 							thisView.modifyPraiseusersToMessage(true, shareMessage.gsid, shareMessage.location);
@@ -769,9 +769,10 @@ public class NearbyController {
 				}
 				if (status == LBSStatus.newest || status == LBSStatus.hottest) {
 					ShareMessage shareMessage = (ShareMessage) thisController.mInfomations.get(position);
-					data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+					// data.boards.shareMessagesMap.put(shareMessage.gsid, shareMessage);
+					data.tempData.tempShareMessageMap.put(shareMessage.gsid, shareMessage);
+					log.e("****************:"+shareMessage);
 					Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
-					intent.putExtra("gid", shareMessage.gid);
 					intent.putExtra("sid", shareMessage.sid);
 					intent.putExtra("gsid", shareMessage.gsid);
 					thisActivity.startActivityForResult(intent, RESULTCODESHAREDETAIL);

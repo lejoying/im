@@ -315,7 +315,8 @@ public class Parser {
 				Log.e(tag, e.toString() + "XXXXXXXXXXXXXXXXXXX" + e);
 			}
 			try {
-				if (phone != "none" && data.boards == null) {
+				// TODO phone != "none" &&
+				if (data.boards == null) {
 					String boardsContent = getFromUserForder(phone, "boards.js");
 					if (boardsContent != null && !"".equals(boardsContent)) {
 						data.boards = gson.fromJson(boardsContent, Boards.class);

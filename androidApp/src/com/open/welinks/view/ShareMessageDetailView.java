@@ -227,6 +227,10 @@ public class ShareMessageDetailView {
 	public ImageView imageView;
 
 	public void showShareMessageDetails() {
+		log.e("-----++:" + thisController.shareMessage);
+		if (thisController.shareMessage == null) {
+			return;
+		}
 		shareMessageTimeView.setText("");
 
 		// this.scoreView.setText(thisController.shareMessage.totalScore);
@@ -251,6 +255,7 @@ public class ShareMessageDetailView {
 		body.setContent(thisController.shareMessage, null);
 		this.contentContainer.addView(body.cardView);
 		this.showShareComments();
+		log.e("00000000000");
 	}
 
 	public ShareBody body;
@@ -459,6 +464,9 @@ public class ShareMessageDetailView {
 
 	public void scoreState() {
 		User currentUser = data.userInformation.currentUser;
+		if (body == null) {
+			return;
+		}
 		if (thisController.shareMessage.scores != null) {
 			Score score = thisController.shareMessage.scores.get(currentUser.phone);
 			body.scoreView.setText(thisController.shareMessage.totalScore + "");
