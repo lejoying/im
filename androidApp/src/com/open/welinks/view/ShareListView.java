@@ -25,6 +25,8 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.welinks.R;
 import com.open.welinks.controller.ShareListController;
@@ -283,9 +285,15 @@ public class ShareListView {
 						int width = (int) (displayMetrics.density * 75 + 0.5f);
 						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
 						layout.addView(imageView, params);
-						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
+						final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
 						if (file.exists()) {
-							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+								@Override
+								public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+									super.onLoadingFailed(imageUri, view, failReason);
+									file.delete();
+								}
+							});
 						} else {
 							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q", file.getAbsolutePath());
 							downloadFile.view = imageView;
@@ -303,9 +311,15 @@ public class ShareListView {
 							params.leftMargin = (int) (38 * displayMetrics.density + 0.5f);
 						}
 						layout.addView(imageView, params);
-						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
+						final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
 						if (file.exists()) {
-							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+								@Override
+								public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+									super.onLoadingFailed(imageUri, view, failReason);
+									file.delete();
+								}
+							});
 						} else {
 							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width / 2 + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
 							downloadFile.view = imageView;
@@ -337,9 +351,15 @@ public class ShareListView {
 							suffix = "@" + width / 2 + "w_" + width / 2 + "h_1c_1e_100q";
 						}
 						layout.addView(imageView, params);
-						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+						final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
 						if (file.exists()) {
-							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+								@Override
+								public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+									super.onLoadingFailed(imageUri, view, failReason);
+									file.delete();
+								}
+							});
 						} else {
 							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
 							downloadFile.view = imageView;
@@ -365,9 +385,15 @@ public class ShareListView {
 							break;
 						}
 						layout.addView(imageView, params);
-						File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+						final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
 						if (file.exists()) {
-							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+							imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+								@Override
+								public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+									super.onLoadingFailed(imageUri, view, failReason);
+									file.delete();
+								}
+							});
 						} else {
 							DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
 							downloadFile.view = imageView;

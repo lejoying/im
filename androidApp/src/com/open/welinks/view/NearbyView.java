@@ -48,6 +48,8 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
@@ -523,6 +525,7 @@ public class NearbyView {
 				}
 				holder.imageContainer.removeAllViews();
 				showImages(message.gsid, images, holder.imageContainer);
+				// log.e("-------------*" + images.size());
 				if (images.size() == 0) {
 					holder.imageContainer.setBackgroundColor(Color.parseColor("#380099cd"));
 					holder.imageTextContentView.setVisibility(View.VISIBLE);
@@ -571,9 +574,15 @@ public class NearbyView {
 					int width = (int) (metrics.density * 90);
 					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
 					layout.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
+					final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@2_2");
 					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+								super.onLoadingFailed(imageUri, view, failReason);
+								file.delete();
+							}
+						});
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width + "w_" + width + "h_1c_1e_100q", file.getAbsolutePath());
 						downloadFile.view = imageView;
@@ -591,9 +600,15 @@ public class NearbyView {
 						params.leftMargin = (int) (45.5f * metrics.density);
 					}
 					layout.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
+					final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + "@1_2");
 					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+								super.onLoadingFailed(imageUri, view, failReason);
+								file.delete();
+							}
+						});
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + "@" + width + "w_" + height + "h_1c_1e_100q", file.getAbsolutePath());
 						downloadFile.view = imageView;
@@ -625,9 +640,15 @@ public class NearbyView {
 						suffix = "@" + width + "w_" + width + "h_1c_1e_100q";
 					}
 					layout.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+					final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
 					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+								super.onLoadingFailed(imageUri, view, failReason);
+								file.delete();
+							}
+						});
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
 						downloadFile.view = imageView;
@@ -653,9 +674,15 @@ public class NearbyView {
 						break;
 					}
 					layout.addView(imageView, params);
-					File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
+					final File file = new File(taskManageHolder.fileHandler.sdcardCacheImageFolder, list.get(i) + name);
 					if (file.exists()) {
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView);
+						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+								super.onLoadingFailed(imageUri, view, failReason);
+								file.delete();
+							}
+						});
 					} else {
 						DownloadFile downloadFile = new DownloadFile(API.DOMAIN_OSS_THUMBNAIL + "images/" + list.get(i) + suffix, file.getAbsolutePath());
 						downloadFile.view = imageView;

@@ -709,6 +709,7 @@ public class FileHandler {
 			final String path = excessivePath;
 			final String url = excessiveUrl;
 			if (file.exists()) {
+				final File file2 = file;
 				imageLoader.displayImage("file://" + path, imageView, options, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
@@ -716,6 +717,7 @@ public class FileHandler {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						file2.delete();
 						downloadImageFile(url, path, imageView, options, type, null, imageListener);
 					}
 
@@ -746,7 +748,7 @@ public class FileHandler {
 	public void getBackImage(String fileName, final ImageView imageView, final DisplayImageOptions options) {
 		imageLoader.displayImage("drawable://" + R.drawable.tempicon, imageView);
 		if (fileName != null && !"".equals(fileName)) {
-			File imageFile = new File(sdcardBackImageFolder, fileName);
+			final File imageFile = new File(sdcardBackImageFolder, fileName);
 			final String path = imageFile.getAbsolutePath();
 			final String url = API.DOMAIN_COMMONIMAGE + "backgrounds/" + fileName;
 			if (imageFile.exists()) {
@@ -757,6 +759,7 @@ public class FileHandler {
 
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						imageFile.delete();
 						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_IMAGE, null, null);
 					}
 
@@ -781,7 +784,7 @@ public class FileHandler {
 	public void getHeadImage(String fileName, final ImageView imageView, final DisplayImageOptions options, final ImageListener imageListener) {
 		imageLoader.displayImage("drawable://" + R.drawable.face_man, imageView, options);
 		if (fileName != null && !"".equals(fileName)) {
-			File imageFile = new File(sdcardHeadImageFolder, fileName);
+			final File imageFile = new File(sdcardHeadImageFolder, fileName);
 			final String path = imageFile.getAbsolutePath();
 			final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
 			if (imageFile.exists()) {
@@ -798,6 +801,7 @@ public class FileHandler {
 						if (imageListener != null) {
 							imageListener.onFailed();
 						}
+						imageFile.delete();
 						downloadImageFile(url, path, imageView, options, DownloadFile.TYPE_HEAD_IMAGE, null, imageListener);
 					}
 

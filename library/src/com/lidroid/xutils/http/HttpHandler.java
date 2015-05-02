@@ -348,25 +348,6 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
 		} else if (statusCode == 416) {
 			throw new HttpException(statusCode, "maybe the file has downloaded completely");
 		} else {
-			Object result = null;
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				isUploading = false;
-				if (isDownloadingFile) {
-					autoResume = autoResume && OtherUtils.isSupportRange(response);
-					String responseFileName = autoRename ? OtherUtils.getFileNameFromHttpResponse(response) : null;
-					FileDownloadHandler downloadHandler = new FileDownloadHandler();
-					result = downloadHandler.handleEntity(entity, this, fileSavePath, autoResume, responseFileName);
-				} else {
-					StringDownloadHandler downloadHandler = new StringDownloadHandler();
-					result = downloadHandler.handleEntity(entity, this, charset);
-					if (HttpUtils.sHttpCache.isEnabled(requestMethod)) {
-						HttpUtils.sHttpCache.put(requestUrl, (String) result, expiry);
-						Log.e("XXX", (String) result);
-					}
-				}
-			}
-			Log.e("XXXXXXX", statusCode + status.getReasonPhrase());
 			throw new HttpException(statusCode, status.getReasonPhrase());
 		}
 		return null;

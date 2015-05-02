@@ -159,7 +159,7 @@ public class ShareMessageDetailController {
 				}
 			}
 		}
-		log.e("-------------------------" + shareMessage);
+		// log.e("-------------------------" + shareMessage.content);
 	}
 
 	public void initShareListener() {
