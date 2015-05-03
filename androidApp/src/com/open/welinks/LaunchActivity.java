@@ -7,10 +7,6 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.UserInformation;
@@ -39,7 +35,7 @@ public class LaunchActivity extends Activity {
 		// taskManageHolder.initialize(getApplicationContext());
 		
 		// taskManageHolder.viewManage.initialize(this);
-		initImageLoader(getApplicationContext());
+		// initImageLoader(getApplicationContext());
 
 		data = Data.getInstance();
 
@@ -74,17 +70,17 @@ public class LaunchActivity extends Activity {
 		}
 	}
 
-	public static void initImageLoader(Context context) {
-		if (!ImageLoader.getInstance().isInited()) {
-			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024)
-					.tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
-			ImageLoader.getInstance().init(config);
-		}
-	}
-
-	public static class Config {
-		public static final boolean DEVELOPER_MODE = false;
-	}
+	// public static void initImageLoader(Context context) {
+	// if (!ImageLoader.getInstance().isInited()) {
+	// ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024)
+	// .tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
+	// ImageLoader.getInstance().init(config);
+	// }
+	// }
+	//
+	// public static class Config {
+	// public static final boolean DEVELOPER_MODE = false;
+	// }
 
 	public class LocalConfig {
 		public String deviceid = "";
